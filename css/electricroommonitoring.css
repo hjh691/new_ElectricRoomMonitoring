@@ -1,0 +1,169 @@
+	/*多种选择器介绍：通用*{}，类型 p{}，类.classname{},代码 #id{}，子选择器 div>p{},后继选择器 div p{}，多个选择器可以用逗号分隔。
+	*元素：head，body，div，h1，ul，li，ol，p，b，span，table，tr，td，input，a，image，br，pre，i，
+	*/
+	*{
+       margin:0px;
+       padding:0px;
+    }
+	.mainarea{
+		position:relative;
+		
+		
+		height:100%;
+		/*/height:700px;
+		margin-left:10px;
+		width:100%;*/
+		background:#ffffff;
+		border-style:solid;
+		border-width:1px 1px 1px 1px;
+		border-color:#eeb0b0;
+	}
+	.row-navigation{
+		background:#85e494;
+		vertical-align:center;
+		width:100%;
+		height:30px;
+		line-height: 30px;
+	}
+	.pc-nav,.count_info{
+		display:inline;
+		vertical-align:center;
+	}
+	.pc-nav li,.count_info li{
+		display:inline;
+		top:5px;
+		padding:0px;
+		vertical-align:center;
+		margin:5px;
+	}
+	li a,table a {
+		/*display: inline;*/
+		color: #000;
+		padding: 2px 3px;
+		margin: 10px 10px;
+		hzalign:center;
+		text-decoration: none;
+	}
+	li{
+		/*display: inline;*/
+		color: #000;
+		padding: 2px 3px;
+		margin: 0px 0px;
+		hzalign:center;
+		text-decoration: none;
+	}
+	
+	.pc-footer{
+		background-color:#eeb0b0;
+	}
+	.pc-footer li {
+		display: inline;
+		color: #FFFFFF;
+		padding: 2px 3px;
+		text-decoration: none;
+		vertical-align:center;
+		
+	} 
+	*{
+       margin:0px;
+       padding:0px;
+    }
+	/* 鼠标移动到选项上修改背景颜色 margin:5px;*/
+	li a:hover {
+		background-color: #555;
+		color: white;
+	}
+	table a:hover {
+		background-color: #555;
+		color: white;
+	}
+	/**顶部系统条	*/
+	.topbar{
+		background-color:#00706B;/*国电绿*/
+		height:80px;
+		line-height:80px;
+		vertical-align:center;
+		
+		
+	}
+	/**顶部系统椭圆形按钮	*/
+	.topbar-bigbutton{
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		border: none;
+		background:#008B8B;
+		height:60px;
+		width:80px;
+		left:400px;
+		position:relative;
+		font-size:16px;
+		bottom:0;
+		color:white;
+	}
+        /* border-radius */
+	/*导航条（水平）*/
+	
+	.pagecard{
+		background:#eee0e0;
+		vertical-align:center;
+		height:30px;
+		line-height:30px;
+		left-side:20px;
+	}
+	.table{
+		border:0px;
+		cellspacing:1px;
+		cellpadding:4px;
+		bgcolor:#fff;
+		align:center;
+	}
+	.table-lable{
+		color:#0000b0;
+		font-size:20px;
+		line-height:50px;
+		margin-left:20px;
+
+	}
+	#leftmenu{
+		position:relative;
+		float:left;
+		align:center;
+		width:100%;
+		height:100%;/*height:700px;*/
+		border-style:solid;
+		border-width:0px 0px 0px 0px;
+		border-color:#eeb0b0;
+	}
+	/* KeFuDiv */
+	.KeFuDiv{
+		position:absolute;
+		height:50px;
+		width:500px;
+		background: #FFFF00;
+		color:#0;
+		font-size:16px;
+		text-align: center;
+		cursor: pointer;
+		border-radius: 50%;
+		vertical-align:center;
+		overflow:hidden;
+	}
+	.KeFuDiv p{
+		line-height: 50px;
+		font-weight:bold;
+	}
+	.condition {
+		color:#0000b0;
+		font-size:20px;
+		border:0px;
+	}
+	.button{
+		width:60px;
+		font-size:18px;
+		background-image:url(../res/jianbian_orange.jpg);
+	}
+	body{
+		background-color:#ffFFFF;
+		color:#000;
+	}

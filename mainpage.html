@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
+	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
+	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<title>机房监控</title>
+	<script  type="text/javascript" src="js/config.js"></script>
+	
+	<script type="text/javascript" src="js/bootstrap.js" ></script>
+	<script type="text/javascript" src="js/bootstrap-treeview.min.js" ></script>
+	<script type="text/javascript" src="js/tree.js" ></script>
+	<script  type="text/javascript" src="js/function.js"></script>
+</head>
+<body ><!--"showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>-->
+	<div class="header" id="header" style="height:120px;position:relative;">
+      <div class="topbar" id="topbar" >
+        <div id="app_name" style="position:relative;float:left;left:15px;font-size:30px;font-style:bold;color:white" ><i></i></div>
+		<span id="img_yonghu" style="position:relative;float:left;left:40px"><!--No.2登录用户名显示/未登录-->
+		<img src="res/caisetouxiang.png" width="20px" height="20px" >
+		</span><!--end No.2-->
+		<span id="yhname" style="position:relative;float:left;left:50px;color:white;font-size:12px;"><!--No.1登录用户名显示/未登录-->
+		未登录
+		</span><!--end No.1-->
+		
+		<span id="yhout" style="position:relative;float:left;left:80px;color:white;font-size:12px;"><a href="javascript:void(0)"style="color:white;">[登录]</a></span>
+		<!--<input type="button"  class="topbar-bigbutton" value="实时状态"></input>
+		<input type="button"  class="topbar-bigbutton"  value="历史数据"></input>
+		<input type="button" class="topbar-bigbutton"  value="综合分析"></input>
+		<input type="button" class="topbar-bigbutton"  value="系统设置"></input>
+		-->
+      </div>
+		<!-- 导航栏 -->
+		<div class="navigation" style="vertical-align:center;overflow:auto">
+			<div class="row-navigation" style="vertical-align:center;min-width:1100px;"align="center">
+					<ul class="pc-nav" >
+						<li ><a href="javascript:void(0)" onclick="initdrawing()">实时状态</a></li>
+						<li ><a id="realdata" href="javascript:void(0)" onclick="loadstations_realdata()">实时数据</a></li>
+						<li ><a id="historychart" href="javascript:void(0)" onclick="loadstations_chart()">趋势图</a></li>
+						<li ><a id="historydata" href="javascript:void(0)" onclick="loadstations_historydata()">历史数据</a></li>
+						<!--<li ><a href="javascript:void(0)" onclick="loadstations_warnlog()" >告警信息</a></li>
+						<li ><a href="realwarning.html" target="iframe_main" >当前告警</a></li>
+						<li ><a href="#" onclick="loadstations_smslog()">短信日志</a></li>-->
+						<li ><a href="app_download.html" target="iframe_main"  >客户端下载</a></li>
+						<li ><a href="help.html" target="iframe_main" >使用指南</a></li> <!--onclick="showfudongdiv()"download="SubstationTemperature.apk"onclick="showfudongdiv()"-->
+						<li ><a href="ContactUs.html" target="iframe_main">联系我们</a></li>
+					</ul>
+			</div>
+		</div>
+	
+	<!--  内容  -->
+	<hr style="display:none"/>
+	</div><!--header-->
+	<div id="chuangti" style="position: relative;">
+	<!--左侧站名列表 <h4 id="head_list_name" align="left"  >变电站:</h4>-->
+	<div class="leftmenu" id="leftmenu" style="float:left;width:200px;">
+		
+		<div id="tree" >
+		
+		</div>
+	</div>
+	<div id="content" style="overflow: hidden;">
+	<div class="mainarea" id="mainarea" >
+		<iframe  name="iframe_main" id="iframe_main" style="width:100%;height:100%" frameborder="0">
+		
+		</iframe>
+	</div>
+	</div>
+	<!--<table id="warningtable" style="display:none" >
+		<thead>
+			<tr >
+			<th>测量点编号</th>
+			<th>测量点名称</th>
+			<th>测量时间</th>
+			<th>温度（℃）</th>	
+			<th>告警内容</th>
+			<th style="width:18px;border:0px solid black;"></th>
+			</tr>
+		</thead>
+		<tbody id='realwarningdata-tbody'>
+ 		</tbody>
+	</table>-->
+	
+	</div>
+	
+	<!--底部公司版权 -->
+	<div>
+	<div class="navigation" id="footer" style="height:30px;position: absolute;bottom:0px;left:0px;right:0px">	
+		<div class="pc-footer" >
+			<ul class="pc-footer" align="center" style="margin:0 150px;">
+				<li ><a id="company_info" href="" target="_blank" ><img id="company_log" src="" width="20px" height="20px" > 保定金凯澳自动化设备有限公司</a></li>
+				<!--<li ><a href="#" style="margin-left:500px" >实时告警窗口</a></li>-->
+			</ul>
+		</div>
+	</div>
+	<!--告警信息悬浮窗-->
+	<div id="KeFuDiv" class="KeFuDiv" onmousedown="hidefudongdiv();" style="display:none" >
+		<!--屏幕滚动设置 <div class="affiche_text" id="alert_info">
+		</div>
+		 <marquee id="affiche" align="middle" behavior="scroll"  direction="left" height="50" width="500" hspace="100" vspace="50" loop="-1" scrollamount="10" scrolldelay="100" onMouseOut="this.start()" onMouseOver="this.stop()" ></marquee>-->
+		<div id="alert_info" style="vertical-align:center;">
+		</div>
+		
+	</div><!--KeFuDiv endhttp://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=<embed height="0" width="0" src="">-->
+	<div id="wrapSpk">
+		<audio id="spkAudio" >
+			<source src="" type="audio/wav">
+			
+		</audio>
+		<textarea id="chatData"  style="width:300px;height:40px;display:none" onclick="spack()";>asd
+		</textarea>
+	</div>
+	<div id="audio"></div>
+	<script>
+		function refreshwindow(){
+		initIndex();
+		var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
+		var fdheight=document.getElementById("KeFuDiv").offsetHeight;
+		var fdwidth=document.getElementById("KeFuDiv").offsetWidth;
+		var main = document.getElementById("chuangti");
+		var header = document.getElementById("header");
+		var menu = document.getElementById("leftmenu");
+		var content = document.getElementById("content");
+		var footer = document.getElementById("footer");
+		//获取窗口宽度
+		if (window.innerWidth)
+            winWidth = window.innerWidth;
+        else if ((document.body) && (document.body.clientWidth))
+            winWidth = document.body.clientWidth;
+        //获取窗口高度
+        if (window.innerHeight)
+            winHeight = window.innerHeight;
+        else if ((document.body) && (document.body.clientHeight))
+            winHeight = document.body.clientHeight;
+		//初始位置
+		var top=bodyfrm.scrollTop + bodyfrm.clientHeight - fdheight-10;
+		document.getElementById("KeFuDiv").style.top =top+'px';////document.getElementById("KeFuDiv").offsetHeight)-30;
+		var left=bodyfrm.scrollLeft+bodyfrm.clientWidth - fdwidth;//document.getElementById("KeFuDiv").offsetWidth)-17;;
+		// (winHeight - document.getElementById("KeFuDiv").offsetHeight)-30 +"px";
+		document.getElementById("KeFuDiv").style.left = left+'px';//(winWidth - 
+		var m = (/MSIE [67]/.test(navigator.userAgent) && (event.type=="load"))?1:2;
+		if(/MSIE [567]/.test(navigator.userAgent)){
+			var fwidth = main.offsetWidth;
+			if(footer.style.borderWidth){
+				fwidth -= m * footer.style.borderWidth.replace("px","");
+			}
+			footer.style.width = fwidth + "px";
+		}
+		var height = footer.offsetTop - main.offsetTop;
+		if(main.style.borderWidth){
+			height -= m * main.style.borderWidth.replace("px","");
+		}	
+		if(height > 0){
+			main.style.height = height + "px";
+			var mheight = height;
+			if(menu.style.borderWidth){
+				mheight -= m * menu.style.borderWidth.replace("px","");
+			}
+			if(mheight > 0){
+				menu.style.height = mheight + "px";
+			}
+			mheight = height;
+			if(content.style.borderWidth){
+				mheight -= m * content.style.borderWidth.replace("px","");
+			}
+			if(mheight > 0){
+				content.style.height = mheight + "px";
+			}
+		}
+	}
+	window.onload=window.onresize =  window.onscroll  =refreshwindow;
+	//index页面初始化
+	function initIndex() {
+		showusername();
+		document.getElementById('app_name').innerHTML = '<i>' + wctm_base_config.app_name + "</i>";
+		document.getElementById('company_log').src = wctm_base_config.log_src;
+		document.getElementById('company_info').href = wctm_base_config.company_url;
+		//sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
+		//sessionStorage.jssj = getCurrentDate(1) + " 23:59:59"; //"2012-09-05T08:00:00";//
+		//sessionStorage.pageindex = 1;
+		//getgraphics();
+		//document.getElementById("iframe_main").src = 'drawmap.html';
+		var tree = [
+			{
+				text: "王京站",
+				id:1,
+				nodes: [
+				{
+					text: "温度监测",
+					id:2,
+					nodes: [
+					{
+						text: "Grandchild 1",
+						id:3,
+					},
+					{
+						text: "Grandchild 2",
+						id:4
+					}
+					]
+				},
+				{
+					text: "局部放电",
+					id:5,
+					nodes:[
+					
+					]
+				},
+				{
+					text:"弧光保护",
+					id:6
+				}
+				]
+			},
+			{
+				text: "城南站",
+				id:7
+				
+			},
+			{
+				text: "伏城战",
+				id:8
+			},
+			{
+				text: "城关站",
+				id:9
+			},
+			{
+				text: "电厂站",
+				id:10
+			}
+		];
+		var obj=tree[1];
+		var node='[{"text":"加一站","id":"12"}]';
+		obj.nodes=JSON.parse( node);
+		tree[1]=obj;
+		tree.push(obj);
+		$('#tree').treeview({
+				data: tree,         // 数据源
+				showCheckbox: false,   //是否显示复选框
+				highlightSelected: true,    //是否高亮选中
+				//nodeIcon:'glyphicon glyphicon-user',    //节点上的图标
+				//nodeIcon: 'glyphicon glyphicon-globe',
+				emptyIcon: '',    //没有子节点的节点图标
+				multiSelect: false,    //多选
+				onNodeChecked: function (event,data) {
+					console.log("nodeId = "+data.nodeId);
+					console.log("id = "+data.id);
+				},
+				onNodeSelected: function (event, data) {
+					console.log("nodeId = "+data.nodeId);
+					console.log("id = "+data.id);
+				}
+		});
+	}
+	 </script>
+  </div>
+</body>
+</html>

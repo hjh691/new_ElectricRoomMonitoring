@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<title>三相不平衡|登录</title>
+	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<script  type="text/javascript" src="js/config.js"></script>
+	<script  type="text/javascript" src="js/layer/layer.js"></script>
+	<!--<script  type="text/javascript" src="js/json2.js"></script>-->
+	<script  type="text/javascript" src="js/function.js"></script>
+	
+	
+	<style>
+	.button {
+	display: inline-block;
+	position: relative;
+	margin: 10px;
+	padding: 0 20px;
+	text-align: center;
+	text-decoration: none;
+	font: bold 12px/25px Arial, sans-serif;
+
+	text-shadow: 1px 1px 1px rgba(255,255,255, .22);
+
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+
+	-webkit-box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+	-moz-box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+	box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+
+	-webkit-transition: all 0.15s ease;
+	-moz-transition: all 0.15s ease;
+	-o-transition: all 0.15s ease;
+	-ms-transition: all 0.15s ease;
+	transition: all 0.15s ease;
+	}
+	.green {
+		color: #3e5706;
+		background: #a5cd4e;
+	}
+
+	/* Blue Color */
+
+	.blue {
+		color: #19667d;
+		background: #70c9e3;
+	}
+
+	/* Gray Color */
+
+	.gray {
+		color: #515151;
+		background: #d3d3d3;
+	}
+	</style>
+	<style>
+		#page {
+			/*height: 200px;
+			background: -webkit-linear-gradient(left top, red , blue);  Safari 5.1 - 6.0 */
+			/*background: -o-linear-gradient(bottom right, red, blue);  Opera 11.1 - 12.0 */
+			/*background: -moz-linear-gradient(bottom right, red, blue);  Firefox 3.6 - 15 */
+			background: linear-gradient(to bottom right,#6666FF,#006666,#55aa66);  /*标准的语法（必须放在最后） */
+			background-size: 100% 100%;
+		}
+</style>
+</head>
+<body onload="initlogin()"><!--style="background-image:url(rec/zzpic12708.jpg)"-->
+	<div align="center" id="page" style="margin:0;padding:0;width:100%; height:850px;font-size:20px" >
+	<br>
+	<h1 id="company_name" style="color:#FF6666"></h1><br><br>
+	<table>
+	<tr>
+	<td>
+	<img id="login_pic" src="" align="center" style="position:relative;display:inline;float:right;margin-right:20px" />
+
+	</td>
+	<td><form id="form1" align="center" style="margin-left:30Px" >
+		<div style="color:#FFFFFF">用户名<input id="username" type="text" name="username"  style="margin-left:10px;padding:2px;padding-left:30px;font-size:20px;background-image:url(./res/touxiang.png);background-repeat:no-repeat;border-radius:8px;"></input></div><br><br>
+		<div style="color:#FFFFFF">密&nbsp  码<input id="password" type="password" name="password" style="margin-left:10px;padding:2px;padding-left:30px;font-size:20px;background-image:url(res/lock2.png);background-repeat:no-repeat;border-radius:8px" onkeypress="return KeyUp()" autocomplete="new-password"></input></div>
+		<br>
+		<div style="display:none">
+			<a href="iframe_regist.html" target="main-frame" style="font-style:{'bold'};text-decoration:none;" ><b>注册新用户</b></a>
+			<div style="color:red;font-size:20px;display:inline;left:40px;position:relative" >
+				<a href="#"style="color:red; text-decoration:none;">忘记密码</a>
+			</div>
+		</div>
+		<br><br>
+		<input class="button" id="btn_login" type="button"  value="登陆"  onclick="login()"style="font-size:20px;background-image:url(res/jianbian_orange.jpg);width:100px;height:40px;line-height:40px;margin-left:20px;"></input>
+		<input class="button" type="submit" value="重置"  style="font-size:20px;width:100px;height:40px;line-height:40px;background-image:url(res/jianbian_orange.jpg);margin-left:20px;"></input>
+		<br>
+		
+	</form></td>
+	</tr>
+	<table>
+	</div>
+</body>
+</html>
