@@ -172,7 +172,7 @@
 		//sessionStorage.pageindex = 1;
 		//getgraphics();
 		document.getElementById("iframe_main").src = 'page1.html';
-		var tree = [
+		/*var tree = [
 			{
 				text: "王京站",
 				id:1,
@@ -248,20 +248,23 @@
 				text: "电厂站",
 				id:10
 			}
-		];
-		var obj=tree[1];
-		var node='[{"text":"加一站","id":"12"}]';
-		obj.nodes[1].nodes=(JSON.parse( node));
-		tree[1]=obj;
-		tree.push(obj);
+		];*/
+	
+		//var obj=tree[1];
+		
+		//obj.nodes=(JSON.parse( node));
+		//tree[1]=obj;
 		$('#tree').treeview({
-				data: tree,         // 数据源
+				data: getData(),         // 数据源
 				showCheckbox: false,   //是否显示复选框
 				highlightSelected: true,    //是否高亮选中
-				nodeIcon:'glyphicon glyphicon-user',    //节点上的图标
-				//nodeIcon: 'glyphicon glyphicon-globe',
+				//nodeIcon:'glyphicon glyphicon-user',    //节点上的图标
+				nodeIcon: 'glyphicon glyphicon-globe',
 				emptyIcon: '',    //没有子节点的节点图标
+				enableLinks : true,//必须在节点属性给出href属性
 				multiSelect: false,    //多选
+				
+
 				//onNodeChecked: function (event,data) {
 				//	console.log("nodeId = "+data.nodeId);
 				//	console.log("id = "+data.id);
@@ -271,7 +274,28 @@
 					console.log("id = "+data.id);
 				}
 		});
+		$("#tree").treeview('collapseAll');//关闭展开
+		var id=getData()[0].id+"";
+		var firstNode = $("#tree").treeview('search',[id,{ ignoreCase: false, exactMatch: false },'id']);//得到第一个节点
+		$("#tree").treeview('expandNode',[firstNode, { levels: 2, silent: true } ]);//展开第一个节点
+		//$('#tree').treeview('expandNode', [ tree[0].id, { levels: 2, silent: true } ]);
+		$('#tree').treeview('selectNode', [ 1, { silent: true } ]);
+		//$("#tree").treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
 	}
+	function getData(){
+		var tree = [];
+		for(i=0;i<6;i++){
+			var nodes=new Object();
+			nodes.text="变电站"+i;
+			nodes.id=i;
+			nodes.nodes=[];
+			var node='[{"text":"测温","id":'+((i+1)*10)+'},{"text":"局部放电","id":'+((i+1)*10+1)+'},{"text":"弧光保护","id":'+((i+1)*10+2)+'},{"text":"视频监控","id":'+((i+1)*10+3)+'}]';
+			nodes.nodes=(JSON.parse( node));
+			//var lnode=new Object();
+			tree.push(nodes);
+		}
+		return tree;
+	}	
 	 </script>
   
 </body>
