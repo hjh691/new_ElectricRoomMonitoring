@@ -229,6 +229,14 @@ function GetUserProfile() {
 		Alert("用户未登录，您无权完成此次操作", 2000);
 	}
 }
+
+//初始化page1的时间空间
+function initpage1() {
+	document.getElementById("kssj_chart").value =  getCurrentDate(1) + " 00:00:00";;
+	document.getElementById("jssj_chart").value =  getCurrentDate(1) + " 23:59:59";;
+	//drawchart()
+}
+
 //网络连接心跳包
 function sendbeat() {
 	var url = wctm_base_config.baseurl; //+"GetGraphic?graphicId="+stationID;
