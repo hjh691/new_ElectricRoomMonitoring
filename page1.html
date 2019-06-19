@@ -8,34 +8,6 @@
         <script type="text/javascript" src="dist/echarts-all.js"></script>
         <script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
         <script  type="text/javascript" src="js/function.js"></script>
-        <style>
-            #h2,#h1,#h3 {
-                border-top: solid cornflowerblue 1px;
-                border-left: solid cornflowerblue 1px;
-                border-right: solid cornflowerblue 1px;
-                width: 150px;
-                height: 40px;
-                margin: 0;
-                float: left;
-                text-align: center;
-                line-height: 40px;
-                }
-            .tab-content {
-                border: solid cornflowerblue 1px;
-                width: 100%;
-                height: 100%;
-                }
-            .selected {
-                background-color: cornflowerblue;
-                }
-            /*.tab-content div{
-                display: none;
-                }
-            .tab-content .show{
-                display: block;
-            }*/
-
-        </style>
     </head>
     <body>
             <div class="tab-head" id="tab-head" style="height: 40px">
@@ -44,9 +16,35 @@
                 <div id="h3"><img src="res/lock2.png" style="float:left">变化趋势</div>
             </div>
             <div class="tab-content" id="tab-content">
-                <div class="show" id="main" style="display:none">content1</div>
-                <div id="reallist"style="display:none">content2</div>
-                <div id="chartmain" align="center" style="display:none">
+                <div class="tab-div show " id="main" >content1</div>
+                <div class="tab-div" id="reallist">
+                    <div class="pagecard" id="pagecard1" style="margin-bottom:10px">
+                        <h3 align="center" >数据列表</h3>
+                        <!--ul class="pc-nav" >
+                            <li ><a href="#" target="iframe_main"><i>数据列表</i></a></li>
+                            <li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
+                        </ul-->
+                    </div>
+                    <div align="center" style="overflow:auto;">
+                        <table id="list-table" width="1200px" >
+                            <thead>
+                                <tr >
+                                <th style="color:#0000ff" onclick="sortt('.sensorid')"><a href="javascript:">测量点编号 <span class="sensorid"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.sensorname')" ><a href="javascript:">测量点名称<span class="sensorname"></span> </a></th>
+                                <!--th>数据编号</thonclick="sortt('.tmpvalue')"-->
+                                <th style="color:#0000ff" onclick="sortt('.time')"><a href="javascript:">测量时间 <span class="time"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.tmpvalue')"><a href="javascript:">测量值<span class="tmpvalue"></span></a></th>
+                                <!--<th style="color:#0000ff">查看历史数据</th>
+                                <th style="color:#0000ff">查看告警信息</th> 
+                                <th style="width:18px;border:0px solid black;"></th>-->
+                                </tr>
+                            </thead>
+                            <tbody id='list-tbody'>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-div" id="chartmain" align="center" >
                     
                     <h3 align="center" style="height:40px;line-height: 40px" >趋势图</h3>
                     <table class="table" align="center" >
@@ -72,7 +70,7 @@
             </div>
         <script>
             var tabs = document.getElementsByClassName('tab-head')[0].getElementsByTagName('div'),
-            contents = document.getElementsByClassName('tab-content')[0].getElementsByTagName('div');
+            contents = document.getElementsByClassName('tab-content')[0].getElementsByClassName('tab-div');
             var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
             function refreshwindow(){
                 (function changeTab(tab) {
@@ -89,7 +87,7 @@
                     contents[j].style.width=wwidth+"px";
                     contents[j].style.height=wheight+"px";
                 }
-                document.getElementById("main2").style.height="500px";
+                //document.getElementById("main2").style.height="500px";
                 // 基于准备好的dom，初始化echarts实例
                 var myChart = echarts.init(document.getElementById('main'));
 
@@ -576,7 +574,16 @@
             }; 
             window.onload=window.onresize=refreshwindow;
             function showTab() {
-                if("仪表显示"=== this.innerText) {
+                for(i=0;i<tabs.length;i++){
+                    if(tabs[i]===this){
+                        tabs[i].className="selected";
+                        contents[i].className="tab-div show";
+                    }else{
+                        tabs[i].className="";
+                        contents[i].className="tab-div";
+                    }
+                }
+                /*if("仪表显示"=== this.innerText) {
                     tabs[0].className = 'selected';
                     tabs[1].className = '';
                     tabs[2].className = '';
@@ -597,7 +604,7 @@
                     document.getElementById("main").style.display="none";
                     document.getElementById("reallist").style.display="none";
                     document.getElementById("chartmain").style.display="block";
-                }
+                }*/
 
             }
             function makeseries(){

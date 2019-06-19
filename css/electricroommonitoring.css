@@ -93,11 +93,26 @@
 		background-color: #555;
 		color: white;
 	}
+	table {
+		/*设置相邻单元格的边框间的距离*/
+		border-spacing: 0;
+		/*表格设置合并边框模型*/
+		border-collapse: collapse;
+		text-align: center;
+	}
 	table a:hover {
 		background-color: #555;
 		color: white;
 	}
-	.pagecard{
+	th,td{
+        border:1px solid black;
+        text-align:center;
+        line-height:center;
+        width:100px;/**/
+		height:30px;
+		font-size:20px;
+    }
+   	.pagecard{
 		background:#eee0e0;
 		vertical-align:center;
 		height:30px;
@@ -156,4 +171,34 @@
 		font-size:18px;
 		background-image:url(../res/jianbian_orange.jpg);
 	}
+	/**多标签页面格式*/
+	#h2,#h1,#h3,#h4,#h5 {
+		border-top: solid cornflowerblue 1px;
+		border-left: solid cornflowerblue 1px;
+		border-right: solid cornflowerblue 1px;
+		width: 150px;
+		height: 40px;
+		margin: 0;
+		float: left;
+		text-align: center;
+		line-height: 40px;
+	}
+	.tab-content {
+		border: solid cornflowerblue 1px;
+		width: 100%;
+		height: 100%;
+	}
+	.selected {
+		background-color: cornflowerblue;
+	}
+	.tab-div {
+		display:none;
+	}
+	.tab-content .tab-div{
+		display: none;
+		}
+	.tab-content .show{
+		display: block;
+	}
+	
 	
