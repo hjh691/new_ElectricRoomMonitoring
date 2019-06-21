@@ -8,24 +8,34 @@
         <script type="text/javascript" src="dist/echarts-all.js"></script>
         <script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
         <script  type="text/javascript" src="js/function.js"></script>
+        <script  type="text/javascript" src="js/config.js"></script>
     </head>
     <body>
+            <h2 id="title" align="center">分项显示页</h2>
             <div class="tab-head" id="tab-head" style="height: 40px">
                 <div id="h1" class="selected"><img src="res/lock2.png" style="float:left"></img>仪表显示</div>
                 <div id="h2" ><img src="res/lock2.png" style="float:left">数据列表</div>
                 <div id="h3"><img src="res/lock2.png" style="float:left">变化趋势</div>
             </div>
             <div class="tab-content" id="tab-content">
-                <div class="tab-div show " id="main" >content1</div>
-                <div class="tab-div" id="reallist">
-                    <div class="pagecard" id="pagecard1" style="margin-bottom:10px">
-                        <h3 align="center" >数据列表</h3>
-                        <!--ul class="pc-nav" >
-                            <li ><a href="#" target="iframe_main"><i>数据列表</i></a></li>
-                            <li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
-                        </ul-->
+                <div class="tab-div show parent" >
+                    <div class="column" id="column0" align="center" >
+                        
                     </div>
-                    <div align="center" style="overflow:auto;">
+                    <div class="column" id="column1" align="center"></div>
+                    <div class="column" id="column2" align="center"></div>
+                    <div class="column" id="column3" align="center"></div>
+                </div>
+                <div class="tab-div" id="reallist">
+                    <div class="column" align="center" style="overflow:auto;">
+                        <div class="pagecard" id="pagecard1" style="margin-bottom:10px">
+                            <h3 align="center" >数据列表</h3>
+                            <!--ul class="pc-nav" >
+                                <li ><a href="#" target="iframe_main"><i>数据列表</i></a></li>
+                                <li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
+                            </ul-->
+                        </div>
+                    
                         <table id="list-table" width="1200px" >
                             <thead>
                                 <tr >
@@ -45,26 +55,27 @@
                     </div>
                 </div>
                 <div class="tab-div" id="chartmain" align="center" >
-                    
-                    <h3 align="center" style="height:40px;line-height: 40px" >趋势图</h3>
-                    <table class="table" align="center" >
-                        <tr >
-                        <td  class="condition" style="color:#0000b0;width:120px;border:0px;"> 监测点名称 :</td>
-                        <td  class="condition" style="width:100px;border:0px;width:120px;">	
-                            <select id="jdcmc" style="font-size:16px;width:153px;">
-                                <option value="0">温度</option>
-                            </select>
-                        </td>
-                        </tr>
-                        <tr>
-                            <td class="condition" style="width:100px;"> 起止时间:</td>
-                            <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="kssj_chart" style="width:190px;" ></input></td>
-                            <td class="condition" style="width:30px;">至</td>
-                            <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_chart" style="width:190px;" ></input></td>
-                            <td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="" ></input></td>
-                        </tr>
-                    </table>
-                    <div id="main2" align="center" style="height:400px;width:600px;">
+                    <div class="column" align="center">
+                        <h3 align="center" style="height:40px;line-height: 40px" >趋势图</h3>
+                        <table class="table" align="center" >
+                            <tr >
+                            <td  class="condition" style="color:#0000b0;width:120px;border:0px;"> 监测点名称 :</td>
+                            <td  class="condition" style="width:100px;border:0px;width:120px;">	
+                                <select id="jdcmc" style="font-size:16px;width:153px;">
+                                    <option value="0">温度</option>
+                                </select>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td class="condition" style="width:100px;"> 起止时间:</td>
+                                <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="kssj_chart" style="width:190px;" ></input></td>
+                                <td class="condition" style="width:30px;">至</td>
+                                <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_chart" style="width:190px;" ></input></td>
+                                <td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="" ></input></td>
+                            </tr>
+                        </table>
+                        <div id="main2" align="center" style="height:400px;width:600px;">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -78,18 +89,70 @@
                     tabs[i].onclick = showTab;
                     }
                 })();
-                var  tabhead=document.getElementById("tab-content");
+                var tabhead=document.getElementById("tab-content");
+                var title=document.getElementById("title");
                 wwidth=bodyfrm.clientWidth-5;
-                wheight=bodyfrm.clientHeight-28;
+                wheight=bodyfrm.clientHeight-title.offsetHeight-28;
                 tabhead.style.width=wwidth+"px";
                 tabhead.style.height=wheight+"px";
                 for(var j=0;j<contents.length;j++){
                     contents[j].style.width=wwidth+"px";
                     contents[j].style.height=wheight+"px";
                 }
+                //var myChart = echarts.init(document.getElementById('chart00'));
                 //document.getElementById("main2").style.height="500px";
+                //initseries(myChart);
+                initpage1();
+                //形成图表数据对象数组
+                
+                var datas=[];
+                for(var i=0;i<6;i++){
+                    var value=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"温度'+i+'","value":'+value+'}'));
+                }
+                //画仪表盘式图表（多个）；
+                drawmeters(datas);
+                window.setInterval("refreshData()",5000);//自动刷新图表数据
+               
+            }; 
+            window.onload=window.onresize=refreshwindow;
+            function showTab() {
+                for(i=0;i<tabs.length;i++){
+                    if(tabs[i]===this){
+                        tabs[i].className="selected";
+                        contents[i].className="tab-div show";
+                    }else{
+                        tabs[i].className="";
+                        contents[i].className="tab-div";
+                    }
+                }
+                /*if("仪表显示"=== this.innerText) {
+                    tabs[0].className = 'selected';
+                    tabs[1].className = '';
+                    tabs[2].className = '';
+                    document.getElementById("main").style.display="block";
+                    document.getElementById("reallist").style.display="none";
+                    document.getElementById("chartmain").style.display="none";
+                } else if(this.innerText==="数据列表"){
+                    tabs[0].className = '';
+                    tabs[1].className = 'selected';
+                    tabs[2].className = '';
+                    document.getElementById("main").style.display="none";
+                    document.getElementById("reallist").style.display="block";
+                    document.getElementById("chartmain").style.display="none";
+                }else if(this.innerText==="变化趋势"){
+                    tabs[0].className = '';
+                    tabs[2].className = 'selected';
+                    tabs[1].className = '';
+                    document.getElementById("main").style.display="none";
+                    document.getElementById("reallist").style.display="none";
+                    document.getElementById("chartmain").style.display="block";
+                }*/
+
+            }
+            function initseries(myChart,data){
                 // 基于准备好的dom，初始化echarts实例
-                var myChart = echarts.init(document.getElementById('main'));
+                //var myChart = echarts.init(document.getElementById('main'));
 
                 // 指定图表的配置项和数据
                 option = {
@@ -111,7 +174,7 @@
                             }
                         }
                     },
-                    series: [{
+                    series: [/*{
                         name: '速度',
                         type: 'gauge',
                         min: 0,
@@ -472,12 +535,12 @@
                             value: 0.5,
                             name: 'gas'
                         }]
-                    },
+                    },*/
                     {
-                        name: '温度',
+                        name: data.name,//'温度',
                         type: 'gauge',
-                        center: ['10%', '38%'], // 默认全局居中
-                        radius: '15%',//半径
+                        center: ['50%', 150], // 默认全局居中
+                        radius: '50%',//半径
                         min: 0,
                         max: 100,
                         //startAngle: 315,//起始角度
@@ -542,73 +605,99 @@
                             }
 
                         },
-                        data: [{
-                            value: 20,
-                            name: '温度'
-                        }]
+                        data: [data],//[{value: 20,name: '温度'}]
                     }
                     ]
                 };
 
                 myChart.setOption(option);
-                    setInterval(function() {
-                    option.series[0].data[0].value = (Math.random() * 100).toFixed(2) - 0;
-                    option.series[1].data[0].value = (Math.random() * 7).toFixed(2) - 0;
-                    option.series[2].data[0].value = (Math.random() * 2).toFixed(2) - 0;
-                    option.series[3].data[0].value = (Math.random() * 2).toFixed(2) - 0;
-                    option.series[4].data[0].value = (Math.random() * 100).toFixed(2) - 0;
-                    var value = (Math.random() * 100).toFixed(2) - 0;
-                    option.series[5].data[0].value=value;
+                var option = myChart.getOption();
+                var value =data.value;
+                option.series[0].data[0].value=value; 
+                //形成进度条式的填充仪表效果并分段显示不同延时用于指示不同状态。    
+                if(value<20){
+                    option.series[0].axisLine.lineStyle.color[0]=[value/100,'blue'];
+                }else if(value<80){
+                    option.series[0].axisLine.lineStyle.color[0]=[value/100,"green"];
+                }else{
+                    option.series[0].axisLine.lineStyle.color[0]=[value/100,"red"];
+                }
+                    //option.series[5].axisLine.lineStyle.color[0][0]=value/220;
+                myChart.setOption(option);
+                /*setInterval(function() {
+                    
+                    //option.series[0].data[0].value = (Math.random() * 100).toFixed(2) - 0;
+                    //option.series[1].data[0].value = (Math.random() * 7).toFixed(2) - 0;
+                    //option.series[2].data[0].value = (Math.random() * 2).toFixed(2) - 0;
+                    //option.series[3].data[0].value = (Math.random() * 2).toFixed(2) - 0;
+                    //option.series[4].data[0].value = (Math.random() * 100).toFixed(2) - 0;
+                    //var value = (Math.random() * 100).toFixed(2) - 0;
+                    var value =data.value;
+                   
+                    option.series[0].data[0].value=value; 
                     
                     if(value<20){
-                        option.series[5].axisLine.lineStyle.color[0]=[value/100,'blue'];
+                        option.series[0].axisLine.lineStyle.color[0]=[value/100,'blue'];
                     }else if(value<80){
-                        option.series[5].axisLine.lineStyle.color[0]=[value/100,"green"];
+                        option.series[0].axisLine.lineStyle.color[0]=[value/100,"green"];
                     }else{
-                        option.series[5].axisLine.lineStyle.color[0]=[value/100,"red"];
+                        option.series[0].axisLine.lineStyle.color[0]=[value/100,"red"];
                     }
                     //option.series[5].axisLine.lineStyle.color[0][0]=value/220;
                     myChart.setOption(option);
-                }, 2000)
-                initpage1();
-            }; 
-            window.onload=window.onresize=refreshwindow;
-            function showTab() {
-                for(i=0;i<tabs.length;i++){
-                    if(tabs[i]===this){
-                        tabs[i].className="selected";
-                        contents[i].className="tab-div show";
-                    }else{
-                        tabs[i].className="";
-                        contents[i].className="tab-div";
+                }, 2000);*/
+                
+            }
+            function drawmeters(datas){
+                if(datas===null||datas===undefined){
+                    return;
+                }
+                mcount=datas.length;
+                var row=Math.floor(mcount/mcol);
+                var mod=(mcount%mcol);
+                for(var r=0;r<row;r++){
+                    for(var c=0;c<mcol;c++){
+                        var div=document.getElementById("chart"+r+c);
+                        //如果已经存在此图表div，则进行刷新，没有则创建添加，下同。
+                        if(div===null || div===undefined){
+                            var div= document.createElement("div");
+                            div.setAttribute("style","width:300px;height:300px;");
+                            div.setAttribute("id","chart"+r+c);
+                            document.getElementById("column"+c).appendChild(div);
+                        }
+                        var chart=echarts.init(document.getElementById("chart"+r+c));
+                        initseries(chart,datas[r*4+c]);
+                        
                     }
                 }
-                /*if("仪表显示"=== this.innerText) {
-                    tabs[0].className = 'selected';
-                    tabs[1].className = '';
-                    tabs[2].className = '';
-                    document.getElementById("main").style.display="block";
-                    document.getElementById("reallist").style.display="none";
-                    document.getElementById("chartmain").style.display="none";
-                } else if(this.innerText==="数据列表"){
-                    tabs[0].className = '';
-                    tabs[1].className = 'selected';
-                    tabs[2].className = '';
-                    document.getElementById("main").style.display="none";
-                    document.getElementById("reallist").style.display="block";
-                    document.getElementById("chartmain").style.display="none";
-                }else if(this.innerText==="变化趋势"){
-                    tabs[0].className = '';
-                    tabs[2].className = 'selected';
-                    tabs[1].className = '';
-                    document.getElementById("main").style.display="none";
-                    document.getElementById("reallist").style.display="none";
-                    document.getElementById("chartmain").style.display="block";
-                }*/
-
+                for(var m=0;m<mod;m++){
+                    var div=document.getElementById("chart"+r+m);
+                    if((div===null) || (div===undefined)){
+                        var div=document.createElement("div");
+                        div.setAttribute("style","width:300px;height:300px;");
+                        div.setAttribute("id","chart"+r+m);
+                        document.getElementById("column"+m).appendChild(div);
+                        
+                    }
+                    var chart=echarts.init(document.getElementById("chart"+r+m));
+                    initseries(chart,datas[r*mcol+m]);
+                }
             }
-            function makeseries(){
-
+            function refreshData(){
+                //if(!myChart){
+                //    return;
+                //}
+                
+                //更新数据
+                //var option = myChart.getOption();
+                //option.series[0].data = data;
+                var datas=[];
+                for(var i=0;i<6;i++){
+                    var value=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"温度'+i+'","value":'+value+'}'));
+                }   
+                //myChart.setOption(option);
+                drawmeters(datas)    
             }
         </script>        
     </body>

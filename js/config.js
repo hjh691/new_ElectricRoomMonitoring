@@ -35,3 +35,12 @@ var wctm_base_config={};
  wctm_base_config.part2="技术服务部：0312-6783282 安经理";
  wctm_base_config.part3="生　产　部：0312-6783282 刘经理";
  wctm_base_config.part4="市　场　部：13313227451 闫经理";
+
+ colors=["#080","#d58930", "#28cfed", "#236be2", "#bd59d5", "#2fcea7", "#ee4a4b", "#0c9cef"];
+ mcol=4;
+ /**
+  * 
+  * 
+  * 
+  * 自动刷新，树形菜单节点图标、字体图标的内容，
+  */

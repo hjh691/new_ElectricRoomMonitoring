@@ -198,7 +198,22 @@
 		display: none;
 		}
 	.tab-content .show{
-		display: block;
+		display: flex;
+	}
+	.parent{display: flex;overflow: auto;}
+	.column{
+		flex: 1;
+		box-align:center;
+	}
+	.column+ .column{margin-left: 20px;}
+	.zlchart{
+		margin-top:10px;
+		width:300px;
+		height:300px;
+		border: solid cornflowerblue 0px;
+	}
+	.zltable{
+		margin-top:10px;
 	}
 	
 	

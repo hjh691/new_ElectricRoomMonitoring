@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="css/electricroommonitoring.css"/>
         <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
         <script type="text/javascript" src="dist/echarts-all.js"></script>
+        <script  type="text/javascript" src="js/config.js"></script>
         <script  type="text/javascript" src="js/function.js"></script>
         <style>
         th,td{
@@ -20,6 +21,7 @@
         </style>
     </head>
     <body>
+        <h1>分项显示页面</h1>
         <div class="tab-head" id="tab-head" style="height: 40px">
             <div id="h1" class="selected"><img src="res/lock2.png" style="float:left"></img>总览</div>
             <div id="h2" ><img src="res/lock2.png" style="float:left">触头测温</div>
@@ -28,37 +30,119 @@
             <div id="h3"><img src="res/lock2.png" style="float:left">视频监控</div>
         </div>
         <div class="tab-content" id="tab-content">
-            <div class="tab-div show container" style="overflow: auto" >
-                <div id="main" style="margin-top:10px;margin-left:10px;width:300px;height:300px;border: solid cornflowerblue 1px;float:left;">ghg
-
+            <div class="tab-div show parent" >
+                <div class="column">
+                    <div width="100%"  align="center">
+                        <div id="zl-chart" style="width:50%;height:300px;">ghg1
+                        </div>
+                        <table style="margin-top:10px;" >
+                            <tr><td colspan=2>测量点：</td><td id="count">235</td></tr>
+                            <tr ><td rowspan=6>其中：</td><td>测温:</td><td>100</td></tr>
+                            <tr ><td>局放:</td><td>50</td></tr>
+                            <tr ><td>弧光:</td><td>20</td></tr>
+                            <tr ><td>视频:</td><td>15</td></tr>
+                            <tr ><td>门禁:</td><td>5</td></tr>
+                            <tr ><td>环境:</td><td>30</td></tr>
+                        </table>
+                    </div>
                 </div>
-                <table style="float:left;margin-left:30px;margin-top:10px;height: 300px;vertical-align:center;">
-                    <tr><td colspan=2>测量点总数：</td><td id="count">235</td></tr>
-                    <tr ><td rowspan=6>其中：</td><td>测温:</td><td>100</td></tr>
-                    <tr ><td>局放:</td><td>50</td></tr>
-                    <tr ><td>弧光:</td><td>20</td></tr>
-                    <tr ><td>视频:</td><td>15</td></tr>
-                    <tr ><td>门禁:</td><td>5</td></tr>
-                    <tr ><td>环境:</td><td>30</td></tr>
-                </table>
+                <div class="column" align="center">
+                    <div id="chart0" style="width:300px;height:300px;" >ghg2
+                    </div>
+                    <table style="margin-top:10px;">
+                        <tr><td colspan=2>测量点总数：</td><td id="count0">235</td></tr>
+                        <tr ><td rowspan=6>其中：</td><td id="normal0">正常运行:</td><td>100</td></tr>
+                        <tr ><td>异常:</td><td id="abnormal0">50</td></tr>
+                        <tr ><td>停运:</td><td id="stop0">20</td></tr>
+                    </table>
+                </div>
             </div>
             <div class="tab-div" >
-                <div id="canvas-cw" style="margin-top:10px;margin-left:10px;width:300px;height:300px;border: solid cornflowerblue 1px;float:left;">ghg
-
+                <div class="column" align="center">
+                    <div class="zlchart" id="chart1">ghg
+                    </div>
+                    <table class="zltable" >
+                        <tr><td colspan=2>共安装（支）：</td><td id="count1">235</td></tr>
+                        <tr ><td rowspan=3>其中：</td><td>正常运行:</td><td id="normal1">100</td></tr>
+                        <tr ><td>异常:</td><td id="abnormal1">20</td></tr>
+                        <tr ><td>停运:</td><td id="stop1">15</td></tr>
+                    </table>
                 </div>
-                <table style="float:left;margin-left:30px;margin-top:10px;height: 300px;vertical-align:center;">
-                    <tr><td colspan=2>共安装（支）：</td><td id="count">235</td></tr>
-                    <tr ><td rowspan=3>其中：</td><td>正常运行:</td><td>100</td></tr>
-                    <tr ><td>异常:</td><td>20</td></tr>
-                    <tr ><td>停运:</td><td>15</td></tr>
-                </table>
             </div>
-            <div class="tab-div" >content2</div>
-            <div class="tab-div">content3</div>
-            <div class="tab-div" >content4</div>
-            <div class="tab-div" >content5</div>
+            <div class="tab-div" >
+                <div class="column" align="center">
+                    <div class="zlchart" id="chart2" >ghg
+                    </div>
+                    <table class="zltable" >
+                        <tr><td colspan=2>共安装（支）：</td><td id="count2">235</td></tr>
+                        <tr ><td rowspan=3>其中：</td><td>正常运行:</td><td id="normal2">100</td></tr>
+                        <tr ><td>异常:</td><td id="abnormal2">20</td></tr>
+                        <tr ><td>停运:</td><td id="stop2">15</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-div">
+                <div class="column" align="center">
+                    <div class="zlchart" id="chart3">ghg
+                    </div>
+                    <table class="zltable" >
+                        <tr><td colspan=2>共安装（支）：</td><td id="count3">235</td></tr>
+                        <tr ><td rowspan=3>其中：</td><td>正常运行:</td><td id="normal3">100</td></tr>
+                        <tr ><td>异常:</td><td id="abnormal3">20</td></tr>
+                        <tr ><td>停运:</td><td id="stop3">15</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-div" >
+                <div class="column" align="center">
+                    <div class="zlchart" id="chart4" >ghg
+                    </div>
+                    <table class="zltable">
+                        <tr><td colspan=2>共安装（支）：</td><td id="count4">235</td></tr>
+                        <tr ><td rowspan=3>其中：</td><td>正常运行:</td><td id="normal4">100</td></tr>
+                        <tr ><td>异常:</td><td id="abnormal4">20</td></tr>
+                        <tr ><td>停运:</td><td id="stop4">15</td ></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-div" >
+                <div class="column" align="center">
+                    <div class="zlchart" id="chart5">ghg
+                    </div>
+                    <table class="zltable">
+                        <tr><td colspan=2>共安装（支）：</td><td id="count5">235</td></tr>
+                        <tr ><td rowspan=3>其中：</td><td>正常运行:</td><td id="normal5">100</td></tr>
+                        <tr ><td>异常:</td><td id="abnormal5">20</td></tr>
+                        <tr ><td>停运:</td><td id="stop5">15</td></tr>
+                    </table>
+                </div>
+            </div>
         </div>
         <script>
+            var ecConfig =echarts.config;
+            var ecConfig = echarts.config;
+            function eConsole(param) {
+                var mes = '【' + param.type + '】';
+                if (typeof param.seriesIndex != 'undefined') {
+                    mes += '  seriesIndex : ' + param.seriesIndex;
+                    mes += '  dataIndex : ' + param.dataIndex;
+                }
+                /*if (param.type == 'hover') {
+                    document.getElementById('hover-console').innerHTML = 'Event Console : ' + mes;
+                }
+                else {
+                    document.getElementById('console').innerHTML = mes;
+                }*/
+                console.log(param);
+            }
+            /*
+            myChar.on(ecConfig.EVENT.CLICK, eConsole);
+            myChar.on(ecConfig.EVENT.DBLCLICK, eConsole);
+            //myChart.on(ecConfig.EVENT.HOVER, eConsole);
+            myChar.on(ecConfig.EVENT.DATA_ZOOM, eConsole);
+            myChar.on(ecConfig.EVENT.LEGEND_SELECTED, eConsole);
+            myChar.on(ecConfig.EVENT.MAGIC_TYPE_CHANGED, eConsole);
+            myChar.on(ecConfig.EVENT.DATA_VIEW_CHANGED, eConsole);*/
             var tabs = document.getElementsByClassName('tab-head')[0].getElementsByTagName('div'),
             contents = document.getElementsByClassName('tab-content')[0].getElementsByClassName('tab-div');
             var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
@@ -77,14 +161,16 @@
                     contents[j].style.width=wwidth+"px";
                     contents[j].style.height=wheight+"px";
                 }
-                numberPie("pie", getdata());//tabs[1].click();
-                
+                numberPie("zl-chart",'测量信息总览' ,getdata());//tabs[1].click();
+                numberPie("chart0","运行信息", getdata());
             }
             function showTab(){
+                var datas=[{"name":"正常","value":120},{"name":"异常","value":12},{"name":"停运","value":5}]
                 for(var i=0;i<tabs.length;i++){
                     if(tabs[i]===this){
                         tabs[i].className="selected";
                         contents[i].className="tab-div show";
+                        refreshview(i,datas);
                     }else{
                         tabs[i].className="";
                         contents[i].className="tab-div";
@@ -95,7 +181,7 @@
             function getdata(obj){
                 var data= []
                 if(Object.prototype.toString.call(obj) === '[object Array]'){
-                    data=(JSON.parse(obj))
+                    data=obj;
                 }else{
                     data=[{"value":100, "name":"测温"},
                         {"value":50, "name":"局放"},
@@ -111,15 +197,16 @@
                     return null;
                 }
             }
-            var numberPie = function (className, data) {
-                var myChar=echarts.init(document.getElementById("main"));
+            var numberPie = function (canvasid,titlename, data) {
+                var myChar=echarts.init(document.getElementById(canvasid));
                 var legendArr = [];
                 for (var key in data) {
                     legendArr.push(JSON.parse('{"name":"'+data[key].name+'","icon":"rect"}'));
                 }
                 var option = {
+                    backgroundColor:"#1f1f1f",
                     title: {
-                        text: '测量信息总览',
+                        text: titlename,
                         // subtext:'pie',
                         x: 'center',                 // 水平安放位置，默认为左对齐，可选为：'center' ¦ 'left' ¦ 'right' ¦ {number}（x坐标，单位px）
                         y: 'top',                  // 垂直安放位置，默认为全图顶端，可选为：'top' ¦ 'bottom' ¦ 'center' ¦ {number}（y坐标，单位px）
@@ -127,7 +214,7 @@
                         textStyle: {
                             fontSize: 18,
                             fontWeight: 'bolder',
-                            color: '#333'          // 主标题文字颜色
+                            color: '#fff'          // 主标题文字颜色
                         },
                         // subtextStyle: { 
                         //     color: 'red'          // 副标题文字颜色
@@ -143,20 +230,20 @@
                         orient : 'vertical', // 布局方式，默认为水平布局，可选为：'horizontal' ¦ 'vertical'
                         x: 'right',
                         y: 'center',
-                        icon: 'rect',//图标为圆形，默认是方形
-                        data: legendArr
-                        // textStyle: {
-                        //     color: "red"
-                        //}
+                        icon: 'rect',//图标为圆形，默认是方形在，在这里写的话，不起作用，要在data中指定。
+                        data: legendArr,
+                         textStyle: {
+                             color: "white"
+                        }
                     },
                            
-                    color: ["#d58930", "#28cfed", "#236be2", "#bd59d5", "#2fcea7", "#ee4a4b", "#0c9cef"],
+                    color: colors,
                     series: [
                         {
                             name: '数量统计',
                             type: 'pie',
-                            radius: '50%',//环['50%','70%'] 
-                            center: ['40%', '50%'],
+                            radius: ['50%','70%'],//'45%',//环 
+                            center: ['45%', '50%'],
                             data: data,
                             itemStyle: {
                                 // emphasis：英文意思是 强调;着重;（轮廓、图形等的）鲜明;突出，重读
@@ -168,10 +255,10 @@
                                 },
                                normal:{
                                     labelLine: {
-                                        show: false   // show设置线是否显示，默认为true，可选值：true ¦ false
+                                        show: true   // show设置线是否显示，默认为true，可选值：true ¦ false
                                     },
                                     label: {
-                                        position: 'inner',  // 设置标签位置，默认在饼状图外 可选值：'outer' ¦ 'inner（饼状图上）'
+                                        position: 'outer',  // 设置标签位置，默认在饼状图外 可选值：'outer' ¦ 'inner（饼状图上）'
                                         // formatter: '{a} {b} : {c}个 ({d}%)'   设置标签显示内容 ，默认显示{b}
                                         // {a}指series.name  {b}指series.data的name
                                         // {c}指series.data的value  {d}%指这一部分占总数的百分比
@@ -180,12 +267,21 @@
                                 }, /**/
                             }
                             
-                        }
+                        },
                     ]
                 };
                 myChar.setOption(option);
-                var moption=myChar.getOption();
+                //var moption=myChar.getOption();
+                myChar.on(ecConfig.EVENT.CLICK, eConsole);
             };
+            function refreshview(tabid,data){
+                numberPie("chart"+tabid,"信息总览",data);
+                document.getElementById("normal"+tabid).innerHTML=data[0].value;
+                document.getElementById("abnormal"+tabid).innerHTML=data[1].value;
+                document.getElementById("stop"+tabid).innerHTML=data[2].value;
+                document.getElementById("count"+tabid).innerHTML=(data[0].value+data[1].value+data[2].value);
+            }
+            
         </script>
     </body>
 </html>
