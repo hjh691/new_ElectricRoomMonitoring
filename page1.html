@@ -11,31 +11,29 @@
         <script  type="text/javascript" src="js/config.js"></script>
     </head>
     <body>
-            <h2 id="title" align="center">分项显示页</h2>
-            <div class="tab-head" id="tab-head" style="height: 40px">
-                <div id="h1" class="selected"><img src="res/lock2.png" style="float:left"></img>仪表显示</div>
-                <div id="h2" ><img src="res/lock2.png" style="float:left">数据列表</div>
-                <div id="h3"><img src="res/lock2.png" style="float:left">变化趋势</div>
+        <h2 id="title" align="center">实时数据</h2>
+        <div class="tab-head" id="tab-head" style="height: 40px">
+            <div id="h1" class="selected"><img src="res/lock2.png" style="float:left"></img>仪表显示</div>
+            <div id="h2" ><img src="res/lock2.png" style="float:left">数据列表</div>
+            <div id="h3"><img src="res/lock2.png" style="float:left">变化趋势</div><!---->
+        </div>
+        <div class="tab-content" id="tab-content">
+            <div class="tab-div show parent" style="width:900px;overflow-x: scroll;">
+                <div class="column" id="column0" align="center" ></div>
+                <div class="column" id="column1" align="center"></div>
+                <div class="column" id="column2" align="center"></div>
+                <div class="column" id="column3" align="center"></div>
             </div>
-            <div class="tab-content" id="tab-content">
-                <div class="tab-div show parent" >
-                    <div class="column" id="column0" align="center" >
-                        
+            <div class="tab-div" id="reallist" >
+                <div class="column" align="center" style="width:100%;overflow-x:auto;">
+                    <div class="pagecard" id="pagecard1" style="margin-bottom:10px;widows: 100%;">
+                        <h3 align="center" >数据列表</h3>
+                        <!--ul class="pc-nav" >
+                            <li ><a href="#" target="iframe_main"><i>数据列表</i></a></li>
+                            <li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
+                        </ul-->
                     </div>
-                    <div class="column" id="column1" align="center"></div>
-                    <div class="column" id="column2" align="center"></div>
-                    <div class="column" id="column3" align="center"></div>
-                </div>
-                <div class="tab-div" id="reallist">
-                    <div class="column" align="center" style="overflow:auto;">
-                        <div class="pagecard" id="pagecard1" style="margin-bottom:10px">
-                            <h3 align="center" >数据列表</h3>
-                            <!--ul class="pc-nav" >
-                                <li ><a href="#" target="iframe_main"><i>数据列表</i></a></li>
-                                <li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
-                            </ul-->
-                        </div>
-                    
+                    <div  align="center" style="overflow:auto;">
                         <table id="list-table" width="1200px" >
                             <thead>
                                 <tr >
@@ -54,31 +52,32 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-div" id="chartmain" align="center" >
-                    <div class="column" align="center">
-                        <h3 align="center" style="height:40px;line-height: 40px" >趋势图</h3>
-                        <table class="table" align="center" >
-                            <tr >
-                            <td  class="condition" style="color:#0000b0;width:120px;border:0px;"> 监测点名称 :</td>
-                            <td  class="condition" style="width:100px;border:0px;width:120px;">	
-                                <select id="jdcmc" style="font-size:16px;width:153px;">
-                                    <option value="0">温度</option>
-                                </select>
-                            </td>
-                            </tr>
-                            <tr>
-                                <td class="condition" style="width:100px;"> 起止时间:</td>
-                                <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="kssj_chart" style="width:190px;" ></input></td>
-                                <td class="condition" style="width:30px;">至</td>
-                                <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_chart" style="width:190px;" ></input></td>
-                                <td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="" ></input></td>
-                            </tr>
-                        </table>
-                        <div id="main2" align="center" style="height:400px;width:600px;">
-                        </div>
+            </div>
+            <div class="tab-div" id="chartmain" align="center" >
+                <div class="column" align="center" style="overflow: auto">
+                    <h3 align="center" style="height:40px;line-height: 40px" >趋势图</h3>
+                    <table class="table" width="800px" >
+                        <tr >
+                        <td  class="condition" style="width:120px;border:0px;"> 监测点名称 :</td>
+                        <td  class="condition" style="border:0px;width:190px">	
+                            <select id="jdcmc" style="font-size:16px;width:190px;">
+                                <option value="0">温度</option>
+                            </select>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td class="condition" style="width:120px;"> 起 止 时 间  :</td>
+                            <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="kssj_chart" style="width:190px;" ></input></td>
+                            <td class="condition" style="width:30px;">至</td>
+                            <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_chart" style="width:190px;" ></input></td>
+                            <td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="" ></input></td>
+                        </tr>
+                    </table>
+                    <div id="main2" align="center" style="height:400px;width:600px;">
                     </div>
                 </div>
             </div>
+        </div>
         <script>
             var tabs = document.getElementsByClassName('tab-head')[0].getElementsByTagName('div'),
             contents = document.getElementsByClassName('tab-content')[0].getElementsByClassName('tab-div');
@@ -539,7 +538,7 @@
                     {
                         name: data.name,//'温度',
                         type: 'gauge',
-                        center: ['50%', 150], // 默认全局居中
+                        center: ['50%', "50%"], // 默认全局居中
                         radius: '50%',//半径
                         min: 0,
                         max: 100,
