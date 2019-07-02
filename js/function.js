@@ -232,9 +232,27 @@ function GetUserProfile() {
 
 //初始化page1的时间空间
 function initpage1() {
-	document.getElementById("kssj_chart").value =  getCurrentDate(1) + " 00:00:00";;
-	document.getElementById("jssj_chart").value =  getCurrentDate(1) + " 23:59:59";;
+	document.getElementById("kssj_chart").value =  getCurrentDate(1) + " 00:00:00";
+	document.getElementById("jssj_chart").value =  getCurrentDate(1) + " 23:59:59";
 	//drawchart()
+}
+// 初始化实时数据页面，根据不同站点、不同子系统来调用不同的页面
+function initrealdata(){
+	var data=$("#tree").treeview("getSelected");
+	switch (data[0].text){
+		case "测温":
+			document.getElementById("iframe_main").src="realdata.html";
+			break;
+		case "局部放电":
+			document.getElementById("iframe_main").src="GaugeOfJufang.html";
+			break;
+		case "弧光保护":
+			document.getElementById("iframe_main").src="GaugeOfHuguang.html";
+			break;
+		case "视频监控":
+			document.getElementById("iframe_main").src="javascript:void(0)";
+			break;
+	}
 }
 
 //网络连接心跳包
@@ -826,7 +844,7 @@ function loadstations_realdata() {
 	sessionStorage.pageindex = 2;
 	var slistname = $("#head_list_name").text();
 	if (slistname != "请选择站点:") {
-		initlist();
+		//initlist();
 	}
 	document.getElementById("iframe_main").src = 'realdata.html';
 }
@@ -835,7 +853,7 @@ function loadstations_historydata() {
 	sessionStorage.pageindex = 3;
 	var slistname = $("#head_list_name").text();
 	if (slistname != "请选择站点:") {
-		initlist();
+		//initlist();
 	}
 	document.getElementById("iframe_main").src = 'historydata.html';
 }
@@ -843,7 +861,7 @@ function loadstations_chart() {
 	sessionStorage.pageindex = 4;
 	var slistname = $("#head_list_name").text();
 	if (slistname != "请选择站点:") {
-		initlist();
+		//initlist();
 	}
 	document.getElementById("iframe_main").src = 'chart.html';
 }
@@ -851,7 +869,7 @@ function loadstations_warnlog() {
 	sessionStorage.pageindex = 5;
 	var slistname = $("#head_list_name").text();
 	if (slistname != "请选择站点:") {
-		initlist();
+		//initlist();
 	}
 	document.getElementById("iframe_main").src = 'warnlog.html';
 }
@@ -2328,13 +2346,13 @@ function strtodatetime(str) {
 }
 //初始化绘图页面
 function initdrawing() {
-	sessionStorage.pageindex = 1;
-	var slistname = $("#head_list_name").text();
-	if (slistname != "请选择图形:") {
-		initlist();
-	}
+	//sessionStorage.pageindex = 1;
+	//var slistname = $("#head_list_name").text();
+	//if (slistname != "请选择图形:") {
+	//	initlist();
+	//}
 	document.getElementById("iframe_main").src = 'drawmap.html';
-	$('#graphicslist tr:eq(1)').attr("checked", true);
+	//$('#graphicslist tr:eq(1)').attr("checked", true);
 }
 //获取图形信息列表
 function getgraphics() {

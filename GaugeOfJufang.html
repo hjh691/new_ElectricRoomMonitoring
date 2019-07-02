@@ -13,18 +13,19 @@
     <body>
         <h2 id="title" align="center">实时局放数据</h2>
         <div class="tab-head" id="tab-head" style="height: 40px">
-            <div id="h1" class="selected"><img src="res/lock2.png" style="float:left"></img>仪表显示</div>
-            <div id="h2" ><img src="res/lock2.png" style="float:left">数据列表</div>
+            <div id="h1" ><img src="res/lock2.png" style="float:left"></img>仪表显示</div>
+            <div id="h2" class="selected"><img src="res/lock2.png" style="float:left">数据列表</div>
             <div id="h3"><img src="res/lock2.png" style="float:left">变化趋势</div>
         </div>
+        <div style="height:40px;display: block"></div>
         <div class="tab-content" id="tab-content">
-            <div class="tab-div show parent" >
+            <div class="tab-div parent" >
                 <div class="column" id="column0" align="center" ></div>
                <!-- <div class="column" id="column1" align="center"></div>
                 <div class="column" id="column2" align="center"></div>
                 <div class="column" id="column3" align="center"></div>-->
             </div>
-            <div class="tab-div" id="reallist" >
+            <div class="tab-div  parent show" id="reallist" >
                 <div class="column" align="center" style="width:100%;overflow-x:auto;">
                     <div class="pagecard" id="pagecard1" style="margin-bottom:10px;widows: 100%;">
                         <h3 align="center" >数据列表</h3>
@@ -48,15 +49,15 @@
                                 <th style="width:18px;border:0px solid black;"></th>-->
                                 </tr>
                             </thead>
-                            <tbody id='list-tbody'>
+                            <tbody id='jflist-tbody'>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            <div class="tab-div" id="chartmain" align="center" >
+            <div class="tab-div  parent" id="chartmain" align="center" >
                 <div class="column" align="center" style="overflow: auto">
-                    <h3 align="center" style="height:40px;line-height: 40px" >趋势图</h3>
+                    <h3 align="center" style="height:40px;line-height: 40px" >波形图</h3>
                     <table class="table" width="800px" >
                         <tr >
                         <td  class="condition" style="width:120px;border:0px;"> 监测点名称 :</td>
@@ -126,11 +127,11 @@
                 for(i=0;i<tabs.length;i++){
                     if(tabs[i]===this){
                         tabs[i].className="selected";
-                        contents[i].className="tab-div show";
+                        contents[i].className="tab-div parent show";
                         //if(i===2){initData();}
                     }else{
                         tabs[i].className="";
-                        contents[i].className="tab-div";
+                        contents[i].className="tab-div parent ";
                     }
                 }
                 /*if("仪表显示"=== this.innerText) {
@@ -456,7 +457,7 @@
             function initData(chartid) {
                 var legendData = ['放电量', '频次'];
                 var bgColorList = ['#FBB730', '#31BDF2','#6197fb'];
-                var axisLabel = ['化学', '数学', '地理', '物理', '英语', '音乐', '语文', '历史', '美术', '生物', '信息技术', '政治', '体育'];
+                var axisLabel = ['监测1', '监测2', '监测3', '监测4', '监测5', '监测6', '监测7', '监测8', '监测9', '监测10', '监测11', '监测12', '监测13'];
                 var seriesValue = [];
 
                 for (var i = 0; i < legendData.length; i++) {
@@ -495,7 +496,7 @@
                 var echart = echarts.init(chart);
                 var option = {
                     title: {
-                        text: "学科兴趣倾向分析",//正标题
+                        text: "局部放电监测",//正标题
                         x: "center", //标题水平方向位置
                         y: "0", //标题竖直方向位置
                         textStyle: {

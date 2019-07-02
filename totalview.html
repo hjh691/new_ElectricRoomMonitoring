@@ -21,21 +21,22 @@
         </style>
     </head>
     <body>
-        <h1>分项显示页面</h1>
-        <div class="tab-head" id="tab-head" style="height: 40px">
-            <div id="h1" class="selected"><img src="res/lock2.png" style="float:left"></img>总览</div>
-            <div id="h2" ><img src="res/lock2.png" style="float:left">触头测温</div>
-            <div id="h3"><img src="res/lock2.png" style="float:left">局部放电</div>
-            <div id="h3"><img src="res/lock2.png" style="float:left">弧光保护</div>
-            <div id="h3"><img src="res/lock2.png" style="float:left">视频监控</div>
-        </div>
+        <!--<h2>分项显示页面</h2>-->
+            <div class="tab-head" id="tab-head" style="height: 40px">
+                <div id="h1" class="selected"><img src="res/lock2.png" style="float:left"></img>总览</div>
+                <div id="h2" ><img src="res/lock2.png" style="float:left">触头测温</div>
+                <div id="h3"><img src="res/lock2.png" style="float:left">局部放电</div>
+                <div id="h3"><img src="res/lock2.png" style="float:left">弧光保护</div>
+                <div id="h3"><img src="res/lock2.png" style="float:left">视频监控</div>
+            </div>
+        <div style="height:40px;display: block"></div>
         <div class="tab-content" id="tab-content">
             <div class="tab-div show parent" >
                 <div class="column">
                     <div width="100%"  align="center">
-                        <div id="zl-chart" style="width:300px;height:300px;">ghg1
+                        <div class="zlchart" id="zl-chart" style="width:300px;height:300px;">
                         </div>
-                        <table style="margin-top:10px;" >
+                        <table class="zltable" >
                             <tr><td colspan=2>测量点：</td><td id="count">235</td></tr>
                             <tr ><td rowspan=6>其中：</td><td>测温:</td><td>100</td></tr>
                             <tr ><td>局放:</td><td>50</td></tr>
@@ -47,9 +48,9 @@
                     </div>
                 </div>
                 <div class="column" align="center">
-                    <div id="chart0" style="width:300px;height:300px;" >ghg2
+                    <div class="zlchart" id="chart0">ghg2
                     </div>
-                    <table style="margin-top:10px;">
+                    <table class="zltable" style="margin-top:30px;">
                         <tr><td colspan=2>测量点总数：</td><td id="count0">235</td></tr>
                         <tr ><td rowspan=6>其中：</td><td id="normal0">正常运行:</td><td>100</td></tr>
                         <tr ><td>异常:</td><td id="abnormal0">50</td></tr>
@@ -119,7 +120,6 @@
             </div>
         </div>
         <script>
-            var ecConfig =echarts.config;
             var ecConfig = echarts.config;
             function eConsole(param) {
                 var mes = '【' + param.type + '】';
@@ -154,7 +154,7 @@
                 })();
                 var  tabhead=document.getElementById("tab-content");
                 wwidth=bodyfrm.clientWidth-5;
-                wheight=bodyfrm.clientHeight-28;
+                wheight=bodyfrm.clientHeight-30;
                 tabhead.style.width=wwidth+"px";
                 tabhead.style.height=wheight+"px";
                 for(var j=0;j<contents.length;j++){

@@ -53,12 +53,13 @@
 				<div class="row-navigation" style="vertical-align:center;min-width:500px;"align="center">
 						<ul class="pc-nav" >
 							<li ><a href="totalview.html"  target="iframe_main" >信息总览</a></li>
-							<li ><a id="realdata"href="GaugeOfJufang.html" target="iframe_main" >实时数据</a></li>
+							<li ><a href="javascript:void(0)" onclick="initdrawing()" style="display:none" id="realstate">实时状态</a></li>
+							<li ><a id="realdata"href="javascript:void(0)" target="iframe_main" onclick="initrealdata()">实时数据</a></li>
 							<li ><a id="historydata" href="javascript:void(0)" onclick="loadstations_historydata()">历史数据</a></li>
 							<li ><a id="historychart" href="javascript:void(0)" onclick="loadstations_chart()">趋势图</a></li>
 							<li ><a href="javascript:void(0)" onclick="loadstations_warnlog()" >告警信息</a></li>
 							<!--<li ><a href="realwarning.html" target="iframe_main" >当前告警</a></li>
-							<li ><a  onclick="initdrawing()">实时状态</a></li>-->
+							-->
 							<!--<li ><a href="app_download.html" target="iframe_main"  >客户端下载</a></li>
 							<li ><a href="help.html" target="iframe_main" >使用指南</a></li>
 							<li ><a href="ContactUs.html" target="iframe_main">联系我们</a></li>-->
@@ -173,64 +174,34 @@
 		//sessionStorage.jssj = getCurrentDate(1) + " 23:59:59"; //"2012-09-05T08:00:00";//
 		//sessionStorage.pageindex = 1;
 		//getgraphics();
-		document.getElementById("iframe_main").src = 'page1.html';
+		//document.getElementById("iframe_main").src = 'page1.html';
+		inittreeview();
+		document.getElementById("iframe_main").src="totalview.html"
+		
+	}
+	function inittreeview(){
 		/*var tree = [
+		{
+			text: "王京站",
+			id:1,
+			nodes: [
 			{
-				text: "王京站",
-				id:1,
+				text: "温度监测",
+				id:2,
 				nodes: [
 				{
-					text: "温度监测",
-					id:2,
-					nodes: [
-					{
-						text: "Grandchild 1",
-						id:3,
-					},
-					{
-						text: "Grandchild 2",
-						id:4
-					}
-					]
-				},
-				{
-					text: "局部放电",
-					id:5,
-					nodes:[
-					{
-						text: "Grandchild 1",
-						id:3,
-					},
-					{
-						text: "Grandchild 2",
-						id:4,
-					}
-					]
-				},
-				{
-					text:"弧光保护",
-					id:6
-				}
-				]
-			},
-			{
-				text: "城南站",
-				id:7,
-				nodes:[
-				{
 					text: "Grandchild 1",
 					id:3,
 				},
 				{
 					text: "Grandchild 2",
-					id:4,
+					id:4
 				}
 				]
-				
 			},
 			{
-				text: "伏城战",
-				id:8,
+				text: "局部放电",
+				id:5,
 				nodes:[
 				{
 					text: "Grandchild 1",
@@ -243,116 +214,151 @@
 				]
 			},
 			{
-				text: "城关站",
-				id:9
-			},
-			{
-				text: "电厂站",
-				id:10
+				text:"弧光保护",
+				id:6
 			}
-		];*/
+			]
+		},
+		{
+			text: "城南站",
+			id:7,
+			nodes:[
+			{
+				text: "Grandchild 1",
+				id:3,
+			},
+			{
+				text: "Grandchild 2",
+				id:4,
+			}
+			]
+			
+		},
+		{
+			text: "伏城战",
+			id:8,
+			nodes:[
+			{
+				text: "Grandchild 1",
+				id:3,
+			},
+			{
+				text: "Grandchild 2",
+				id:4,
+			}
+			]
+		},
+		{
+			text: "城关站",
+			id:9
+		},
+		{
+			text: "电厂站",
+			id:10
+		}];*/
 	
 		//var obj=tree[1];
 		
 		//obj.nodes=(JSON.parse( node));
 		//tree[1]=obj;
 		$('#tree').treeview({
-				data: getData(),         // 数据源
-				showCheckbox: false,   //是否显示复选框
-				highlightSelected: true,    //是否高亮选中
-				//nodeIcon:'glyphicon glyphicon-user',    //节点上的图标
-				nodeIcon: 'glyphicon glyphicon-globe',
-				emptyIcon: '',    //没有子节点的节点图标
-				enableLinks : true,//必须在节点属性给出href属性
-				multiSelect: false,    //多选
-				searchResultColor:"black",
-				//color: "", //所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
-				//backColor: "#000000", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
-				//borderColor: "#000000", //边框颜色。如果不想要可见的边框，则可以设置showBorder为false。        String
-				//nodeIcon: "glyphicon glyphicon-stop", //所有节点的默认图标
-				//checkedIcon: "glyphicon glyphicon-check", //节点被选中时显示的图标         String
-				//collapseIcon: "glyphicon glyphicon-minus", //节点被折叠时显示的图标        String
-				//expandIcon: "glyphicon glyphicon-plus", //节点展开时显示的图标        String
-				//emptyIcon: "glyphicon", //当节点没有子节点的时候显示的图标              String
-				//enableLinks: false, //是否将节点文本呈现为超链接。前提是在每个节点基础上，必须在数据结构中提供href值。        Boolean
-				//highlightSearchResults: true, //是否高亮显示被选中的节点        Boolean
-				//levels: 2, //设置整棵树的层级数  Integer
-				//multiSelect: false, //是否可以同时选择多个节点      Boolean
-				//onhoverColor: "#F5F5F5", //光标停在节点上激活的默认背景色      String
-				//selectedIcon: "glyphicon glyphicon-stop", //节点被选中时显示的图标     String
+			data: getData(),         // 数据源
+			showCheckbox: false,   //是否显示复选框
+			highlightSelected: true,    //是否高亮选中
+			//nodeIcon:'glyphicon glyphicon-user',    //节点上的图标
+			nodeIcon: 'glyphicon glyphicon-globe',
+			emptyIcon: '',    //没有子节点的节点图标
+			enableLinks : true,//必须在节点属性给出href属性
+			multiSelect: false,    //多选
+			searchResultColor:"black",
+			//color: "", //所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
+			//backColor: "#000000", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+			//borderColor: "#000000", //边框颜色。如果不想要可见的边框，则可以设置showBorder为false。        String
+			//nodeIcon: "glyphicon glyphicon-stop", //所有节点的默认图标
+			//checkedIcon: "glyphicon glyphicon-check", //节点被选中时显示的图标         String
+			//collapseIcon: "glyphicon glyphicon-minus", //节点被折叠时显示的图标        String
+			//expandIcon: "glyphicon glyphicon-plus", //节点展开时显示的图标        String
+			//emptyIcon: "glyphicon", //当节点没有子节点的时候显示的图标              String
+			//enableLinks: false, //是否将节点文本呈现为超链接。前提是在每个节点基础上，必须在数据结构中提供href值。        Boolean
+			//highlightSearchResults: true, //是否高亮显示被选中的节点        Boolean
+			//levels: 2, //设置整棵树的层级数  Integer
+			//multiSelect: false, //是否可以同时选择多个节点      Boolean
+			//onhoverColor: "#F5F5F5", //光标停在节点上激活的默认背景色      String
+			//selectedIcon: "glyphicon glyphicon-stop", //节点被选中时显示的图标     String
 
-				//searchResultBackColor: "", //当节点被选中时的背景色
-				//searchResultColor: "", //当节点被选中时的前景色
+			//searchResultBackColor: "", //当节点被选中时的背景色
+			//searchResultColor: "", //当节点被选中时的前景色
 
-				//selectedBackColor: "", //当节点被选中时的背景色
-				//selectedColor: "#FFFFFF", //当节点被选中时的前景色
+			//selectedBackColor: "", //当节点被选中时的背景色
+			//selectedColor: "#FFFFFF", //当节点被选中时的前景色
 
-				//showBorder: true, //是否在节点周围显示边框
-				//showCheckbox: false, //是否在节点上显示复选框
-				//showIcon: true, //是否显示节点图标
-				//showTags: false, //是否显示每个节点右侧的标记。前提是这个标记必须在每个节点基础上提供数据结构中的值。
-				//uncheckedIcon: "glyphicon glyphicon-unchecked", //未选中的复选框时显示的图标，可以与showCheckbox一起使用
+			//showBorder: true, //是否在节点周围显示边框
+			//showCheckbox: false, //是否在节点上显示复选框
+			//showIcon: true, //是否显示节点图标
+			//showTags: false, //是否显示每个节点右侧的标记。前提是这个标记必须在每个节点基础上提供数据结构中的值。
+			//uncheckedIcon: "glyphicon glyphicon-unchecked", //未选中的复选框时显示的图标，可以与showCheckbox一起使用
 
-				//onNodeChecked: function (event,data) {
-				//	console.log("nodeId = "+data.nodeId);
-				//	console.log("id = "+data.id);
-				//},
-				onNodeSelected: function (event, data) {
-					console.log("nodeId = "+data.nodeId);
-					console.log("id = "+data.id);
-					loaddata(data.id);
-				}
-				/**方法
-				 * checkAll(options);//选中所有树节点
-				checkNode(node | nodeId, options);  //选中一个给定nodeId的树节点
-				clearSearch();//清除查询结果
-				collapseAll(options);//折叠所有树节点
-				collapseNode(node | nodeId, options);//折叠一个给定nodeId的树节点和它的子节点
-				disableAll(options);//禁用所有树节点
-				disableNode(node | nodeId, options);//禁用一个给定nodeId的树节点
-				enableAll(options);//激活所有树节点
-				enableNode(node | nodeId, options);//激活给定nodeId的树节点
-				expandAll(options);//展开所有节点
-				expandNode(node | nodeId, options);//展开给定nodeId的树节点
-				getCollapsed();//返回被折叠的树节点数组
-				getDisabled();//返回被禁用的树节点数组
-				getEnabled();//返回被激活的树节点数组  
-				getExpanded();//返回被展开的树节点数组
-				getNode(nodeId);//返回与给定节点id相匹配的单个节点对象。
-				getParent(node | nodeId);//返回给定节点id的父节点
-				getSelected();//返回被选定节点的数组。
-				getSiblings(node | nodeId);//返回给定节点的兄弟节点数组
-				getUnselected();//返回未选择节点的数组
-				remove();//删除the tree view component.删除绑定的事件，内部附加的对象，并添加HTML元素。
-				revealNode(node | nodeId, options);//显示给定的树节点，将树从节点扩展到根。
-				search(pattern, options);//在树视图中搜索匹配给定字符串的节点，并在树中突出显示它们。返回匹配节点的数组。
-				selectNode(node | nodeId, options);//选择一个给定的树节点
-				toggleNodeChecked(node | nodeId, options);//Toggles a nodes checked state; checking if unchecked, unchecking if checked.
-				toggleNodeDisabled(node | nodeId, options);//切换节点的禁用状态;
-				toggleNodeExpanded(node | nodeId, options);//切换节点的展开与折叠状态
-				toggleNodeSelected(node | nodeId, options);//切换节点的选择状态
-				uncheckAll(options);//不选所有节点
-				uncheckNode(node | nodeId, options);//不选给定nodeId的节点
-				unselectNode(node | nodeId, options);//不选给定nodeId的节点
-				事件：
-				*nodeChecked (event, node) - 一个节点被checked.
-				*nodeUnchecked (event, node) - 一个节点被unchecked.
-				*nodeCollapsed (event, node) - 一个节点被折叠.
-				*nodeDisabled (event, node) - 一个节点被禁用.
-				*nodeEnabled (event, node) - 一个节点被启用.
-				*nodeExpanded (event, node) - 一个节点被展开.
-				*nodeSelected (event, node) - 一个节点被选择.
-				*nodeUnselected (event, node) - 取消选择一个节点.
-				*searchComplete (event, results) - 搜索完成之后触发.
-				*searchCleared (event, results) - 搜索结果被清除之后触发.
-				*/
+			//onNodeChecked: function (event,data) {
+			//	console.log("nodeId = "+data.nodeId);
+			//	console.log("id = "+data.id);
+			//},
+			onNodeSelected: function (event, data) {
+				console.log("nodeId = "+data.nodeId);
+				console.log("id = "+data.id);
+				loaddata(data);
+				
+			}
+			/**方法
+			 * checkAll(options);//选中所有树节点
+			checkNode(node | nodeId, options);  //选中一个给定nodeId的树节点
+			clearSearch();//清除查询结果
+			collapseAll(options);//折叠所有树节点
+			collapseNode(node | nodeId, options);//折叠一个给定nodeId的树节点和它的子节点
+			disableAll(options);//禁用所有树节点
+			disableNode(node | nodeId, options);//禁用一个给定nodeId的树节点
+			enableAll(options);//激活所有树节点
+			enableNode(node | nodeId, options);//激活给定nodeId的树节点
+			expandAll(options);//展开所有节点
+			expandNode(node | nodeId, options);//展开给定nodeId的树节点
+			getCollapsed();//返回被折叠的树节点数组
+			getDisabled();//返回被禁用的树节点数组
+			getEnabled();//返回被激活的树节点数组  
+			getExpanded();//返回被展开的树节点数组
+			getNode(nodeId);//返回与给定节点id相匹配的单个节点对象。
+			getParent(node | nodeId);//返回给定节点id的父节点
+			getSelected();//返回被选定节点的数组。
+			getSiblings(node | nodeId);//返回给定节点的兄弟节点数组
+			getUnselected();//返回未选择节点的数组
+			remove();//删除the tree view component.删除绑定的事件，内部附加的对象，并添加HTML元素。
+			revealNode(node | nodeId, options);//显示给定的树节点，将树从节点扩展到根。
+			search(pattern, options);//在树视图中搜索匹配给定字符串的节点，并在树中突出显示它们。返回匹配节点的数组。
+			selectNode(node | nodeId, options);//选择一个给定的树节点
+			toggleNodeChecked(node | nodeId, options);//Toggles a nodes checked state; checking if unchecked, unchecking if checked.
+			toggleNodeDisabled(node | nodeId, options);//切换节点的禁用状态;
+			toggleNodeExpanded(node | nodeId, options);//切换节点的展开与折叠状态
+			toggleNodeSelected(node | nodeId, options);//切换节点的选择状态
+			uncheckAll(options);//不选所有节点
+			uncheckNode(node | nodeId, options);//不选给定nodeId的节点
+			unselectNode(node | nodeId, options);//不选给定nodeId的节点
+			事件：
+			*nodeChecked (event, node) - 一个节点被checked.
+			*nodeUnchecked (event, node) - 一个节点被unchecked.
+			*nodeCollapsed (event, node) - 一个节点被折叠.
+			*nodeDisabled (event, node) - 一个节点被禁用.
+			*nodeEnabled (event, node) - 一个节点被启用.
+			*nodeExpanded (event, node) - 一个节点被展开.
+			*nodeSelected (event, node) - 一个节点被选择.
+			*nodeUnselected (event, node) - 取消选择一个节点.
+			*searchComplete (event, results) - 搜索完成之后触发.
+			*searchCleared (event, results) - 搜索结果被清除之后触发.
+			*/
 		});
 		$("#tree").treeview('collapseAll');//关闭展开
-		var id=getData()[0].id+"";
-		var firstNode = $("#tree").treeview('search',[id,{ ignoreCase: false, exactMatch: false },'id']);//得到第一个节点
+		var id=getData()[0].id;
+		var firstNode = $("#tree").treeview('search',[id+"",{ ignoreCase: false, exactMatch: false },'id']);//得到第一个节点
 		$("#tree").treeview('expandNode',[firstNode, { levels: 2, silent: true } ]);//展开第一个节点
 		//$('#tree').treeview('expandNode', [ tree[0].id, { levels: 2, silent: true } ]);
-		$('#tree').treeview('selectNode', [ 1, { silent: true } ]);
+		$('#tree').treeview('selectNode', [ id, { silent: true } ]);
 		//$("#tree").treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
 	}
 	function getData(){
@@ -378,8 +384,12 @@
 	function showcontactus(){
 		document.getElementById("iframe_main").src="ContactUs.html"
 	}
-	function loaddata(){
-		
+	function loaddata(mdata){
+		if(mdata.text==="测温"){
+			document.getElementById("realstate").style.display="inline";
+		}else{
+			document.getElementById("realstate").style.display="none";
+		}
 	}
 	</script>
   
