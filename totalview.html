@@ -28,6 +28,7 @@
                 <div id="h3"><img src="res/lock2.png" style="float:left">局部放电</div>
                 <div id="h3"><img src="res/lock2.png" style="float:left">弧光保护</div>
                 <div id="h3"><img src="res/lock2.png" style="float:left">视频监控</div>
+                <div id="h2" ><img src="res/lock2.png" style="float:left">机房监控</div>
             </div>
         <div style="height:40px;display: block"></div>
         <div class="tab-content" id="tab-content">
@@ -42,15 +43,15 @@
                             <tr ><td>局放:</td><td>50</td></tr>
                             <tr ><td>弧光:</td><td>20</td></tr>
                             <tr ><td>视频:</td><td>15</td></tr>
-                            <tr ><td>门禁:</td><td>5</td></tr>
-                            <tr ><td>环境:</td><td>30</td></tr>
+                            <tr ><td>动环:</td><td>5</td></tr>
+                            <tr ><td>其他:</td><td>30</td></tr>
                         </table>
                     </div>
                 </div>
                 <div class="column" align="center">
                     <div class="zlchart" id="chart0">ghg2
                     </div>
-                    <table class="zltable" style="margin-top:30px;">
+                    <table class="zltable" >
                         <tr><td colspan=2>测量点总数：</td><td id="count0">235</td></tr>
                         <tr ><td rowspan=6>其中：</td><td id="normal0">正常运行:</td><td>100</td></tr>
                         <tr ><td>异常:</td><td id="abnormal0">50</td></tr>
@@ -107,6 +108,22 @@
                 </div>
             </div>
             <div class="tab-div" >
+                <div class="column">
+                    <div width="100%"  align="center">
+                        <div class="zlchart" id="re-chart" style="width:300px;height:300px;">
+                        </div>
+                        <table class="zltable" >
+                            <tr><td colspan=2>测量点：</td><td id="count">20</td></tr>
+                            <tr ><td rowspan=6>其中：</td><td>温湿度:</td><td>7</td></tr>
+                            <tr ><td>动力:</td><td>2</td></tr>
+                            <tr ><td>门禁:</td><td>2</td></tr>
+                            <tr ><td>空调:</td><td>1</td></tr>
+                            <tr ><td>水浸:</td><td>5</td></tr>
+                            <tr ><td>灯光:</td><td>3</td></tr>
+                        </table>
+                    </div>
+                </div>
+                
                 <div class="column" align="center">
                     <div class="zlchart" id="chart5">ghg
                     </div>
@@ -163,6 +180,7 @@
                 }
                 numberPie("zl-chart",'测量信息总览' ,getdata());//tabs[1].click();
                 numberPie("chart0","运行信息", getdata());
+                numberPie("re-chart","机房监控设备总览",[{"name":"温湿度","value":7},{"name":"动力","value":2},{"name":"门禁","value":2},{"name":"空调","value":1},{"name":"水浸","value":5},{"name":"灯光","value":3}]);
             }
             function showTab(){
                 var datas=[{"name":"正常","value":120},{"name":"异常","value":12},{"name":"停运","value":5}]
@@ -187,8 +205,8 @@
                         {"value":50, "name":"局放"},
                         {"value":20, "name":"弧光"},
                         {"value":25, "name":"视频"},
-                        {"value":5, "name":"门禁"},
-                        {"value":35, "name":"环境"},
+                        {"value":5, "name":"其他"},
+                        {"value":35, "name":"动环"},
                     ]
                 }
                 if(Object.prototype.toString.call(data) === '[object Array]'){
@@ -229,7 +247,7 @@
                     legend: {                     //图例
                         orient : 'vertical', // 布局方式，默认为水平布局，可选为：'horizontal' ¦ 'vertical'
                         x: 'right',
-                        y: 'center',
+                        y: 'bottom',
                         icon: 'rect',//图标为圆形，默认是方形在，在这里写的话，不起作用，要在data中指定。
                         data: legendArr,
                          textStyle: {
@@ -242,7 +260,7 @@
                         {
                             name: '数量统计',
                             type: 'pie',
-                            radius: ['50%','70%'],//'45%',//环 
+                            radius: ['34%','55%'],//'45%',//环 
                             center: ['45%', '50%'],
                             data: data,
                             itemStyle: {
@@ -255,7 +273,7 @@
                                 },
                                normal:{
                                     labelLine: {
-                                        show: true   // show设置线是否显示，默认为true，可选值：true ¦ false
+                                        show: true   // show设置线是否显示，默认为true，可选值：true ¦ false 1 
                                     },
                                     label: {
                                         position: 'outer',  // 设置标签位置，默认在饼状图外 可选值：'outer' ¦ 'inner（饼状图上）'

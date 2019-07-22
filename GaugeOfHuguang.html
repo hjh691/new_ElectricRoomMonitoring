@@ -11,11 +11,11 @@
         <script  type="text/javascript" src="js/config.js"></script>
     </head>
     <body>
-        <h2 id="title" align="center">实时局放数据</h2>
+        <h2 id="title" align="center">弧光保护数据</h2>
         <div class="tab-head" id="tab-head" style="height: 40px">
-            <div id="h1" ><img src="res/lock2.png" style="float:left"></img>仪表显示</div>
-            <div id="h2" class="selected"><img src="res/lock2.png" style="float:left">数据列表</div>
-            <div id="h3"><img src="res/lock2.png" style="float:left">变化趋势</div>
+            <div id="h1"><img src="res/lock2.png" style="float:left"></img>仪表显示</div>
+            <div id="h2" class="selected" ><img src="res/lock2.png" style="float:left">数据列表</div>
+            <div id="h3"><img src="res/lock2.png" style="float:left">波形显示</div>
         </div>
         <div style="height:40px;display: block"></div>
         <div class="tab-content" id="tab-content">
@@ -25,7 +25,7 @@
                 <div class="column" id="column2" align="center"></div>
                 <div class="column" id="column3" align="center"></div>-->
             </div>
-            <div class="tab-div  parent show" id="reallist" >
+            <div class="tab-div parent show" id="reallist" >
                 <div class="column" align="center" style="width:100%;overflow-x:auto;">
                     <div class="pagecard" id="pagecard1" style="margin-bottom:10px;widows: 100%;">
                         <h3 align="center" >数据列表</h3>
@@ -41,21 +41,21 @@
                                 <th style="color:#0000ff" onclick="sortt('.sensorid')"><a href="javascript:">监测点编号 <span class="sensorid"></span></a></th>
                                 <th style="color:#0000ff" onclick="sortt('.sensorname')" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
                                 <!--th>数据编号</thonclick="sortt('.tmpvalue')"-->
-                                <th style="color:#0000ff" onclick="sortt('.time')"><a href="javascript:">测量时间 <span class="time"></span></a></th>
-                                <th style="color:#0000ff" onclick="sortt('.tmpvalue')"><a href="javascript:">放电量<span class="tmpvalue"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.time')"><a href="javascript:">发生时间 <span class="time"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.tmpvalue')"><a href="javascript:">强度<span class="tmpvalue"></span></a></th>
                                 <th style="color:#0000ff" onclick="sortt('.frevalue')"><a href="javascript:">频次<span class="frevalue"></span></a></th>
                                 <!--<th style="color:#0000ff">查看历史数据</th>
                                 <th style="color:#0000ff">查看告警信息</th> 
                                 <th style="width:18px;border:0px solid black;"></th>-->
                                 </tr>
                             </thead>
-                            <tbody id='jflist-tbody'>
+                            <tbody id='arclist-tbody'>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            <div class="tab-div  parent" id="chartmain" align="center" >
+            <div class="tab-div parent" id="chartmain" align="center" >
                 <div class="column" align="center" style="overflow: auto">
                     <h3 align="center" style="height:40px;line-height: 40px" >波形图</h3>
                     <table class="table" width="800px" >
@@ -81,12 +81,13 @@
             </div>
         </div>
         <script>
-            var chart;
             var tabs = document.getElementsByClassName('tab-head')[0].getElementsByTagName('div'),
             contents = document.getElementsByClassName('tab-content')[0].getElementsByClassName('tab-div');
             var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
+            var chart;
             var datas=[];
             function refreshwindow(){
+               
                 var tabhead=document.getElementById("tab-content");
                 var title=document.getElementById("title");
                 wwidth=bodyfrm.clientWidth-5;
@@ -97,16 +98,13 @@
                     contents[j].style.width=wwidth+"px";
                     contents[j].style.height=wheight+"px";
                 }
-                //var myChart = echarts.init(document.getElementById('chart00'));
-                //document.getElementById("main2").style.height="500px";
-                //initseries(myChart);
                 initpage1();
                 //形成图表数据对象数组
                 
-                datas.splice(0,datas.length);//
+                datas.splice(0,datas.length);
                 for(var i=0;i<7;i++){
                     var value=(Math.random() * 100).toFixed(2) - 0;
-                    datas.push(JSON.parse('{"name":"放电量'+i+'","value":'+value+'}'));
+                    datas.push(JSON.parse('{"name":"强度'+i+'","value":'+value+'}'));
                     var value=(Math.random() * 100).toFixed(2) - 0;
                     datas.push(JSON.parse('{"name":"频次'+i+'","value":'+value+'}'));
                 }
@@ -120,9 +118,9 @@
                     tabs[i].onclick = showTab;
                     }
                 })();
-                
+
                 drawmeters("column0",datas);
-               
+                
             }; 
             window.onload=window.onresize=refreshwindow;
             function showTab() {
@@ -130,38 +128,12 @@
                     if(tabs[i]===this){
                         tabs[i].className="selected";
                         contents[i].className="tab-div parent show";
-                        if(i==0){
-                            drawmeters("column0",datas);
-                        }
-                        //if(i===2){initData();}
+                        if(i===0){drawmeters("column0",datas);}
                     }else{
                         tabs[i].className="";
-                        contents[i].className="tab-div parent ";
+                        contents[i].className="tab-div parent";
                     }
                 }
-                /*if("仪表显示"=== this.innerText) {
-                    tabs[0].className = 'selected';
-                    tabs[1].className = '';
-                    tabs[2].className = '';
-                    document.getElementById("main").style.display="block";
-                    document.getElementById("reallist").style.display="none";
-                    document.getElementById("chartmain").style.display="none";
-                } else if(this.innerText==="数据列表"){
-                    tabs[0].className = '';
-                    tabs[1].className = 'selected';
-                    tabs[2].className = '';
-                    document.getElementById("main").style.display="none";
-                    document.getElementById("reallist").style.display="block";
-                    document.getElementById("chartmain").style.display="none";
-                }else if(this.innerText==="变化趋势"){
-                    tabs[0].className = '';
-                    tabs[2].className = 'selected';
-                    tabs[1].className = '';
-                    document.getElementById("main").style.display="none";
-                    document.getElementById("reallist").style.display="none";
-                    document.getElementById("chartmain").style.display="block";
-                }*/
-
             }
             function initseries(myChart,data){
                 // 基于准备好的dom，初始化echarts实例
@@ -187,81 +159,9 @@
                             }
                         }
                     },
-                    series: data,/*[
-                    {
-                        name: data.name,//'温度',
-                        type: 'gauge',
-                        center: ['50%', 150], // 默认全局居中
-                        radius: '50%',//半径
-                        min: 0,
-                        max: 100,
-                        //startAngle: 315,//起始角度
-                        //endAngle: 225,//终止角度
-                        splitNumber: 5,//
-                        axisLine: { // 坐标轴线
-                            lineStyle: { // 属性lineStyle控制线条样式
-                                color: [
-                                    [0.2, 'green'],
-                                    [1, '#1f1f1f']
-                                ],
-                                width: 10,
-                                shadowColor: 'yellow', //默认透明
-                                shadowOffsetX:2,
-                                shadowBlur: 10
-                            }
-                        },
-                        axisTick: { // 坐标轴小标记
-                            show: true,
-                            splitNumber:5,
-                        },
-                        axisLabel: {
-                            textStyle: { // 属性lineStyle控制线条样式
-                                fontWeight: 'bolder',
-                                color: '#fff',
-                                shadowColor: '#fff', //默认透明
-                                shadowBlur: 10
-                            },
-                            
-                        },
-                        splitLine: { // 分隔线
-                            length: 12, // 属性length控制线长
-                            lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
-                                width: 1,
-                                color: '#fff',
-                                shadowColor: '#fff', //默认透明
-                                shadowBlur: 10
-                            }
-                        },
-                        pointer: {
-                            show:false,
-                            width: 2,
-                            shadowColor: '#fff', //默认透明
-                            shadowBlur: 5
-                        },
-                        title: {
-                            show: true,
-                            offsetCenter: [0, '-10%'], // x, y，单位px
-                            textStyle: {
-                                color: 'white',
-                                fontSize: 16
-                            }
-
-                        },
-                        detail: {
-                            show: true,
-                            offsetCenter: [0, '-10%'],
-                            formatter: '{value}',
-                            textStyle: {
-                                fontSize: 16,
-                                color:'#F8F43C'
-                            }
-
-                        },
-                        data: [data],//[{value: 20,name: '温度'}]
-                    }
-                    ]*/
+                    series: data,
                 };
-
+                myChart.hideLoading();
                 myChart.setOption(option);
                 //var option = myChart.getOption();
                 for(var i=0;i<data.length;i++){
@@ -278,29 +178,6 @@
                 }
                     //option.series[5].axisLine.lineStyle.color[0][0]=value/220;
                 myChart.setOption(option);
-                /*setInterval(function() {
-                    
-                    //option.series[0].data[0].value = (Math.random() * 100).toFixed(2) - 0;
-                    //option.series[1].data[0].value = (Math.random() * 7).toFixed(2) - 0;
-                    //option.series[2].data[0].value = (Math.random() * 2).toFixed(2) - 0;
-                    //option.series[3].data[0].value = (Math.random() * 2).toFixed(2) - 0;
-                    //option.series[4].data[0].value = (Math.random() * 100).toFixed(2) - 0;
-                    //var value = (Math.random() * 100).toFixed(2) - 0;
-                    var value =data.value;
-                   
-                    option.series[0].data[0].value=value; 
-                    
-                    if(value<20){
-                        option.series[0].axisLine.lineStyle.color[0]=[value/100,'blue'];
-                    }else if(value<80){
-                        option.series[0].axisLine.lineStyle.color[0]=[value/100,"green"];
-                    }else{
-                        option.series[0].axisLine.lineStyle.color[0]=[value/100,"red"];
-                    }
-                    //option.series[5].axisLine.lineStyle.color[0][0]=value/220;
-                    myChart.setOption(option);
-                }, 2000);*/
-                
             }
             function initSeriesData(type,rad,center,data){
                 var serie=new Object();
@@ -405,13 +282,13 @@
                 var moffsety=1/row;
                 var divChart=document.getElementById("chart");//如果已经存在此图表div，则进行刷新，没有则创建添加，下同
                 if(divChart===null || divChart===undefined){
-                     divChart=document.createElement("div");
-                     divChart.setAttribute("style","width:"+widthofdiv+"px;height:"+heightofdiv+"px;");
+                    divChart=document.createElement("div");
+                    divChart.setAttribute("style","width:"+widthofdiv+"px;height:"+heightofdiv+"px;");
                     divChart.setAttribute("id","chart");
                     document.getElementById(chartparentid).appendChild(divChart); 
                     chart=echarts.init(document.getElementById("chart"));
                 }
-                
+                chart.showLoading();
                 var series=[];
                 for(var r=0;r<row-1;r++){
                     for(var c=0;c<mcol;c++){
@@ -449,10 +326,10 @@
                 //更新数据
                 //var option = myChart.getOption();
                 //option.series[0].data = data;
-                datas.splice(0,datas.length);//
+                var datas=[];
                 for(var i=0;i<7;i++){
                     var value=(Math.random() * 100).toFixed(2) - 0;
-                    datas.push(JSON.parse('{"name":"放电量'+i+'","value":'+value+'}'));
+                    datas.push(JSON.parse('{"name":"强度'+i+'","value":'+value+'}'));
                     var value=(Math.random() * 100).toFixed(2) - 0;
                     datas.push(JSON.parse('{"name":"频次'+i+'","value":'+value+'}'));
                 }   
@@ -462,7 +339,7 @@
             window.setInterval("refreshData()",5000);//自动刷新图表数据
              //生成数据
             function initData(chartid) {
-                var legendData = ['放电量', '频次'];
+                var legendData = ['强度', '频次'];
                 var bgColorList = ['#FBB730', '#31BDF2','#6197fb'];
                 var axisLabel = ['监测1', '监测2', '监测3', '监测4', '监测5', '监测6', '监测7', '监测8', '监测9', '监测10', '监测11', '监测12', '监测13'];
                 var seriesValue = [];
@@ -503,7 +380,7 @@
                 var echart = echarts.init(chart);
                 var option = {
                     title: {
-                        text: "局部放电监测",//正标题
+                        text: "弧光保护监测数据",//正标题
                         x: "center", //标题水平方向位置
                         y: "0", //标题竖直方向位置
                         textStyle: {

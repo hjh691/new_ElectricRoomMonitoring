@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
+	<title>告警信息</title>
+	<script  type="text/javascript" src="js/function.js"></script>
+	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<script  type="text/javascript" src="js/radialIndicator.js"></script>
+	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
+	<style>
+	*{
+       margin:0px;
+       padding:0px;
+    }
+    /**/
+    th,td{
+        border:1px solid black;
+        text-align:center;
+        line-height:center;
+        width:200px;
+        height:30px;
+    }
+    td{
+        border:1px solid black;
+        text-align:center;
+        line-height:center;
+    }
+	
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            
+            table {
+                /*设置相邻单元格的边框间的距离*/
+                border-spacing: 0;
+                /*表格设置合并边框模型*/
+                border-collapse: collapse;
+                text-align: center;
+            }
+            /*关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
+            table tbody {
+                display: block;
+                
+                
+            }
+            
+            table thead,
+            tbody tr {
+                display: table;
+                table-layout: fixed;
+            }
+            /*关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
+            
+            table thead {
+                width: calc( tbody.width )
+            }
+            
+            table thead th {
+                background: #ccc;
+            }*/
+
+	</style>
+</head>
+<body onload="initwarnlog()">
+	<div>
+		<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
+			<h3 align="center" >告警信息</h3>
+			<!--ul class="pc-nav" >
+				<li ><a href="#" target="iframe_main"><i>数据列表</i></a></li>
+				<li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
+			</ul-->
+			
+		</div>
+		<div align="center"style="height:50px;" >
+		<table class="table" style="border:0px;"align="center">
+			<tr >
+			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td><!---->
+			<td style="width:100px;border:0px;width:120px;">	
+				<select id="jdcmc" style="font-size:16px;width:153px;">
+				</select>
+			</td>
+			<td class="condition"style="width:100px;"> 起止时间:</td>
+			<td class="condition"><input input type="datetime-local" value="2015-09-24T13:59:59" id="kssj_warning" style="width:190px;"></input></td>
+			<td class="condition" style="width:30px;">至</td>
+			<td class="condition"><input input type="datetime-local" value="2015-09-24T13:59:59"id="jssj_warning" style="width:190px;"></input></td>
+			<td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="querywarnlog(0)" ></input><input class="button"type="button" id="chaxun"style="width:100px" value="查询全站" onclick="querywarnlog(1)" ></input></td>
+			
+			</tr>
+		</table>
+		</div>
+		
+		<div >
+		<div  class="row" style="margin-bottom:10px;width=100%;" align="center">
+			<ul class="count_info" align="center" >
+				<li style="width:50px"><b>站名：</b></li>
+				<li id="station_name"style="width:50px;margin-right:10px"> </li>
+				
+				<li style="width:50px;margin-right:10px"><b>记录数：</b></li>
+				<li id="count_val"style="width:50px;margin-right:10px"> </li>
+
+				<!--<li style="width:50px;margin-right:10px"><b>标签名称：</b> </li>
+				<li id="normal_count"style="width:150px;margin-right:10px"> </li>
+				<li style="width:50px;margin-right:10px"><b>异常数：</b></li>
+				<li id="err_count"style="width:50px;margin-right:10px"> </li>
+				 -->
+				
+			</ul>
+			<a href="#" style="left:300px;align:right;margin-left:200px;" onclick="method5('warnlogtable')">导出Excel表格</a>
+		</div>
+		
+		<div align="center">
+		
+		<table id="warnlogtable" >
+
+			<thead>
+				<tr >
+				<th>测量点编号</th>
+				<th>测量点名称</th>
+				<th>测量时间</th>
+				<th>温度（℃）</th>	
+				<th>告警内容</th>
+				<!--<th style="width:18px;border:0px solid black;"></th>-->
+				</tr>
+			</thead>
+			<tbody id='warnlogdata-tbody'>
+     
+			</tbody>
+		</table>
+	</div>
+	<div id="indicatorContainer"></div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="css/temperature.css"/>
+	<title>用户信息</title>
+	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<script  type="text/javascript" src="js/config.js"></script>
+	<script  type="text/javascript" src="js/layer/layer.js"></script>
+	<script  type="text/javascript" src="js/function.js"></script>
+	
+</head>
+<body onload="GetUserProfile()">
+	<div style="width:100%;height:100%;">
+		<h2 align="center" style="color:blue;">用户详细信息</h2>
+		<form id="form_deviceinfo">
+			<table id="userprofile-format"align="center">
+			<span>
+			<tr>
+			<td class="table-lable"> 用户编号:</td>
+			<td><input id="up-yhbh" type="text" readonly="readonly" style="width:150px;" value=""></input>
+			</span>
+			</td>
+			</tr>
+			<tr>
+			<td class="table-lable"> 用户名称:</td>
+			<td class="table-lable" >
+				<input id="up-yhmc" type="text" readonly="readonly" style="width:150px;"value="" ></input>
+			<!--<select id="sblx" style="font-size:20px">
+					<option value="llj">流量计</option>
+					<option value="cwj">温度测量</option>
+					<option value="ylcgq">压力传感器</option>
+					<option value="wdcgq">温度传感器</option>
+				</select>-->
+			</td>
+			</tr>
+			<span>
+			<tr>
+			<td class="table-lable"> 登录密码:</td>
+			<td>	<input id="up-yhmm" type="password"  style="width:150px" value="admin"></input><span id="txt_editpassword" style="color:red;font-size:12px;margin-left:10px"><a href="javascript:showeditpassword()">修改密码</a></span>
+			</td>
+			</tr>
+			</span>
+			<tr >
+			<td class="table-lable"id="up-editpassword" style="display:none">新密码:</td>
+			<td>	<input id="up-yhmmqr" type="password" style="display:none;width:150px;" value=""></input>
+			</td>
+			</tr>
+			<span>
+			<tr>
+			<td class="table-lable"> 用户权限:</td>
+			<td><input id="up-yhqx" type="text" readonly="readonly" style="width:150px" value=""></input>
+			</td>
+			</tr>
+				
+			</span>
+			<tr>
+			<td class="table-lable"> 详细说明:</td>
+			<td>
+				<input type="text" id="up-yhsm" type="text" readonly="readonly" style="width:150px;" value="">
+				</input>
+			</td>
+				<!--span id="info_sbxh" style="color:red;display:none;font-size:10px;">请输入设备型号</span
+			</tr>
+			<tr>
+			<td style="color:#0000b0;font-size:20px"> 生产厂家:</td>
+			<td><input id="sccj" placeholder="请输入厂家名称"></input>
+			</td>
+			</tr>
+			<tr>
+			<td style="color:#0000b0;font-size:20px;position:relative"> 通信接口:</td>
+			<td>	<select id="jkxy" style="font-size:20px;width:120px;"onchange="document.getElementById('input-jkxy').value=this.value">
+					<option value="RS485">RS485</option>
+					<option value="zgbee">zgbee</option>
+					<option value="mudbus">mudbus</option>
+					</select>
+				<input id="input-jkxy" name="input" class="iInput" ></input>
+			
+			</td>-->
+			</tr>
+			<tr style="height:30px">
+			</tr>
+			<tr>
+			
+			<td class="table-lable">
+				<input type="button" id="info_ok" onclick="infook()" style="margin-left:10px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);display:none" value="确定"/></td>
+			<td class="table-lable">	<input type="button" name="reset" id="reset" style="margin-left:10px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);display:none;" value="取消"/>
+			<!-- background: -webkit-gradient(linear, left top, left bottom, from(#D2691E), color-stop(1, #ffffff), to(rgb(0,0,0)));-->
+			</td>
+			</tr>
+			</table>
+			
+		</form>
+	</div>
+</body>
+</html>

@@ -113,7 +113,7 @@ function LoginOrder(name, ps) {
 		}
 	});
 }
-//用户登录
+//用户登录  used by electricroommonitor
 function login() {
 	var islogin = false;
 	var sname = document.getElementById('username').value;
@@ -139,7 +139,7 @@ function quxiao() {
 	document.getElementById('username').value = "";
 	document.getElementById('password').value = "";
 }
-//退出登录
+//退出登录 used by electricroommonitor
 function logout() {
 	var url = wctm_base_config.baseurl + "Logout";
 	url = encodeURI(url);
@@ -183,7 +183,7 @@ function logout() {
 		window.location.href = "index.html";
 	}
 }
-//获取用户详细信息
+//获取用户详细信息 used by electricroommonitor
 function GetUserProfile() {
 	var url = wctm_base_config.baseurl + "_manager/GetUserProfile";
 	url = encodeURI(url);
@@ -230,13 +230,13 @@ function GetUserProfile() {
 	}
 }
 
-//初始化page1的时间空间
+//初始化page1的时间空间 used by electricroommonitor
 function initpage1() {
 	document.getElementById("kssj_chart").value =  getCurrentDate(1) + " 00:00:00";
 	document.getElementById("jssj_chart").value =  getCurrentDate(1) + " 23:59:59";
 	//drawchart()
 }
-// 初始化实时数据页面，根据不同站点、不同子系统来调用不同的页面
+// 初始化实时数据页面，根据不同站点、不同子系统来调用不同的页面 used by electricroommonitor 
 function initrealdata(){
 	var data=$("#tree").treeview("getSelected");
 	switch (data[0].text){
@@ -251,6 +251,9 @@ function initrealdata(){
 			break;
 		case "视频监控":
 			document.getElementById("iframe_main").src="javascript:void(0)";
+			break;
+		case "机房监控":
+			document.getElementById("iframe_main").src="roommonitor.html";
 			break;
 	}
 }
