@@ -244,5 +244,22 @@
 		height:170px;
 		border: solid #222 0px;
 	}
+	.ht-pointname{
+		width: 30px;
+		height:320px;
+		display: inline-block;
+		writing-mode: vertical-lr;
+		-webkit-writing-mode: vertical-lr;
+		-ms-writing-mode: vertical-lr;
+		font-size: 20px;
+	}
+	.ht-gauge,.ht-chart{
+		width:400px;
+		height:300px;
+		margin-left: 50px;
+		margin-bottom: 10px;
+		margin-top:10px;
+		margin-right: 10px;
+	}
 	
 	

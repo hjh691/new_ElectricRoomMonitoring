@@ -249,7 +249,7 @@
                 var option_gauge= {
                 backgroundColor: '#1b1b1b',
                 tooltip: {
-                    formatter:  "{b}: <br/>{c} "+unit
+                    formatter:  "{a}: <br/>{c} "+unit
                 },
                 toolbox: {
                     show: false,
@@ -266,7 +266,7 @@
                     }
                 },
                 series: [{ 
-                    name: data.name,//'电压',
+                    name: data[0].name,//'电压',
                     type: 'gauge',
                     center: ['50%', "50%"], // 默认全局居中
                     radius: '60%',//半径
@@ -332,7 +332,7 @@
                         }
 
                     },
-                    data:data,//[{value: 20,name: '电压'}],// [data]
+                    data:[data[0]],//[{value: 20,name: '电压'}],// [data]
                 }]
                 
             }
