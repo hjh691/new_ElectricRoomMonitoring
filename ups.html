@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="css/electricroommonitoring.css"/>
+        <style>
+            li{
+                list-style-type: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="div1" style="position:absolute ; width:100%;height:100%;background-repeat:no-repeat;background-size:cover;min-width: 800px;min-height: 600px;z-index:-1 ">
+            <img src="res/ups.jpg" style="width:100%; height:100%;min-width: 800px;min-height: 600px;z-index:-1"/>
+            <!--<p><a href="#" onclick="creadiv(10,10,'Hello你好')">点一下我</a></p>
+            <p><a href="#" onclick="creadiv(30,10,'哈哈哈')">再点一下</a></p>-->
+            <div class="textbox" id="txb-shidian" style="left:6%;top:15%;">
+                <li>abc</li>
+                <li>def</li>
+                <li>ghi</li>
+                <li>jkl</li>
+            </div>
+            <div class="textbox" id="txb-batter" style="left:6%;top:60%;">
+                <li>123</li>
+                <li>345</li>
+                <li>567</li>
+            </div>
+            <div class="textbox" id="txb-switch" style="left:35%;top:4%;width:450px;height:100px;">
+
+            </div>
+            <div class="textbox" id="txb-device" style="left:73%;top:48%;width:300px;height:150px;">
+
+            </div>
+            <div class="textbox" id="txb-ups" style="left:40%;top:70%;width:300px;height:150px;">
+
+            </div>
+        </div>
+        
+    </body>
+    <script language="javascript">
+        function creadiv(l,r,t){ //l是距左的距离,r是距右的距离,t是要显示的文本内容
+        var dd=document.createElement("div");
+        dd.style.position="absolute";
+        dd.style.left=l+"%";
+        dd.style.top=r+"%"
+        dd.innerText=t;
+        document.getElementById("div1").appendChild(dd);
+        }
+        </script>
+</html>

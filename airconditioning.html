@@ -16,14 +16,21 @@
             .ac-ht{
                 border:solid white 1px;
                 width:75px;
-                height:25px;
+                /*height:25px;*/
                 
                 background-color:rgba(11, 11, 15, 0.733);
                 color:white;
                 border-radius: 5px;
             }
-            .state{
+            .normal{
                 background-color:rgba(4, 105, 4, 0.993);
+                border:solid white 1px;
+                border-radius: 5px;
+                text-align:  center;
+                width:75px;
+            }
+            .unnormal{
+                background-color:rgba(204, 6, 6, 0.993);
                 border:solid white 1px;
                 border-radius: 5px;
                 text-align:  center;
@@ -42,39 +49,43 @@
             <h2 align="center">紧密空调实时参数状态</h2>
             <table style="background-color: gray;color:white;border-radius: 5px;">
                 <tr>
-                    <td class="ac" style="background-color: gray;color:white;border-radius: 5px;" >
-                        <table align="center" style="width:100%;height:90%;">
-                            <p align="center" style="margin:0px;">现场温湿度</p>
-                            <tr style="width:300px;margin-top:40px;">
-                                <td>
-                                    <div ></div>
-                                    温度
+                    <td class="ac" style="background-color: gray;color:white;border-radius: 5px;">
+                        <p style="margin-top:0px;text-align:center">现场温湿度</p>
+                        <table align="center" style="width:100%;height:270px;">
+                            <tr style="width:300px;margin-top:30px;">
+                                <td >
+                                    <li style="list-style-image: url(res/t1.jpg);margin-left: 10px;"></li>
+                                    <li id="tmp-value" style="margin-left: 50px;"> 40 ℃</li>
                                 </td>
                                 <td align="right">
+                                    <li></li>
                                     <li>设定值：</li>
                                     <li>上限：</li>
                                     <li>下限：</li>
                                 </td>
                                 <td align="center" >
-                                    <li align="center" class="ac-ht" >36</li>
-                                    <li align="center" class="ac-ht" >59</li>
-                                    <li align="center" class="ac-ht" >20</li>
+                                    <li></li>
+                                    <li align="center" class="ac-ht" id="t_set" >36</li>
+                                    <li align="center" class="ac-ht" id="t_top">59</li>
+                                    <li align="center" class="ac-ht" id="t_bottom">20</li>
                                 </td>
                             </tr>
                             <tr style="width:300px;margin-top:10px;">
                                 <td>
-                                    <div></div>
-                                    湿度
+                                    <li style="list-style-image: url(res/s1.jpg);margin-left: 10px;"></li>
+                                    <li id="tmp-value" style="margin-left: 50px;"> 30 %</li>
                                 </td>
                                 <td align="right">
+                                    <li></li>
                                     <li>设定值：</li>
                                     <li>上限：</li>
                                     <li>下限：</li>
                                 </td>
                                 <td align="center">
-                                    <li align="center" class="ac-ht" >36</li>
-                                    <li align="center" class="ac-ht" >59</li>
-                                    <li align="center" class="ac-ht" >20</li>
+                                    <li></li>
+                                    <li align="center" class="ac-ht" id="s_set">36</li>
+                                    <li align="center" class="ac-ht" id="s_top">59</li>
+                                    <li align="center" class="ac-ht" id="s_bottom">20</li>
                                 </td>
                             </tr>
                         </table>
@@ -93,11 +104,11 @@
                                 <li class="lable">风机工作状态：</li>
                             </td>
                             <td>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
+                                <li class="normal" id="jrq1">正常</li>
+                                <li class="normal" id="jrq2">正常</li>
+                                <li class="unnormal" id="jsq">异常</li>
+                                <li class="normal" id="csq">正常</li>
+                                <li class="normal" id="fj">正常</li>
                             </td>
                         </table>
                     </td>
@@ -113,11 +124,11 @@
                                 <li class="lable">风机工作状态：</li>
                             </td>
                             <td>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
+                                <li class="normal" id="state1">正常</li>
+                                <li class="normal" id="state2">正常</li>
+                                <li class="normal" id="state3">正常</li>
+                                <li class="normal" id="state4">正常</li>
+                                <li class="normal" id="state5">正常</li>
                             </td>
                         </table>
                     </td>
@@ -131,11 +142,11 @@
                                 <li class="lable">风机工作状态：</li>
                             </td>
                             <td>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
+                                <li class="normal" id="state6">正常</li>
+                                <li class="normal" id="state7">正常</li>
+                                <li class="normal" id="state8">正常</li>
+                                <li class="normal" id="state9">正常</li>
+                                <li class="normal" id="state10">正常</li>
                             </td>
                         </table>
                     </td>
@@ -149,11 +160,11 @@
                                 <li class="lable">风机工作状态：</li>
                             </td>
                             <td>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
-                                <li class="state">正常</li>
+                                <li class="normal" id="state11">正常</li>
+                                <li class="normal" id="state12">正常</li>
+                                <li class="normal" id="state13">正常</li>
+                                <li class="normal" id="state14">正常</li>
+                                <li class="normal" id="state15">正常</li>
                             </td>
                         </table>
                     </td>
