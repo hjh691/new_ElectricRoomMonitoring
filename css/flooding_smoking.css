@@ -1,0 +1,68 @@
+.bg {
+    border-collapse: collapse;
+    border : solid rgb(102, 101, 101) 1px;
+    margin-top: 10px;
+    background-color: rgb(87, 86, 86);
+    border-radius: 5px;
+    width:800px;
+    height:35px;
+    line-height: 35px;
+    border-collapse:collapse;
+    color: white;
+    overflow: hidden;
+}
+.lable{
+    width:200px;
+    height:35px;
+    line-height: 35px;
+    border : solid rgb(204, 7, 7) 0px;
+    display:table-cell;
+    border-radius: 5px;
+    text-align:center;
+}/**/
+.normal{
+    width:100px;
+    height:25px;
+    line-height: 25px;
+    border : solid grey 0px;
+    background-color: rgb(18, 134, 14);
+    display:table-cell;
+    border-radius: 15px;
+    vertical-align: middle;
+    text-align:center;
+}
+.unnormal{
+    width:100px;
+    height:25px;
+    line-height: 25px;
+    border : solid grey 0px;
+    background-color: rgba(202, 5, 5, 0.781);
+    display:table-cell;
+    border-radius: 15px;
+    vertical-align: middle;
+    text-align:center;
+}
+.unenabled{
+    width:100px;
+    height:25px;
+    line-height: 25px;
+    border : solid grey 0px;
+    background-color: grey;
+    display:table-cell;
+    border-radius: 15px;
+    vertical-align: middle;
+    text-align:center;
+}
+.set{
+    width:100px;
+    height:35px;
+    line-height: 35px;
+    display:table-cell;
+}
+button{
+    background-color: rgb(238, 145, 5);
+    width:75px;
+    height:30px;
+    vertical-align: middle;
+    border-radius: 10px;
+}

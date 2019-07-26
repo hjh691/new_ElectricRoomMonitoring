@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="css/flooding_smoking.css"/><!---->
+        <title>烟感模块状态参数</title>
+        
+    </head>
+    <body>
+        <div class="main" align="center" id="main" >
+            <h3 style="text-align: center">烟雾感应监测状态</h3>
+                <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
+                    <p class="lable">设备编号</p>
+                    <p class="lable">设备名称</p>
+                    <p class="lable" style="width:100px;">当前状态</p>
+                    <p class="lable" style="width:100px;">运行状态</p>
+                    <p class="lable" style="width:100px;">设置复位</p>
+                    <p class="lable" style="width:100px;">关联信息</p>
+                </div><!---->
+                <div class="bg" >
+                    <p class="lable">smokeing-01</p>
+                    <p class="lable">1#感应区</p>
+                    <p class="normal" id="sf_1">正常</p>
+                    <p class="set"><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="changestated(this,'sf_1')"/></p>
+                    <p class="set"><button onclick="reset('sf_1')">设置/复位</button></p>
+                    <p class="set"><button>更多▼</button></p>
+                </div>
+                <div class="bg">
+                    <p class="lable">smoking0102</p>
+                    <p class="lable">1#感应区</p>
+                    <p class="unnormal" id="sf_2">异常</p>
+                    <p class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="changestated(this,'sf_2')"/></p>
+                    <p class="set"><button onclick="reset('sf_2')">设置/复位</button></p>
+                    <p class="set"><button>更多∨</button></p>
+                </div>
+        </div>
+        <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+        <script type="text/javascript" src="js/smokedetector.js"></script>
+    </body>
+</html>

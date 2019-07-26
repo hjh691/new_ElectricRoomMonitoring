@@ -255,9 +255,30 @@
 	}
 	.textbox{
 		position: absolute;
-		border:solid #555 1px;
+		border:solid rgb(80, 82, 82) 1px;
 		border-radius: 5px;
 		color:white;
+		padding:3px;
+	}
+	.ups-edit{
+		background-color: rgb(69, 85, 69);
+		color:white;
+		margin-left: 30px;
+		width:50px;
+		height:25px;
+		line-height: 25px;
+		border-radius: 5px;
+		text-align: center;
+	}
+	.ups-stated{
+		background-color: rgb(40, 128, 40);
+		color:white;
+		margin-left: 30px;
+		width:50px;
+		height:25px;
+		line-height: 25px;
+		border-radius: 5px;
+		text-align: center;
 	}
 	
 	
