@@ -3,12 +3,12 @@
     <head>
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="css/flooding_smoking.css"/><!---->
-        <title>烟感模块状态参数</title>
+        <title>红外侦测</title>
         
     </head>
-    <body>
+    <body >
         <div class="main" align="center" id="main" >
-            <h3 style="text-align: center">烟雾感应监测状态</h3>
+            <h3 style="text-align: center">红外侦测</h3>
             <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
                 <p class="lable">设备编号</p>
                 <p class="lable" >设备名称</p>
@@ -18,20 +18,20 @@
                 <p class="lable" style="width:100px;">关联信息</p>
             </div><!---->
             <div class="bg" >
-                <p class="lable">smokeing-01</p>
-                <p class="lable" id="name_smoking-01">1#感应区</p>
-                <p class="normal" id="sf_smoking-01">正常</p>
-                <p class="set"><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="changestated(this,'smoking-01')"/></p>
-                <p class="set"><button onclick="reset('smoking-01')">设置/复位</button></p>
-                <p class="set"><button onclick="other(this,'smoking-01')">更多▼</button></p>
+                <p class="lable">infrared1</p>
+                <p class="lable" id="name_infrared1">1#侦测区</p>
+                <p class="normal" id="sf_infrared1">正常</p>
+                <p class="set"><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="changestated(this,'infrared1')"/></p>
+                <p class="set"><button onclick="reset('infrared1')">设置/复位</button></p>
+                <p class="set"><button onclick="other(this,'infrared1')">更多▼</button></p>
             </div>
             <div class="bg">
-                <p class="lable">smoking0102</p>
-                <p class="lable" id="name_smoking0102">1#感应区</p>
-                <p class="unnormal" id="sf_smoking0102">告警</p>
-                <p class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="changestated(this,'smoking0102')"/></p>
-                <p class="set"><button onclick="reset('smoking0102')">设置/复位</button></p>
-                <p class="set"><button onclick="other(this,'smoking0102')">更多∨</button></p>
+                <p class="lable">infrared2</p>
+                <p class="lable" id="name_infrared2">2#侦测区</p>
+                <p class="unnormal" id="sf_infrared2">告警</p>
+                <p class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="changestated(this,'infrared2')"/></p>
+                <p class="set"><button onclick="reset('infrared2')">设置/复位</button></p>
+                <p class="set"><button onclick="other(this,'infrared2')">更多∨</button></p>
             </div>
         </div>
         <div class="fudongdiv" id="fudong" onmousedown="hideself(this) ">

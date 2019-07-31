@@ -255,6 +255,30 @@ function initrealdata(){
 		case "机房监控":
 			document.getElementById("iframe_main").src="roommonitor.html";
 			break;
+		case "门禁":
+			document.getElementById("iframe_main").src="guard.html";
+			break;
+		case "水浸":
+			document.getElementById("iframe_main").src="flooding.html";
+			break;
+		case "灯光":
+			document.getElementById("iframe_main").src="light.html";
+			break;
+		case "环境":
+			document.getElementById("iframe_main").src="humiture.html";
+			break;
+		case "空调":
+			document.getElementById("iframe_main").src="airconditioning.html";
+			break;
+		case "动力":
+			document.getElementById("iframe_main").src="ups.html";
+			break;
+		case "烟感":
+			document.getElementById("iframe_main").src="SmokeDetector.html";
+			break;
+		case "红外":
+			document.getElementById("iframe_main").src="infrared.html";
+			break;
 	}
 }
 

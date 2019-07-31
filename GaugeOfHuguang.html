@@ -128,7 +128,10 @@
                     if(tabs[i]===this){
                         tabs[i].className="selected";
                         contents[i].className="tab-div parent show";
-                        if(i===0){drawmeters("column0",datas);}
+                        if(i===0){
+                            //drawmeters("column0",datas);
+                            refreshwindow();
+                        }
                     }else{
                         tabs[i].className="";
                         contents[i].className="tab-div parent";

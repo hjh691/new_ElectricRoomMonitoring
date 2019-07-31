@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="css/flooding_smoking.css"/><!---->
+        <title>灯光控制</title>
+        <style>
+            #zxd_x{width:20px; height:20px;text-align:center;font-size:16px;color:red;position:absolute;right:0px; top:0px;cursor:pointer;}
+            
+        </style>
+    </head>
+    <body>
+        <div class="main" align="center" id="main" >
+            <h3 style="text-align: center">灯光状态</h3>
+            <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
+                <p class="lable" >设备编号</p>
+                <p class="lable" >安装位置</p>
+                <p class="lable" style="width:100px;">当前状态</p>
+                <p class="lable" style="width:200px;">详细信息</p>
+                <p class="lable" style="width:100px;">开关控制</p>
+                <p class="lable" style="width:100px;">关联信息</p>
+            </div><!---->
+            <div class="bg" >
+                <p class="lable" id="door1">light1</p>
+                <p class="lable" id="name_door1">主控室</p>
+                <p class="normal" id="sf_door1">点亮</p>
+                <p class="lable" id="info_door1">正常照明</p>
+                <p class="set"><img src="res/d9.png" style="height:30px;vertical-align: middle;" onclick="changestated(this,'door1')"/></p>
+                <p class="set"><button onclick="other(this,'door1')">更多▼</button></p>
+            </div>
+            <div class="bg">
+                <p class="lable" id="door2">light2</p>
+                <p class="lable" id="name_door2">设备机房</p>
+                <p class="unenabled" id="sf_door2">熄灭</p>
+                <p class="lable" id="info_door2">正常熄灭</p>
+                <p class="set" ><img src="res/d3.png" style="height:30px;vertical-align: middle;" onclick="changestated(this,'door2')"/></p>
+                <p class="set"><button onclick="other(this,'door2')">更多∨</button></p>
+            </div>
+        </div>
+        <div class="fudongdiv" id="fudong" onmousedown="hideself(this) ">
+            <div align="center">
+                <p id="bind_name">主控室</p>
+                <li id="bind_addr">安装地址：主控室</li>
+                <li id="bind_view">绑定信息：2#视频</li></div>
+        </div>
+        <!--<div style="z-index:999;display: block; position: fixed; left: 500px; top: 200px;">
+            <div id="zxd_x">
+              <a title="点击关闭"><b></b></a></div>
+              <div class="content"><a href=""><img src="res/ac.jpg"></a></div>
+            </div>-->
+        <script type="text/javascript" src="js/light.js"></script>
+    </body>
+</html>
