@@ -9,10 +9,10 @@
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<title>机房监控</title>
 	<script  type="text/javascript" src="js/config.js"></script>
-	
+	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js" ></script>
 	<script type="text/javascript" src="js/bootstrap-treeview.min.js" ></script>
-	<script type="text/javascript" src="js/tree.js" ></script>
+	
 	<script  type="text/javascript" src="js/function.js"></script>
 </head>
 <body ><!--"showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>-->
@@ -167,19 +167,23 @@
 	//index页面初始化
 	function initIndex() {
 		showusername();
-		document.getElementById('app_name').innerHTML = '<i>' + wctm_base_config.app_name + "</i>";
-		document.getElementById('company_log').src = wctm_base_config.log_src;
-		document.getElementById('company_info').href = wctm_base_config.company_url;
+		document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
+		document.getElementById('company_log').src = jfjk_base_config.log_src;
+		document.getElementById('company_info').href = jfjk_base_config.company_url;
 		//sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
 		//sessionStorage.jssj = getCurrentDate(1) + " 23:59:59"; //"2012-09-05T08:00:00";//
 		//sessionStorage.pageindex = 1;
 		//getgraphics();
 		//document.getElementById("iframe_main").src = 'page1.html';
-		inittreeview();
+		if(sessionStorage.islogin){	
+			getData();
+		}else{
+			inittreeview();
+		}
 		document.getElementById("iframe_main").src="totalview.html"
 		
 	}
-	function inittreeview(){
+	function inittreeview(anodes){
 		/*var tree = [
 		{
 			text: "王京站",
@@ -261,12 +265,19 @@
 		
 		//obj.nodes=(JSON.parse( node));
 		//tree[1]=obj;
+		var mnodes=[];
+		if(anodes==null){
+			mnodes=buildnode();
+		}else{
+			mnodes=anodes;
+		}
 		$('#tree').treeview({
-			data: getData(),         // 数据源
+			
+			data: mnodes,    // 数据源
 			showCheckbox: false,   //是否显示复选框
 			highlightSelected: true,    //是否高亮选中
-			//nodeIcon:'glyphicon glyphicon-user',    //节点上的图标
-			nodeIcon: 'glyphicon glyphicon-globe',
+			nodeIcon:'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
+			//nodeIcon: 'glyphicon glyphicon-lock',
 			emptyIcon: '',    //没有子节点的节点图标
 			enableLinks : true,//必须在节点属性给出href属性
 			multiSelect: false,    //多选
@@ -305,6 +316,11 @@
 			onNodeSelected: function (event, data) {
 				console.log("nodeId = "+data.nodeId);
 				console.log("id = "+data.id);
+				console.log("name = "+data.text);
+				console.log("Time = "+data.Time);
+				console.log("Config = "+data.Config);
+				console.log("Catalog = "+data.Catalog);
+				console.log("levels = "+data.level);
 				loaddata(data);
 				
 			}
@@ -354,27 +370,139 @@
 			*/
 		});
 		$("#tree").treeview('collapseAll');//关闭展开
-		var id=getData()[0].id;
-		var firstNode = $("#tree").treeview('search',[id+"",{ ignoreCase: false, exactMatch: false },'id']);//得到第一个节点
+		var id=mnodes[0].text;
+		var firstNode = $("#tree").treeview('search',[id+"",{ ignoreCase: false, exactMatch: false }]);//得到第一个节点
 		$("#tree").treeview('expandNode',[firstNode, { levels: 2, silent: true } ]);//展开第一个节点
 		//$('#tree').treeview('expandNode', [ tree[0].id, { levels: 2, silent: true } ]);
-		$('#tree').treeview('selectNode', [ id, { silent: true } ]);
+		$('#tree').treeview('selectNode', [ firstNode, { silent: true } ]);
 		//$("#tree").treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
 	}
 	function getData(){
+		var url = jfjk_base_config.baseurl + "/GetNodes";
+		url = encodeURI(url);
+		if (sessionStorage.islogin == "true") {
+			$.ajax({
+				beforeSend: function(request) {
+					request.setRequestHeader("_token", sessionStorage.token);
+				},
+				url: url,
+				type: 'GET',
+				dataType: 'json',
+				timeout: 10000,
+				error: function(jqXHR, textStatus, errorThrown) {
+					inittreeview();
+					layer.alert('获取系统系统列表数据失败');
+					errortime++;
+				},
+				success: function(data, status) {
+					var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+					if (status == "success") {
+						errortime = 0;
+						sessionStorage.islogin = true;
+						if (data.Error == null) {
+							var obj_nodes=[];
+							var result=data.Result;
+							if(!jQuery.isEmptyObject(result.Nodes)){
+								obj_nodes=data.Result.Nodes;
+							}
+							var nodes=buildnode(obj_nodes,0);
+							inittreeview(nodes);
+						} else {
+							layer.alert(data.Error);
+							sessionStorage.islogin = ture;
+						}
+					}
+				}
+			});
+		} else {
+			Alert("用户未登录，您无权完成此次操作", 2000);
+			inittreeview(null,0);
+		}
+	}
+	function buildnode(data,level){
 		var tree = [];
-		for(i=0;i<6;i++){
-			var nodes=new Object();
-			nodes.text="变电站"+i;
-			nodes.id=i;
-			nodes.nodes=[];
-			var node='[{"text":"测温","id":'+((i+1)*10)+',"icon":"glyphicon glyphicon-user"},{"text":"局部放电","id":'+((i+1)*10+1)+'},{"text":"弧光保护","id":'+((i+1)*10+2)+'},{"text":"视频监控","id":'+((i+1)*10+3)+'},{"text":"机房监控","id":'+((i+1)*10+4)+',"nodes":[{"text":"门禁","id":543},{"text":"水浸","id":345}]}]';
-			nodes.nodes=(JSON.parse( node));
-			//var lnode=new Object();
-			tree.push(nodes);
+		if(data==null|| data==undefined){
+			for(i=0;i<3;i++){
+				var nodes=new Object();
+				nodes.text="变电站"+(2-i);
+				nodes.id=i;
+				nodes.nodes=[];
+				nodes.icon="url(res/lock.png)";
+				var node='[{"text":"测温","id":'+((i+1)*10)+',"icon":"glyphicon glyphicon-user"},{"text":"局部放电","id":'+((i+1)*10+1)+'},{"text":"弧光保护","id":'+((i+1)*10+2)+'},{"text":"视频监控","id":'+((i+1)*10+3)+'},{"text":"机房监控","id":'+((i+1)*10+4)+',"nodes":[{"text":"门禁","id":543},{"text":"水浸","id":345}]}]';
+				nodes.nodes=(JSON.parse( node));
+				//var lnode=new Object();
+				tree.push(nodes);
+			}
+		}else{
+			for(var j=0;j<data.length;j++){
+				var nodes=new Object();
+				nodes.text=data[j].Value.Name;
+				nodes.id=data[j].Value.Id;
+				nodes.Catalog=data[j].Value.Catalog;
+				nodes.Config=data[j].Value.Config;
+				nodes.Time=data[j].Value.Time;
+				nodes.level=level;
+				var icon='glyphicon glyphicon-user';
+				switch(data[j].Value.Name){
+					case "石家庄":
+					case "视频监控":
+					icon="glyphicon glyphicon-facetime-video";//
+					break;
+					case "保定":
+					case "测温":
+						icon="glyphicon glyphicon-adjust";//glyphicon glyphicon-tree-conifer glyphicon glyphicon-bullhorn
+						break;
+					case "烟感":
+					case "清苑":
+						icon="glyphicon glyphicon-fire";//glyphicon glyphicon-leaf  glyphicon glyphicon-tint  glyphicon glyphicon-flash
+						break;
+					case "局部放电":
+					case "安国":
+						icon="glyphicon glyphicon-flash";//
+						break;
+					case "弧光保护":
+					case "唐县":
+						icon="glyphicon glyphicon-bullhorn";//
+						break;
+					case "机房监控":
+					
+						icon='glyphicon glyphicon-inbox';//
+						break;
+					case "门禁":
+					
+						icon='glyphicon glyphicon-lock';//
+						break;
+					case "灯光":
+						icon='glyphicon glyphicon-cog';
+						break;
+					case "红外":
+						icon='glyphicon glyphicon-signal';
+						break;
+					case "动力":
+						icon='glyphicon glyphicon-retweet';
+						break;
+					case "环境":
+					case "行唐":
+						icon="glyphicon glyphicon-leaf";//
+						break;
+					case "水浸":
+					case "郑州":
+						icon="glyphicon glyphicon-tint";//
+				}
+				if(level==0){
+					icon="glyphicon glyphicon-home"
+				}
+				nodes.icon=icon;
+				if(data[j].Children.lenght!=0){
+					nodes.nodes=[];
+					nodes.nodes=buildnode(data[j].Children,level+1)
+				}
+				tree.push(nodes);
+			}
 		}
 		return tree;
 	}
+	
 	function showdownload(){
 		document.getElementById("iframe_main").src="app_download.html"
 	}
@@ -385,7 +513,7 @@
 		document.getElementById("iframe_main").src="ContactUs.html"
 	}
 	function loaddata(mdata){
-		if(mdata.text==="测温"){
+		if((mdata.text==="保定")||(mdata.text=="测温")){
 			document.getElementById("realstate").style.display="inline";
 		}else{
 			document.getElementById("realstate").style.display="none";

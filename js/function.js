@@ -64,12 +64,12 @@ function rnd(n, m) {
 }
 //初始化登录页面：
 function initlogin() {
-	document.getElementById("login_pic").src = wctm_base_config.login_src;
-	document.getElementById("company_name").innerHTML = wctm_base_config.app_name;
+	document.getElementById("login_pic").src = jfjk_base_config.login_src;
+	document.getElementById("company_name").innerHTML = jfjk_base_config.app_name;
 }
 //判断用户名和密码输入是否符合语法
 function LoginOrder(name, ps) {
-	var url = wctm_base_config.baseurl + "Login?name=" + name + "&pass=" + ps;
+	var url = jfjk_base_config.baseurl + "Login?name=" + name + "&pass=" + ps;
 	url = encodeURI(url);
 	$.ajax({
 		url: url,
@@ -79,7 +79,7 @@ function LoginOrder(name, ps) {
 			sessionStorage.islogin = false;
 		},
 		dataType: 'json',
-		timeout: 1000,
+		timeout: 10000,
 		error: function(data, status) {
 			if (status == "timeout") {
 				layer.alert("登录超时")
@@ -141,7 +141,7 @@ function quxiao() {
 }
 //退出登录 used by electricroommonitor
 function logout() {
-	var url = wctm_base_config.baseurl + "Logout";
+	var url = jfjk_base_config.baseurl + "Logout";
 	url = encodeURI(url);
 	if (sessionStorage.islogin == "true") {
 		$.ajax({
@@ -151,7 +151,7 @@ function logout() {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
 				//layer.alert('退出登录操作失败');
 				sessionStorage.islogin = false;
@@ -182,10 +182,11 @@ function logout() {
 		sessionStorage.islogin = false;
 		window.location.href = "index.html";
 	}
+	
 }
 //获取用户详细信息 used by electricroommonitor
 function GetUserProfile() {
-	var url = wctm_base_config.baseurl + "_manager/GetUserProfile";
+	var url = jfjk_base_config.baseurl + "/GetProfile";
 	url = encodeURI(url);
 	if (sessionStorage.islogin == "true") {
 		$.ajax({
@@ -195,7 +196,7 @@ function GetUserProfile() {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
 
 				layer.alert('获取用户详细信息操作失败');
@@ -212,11 +213,13 @@ function GetUserProfile() {
 						//islogin=false;
 						//window.location.href="index.html";
 						//document.getElementById("iframe_main").src="userprofile.html";
-						document.getElementById("up-yhbh").value = data.Result.UserID;
-						document.getElementById("up-yhmc").value = data.Result.UserName;
+						document.getElementById("up-yhbh").value = data.Result.Id;
+						document.getElementById("up-yhmc").value = data.Result.Name;
 						document.getElementById("up-yhmm").value = ""; //data.Result.UserPass;
-						document.getElementById("up-yhqx").value = data.Result.UserLimit;
-						document.getElementById("up-yhsm").value = data.Result.Description;
+						document.getElementById("up-yhqx").value = data.Result.Roles;//UserLimit;
+						document.getElementById("up-tel").value = data.Result.Tele;//UserLimit;
+						document.getElementById("up-email").value = data.Result.Email;//UserLimit;
+						document.getElementById("up-yhsm").value = data.Result.Display;//Description;
 
 					} else {
 						layer.alert(data.Error);
@@ -240,6 +243,7 @@ function initpage1() {
 function initrealdata(){
 	var data=$("#tree").treeview("getSelected");
 	switch (data[0].text){
+		case "保定":
 		case "测温":
 			document.getElementById("iframe_main").src="realdata.html";
 			break;
@@ -284,7 +288,7 @@ function initrealdata(){
 
 //网络连接心跳包
 function sendbeat() {
-	var url = wctm_base_config.baseurl; //+"GetGraphic?graphicId="+stationID;
+	var url = jfjk_base_config.baseurl; //+"GetGraphic?graphicId="+stationID;
 	url = encodeURI(url);
 	if ((sessionStorage.islogin == "true") && (errortime < 2)) {
 		/*$.ajax({
@@ -294,7 +298,7 @@ function sendbeat() {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function(){
 				sessionStorage.islogin=false;
 				//Alert('获取指定编号的图形操作失败');
@@ -324,9 +328,9 @@ function sendbeat() {
 //index页面初始化
 function initIndex() {
 	showusername();
-	document.getElementById('app_name').innerHTML = '<i>' + wctm_base_config.app_name + "</i>";
-	document.getElementById('company_log').src = wctm_base_config.log_src;
-	document.getElementById('company_info').href = wctm_base_config.company_url;
+	document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
+	document.getElementById('company_log').src = jfjk_base_config.log_src;
+	document.getElementById('company_info').href = jfjk_base_config.company_url;
 	sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
 	sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//
 	sessionStorage.pageindex = 1;
@@ -350,7 +354,7 @@ function getrealdatabystation(id) {
 	var count = 0,
 	err_count = 0;
 	if (sessionStorage.stationID != undefined) {
-		var url = wctm_base_config.baseurl + "GetRealsByStation?stationId=" + sessionStorage.stationID;
+		var url = jfjk_base_config.baseurl + "GetRealsByStation?stationId=" + sessionStorage.stationID;
 		url = encodeURI(url);
 		if (sessionStorage.islogin == "true") {
 			$.ajax({
@@ -360,7 +364,7 @@ function getrealdatabystation(id) {
 				url: url,
 				type: 'GET',
 				dataType: 'json',
-				timeout: 1000,
+				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
 					errortime++;
 					if (errorThrown == "Unauthorized") {
@@ -542,7 +546,7 @@ function getrealsbydataid() {
 	if (sessionStorage.dataId == undefined) {
 		sessionStorage.dataId = 0;
 	}
-	var url = wctm_base_config.baseurl + "GetRealsByDataId?dataId=" + sessionStorage.dataId;
+	var url = jfjk_base_config.baseurl + "GetRealsByDataId?dataId=" + sessionStorage.dataId;
 	url = encodeURI(url);
 	if ((sessionStorage.islogin == "true") && (errortime < 2)) {
 		$.ajax({
@@ -935,7 +939,7 @@ function initlist() {
 function GetStations() {
 	var pt = 0;
 	$("#graphicslist tr").empty();
-	var url = wctm_base_config.baseurl + "GetStations";
+	var url = jfjk_base_config.baseurl + "GetStations";
 	url = encodeURI(url);
 	if (sessionStorage.islogin == "true") {
 		$.ajax({
@@ -945,7 +949,7 @@ function GetStations() {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
 				errortime++;
 				if (errorThrown == "Unauthorized") {
@@ -1042,7 +1046,7 @@ function infook() {
 		layer.alert("请输入新密码");
 		return;
 	}
-	var url = wctm_base_config.baseurl + "ChangePass?pass=" + yhmm + "&newpass=" + xmm;
+	var url = jfjk_base_config.baseurl + "ChangePass?pass=" + yhmm + "&newpass=" + xmm;
 	url = encodeURI(url);
 	$.ajax({
 		beforeSend: function(request) {
@@ -1051,7 +1055,7 @@ function infook() {
 		url: url,
 		type: 'GET',
 		dataType: 'json',
-		timeout: 1000,
+		timeout: 10000,
 		error: function(XMLHttpRequest, textStatus, errorThrown) {
 			layer.alert('密码修改操作失败');
 		},
@@ -1175,7 +1179,7 @@ function initsmslog() {
 */
 function GetSensorsByStation() {
 	if (sessionStorage.islogin == "true") {
-		var url = wctm_base_config.baseurl + "GetSensorsByStation?stationId=0" + sessionStorage.stationID;
+		var url = jfjk_base_config.baseurl + "GetSensorsByStation?stationId=0" + sessionStorage.stationID;
 		url = encodeURI(url);
 		switch (sessionStorage.pageindex) {
 		case "3":
@@ -1210,7 +1214,7 @@ function GetSensorsByStation() {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
 				errortime++;
 				if (errorThrown == "Unauthorized") {
@@ -1410,7 +1414,7 @@ function GetWarnLog(mkssj, mjssj) {
 	var count = 0;
 	if (sessionStorage.islogin == "true") {
 		ajaxLoadingShow();
-		var url = wctm_base_config.baseurl + "GetWarnLogsByStation?stationId=" + sessionStorage.stationID + "&from=" + mkssj + "&to=" + mjssj;
+		var url = jfjk_base_config.baseurl + "GetWarnLogsByStation?stationId=" + sessionStorage.stationID + "&from=" + mkssj + "&to=" + mjssj;
 		url = encodeURI(url);
 		$.ajax({
 			beforeSend: function(request) {
@@ -1419,7 +1423,7 @@ function GetWarnLog(mkssj, mjssj) {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
 				errortime++;
 				ajaxLoadingHidden();
@@ -1498,9 +1502,9 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 		ajaxLoadingShow();
 		//$('#indicatorContainer').radialIndicator();
 		if ((sessionStorage.SensorId == undefined) || (sessionStorage.SensorId == null)) {
-			var url = wctm_base_config.baseurl + "GetWarnLogsByStation?stationId=" + sessionStorage.stationID + "&from=" + mkssj + "&to=" + mjssj;
+			var url = jfjk_base_config.baseurl + "GetWarnLogsByStation?stationId=" + sessionStorage.stationID + "&from=" + mkssj + "&to=" + mjssj;
 		} else {
-			var url = wctm_base_config.baseurl + "GetWarnLogsBySensor?sensorId=" + sessionStorage.SensorId + "&from=" + mkssj + "&to=" + mjssj;
+			var url = jfjk_base_config.baseurl + "GetWarnLogsBySensor?sensorId=" + sessionStorage.SensorId + "&from=" + mkssj + "&to=" + mjssj;
 		}
 		url = encodeURI(url);
 		$.ajax({
@@ -1510,7 +1514,7 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
 				errortime++;
 				ajaxLoadingHidden();
@@ -1601,7 +1605,7 @@ function gethistorydata(kssj, jssj) {
 	var count = 0;
 	if (sessionStorage.islogin == "true") {
 		if (sessionStorage.SensorId != undefined) {
-			var url = wctm_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sessionStorage.SensorId + "&from=" + kssj + "&to=" + jssj;
+			var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sessionStorage.SensorId + "&from=" + kssj + "&to=" + jssj;
 			url = encodeURI(url);
 			$.ajax({
 				beforeSend: function(request) {
@@ -1704,7 +1708,7 @@ function querysmslog() {
 function GetSmsLog(mkssj, mjssj) {
 	var count = 0;
 	if (sessionStorage.islogin == "true") {
-		var url = wctm_base_config.baseurl + "GetSmsLogsByStation?stationId=" + sessionStorage.stationID + "&from=" + mkssj + "&to=" + mjssj;
+		var url = jfjk_base_config.baseurl + "GetSmsLogsByStation?stationId=" + sessionStorage.stationID + "&from=" + mkssj + "&to=" + mjssj;
 		url = encodeURI(url);
 		$.ajax({
 			beforeSend: function(request) {
@@ -1713,7 +1717,7 @@ function GetSmsLog(mkssj, mjssj) {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
 				errortime++;
 				if (errorThrown == "Unauthorized") {
@@ -1778,8 +1782,8 @@ function GetSmsLog(mkssj, mjssj) {
 //获取图表数据；
 function getchartvalue(msensorid, kssj, jssj) {
 	if (sessionStorage.SensorId != undefined) {
-		//var url=wctm_base_config.baseurl+"GetHistoriesBySensor?sensorId="+msensorid+"&from="+kssj+"&to="+jssj;
-		var url = wctm_base_config.baseurl + "GetHistoriesBySensor?sensorId=186&from=2012-09-03&to=2012-09-05";
+		//var url=jfjk_base_config.baseurl+"GetHistoriesBySensor?sensorId="+msensorid+"&from="+kssj+"&to="+jssj;
+		var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=186&from=2012-09-03&to=2012-09-05";
 		url = encodeURI(url);
 		$.ajax({
 			beforeSend: function(request) {
@@ -1788,7 +1792,7 @@ function getchartvalue(msensorid, kssj, jssj) {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function() {
 				errortime++;
 				layer.alert('趋势图数据操作失败');
@@ -1867,8 +1871,8 @@ function drawchart() {
 	}
 
 	function getfirst() {
-		var url = wctm_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + firstid + "&from=" + kssj + "&to=" + jssj;
-		//var url=wctm_base_config.baseurl+"GetHistoriesBySensor?sensorId=186&from=2012-09-04&to=2012-09-05";
+		var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + firstid + "&from=" + kssj + "&to=" + jssj;
+		//var url=jfjk_base_config.baseurl+"GetHistoriesBySensor?sensorId=186&from=2012-09-04&to=2012-09-05";
 		url = encodeURI(url);
 		$.ajax({
 			beforeSend: function(request) {
@@ -1877,7 +1881,7 @@ function drawchart() {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function() {
 				//layer.alert('获取'+sessionStorage.firstname+"数据操作失败");
 				iserror = true;
@@ -1920,8 +1924,8 @@ function drawchart() {
 			getthird();
 			return;
 		}
-		var url = wctm_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sencondid + "&from=" + kssj + "&to=" + jssj;
-		//var url=wctm_base_config.baseurl+"GetHistoriesBySensor?sensorId=186&from=2012-09-04&to=2012-09-05";
+		var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sencondid + "&from=" + kssj + "&to=" + jssj;
+		//var url=jfjk_base_config.baseurl+"GetHistoriesBySensor?sensorId=186&from=2012-09-04&to=2012-09-05";
 		url = encodeURI(url);
 		$.ajax({
 			beforeSend: function(request) {
@@ -1930,7 +1934,7 @@ function drawchart() {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function() {
 				//layer.alert('获取'+sencondid+"数据操作失败");
 				iserror = true;
@@ -1973,8 +1977,8 @@ function drawchart() {
 			drawchart();
 			return;
 		}
-		var url = wctm_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + thirdid + "&from=" + kssj + "&to=" + jssj;
-		//var url=wctm_base_config.baseurl+"GetHistoriesBySensor?sensorId=186&from=2012-09-04&to=2012-09-05";
+		var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + thirdid + "&from=" + kssj + "&to=" + jssj;
+		//var url=jfjk_base_config.baseurl+"GetHistoriesBySensor?sensorId=186&from=2012-09-04&to=2012-09-05";
 		url = encodeURI(url);
 		$.ajax({
 			beforeSend: function(request) {
@@ -1983,7 +1987,7 @@ function drawchart() {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function() {
 				//layer.alert('获取'+thirdid+"数据操作失败");
 				iserror = true;
@@ -2385,7 +2389,7 @@ function initdrawing() {
 function getgraphics() {
 	var pt = 0;
 	$("#graphicslist tr").empty();
-	var url = wctm_base_config.baseurl + "GetGraphics";
+	var url = jfjk_base_config.baseurl + "GetGraphics";
 	url = encodeURI(url);
 	if (sessionStorage.islogin == "true") {
 		$.ajax({
@@ -2395,7 +2399,7 @@ function getgraphics() {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 1000,
+			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
 				errortime++;
 				if (errorThrown == "Unauthorized") {
@@ -2474,7 +2478,7 @@ function getgraphics() {
 function GetGraphic() {
 	sessionStorage.pageindex = 1;
 	if (sessionStorage.graphicID != undefined) {
-		var url = wctm_base_config.baseurl + "GetGraphic?graphicId=" + sessionStorage.graphicID;
+		var url = jfjk_base_config.baseurl + "GetGraphic?graphicId=" + sessionStorage.graphicID;
 		url = encodeURI(url);
 		if (sessionStorage.islogin == 'true') {
 			$.ajax({
@@ -2484,7 +2488,7 @@ function GetGraphic() {
 				url: url,
 				type: 'GET',
 				dataType: 'json',
-				timeout: 1000,
+				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
 					errortime++;
 					if (errorThrown == "Unauthorized") {
@@ -3404,7 +3408,7 @@ function spack() {
 
 	$.ajax({
 		type: "get",
-		url: wctm_base_config.speechurl + "GetVoice?text=" + encodeURIComponent(strText),
+		url: jfjk_base_config.speechurl + "GetVoice?text=" + encodeURIComponent(strText),
 		//"10:23:17 伏城变电站 1#545-4C 温度过高告警",////。
 		success: function(result) {
 			var audio = $("#spkAudio")[0];
@@ -3634,7 +3638,7 @@ function madecode(str) {
 }
 //初始化客户端下载页面，根据字符串生成二维码
 function initmakecode() {
-	var str = toUtf8(this.location.href.substr(0, this.location.href.lastIndexOf('/')) + wctm_base_config.app_path_name); // "/res/SubstationTemperature.apk");
+	var str = toUtf8(this.location.href.substr(0, this.location.href.lastIndexOf('/')) + jfjk_base_config.app_path_name); // "/res/SubstationTemperature.apk");
 	$("#a_code")[0].href = str;
 	madecode(str);
 }
@@ -3665,12 +3669,12 @@ function initrealwarning() {
 	moduletable('realwarning-tbody');
 }
 function initcontactus() {
-	document.getElementById('p1').innerHTML = wctm_base_config.part1;
-	document.getElementById('p2').innerHTML = wctm_base_config.part2;
-	document.getElementById('p3').innerHTML = wctm_base_config.part3;
-	document.getElementById('p4').innerHTML = wctm_base_config.part4;
-	document.getElementById('add').innerHTML = wctm_base_config.company_address;
-	document.getElementById('postcode').innerHTML = wctm_base_config.post_code;
-	document.getElementById('email1').innerHTML = wctm_base_config.email1;
-	document.getElementById('email2').innerHTML = wctm_base_config.email2;
+	document.getElementById('p1').innerHTML = jfjk_base_config.part1;
+	document.getElementById('p2').innerHTML = jfjk_base_config.part2;
+	document.getElementById('p3').innerHTML = jfjk_base_config.part3;
+	document.getElementById('p4').innerHTML = jfjk_base_config.part4;
+	document.getElementById('add').innerHTML = jfjk_base_config.company_address;
+	document.getElementById('postcode').innerHTML = jfjk_base_config.post_code;
+	document.getElementById('email1').innerHTML = jfjk_base_config.email1;
+	document.getElementById('email2').innerHTML = jfjk_base_config.email2;
 }
