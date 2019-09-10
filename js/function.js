@@ -1,7 +1,8 @@
 var token = "1234567";
 errortime = 0;
 sessionStorage.dataId = 0;
-
+sessionStorage.sensors=[];
+var maps=[];
 var str_speech = "告警";
 function KeyUp() {
 	if (event.keyCode == 13) {
@@ -243,14 +244,16 @@ function initpage1() {
 function initrealdata(){
 	var data=$("#tree").treeview("getSelected");
 	switch (data[0].text){
-		case "保定":
+		case "行唐":
 		case "测温":
 			document.getElementById("iframe_main").src="realdata.html";
 			break;
 		case "局部放电":
+		case "唐县":
 			document.getElementById("iframe_main").src="GaugeOfJufang.html";
 			break;
 		case "弧光保护":
+		case "石家庄":
 			document.getElementById("iframe_main").src="GaugeOfHuguang.html";
 			break;
 		case "视频监控":
@@ -3545,7 +3548,7 @@ function sortt(className) {
 		$(className).text('▼');
 		i++;
 	}
-	setTimeout("moduletable('realdata-tbody')", 200)
+	setTimeout("moduletable('arclist-tbody')", 200)
 }
 function moduletable(atableid) {
 	var tbody = document.getElementById(atableid);

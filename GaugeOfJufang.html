@@ -305,10 +305,16 @@
             }
             function initSeriesData(type,rad,center,data){
                 var serie=new Object();
+                var toffsetx=0,toffsety=0,tshow=true,titlelab="",dlab="",tcolor="yellow",ecolor="#333",labshow=false,axisshow=true,dshow=true;
+                var maxvalue=100,minvalue=0,split=10,subsplit=5,axiswidth=-15,split_len=0;
                 if(type===1){
-                    offsety="40%"
+                    offsety="70%";
+                    tcolor="yellow";
+                    ecolor="#333";
                 }else{
-                    offsety="-10%"
+                    offsety="0%";
+                    tcolor="green";
+                    ecolor="#333";
                 }
                 serie={
                         name: data.name,//'温度',
@@ -323,42 +329,43 @@
                         axisLine: { // 坐标轴线
                             lineStyle: { // 属性lineStyle控制线条样式
                                 color: [
-                                    [0.2, 'green'],
-                                    [1, '#1f1f1f']
+                                    [0.2, tcolor],
+                                    [1, ecolor]
                                 ],
-                                width: 10,
-                                shadowColor: 'yellow', //默认透明
-                                shadowOffsetX:2,
-                                shadowBlur: 10
+                                width: -10,
+                                //shadowColor: 'yellow', //默认透明
+                                //shadowOffsetX:2,
+                               // shadowBlur: 10
                             }
                         },
                         axisTick: { // 坐标轴小标记
                             show: true,
                             splitNumber:5,
+                            length:-5,
                         },
                         axisLabel: {
                             textStyle: { // 属性lineStyle控制线条样式
                                 fontWeight: 'bolder',
                                 color: '#fff',
-                                shadowColor: '#fff', //默认透明
-                                shadowBlur: 10
+                                //shadowColor: '#fff', //默认透明
+                               // shadowBlur: 10
                             },
                             
                         },
                         splitLine: { // 分隔线
-                            length: 12, // 属性length控制线长
+                            length: -30, // 属性length控制线长
                             lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
                                 width: 1,
                                 color: '#fff',
-                                shadowColor: '#fff', //默认透明
-                                shadowBlur: 10
+                                //shadowColor: '#fff', //默认透明
+                                //shadowBlur: 10
                             }
                         },
                         pointer: {
                             show:false,
                             width: 2,
-                            shadowColor: '#fff', //默认透明
-                            shadowBlur: 5
+                            //shadowColor: '#fff', //默认透明
+                            //shadowBlur: 5
                         },
                         title: {
                             show: true,
@@ -423,7 +430,7 @@
                         series.push(initSeriesData(0,rad_v,centerpoint,datas[(r*mcol+c)*2]))
                         var x=(1/mcol/2)+moffsetx*c;
                         var y=(1/row/2)+moffsety*r;
-                        var rad_v=70;
+                        var rad_v=60;
                         var centerpoint=[x.toFixed(2)*100+"%",y.toFixed(2)*100+"%"];
                         series.push(initSeriesData(1,rad_v,centerpoint,datas[(r*mcol+c)*2+1]))
                     }
@@ -436,7 +443,7 @@
                     series.push(initSeriesData(0,rad_v,centerpoint,datas[(r*mcol+m)*2]))
                     var x=(1/mcol/2)+moffsetx*m;
                     var y=(1/row/2)+moffsety*r;
-                    var rad_v=80;
+                    var rad_v=60;
                     var centerpoint=[x.toFixed(2)*100+"%",y.toFixed(2)*100+"%"];
                     series.push(initSeriesData(1,rad_v,centerpoint,datas[(r*mcol+m)*2+1]))
                 }

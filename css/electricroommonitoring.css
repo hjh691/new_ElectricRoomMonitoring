@@ -72,7 +72,7 @@
 		vertical-align:center;
 		height:30px;
 		line-height:30px;
-		left-side:20px;
+		left:20px;/* left-side*/
 	}
 	.pc-footer{
 		background-color:#eeb0b0;
@@ -120,16 +120,16 @@
         border:1px solid black;
         text-align:center;
         line-height:center;
-        /*width:100px;
-		height:30px;*/
+        width:100px;
+		/*height:30px;*/
 		font-size:20px;
     }
 	.table{
 		border:0px;
-		cellspacing:1px;
-		cellpadding:4px;
-		bgcolor:#fff;
-		align:center;
+		border-collapse:1px;/*/cellspacing cellpadding  我们可以用table的border-collapse:collapse;属性来代替cellspacing="0"，用th,td的padding:0;属性来代替cellpadding="0"。*/
+		border-collapse:4px;
+		background-color:#fff;
+		text-align:center;
 	}
 	.table-lable{
 		color:#0000b0;

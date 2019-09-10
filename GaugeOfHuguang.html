@@ -38,12 +38,14 @@
                         <table id="list-table" width="1000px" >
                             <thead>
                                 <tr >
-                                <th style="color:#0000ff" onclick="sortt('.sensorid')"><a href="javascript:">监测点编号 <span class="sensorid"></span></a></th>
-                                <th style="color:#0000ff" onclick="sortt('.sensorname')" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
+                                <th style="color:#0000ff" onclick="sortt('.sensorid')"><a href="javascript:">编号 <span class="sensorid"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.sensorname')" ><a href="javascript:">名称<span class="sensorname"></span> </a></th>
                                 <!--th>数据编号</thonclick="sortt('.tmpvalue')"-->
                                 <th style="color:#0000ff" onclick="sortt('.time')"><a href="javascript:">发生时间 <span class="time"></span></a></th>
-                                <th style="color:#0000ff" onclick="sortt('.tmpvalue')"><a href="javascript:">强度<span class="tmpvalue"></span></a></th>
-                                <th style="color:#0000ff" onclick="sortt('.frevalue')"><a href="javascript:">频次<span class="frevalue"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.tmpvalue')"><a href="javascript:">弧光强度<span class="tmpvalue"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.Iavalue')"><a href="javascript:">A相电流<span class="Iavalue"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.Ibvalue')"><a href="javascript:">B相电流<span class="Ibvalue"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.Icvalue')"><a href="javascript:">C相电流<span class="Icvalue"></span></a></th>
                                 <!--<th style="color:#0000ff">查看历史数据</th>
                                 <th style="color:#0000ff">查看告警信息</th> 
                                 <th style="width:18px;border:0px solid black;"></th>-->
@@ -105,14 +107,14 @@
                 for(var i=0;i<7;i++){
                     //var value=(Math.random() * 100).toFixed(2) - 0;
                     datas.push(JSON.parse('{"name":"监测位置'+i+'","value":0}'));
-                    var value=(Math.random() * 100).toFixed(2) - 0;
-                    datas.push(JSON.parse('{"name":"Ia'+i+'","value":'+value+'}'));
-                    var value1=(Math.random() * 100).toFixed(2) - 0;
-                    datas.push(JSON.parse('{"name":"B相'+i+'","value":'+value1+'}'));
-                    var value2=(Math.random() * 100).toFixed(2) - 0;
-                    datas.push(JSON.parse('{"name":"C相'+i+'","value":'+value2+'}'));
-                    var value3=(Math.random() * 100).toFixed(2) - 0;
-                    datas.push(JSON.parse('{"name":"弧光'+i+'","value":'+value3+'}'));
+                    var value=(Math.random() *300).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"Ia","value":'+value+'}'));
+                    var value1=(Math.random() *300).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"B相","value":'+value1+'}'));
+                    var value2=(Math.random() *300).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"C相","value":'+value2+'}'));
+                    var value3=(Math.random() * 10).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"弧光","value":'+value3+'}'));
                 }
                 //画仪表盘式图表（多个）
                 var mychart=document.getElementById("chart");
@@ -152,7 +154,7 @@
                 option = {
                     backgroundColor: '#000',
                     tooltip: {
-                        formatter: "{a} <br/>{c} {b}"
+                        formatter: "{a} <br/>{c}" //{b}
                     },
                     toolbox: {
                         show: true,
@@ -184,7 +186,7 @@
                     }else{
                         option.series[i].axisLine.lineStyle.color[0]=[value/100,option.series[i].axisLine.lineStyle.color[0][1]];
                     }*/
-                    option.series[i].axisLine.lineStyle.color[0]=[value/100,option.series[i].axisLine.lineStyle.color[0][1]];
+                    option.series[i].axisLine.lineStyle.color[0]=[value/option.series[i].max,option.series[i].axisLine.lineStyle.color[0][1]];
                 }
                     //option.series[5].axisLine.lineStyle.color[0][0]=value/220;
                 myChart.setOption(option);
@@ -192,10 +194,10 @@
             function initSeriesData(type,rad,center,data){
                 var serie=new Object();
                 var toffsetx=0,toffsety=0,tshow=true,titlelab="",dlab="",tcolor="yellow",ecolor="#333",labshow=false,axisshow=true,dshow=true;
-                var maxvalue=5,minvalue=0,split=5,subsplit=10,start=220,end=-40,axiswidth=-15,split_len=0;
+                var maxvalue=300,minvalue=0,split=5,subsplit=10,start=220,end=-40,axiswidth=-15,split_len=0;
                 switch(type){
                 case 0:
-                    offsety="25%"
+                    offsety="30%"
                     toffsetx="-80%";
                     toffsety="8%";
                     tshow=true;
@@ -206,10 +208,10 @@
                     ecolor="#660";
                     start=224;
                     end=138;
-                    split_len=-40;
+                    split_len=-45;
                     break;
                 case 1:
-                    offsety="45%"
+                    offsety="50%"
                     toffsetx="0%";
                     toffsety="-80%";
                     tshow=true;
@@ -223,7 +225,7 @@
                     split_len=-35;
                     break;
                 case 2:
-                    offsety="60%"
+                    offsety="65%"
                     toffsetx="80%";
                     toffsety="8%";
                     tshow=true;
@@ -234,7 +236,7 @@
                     ecolor="#720";
                     start=44;
                     end=-42;
-                    split_len=-40;
+                    split_len=-45;
                     break;
                 case 3:
                     offsety="-10%"
@@ -249,11 +251,12 @@
                     ecolor="black";
                     break;
                 case 4:
-                    offsety="180%"
-                    toffset=0;
-                    tshow=false;
+                    offsety="170%"
+                    toffsetx="0";
+                    toffsety="50%";
+                    tshow=true;
                     labshow=true;
-                    titlelab="光强度："
+                    titlelab="光强："
                     tcolor="#0095ff";
                     ecolor="#163777";
                     maxvalue=10;
@@ -324,8 +327,9 @@
                             }
                         },
                         pointer: {
-                            show:false,
-                            width: 2,
+                            show:false,//dshow,
+                            width: 3,
+                            length:'100%',
                             //shadowColor: '#fff', //默认透明
                             //shadowBlur: 5
                         },
@@ -440,14 +444,14 @@
                 for(var i=0;i<7;i++){
                     //var value=(Math.random() * 100).toFixed(2) - 0;
                     datas.push(JSON.parse('{"name":"监测位置'+i+'","value":0}'));
-                    var value=(Math.random() * 100).toFixed(2) - 0;
-                    datas.push(JSON.parse('{"name":"Ia'+i+'","value":'+value+'}'));
-                    var value1=(Math.random() * 100).toFixed(2) - 0;
-                    datas.push(JSON.parse('{"name":"Ib'+i+'","value":'+value1+'}'));
-                    var value2=(Math.random() * 100).toFixed(2) - 0;
-                    datas.push(JSON.parse('{"name":"Ic'+i+'","value":'+value2+'}'));
-                    var value3=(Math.random() * 100).toFixed(2) - 0;
-                    datas.push(JSON.parse('{"name":"弧光'+i+'","value":'+value3+'}'));
+                    var value=(Math.random() * 300).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"Ia","value":'+value+'}'));
+                    var value1=(Math.random() *300).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"Ib","value":'+value1+'}'));
+                    var value2=(Math.random() *300).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"Ic","value":'+value2+'}'));
+                    var value3=(Math.random() * 10).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"弧光","value":'+value3+'}'));
                 }   
                 //myChart.setOption(option);
                 drawmeters("column0",datas)    

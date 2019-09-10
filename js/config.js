@@ -3,7 +3,7 @@
 var jfjk_base_config={};
 // 1. 后台服务器地址：用引号括起来默认："http://localhost";"http://192.168.1.10";"http://www.bdjka.com"等。
 
- jfjk_base_config.baseurl="http://localhost:88/_api/";//"http://192.168.10.67:88/_api/";
+ jfjk_base_config.baseurl="http://192.168.10.250/_api/";//"http://192.168.10.67:88/_api/";http://localhost:88/_api/
  jfjk_base_config.speechurl="http://localhost:/_speeh/";//"http://192.168.10.67:88/_speech/";
 
 // 手机app存放目录和名称：要求在web的资源目录中，
@@ -38,6 +38,8 @@ var jfjk_base_config={};
 
  colors=["#080","#d58930", "#28cfed", "#236be2", "#bd59d5", "#2fcea7", "#ee4a4b", "#0c9cef"];
  mcol=4;
+ //保留小数位数
+ Number_of_decimal=2;
  /**
   * 
   * 
