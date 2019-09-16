@@ -6,10 +6,10 @@
 	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
 	<title>实时数据</title>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="js/bootstrap.js" ></script>
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/jquery.tablesort.min.js"></script>
-	<script type="text/javascript" src="js/bootstrap.js" ></script>
-	<script type="text/javascript" src="js/bootstrap-treeview.min.js" ></script>
+	<script type="text/javascript" src="dist/echarts-all.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	
@@ -61,7 +61,7 @@
 	}*/
   </style>
 </head>
-<body onload="getrealdatabynodeid(-1)" onunload="stopWorker()">
+<body onload="getrealdatabynodeid(-1)" onunload="stopWorker()" >
 	<div>
 		<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
 			<h3 id="head_real" align="center" >实时数据</h3>
@@ -70,8 +70,13 @@
 				<li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
 			</ul-->
 		</div>
-		<div >
-		<div  class="row" style="margin-bottom:10px;width=100%;overflow:auto;" align="center">
+		<div align="center" >
+			<div id="realdata_gaugechart" style="width: 1220px;height: 200px;background-color: rgb(207, 203, 203);">fgdg
+				
+			</div>
+			
+		</div>
+		<div  class="row" style="margin-bottom:10px;width:100%;overflow:auto;display: none" align="center">
 			<ul class="count_info" align="center" widht="1000px" >
 				<li style="width:50px"><b>站名：</b></li>
 				<li id="station_name"style="width:50px;margin-right:0px"> </li>
@@ -85,8 +90,8 @@
 				<li style="width:100px;margin-right:0px"><a href="#" style="align:right;margin-left:20px;" onclick="method5('realtable')">导出Excel</a></li>
 			</ul>
 		</div>
-		</div>
-		<div align="center" style="overflow:auto;">
+		
+		<div align="center" >
 		<table class="tabtop13" id="realtable" width="1200px" >
 			<thead>
 				<tr >
@@ -97,10 +102,10 @@
 				<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>
 				<th style="color:#0000ff">查看历史数据</th>
 				<th style="color:#0000ff">查看告警信息</th> 
-				<!--<th style="width:18px;border:0px solid black;"></th>-->
+				<th style="width:18px;border:0px solid black;"></th><!---->
 				</tr>
 			</thead>
-			<tbody id='realdata-tbody'>
+			<tbody id='realdata-tbody' style="width:1220px;height:500px; overflow:auto;" >
 			</tbody>
 		</table>
 	</div>
@@ -123,22 +128,31 @@
 			//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
 			var t1 = window.setInterval("getrealdatabystation(1);",30000);
 		}*/
+		var t_pt=0;
+		var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
+		var sname;
 		//表格排序使用插件
 		$(function() {
 			$('table').tablesort().data('tablesort');
-		})
+		});
 		function stopWorker() 
 		{ 
 			w1.terminate();
 			w1 = undefined;
+		};
+		var datas=[];
+		datas.splice(0,datas.length);//
+		for(var i=0;i<1;i++){
+			var value=(Math.random() * 100).toFixed(2) - 0;
+			datas.push(JSON.parse('{"name":"峰值'+i+'","value":'+value+'}'));
+			var value=(Math.random() * 100).toFixed(2) - 0;
+			datas.push(JSON.parse('{"name":"均值'+i+'","value":'+value+'}'));
 		}
-		
-		var obj_realdata=new JSONObject();
+		initseries(datas);
+		var obj_realdata=new Object();
 
 	function getrealdatabynodeid(nodeid){
 		sessionStorage.pageindex = 2;
-		var count = 0,
-		err_count = 0;
 		if (nodeid!=undefined&&nodeid!==null) {
 			var url = jfjk_base_config.baseurl + "GetRealsNew?dataId=" + nodeid;
 			url = encodeURI(url);
@@ -154,7 +168,10 @@
 					error: function(jqXHR, textStatus, errorThrown) {
 						errortime++;
 						if (errorThrown == "Unauthorized") {
+							value0=0;value1=0;sname="";
+							refreshData();
 							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败');
+							sessionStorage.islogin = "false"
 						} else {
 							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败');
 						}
@@ -172,79 +189,9 @@
 									}
 									return;
 								}
-								//if (data.Result.Datas.length>0) {
-									/**/
-									obj_realdata=data.Result.Datas;
-									decoderealdata();
-									/*var tbody = document.getElementById('realdata-tbody');
-									var trs = tbody.getElementsByTagName("tr");
-									//data.Result.Datas.Tmp.sort(data.Result.Datas.Tmp.SensorId);
-									for (var i = 0; i < data.Result.Datas.Tmp.length; i++) {
-										//更新原有的列表项的数据内容
-										for (var j = 0; j < trs.length; j++) {
-											if (trs[j].cells[0].childNodes[0].data == data.Result.Datas.Tmp[i].SensorId) {
-												trs[j].cells[2].innerHTML = data.Result.Datas.Tmp[i].Time;
-												trs[j].cells[3].innerHTML = data.Result.Datas.Tmp[i].Value;
-												break;
-											}
-										}
-										//新增数据列表项
-										if (j >= trs.length) {
-											var tr = document.createElement('tr');
-											var tdid = document.createElement('td');
-											var tdename = document.createElement('td');
-											//var tdsalary=document.createElement('td');
-											var tdage = document.createElement('td');
-											var tddiscr = document.createElement('td');
-											var tdhistory = document.createElement('td');
-											var tdwarnlog = document.createElement('td'); {
-												tdid.innerHTML = data.Result.Datas.Tmp[i].SensorId;
-											}
-											for (j = 0; j < data.Result.Sensors.Sensors.length; j++) {
-												if (data.Result.Datas.Tmp[i].SensorId == data.Result.Sensors.Sensors[j].Id) {
-													tdename.innerHTML = data.Result.Sensors.Sensors[j].Name;
-													break;
-												}
-											}
-											//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
-											tdage.innerHTML = data.Result.Datas.Tmp[i].Time; //jsonObject[i].color;
-											tddiscr.innerHTML=parseFloat(data.Result.Datas.Tmp[i].Value).toFixed(Number_of_decimal);
-											tdhistory.setAttribute('backgroundColor', '#ffffff');
-											tdhistory.setAttribute('onclick', 'tohistory(' + tdid.innerHTML + ')');
-											tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
-											tdwarnlog.setAttribute('onclick', 'towarnlog(' + tdid.innerHTML + ')');
-											tdwarnlog.setAttribute('backgroundColor', '#ffffff');
-											tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
-											tr.appendChild(tdid);
-											tr.appendChild(tdename);
-											tr.appendChild(tdage);
-											tr.appendChild(tddiscr);
-											tr.appendChild(tdhistory);
-											tr.appendChild(tdwarnlog);
-											//隔行显示不同的延时
-											if (i % 2 == 0) {
-												tr.cells[0].style.backgroundColor = "#16b9c9";
-												tr.cells[1].style.backgroundColor = "#16b9c9";
-												tr.cells[2].style.backgroundColor = "#16b9c9";
-												tr.cells[3].style.backgroundColor = "#16b9c9";
-											} else {
-												tr.cells[0].style.backgroundColor = "#FFFFFF";
-												tr.cells[1].style.backgroundColor = "#FFFFFF";
-												tr.cells[2].style.backgroundColor = "#FFFFFF";
-												tr.cells[3].style.backgroundColor = "#FFFFFF";
-											}
-											//tdage.setAttribute('class','time');
-											//tdid.setAttribute('class','sensorid');
-											//tddiscr.setAttribute('class','tmpvalue');
-											//tdename.setAttribute('class','sensorname');
-											var tbody = document.getElementById('realdata-tbody');
-											tbody.appendChild(tr);
-										}
-									}
-									count = data.Result.Datas.Tmp.length;*/
-									//parent.window.showfudongdiv();
-								//}
-								if (data.Result.Datas.hasOwnProperty("Err")) {
+								obj_realdata=data.Result.Datas;
+								decoderealdata();
+								/*if (data.Result.Datas.hasOwnProperty("Err")) {
 									for (var i = 0; i < data.Result.Datas.Err.length; i++) {
 										if (jQuery.isEmptyObject(data.Result.Datas.Err[i].Value)) {
 											for (var j = 0; j < trs.length; j++) {
@@ -265,10 +212,7 @@
 										}
 									}
 									//err_count=data.Result.Datas.Err.length;
-								}
-								document.getElementById('count_val').innerHTML = count + "条";
-								//document.getElementById('normal_count').innerHTML=count-err_count+"条";
-								document.getElementById('err_count').innerHTML = err_count + "条";
+								}*/
 							} else {
 								layer.alert(data.Error, 2000);
 							}
@@ -279,71 +223,280 @@
 				layer.alert("与服务器连接失败");
 				//window.location.href="index.html";
 			}
-			document.getElementById('station_name').innerHTML = sessionStorage.stationName;
+			//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
 		}
 	}
 	function decoderealdata(){
-		//if(obj_realdata.length>=0){
-			var sensors=JSON.parse(localStorage.getItem("sensors"));
-			var obj_data=new Object();
-			var pt=0;
-			for(var i=0;i<sensors.length;i++){
-				var sid=sensors[i].id+"";
-				if(obj_realdata.hasOwnProperty(sid)){
-					var sname=sensors[i].Value.Name;
-					var xs=sensors[i].Value.Factor;
-					obj_data=(obj_realdata)[sid];////
-					//添加数据列表项
-					var tbody = document.getElementById('realdata-tbody');
-					var tr = document.createElement('tr');
-					//
-					var tdename = document.createElement('td');
-					//var tdsalary=document.createElement('td');
-					var tdtime = document.createElement('td');
-					var tdvalue = document.createElement('td');
-					var tdvalue2 = document.createElement('td');
-					var tdhistory = document.createElement('td');
-					var tdwarnlog = document.createElement('td');
-					tdename.innerHTML = sname;
-					tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
-					tdvalue.innerHTML=(obj_data[0].Value*xs).toFixed(Number_of_decimal);
-					tdvalue2.innerHTML = (obj_data[0].Value*xs).toFixed(Number_of_decimal);
-					tdhistory.setAttribute('backgroundColor', '#ffffff');
-					tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
-					tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
-					tdwarnlog.setAttribute('onclick', 'towarnlog(' +sid + ')');
-					tdwarnlog.setAttribute('backgroundColor', '#ffffff');
-					tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
-					tr.appendChild(tdename);
-					tr.appendChild(tdtime);
-					tr.appendChild(tdvalue);
-					tr.appendChild(tdvalue2);
-					tr.appendChild(tdhistory);
-					tr.appendChild(tdwarnlog);
-					//隔行显示不同的延时
-					if (pt % 2 == 0) {
-						tr.cells[0].style.backgroundColor = "#16b9c9";
-						tr.cells[1].style.backgroundColor = "#16b9c9";
-						tr.cells[2].style.backgroundColor = "#16b9c9";
-						tr.cells[3].style.backgroundColor = "#16b9c9";
-					} else {
-						tr.cells[0].style.backgroundColor = "#FFFFFF";
-						tr.cells[1].style.backgroundColor = "#FFFFFF";
-						tr.cells[2].style.backgroundColor = "#FFFFFF";
-						tr.cells[3].style.backgroundColor = "#FFFFFF";
-					}
-					pt++;
-					//tdage.setAttribute('class','time');
-					//tdid.setAttribute('class','sensorid');
-					//tddiscr.setAttribute('class','tmpvalue');
-					//tdename.setAttribute('class','sensorname');
-					var tbody = document.getElementById('realdata-tbody');
-					tbody.appendChild(tr);
+		//$("#realdata-tbody tr").empty();
+		var tbody = document.getElementById('realdata-tbody');
+		var tableLength = tbody.rows.length;
+		for(var int = 0;int < tableLength;int++) {
+			tbody.deleteRow(0);
+	    }
+		var sensors=JSON.parse(localStorage.getItem("sensors"));
+		var obj_data=new Object();
+		var pt=0;
+		for(var i=0;i<sensors.length;i++){
+			var sid=sensors[i].id+"";
+			if(obj_realdata.hasOwnProperty(sid)){
+				sname=sensors[i].Value.Name;
+				var xs=sensors[i].Value.Factor;
+				obj_data=(obj_realdata)[sid];////
+				//添加数据列表项
+				var tr = document.createElement('tr');
+				tr.setAttribute("onclick","tableclick(this)");
+				//
+				var tdename = document.createElement('td');
+				//var tdsalary=document.createElement('td');
+				var tdtime = document.createElement('td');
+				var tdvalue = document.createElement('td');
+				var tdvalue2 = document.createElement('td');
+				var tdhistory = document.createElement('td');
+				var tdwarnlog = document.createElement('td');
+				tdename.innerHTML = sname;
+				tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
+				tdvalue.innerHTML=(obj_data[0].Value*xs).toFixed(Number_of_decimal);
+				tdvalue2.innerHTML = (obj_data[0].Value*xs).toFixed(Number_of_decimal);
+				tdhistory.setAttribute('backgroundColor', '#ffffff');
+				tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
+				tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
+				tdwarnlog.setAttribute('onclick', 'towarnlog(' +sid + ')');
+				tdwarnlog.setAttribute('backgroundColor', '#ffffff');
+				tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
+				tr.appendChild(tdename);
+				tr.appendChild(tdtime);
+				tr.appendChild(tdvalue);
+				tr.appendChild(tdvalue2);
+				tr.appendChild(tdhistory);
+				tr.appendChild(tdwarnlog);
+				
+				//隔行显示不同的延时
+				if (pt % 2 == 0) {
+					tr.cells[0].style.backgroundColor = "#16b9c9";
+					tr.cells[1].style.backgroundColor = "#16b9c9";
+					tr.cells[2].style.backgroundColor = "#16b9c9";
+					tr.cells[3].style.backgroundColor = "#16b9c9";
+				} else {
+					tr.cells[0].style.backgroundColor = "#FFFFFF";
+					tr.cells[1].style.backgroundColor = "#FFFFFF";
+					tr.cells[2].style.backgroundColor = "#FFFFFF";
+					tr.cells[3].style.backgroundColor = "#FFFFFF";
 				}
+				pt++;
+				//tdage.setAttribute('class','time');
+				//tdid.setAttribute('class','sensorid');
+				//tddiscr.setAttribute('class','tmpvalue');
+				//tdename.setAttribute('class','sensorname');
+				var tbody = document.getElementById('realdata-tbody');
+				tbody.appendChild(tr);
 			}
-		//}
+		}
+		//document.getElementById('count_val').innerHTML = pt + "条";
+		//document.getElementById('normal_count').innerHTML=count-err_count+"条";
+		//document.getElementById('err_count').innerHTML = 0 + "条";
+		sname=tbody.rows[t_pt].cells[0].innerHTML;
+		value0=parseFloat(tbody.rows[t_pt].cells[2].innerHTML)/100;
+		value1=parseFloat(tbody.rows[t_pt].cells[2].innerHTML)/100;
+		//tbody.rows[t_pt].scrollIntoView();
+		refreshData();
 	}
 
+	function tableclick(tr){
+		t_pt=tr.rowIndex-1;
+		sname=tr.cells[0].innerHTML;
+		value0=parseFloat(tr.cells[2].innerHTML)/100;
+		value1=parseFloat(tr.cells[3].innerHTML)/100;
+		refreshData();
+	}
+
+	function initseries(data){
+		// 基于准备好的dom，初始化echarts实例
+		// 指定图表的配置项和数据
+		option = {
+			backgroundColor: '#4b4b4b',
+			tooltip: {
+				formatter: "{a} <br/>{c} {b}"
+			},
+			toolbox: {
+				show: true,
+				feature: {
+					mark: {
+						show: true
+					},
+					restore: {
+						show: true
+					},
+					saveAsImage: {
+						show: true
+					}
+				}
+			},
+			series:[
+				{
+					name: '峰值',
+                    type: 'gauge',
+                    center: [ '25%','50%'], // 默认全局居中
+                    radius: '70%',//半径
+                    min: 0,
+                    max: 100,
+                    //startAngle: 315,//起始角度
+                    //endAngle: 225,//终止角度
+                    splitNumber: 5,//
+                    axisLine: { // 坐标轴线
+                        lineStyle: { // 属性lineStyle控制线条样式
+                            color: [
+                                [0.2, 'green'],
+                                [1, '#1f1f1f']
+                            ],
+                            width: 10,
+                            shadowColor: 'yellow', //默认透明
+                            shadowOffsetX:2,
+                            shadowBlur: 10
+                        }
+                    },
+                    axisTick: { // 坐标轴小标记
+                        show: true,
+                        splitNumber:5,
+                    },
+                    axisLabel: {
+                        textStyle: { // 属性lineStyle控制线条样式
+                            fontWeight: 'bolder',
+                            color: '#fff',
+                            shadowColor: '#fff', //默认透明
+                            shadowBlur: 10
+                        },
+                        
+                    },
+                    splitLine: { // 分隔线
+                        length: 12, // 属性length控制线长
+                        lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                            width: 1,
+                            color: '#fff',
+                            shadowColor: '#fff', //默认透明
+                            shadowBlur: 10
+                        }
+                    },
+                    pointer: {
+                        show:false,
+                        width: 2,
+                        shadowColor: '#fff', //默认透明
+                        shadowBlur: 5
+                    },
+                    title: {
+                        show: true,
+                        offsetCenter: [0, '100%'], // x, y，单位px
+                        textStyle: {
+                            color: 'white',
+                            fontSize: 16
+                        }
+
+                    },
+                    detail: {
+                        show: true,
+                        offsetCenter: [0, '-20%'],
+                        formatter: '峰值: \n'+' '+' {value}  ',
+                        textStyle: {
+                            fontSize: 16,
+                            color:'#F8F43C'
+                        }
+
+                    },
+                    data: [data[0]],//[{value: 20,name: '温度'}]
+				},
+				{
+					name: '均值：',
+                    type: 'gauge',
+                    center: ['75%', "50%"], // 默认全局居中
+                    radius: '70%',//半径
+                    min: 0,
+                    max: 100,
+                    //startAngle: 315,//起始角度
+                    //endAngle: 225,//终止角度
+                    splitNumber: 5,//
+                    axisLine: { // 坐标轴线
+                        lineStyle: { // 属性lineStyle控制线条样式
+                            color: [
+                                [0.2, 'green'],
+                                [1, '#1f1f1f']
+                            ],
+                            width: 10,
+                            shadowColor: 'yellow', //默认透明
+                            shadowOffsetX:2,
+                            shadowBlur: 10
+                        }
+                    },
+                    axisTick: { // 坐标轴小标记
+                        show: true,
+                        splitNumber:5,
+                    },
+                    axisLabel: {
+                        textStyle: { // 属性lineStyle控制线条样式
+                            fontWeight: 'bolder',
+                            color: '#fff',
+                            shadowColor: '#fff', //默认透明
+                            shadowBlur: 10
+                        },
+                        
+                    },
+                    splitLine: { // 分隔线
+                        length: 12, // 属性length控制线长
+                        lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                            width: 1,
+                            color: '#fff',
+                            shadowColor: '#fff', //默认透明
+                            shadowBlur: 10
+                        }
+                    },
+                    pointer: {
+                        show:false,
+                        width: 2,
+                        shadowColor: '#fff', //默认透明
+                        shadowBlur: 5
+                    },
+                    title: {
+                        show: true,
+                        offsetCenter: [0, '100%'], // x, y，单位px
+                        textStyle: {
+                            color: 'white',
+                            fontSize: 16
+                        }
+
+                    },
+                    detail: {
+                        show: true,
+                        offsetCenter: [0, '-20%'],
+                        formatter: '均值:\n'+' '+' {value}  ',
+                        textStyle: {
+                            fontSize: 16,
+                            color:'#F8F43C'
+                        }
+
+                    },
+                    data: [data[1]],//[{value: 20,name: '温度'}]
+				}
+			]
+		};
+		myChart.setOption(option);
+	}
+	window.setInterval("getrealdatabynodeid(-1)",60000)
+	function refreshData(){
+		//var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
+		for(var i=0;i<option.series.length;i++){
+			value= eval("value"+i);
+			option.series[i].data[0].name=sname;
+			option.series[i].data[0].value=value; 
+			//形成进度条式的填充仪表效果并分段显示不同延时用于指示不同状态。    
+			if(value<20){
+				option.series[i].axisLine.lineStyle.color[0]=[value/100,'blue'];
+			}else if(value<80){
+				option.series[i].axisLine.lineStyle.color[0]=[value/100,"green"];
+			}else{
+				option.series[i].axisLine.lineStyle.color[0]=[value/100,"red"];
+			}
+		}
+			//option.series[5].axisLine.lineStyle.color[0][0]=value/220;
+		myChart.setOption(option);
+	}
 	</script>
 </body>
 </html>

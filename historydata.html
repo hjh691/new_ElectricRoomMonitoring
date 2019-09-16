@@ -10,7 +10,23 @@
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
-	
+	<style>
+	th,td{
+        border:1px solid black;
+        text-align:center;
+        line-height:center;
+        width:200px;
+        height:30px;
+    }
+	table tbody {
+		display: block;
+	}
+	table thead,
+	tbody tr {
+		display: table;
+		table-layout: fixed;
+	}
+	</style>
 </head>
 <body >
 	<div>
@@ -22,7 +38,7 @@
 				<tr >
 				<td class="condition" style="font-size:16px;width:120px;"> 计量点名称 :</td>
 				<td style="width:100px;border:0px;width:120px;">	
-					<select id="jdcmc" style="font-size:16px;width:153px;">
+					<select id="jcdd" style="font-size:16px;width:153px;">
 						<option value="0">测温0</option>
 					</select>
 				</td>
@@ -46,21 +62,104 @@
 					<li style="width:100px;margin-right:0px"><a href="#" style="margin-left:20px;" onclick="method5('realtable')">导出Excel</a></li>
 				</ul>
 			</div>
-		<div align="center" style="overflow:auto;">
+		</div>
+		<div align="center" >
 		<table id="historytable" width="800px"  >
 			<thead>
 				<tr >
-				<th>测量点编号</th>
+				<!--<th>测量点编号</th>-->
 				<th>测量点名称</th>
-				<!--th>数据编号</th-->
 				<th>测量时间</th>
-				<th>温度（℃）</th>	
+				<th>峰值</th>
+				<th>均值</th>	
 				</tr>
 			</thead>
-			<tbody id='historydata-tbody'>
+			<tbody id='historydata-tbody'  style="width:823px;height:600px; overflow:auto;">
 			</tbody>
 		</table>
+		</div>
 	</div>
-	</div>
+	<script>
+		var xs=1;
+		var sensors;
+		initpage();
+
+		function initpage(){
+			document.getElementById("kssj_history").value = sessionStorage.kssj;
+			document.getElementById("jssj_history").value = sessionStorage.jssj;
+			var sel_sensor=document.getElementById("jcdd");
+			for (var i = 0; i < sel_sensor.length; i++) {
+				sel_sensor.removeChild(sel_sensor.options[0]);
+				sel_sensor.remove(0);
+				sel_sensor.options[0] = null;
+			}
+			sensors=JSON.parse(localStorage.getItem("sensors"));
+			for(var i=0;i<sensors.length;i++){
+				var op=document.createElement("option");
+				op.setAttribute("value",sensors[i].id);
+				op.innerHTML=sensors[i].Value.Name;
+				sel_sensor.appendChild(op);
+			}
+			setSelectOption("jcdd", sessionStorage.SensorId);
+
+		}
+		//查询历史记录
+		function queryhistorydata() {
+			var sel=document.getElementById("jcdd");
+			sessionStorage.SensorId = sel.value;
+			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
+			xs=sensors[sel.selectedIndex].Value.Factor;
+			var kssj = document.getElementById("kssj_history").value;
+			if ((kssj == null) || (kssj == "") || (kssj == undefined)) {
+				layer.alert("请指定开始时间");
+				return;
+			}
+			var jssj = document.getElementById("jssj_history").value;
+			if ((jssj == null) || (jssj == "") || (jssj == undefined)) {
+				layer.alert("请指定截至时间");
+				return;
+			}
+			sessionStorage.kssj = kssj;
+			sessionStorage.jssj = jssj;
+			$("#historydata-tbody tr").empty();
+			gethistorydata(sessionStorage.SensorId,kssj, jssj);
+		}
+
+		function decodedatas(obj_data){
+			var count = 0;
+			//数据以表格行的形式添加进table中，其实现隔行颜色区分。
+			for (var i = 0; i <obj_data.length; i++) {
+				var tr = document.createElement('tr');
+				if (i % 2 == 0) {
+					tr.setAttribute('style', "background-color:#16b9c9");
+				}
+				var tdname = document.createElement('td');
+				tdname.setAttribute('class', 'seneorname');
+				var tdtime = document.createElement('td');
+				tdtime.setAttribute('class', 'time');
+				var tdvalue1 = document.createElement('td');
+				tdvalue1.setAttribute('class', 'value1'); //给单元格添加类名属性
+				var tdvalue2 = document.createElement('td');
+				tdvalue2.setAttribute('class', 'value2');
+				tdname.innerHTML=sessionStorage.SensorName;
+				tdvalue1.innerHTML = obj_data[i].Value;
+				
+				
+				//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
+				tdtime.innerHTML = obj_data[i].Time; //jsonObject[i].color;
+				tdvalue2.innerHTML = obj_data[i].Value;
+				tr.appendChild(tdname);
+				tr.appendChild(tdtime);
+				tr.appendChild(tdvalue1);
+				tr.appendChild(tdvalue2);
+				var tbody = document.getElementById('historydata-tbody');
+				tbody.appendChild(tr);
+			}
+			count =obj_data.length;
+			document.getElementById('count_val').innerHTML = count + "条";
+			//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
+			//document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
+		}
+	</script>
 </body>
 </html>

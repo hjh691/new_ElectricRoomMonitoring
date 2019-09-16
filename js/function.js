@@ -249,7 +249,7 @@ function initrealdata(){
 			document.getElementById("iframe_main").src="realdata.html";
 			break;
 		case "局部放电":
-		case "唐县":
+		//case "行唐":
 			document.getElementById("iframe_main").src="GaugeOfJufang.html";
 			break;
 		case "弧光保护":
@@ -328,7 +328,7 @@ function sendbeat() {
 		LoginOrder(sessionStorage.username, sessionStorage.password);
 	}
 }
-//index页面初始化
+/*//index页面初始化
 function initIndex() {
 	showusername();
 	document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
@@ -336,10 +336,10 @@ function initIndex() {
 	document.getElementById('company_info').href = jfjk_base_config.company_url;
 	sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
 	sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//
-	sessionStorage.pageindex = 1;
-	getgraphics();
-	document.getElementById("iframe_main").src = 'drawmap.html';
-}
+	//sessionStorage.pageindex = 1;
+	//getgraphics();
+	//document.getElementById("iframe_main").src = 'drawmap.html';
+}*/
 //主页面显示用户名称
 function showusername() {
 
@@ -514,7 +514,7 @@ function towarnlog(sorid) {
 		for(var j=0;j<trs.length;j++){
 			if(trs[j].cells[0].childNodes[0].data==sorid){
 				sessionStorage.SensorName=trs[j].cells[1].childNodes[0].data;
-				setSelectOption("jdcmc",sorid);
+				setSelectOption("jcdd",sorid);
 				break;
 			}
 		}*/
@@ -1147,10 +1147,10 @@ function check() {
 		layer.alert("请选择一行");
 	}
 }
-//初始化历史数据页面（在进入历史数据页面时触发）。
+/*//初始化历史数据页面（在进入历史数据页面时触发）。
 function inithistorydata() {
 	sessionStorage.pageindex = 3;
-	setSelectOption("jdcmc", sessionStorage.SensorName);
+	setSelectOption("jcdd", sessionStorage.SensorName);
 	document.getElementById("kssj_history").value = sessionStorage.kssj;
 	document.getElementById("jssj_history").value = sessionStorage.jssj;
 	GetSensorsByStation();
@@ -1161,8 +1161,22 @@ function inithistorychart() {
 	GetSensorsByStation();
 	document.getElementById("kssj_chart").value = sessionStorage.kssj;
 	document.getElementById("jssj_chart").value = sessionStorage.jssj;
+	
+	var sel_sensor=document.getElementById("jcdd");
+	for (var i = 0; i < sel_sensor.length; i++) {
+		sel_sensor.removeChild(sel_sensor.options[0]);
+		sel_sensor.remove(0);
+		sel_sensor.options[0] = null;
+	}
+	var sensors=JSON.parse(localStorage.getItem("sensors"));
+	for(var i=0;i<sensors.length;i++){
+		var op=document.createElement("option");
+		op.setAttribute("value",sensors[i].Id);
+		op.innerHTML=sensors[i].Value.Name;
+		sel_sensor.appendChild(op);
+	}
 	//drawchart()
-}
+}*/
 //初始化告警信息查询页面（在进入告警信息页面时触发）。
 function initwarnlog() {
 	sessionStorage.pageindex = 5;
@@ -1186,7 +1200,7 @@ function GetSensorsByStation() {
 		url = encodeURI(url);
 		switch (sessionStorage.pageindex) {
 		case "3":
-			var sel = document.getElementById('jdcmc');
+			var sel = document.getElementById('jcdd');
 			for (var i = 0; i < sel.length; i++) {
 				sel.removeChild(sel.options[0]);
 				sel.remove(0);
@@ -1194,9 +1208,9 @@ function GetSensorsByStation() {
 			}
 			break;
 		case "4":
-			var sel = document.getElementById('jdcmc');
-			var sel2 = document.getElementById('jdcmc2');
-			var sel3 = document.getElementById('jdcmc3');
+			var sel = document.getElementById('jcdd');
+			var sel2 = document.getElementById('jcdd2');
+			var sel3 = document.getElementById('jcdd3');
 			for (var i = 0; i < sel.length; i++) {
 				sel.removeChild(sel.options[0]);
 				sel.remove(0);
@@ -1246,43 +1260,43 @@ function GetSensorsByStation() {
 								op3.innerHTML = data.Result.Sensors[i].Name;
 								switch (sessionStorage.pageindex) {
 								case '3':
-									var sel = document.getElementById('jdcmc');
+									var sel = document.getElementById('jcdd');
 									sel.appendChild(op);
 									break;
 								case '4':
-									var sel = document.getElementById('jdcmc');
+									var sel = document.getElementById('jcdd');
 									sel.appendChild(op);
-									var sel2 = document.getElementById('jdcmc2');
+									var sel2 = document.getElementById('jcdd2');
 									sel2.appendChild(op2);
-									var sel3 = document.getElementById('jdcmc3');
+									var sel3 = document.getElementById('jcdd3');
 									sel3.appendChild(op3);
 									break;
 								case '5':
-									var sel = document.getElementById('jdcmc');
+									var sel = document.getElementById('jcdd');
 									sel.appendChild(op);
 									break;
 								}
 							}
 							switch (sessionStorage.pageindex) {
 							case '3':
-								setSelectOption("jdcmc", sessionStorage.SensorId);
+								setSelectOption("jcdd", sessionStorage.SensorId);
 								SensorName = sel.options[sel.selectedIndex].text;
 								queryhistorydata(sessionStorage.kssj, sessionStorage.jssj);
 								break;
 							case '4':
-								var sel = document.getElementById('jdcmc');
-								setSelectOption("jdcmc", sessionStorage.firstid);
+								var sel = document.getElementById('jcdd');
+								setSelectOption("jcdd", sessionStorage.firstid);
 								sessionStorage.firstname = sel.options[sel.selectedIndex].text; //赋值
-								var sel2 = document.getElementById('jdcmc2');
-								setSelectOption("jdcmc2", sessionStorage.sencondid);
+								var sel2 = document.getElementById('jcdd2');
+								setSelectOption("jcdd2", sessionStorage.sencondid);
 								sessionStorage.sencondname = sel.options[sel2.selectedIndex].text;
-								var sel3 = document.getElementById('jdcmc3');
-								setSelectOption("jdcmc3", sessionStorage.thirdid);
+								var sel3 = document.getElementById('jcdd3');
+								setSelectOption("jcdd3", sessionStorage.thirdid);
 								sessionStorage.thirdname = sel.options[sel3.selectedIndex].text;
 								//drawchart();
 								break;
 							case '5':
-								setSelectOption("jdcmc", sessionStorage.SensorId);
+								setSelectOption("jcdd", sessionStorage.SensorId);
 								sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
 								querywarnlog(flag_warning);
 							}
@@ -1299,7 +1313,7 @@ function GetSensorsByStation() {
 		layer.alert('与服务器连接断开');
 	}
 }
-//根据标签名称确定下，拉列表框的选中项
+//根据标签名称确定下，拉列表框的选中项///////已用
 function setSelectOption(objid, sensor) {
 	var sel = document.getElementById(objid);
 	var options = sel.options;
@@ -1388,10 +1402,59 @@ function closewin(ranid) {
 	document.getElementById("alertmsgDiv" + ranid).removeChild(document.getElementById("alertmsgTitle"));
 	document.body.removeChild(document.getElementById("alertmsgDiv" + ranid));
 }
+//获取历史数据
+function gethistorydata(sensorid,kssj, jssj) {
+	if (sessionStorage.islogin == "true") {
+		if (sensorid != undefined) {
+			var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sensorid + "&from=" + kssj + "&to=" + jssj;
+			url = encodeURI(url);
+			$.ajax({
+				beforeSend: function(request) {
+					request.setRequestHeader("_token", sessionStorage.token);
+				},
+				url: url,
+				type: 'GET',
+				dataType: 'json',
+				timeout: 10000,
+				error: function(jqXHR, textStatus, errorThrown) {
+					errortime++;
+					if (errorThrown == "Unauthorized") {
+						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
+					} else {
+						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
+					}
+				},
+				success: function(data, status) {
+					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+					if (status == "success") {
+						errortime = 0;
+						sessionStorage.islogin = true;
+						if (data.Error == null) {
+							if (!jQuery.isEmptyObject(data.Result.Datas)) {
+								if (!jQuery.isEmptyObject(data.Result.Datas[sensorid])) {
+									//if(data.Result.Datas.hasOwnProperty("Tmp")){
+										decodedatas( data.Result.Datas[sensorid]);
+								} else {
+									layer.alert("没有符合条件的记录");
+								}
+							} else {
+								layer.alert("没有符合条件的记录");
+							}
+						} else {
+							layer.alert(data.Error);
+						}
+					}
+				}
+			});
+		}
+	} else {
+		layer.alert('与服务器连接失败');
+	}
+}
 //告警信息查询按钮
 function querywarnlog(num) {
-	sessionStorage.SensorId = document.getElementById("jdcmc").value;
-	sessionStorage.SensorName = document.getElementById("jdcmc").options[document.getElementById("jdcmc").selectedIndex].text;
+	sessionStorage.SensorId = document.getElementById("jcdd").value;
+	sessionStorage.SensorName = document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text;
 	var kssj = document.getElementById("kssj_warning").value;
 	if ((kssj == null) || (kssj == "") || (kssj == undefined)) {
 		layer.alert("请指定开始时间");
@@ -1584,113 +1647,7 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 	}
 	document.getElementById('station_name').innerHTML = sessionStorage.stationName;
 }
-//查询历史记录
-function queryhistorydata() {
-	sessionStorage.SensorId = document.getElementById("jdcmc").value;
-	sessionStorage.SensorName = document.getElementById("jdcmc").options[document.getElementById("jdcmc").selectedIndex].text;
-	var kssj = document.getElementById("kssj_history").value;
-	if ((kssj == null) || (kssj == "") || (kssj == undefined)) {
-		layer.alert("请指定开始时间");
-		return;
-	}
-	var jssj = document.getElementById("jssj_history").value;
-	if ((jssj == null) || (jssj == "") || (jssj == undefined)) {
-		layer.alert("请指定截至时间");
-		return;
-	}
-	sessionStorage.kssj = kssj;
-	sessionStorage.jssj = jssj;
-	$("#historydata-tbody tr").empty();
-	gethistorydata(kssj, jssj);
-}
-//获取历史数据
-function gethistorydata(kssj, jssj) {
-	var count = 0;
-	if (sessionStorage.islogin == "true") {
-		if (sessionStorage.SensorId != undefined) {
-			var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sessionStorage.SensorId + "&from=" + kssj + "&to=" + jssj;
-			url = encodeURI(url);
-			$.ajax({
-				beforeSend: function(request) {
-					request.setRequestHeader("_token", sessionStorage.token);
-				},
-				url: url,
-				type: 'GET',
-				dataType: 'json',
-				timeout: 2000,
-				error: function(jqXHR, textStatus, errorThrown) {
-					errortime++;
-					if (errorThrown == "Unauthorized") {
-						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
-					} else {
-						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
-					}
-				},
-				success: function(data, status) {
-					var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-					if (status == "success") {
-						errortime = 0;
-						sessionStorage.islogin = true;
-						if (data.Error == null) {
-							if (!jQuery.isEmptyObject(data.Result.Datas)) {
-								if (!jQuery.isEmptyObject(data.Result.Datas.Tmp)) {
-									//if(data.Result.Datas.hasOwnProperty("Tmp")){
-									//数据以表格行的形式添加进table中，其实现隔行颜色区分。
-									for (var i = 0; i < data.Result.Datas.Tmp.length; i++) {
-										var tr = document.createElement('tr');
-										if (i % 2 == 0) {
-											tr.setAttribute('style', "background-color:#16b9c9");
-										}
-										var tdid = document.createElement('td');
-										tdid.setAttribute('class', 'sensorid'); //给单元格添加类名属性
-										var tdename = document.createElement('td');
-										tdename.setAttribute('class', 'seneorname');
-										//var tdsalary=document.createElement('td');
-										var tdage = document.createElement('td');
-										tdage.setAttribute('class', 'time');
-										var tddiscr = document.createElement('td');
-										tddiscr.setAttribute('class', 'tmpvalue');
-										if (data.Result.Datas.hasOwnProperty("Tmp")) {
-											tdid.innerHTML = data.Result.Datas.Tmp[i].SensorId;
-										}
-										for (j = 0; j < data.Result.Sensors.Sensors.length; j++) {
-											if (data.Result.Datas.Tmp[i].SensorId == data.Result.Sensors.Sensors[j].Id) {
-												tdename.innerHTML = data.Result.Sensors.Sensors[j].Name;
-												break;
-											}
-										}
-										//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
-										tdage.innerHTML = data.Result.Datas.Tmp[i].Time; //jsonObject[i].color;
-										tddiscr.innerHTML = data.Result.Datas.Tmp[i].Value;
-										tr.appendChild(tdid);
-										tr.appendChild(tdename);
-										tr.appendChild(tdage);
-										tr.appendChild(tddiscr);
-										var tbody = document.getElementById('historydata-tbody');
-										tbody.appendChild(tr);
-									}
-									count = data.Result.Datas.Tmp.length;
 
-								} else {
-									layer.alert("没有符合条件的记录");
-								}
-							} else {
-								layer.alert("没有符合条件的记录");
-							}
-							document.getElementById('count_val').innerHTML = count + "条";
-						} else {
-							layer.alert(data.Error);
-						}
-					}
-				}
-			});
-		}
-	} else {
-		layer.alert('与服务器连接失败');
-	}
-	document.getElementById('station_name').innerHTML = sessionStorage.stationName;
-	document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
-}
 function querysmslog() {
 	var kssj = document.getElementById("kssj_sms").value;
 	if ((kssj == null) || (kssj == "") || (kssj == undefined)) {
@@ -1823,23 +1780,6 @@ function getchartvalue(msensorid, kssj, jssj) {
 	}
 }
 function querychartvalue() {
-
-	//getchartvalue(firstid,kssj,jssj);
-	//getdatas();
-	drawchart();
-}
-
-//绘图变化趋势图
-function drawchart() {
-	var iserror = false,
-	err_info = "获取";
-	var isnull = false,
-	nullname = "";
-	var pa = [],
-	pb = [],
-	pc = [],
-	labels = [],
-	t;
 	var kssj = document.getElementById("kssj_chart").value;
 	if ((kssj == null) || (kssj == "") || (kssj == undefined)) {
 		layer.alert("请指定开始时间");
@@ -1852,22 +1792,48 @@ function drawchart() {
 	}
 	sessionStorage.kssj = kssj;
 	sessionStorage.jssj = jssj;
-	var firstid = document.getElementById("jdcmc").value;
-	sessionStorage.firstname = document.getElementById("jdcmc").options[document.getElementById("jdcmc").selectedIndex].text;
-	var sencondid = document.getElementById("jdcmc2").value;
-	sessionStorage.sencondname = document.getElementById("jdcmc2").options[document.getElementById("jdcmc2").selectedIndex].text;
-	var thirdid = document.getElementById("jdcmc3").value;
-	sessionStorage.thirdname = document.getElementById("jdcmc3").options[document.getElementById("jdcmc3").selectedIndex].text;
+	var first = document.getElementById("jcdd");
+	sessionStorage.sensorid=first.value;
+	sessionStorage.firstname = document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text;
+	gethistorydata(sessionStorage.sensorid,kssj,jssj);
+	//drawchart();
+}
+
+//绘图变化趋势图
+function decodedatas(obj_chartdata) {
+	var iserror = false,
+	err_info = "获取";
+	var isnull = false,
+	nullname = "";
+	var pa = [],
+	pb = [],
+	pc = [],
+	labels = [],
+	t;
 	var myChart = echarts.init(document.getElementById('main'));
 	myChart.clear();
-	myChart.showLoading();
+	for (var i = 0; i <obj_chartdata.length; i++) {
+		pa.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
+		pb.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/5, i])
+		pc.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/2, i])
+	}
+	
 	var lengenddata = [];
-	lengenddata[0] = document.getElementById("jdcmc").options[document.getElementById("jdcmc").selectedIndex].text;
+	lengenddata[0] = document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text;
+	lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177");
+	lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457");
+	drawchart();
+	/*var sencondid = document.getElementById("jcdd2").value;
+	sessionStorage.sencondname = document.getElementById("jcdd2").options[document.getElementById("jcdd2").selectedIndex].text;
+	var thirdid = document.getElementById("jcdd3").value;
+	sessionStorage.thirdname = document.getElementById("jcdd3").options[document.getElementById("jcdd3").selectedIndex].text;
+	
+	
 	if (sencondid != firstid) {
-		lengenddata.push(document.getElementById("jdcmc2").options[document.getElementById("jdcmc2").selectedIndex].text);
+		lengenddata.push(document.getElementById("jcdd2").options[document.getElementById("jcdd2").selectedIndex].text);
 	}
 	if ((thirdid != firstid) && (thirdid != sencondid)) {
-		lengenddata.push(document.getElementById("jdcmc3").options[document.getElementById("jdcmc3").selectedIndex].text);
+		lengenddata.push(document.getElementById("jcdd3").options[document.getElementById("jcdd3").selectedIndex].text);
 	}
 	if (firstid != undefined) {
 		getfirst();
@@ -1973,8 +1939,8 @@ function drawchart() {
 				}
 			}
 		});
-	}
-	function getthird() {
+	}*/
+	/*function getthird() {
 		if ((thirdid == sencondid) || (thirdid == firstid)) {
 			//myChart.hideLoading();
 			drawchart();
@@ -2014,219 +1980,6 @@ function drawchart() {
 									//labels.push(data.Result.Datas.Tmp[i].Time);
 									pc.push([strtodatetime(data.Result.Datas.Tmp[i].Time), data.Result.Datas.Tmp[i].Value, i])
 								}
-								//var data2 = [labels,pa];
-								/*			{
-												//name : document.getElementById("jdcmc").options[document.getElementById("jdcmc").selectedIndex].text,
-												value:pa,
-												//color:'yellow',
-												//line_width:2
-											},
-											{
-												name : document.getElementById("jdcmc2").options[document.getElementById("jdcmc2").selectedIndex].text,
-												value:pb,
-												color:'GREEN',
-												line_width:2
-											},
-											{
-												name : document.getElementById("jdcmc3").options[document.getElementById("jdcmc3").selectedIndex].text,
-												value:pc,
-												color:'RED',
-												line_width:2
-											}
-										 ];*/
-								/*var myChart = echarts.init(document.getElementById('main'));
-								if((pa.length==0)&&(pb.length==0)&&(pc.length==0)){
-									myChart.hideLoading();
-									layer.alert("没有符合条件的记录");
-									return;
-								}*/
-								/*//创建x轴标签文本   
-								var date = new Date()
-								date.setDate(date.getDate()-6);
-								//var labels = [];
-								//for(var i=0;i<60;i++){
-								//	date.setDate(date.getDate()+1);
-								//	labels.push(date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate());
-								//}
-								var chart = new iChart.LineBasic2D({
-									render : 'canvasDiv',
-									data: data2,
-									align:'center',
-									title : '温度变化趋势图',
-									//subtitle : '平均每个人访问2-3个页面(访问量单位：万)',
-									//footnote : '数据来源：模拟数据',
-									width : 900,
-									height : 600,
-									background_color:'#a0a0a0',
-									tip:{
-										enable:true,
-										shadow:true,
-										move_duration:400,
-										border:{
-											 enable:true,
-											 radius : 5,
-											 width:2,
-											 color:'#3f8695'
-										},
-										listeners:{
-											 //tip:提示框对象、name:数据名称、value:数据值、text:当前文本、i:数据点的索引
-											parseText:function(tip,name,value,text,i){
-												return name+" 温度值: "+value+"℃";
-											}
-										}
-									},
-									tipMocker:function(tips,i){
-										return "<div style='font-weight:600'>"+
-												labels[i]+" "+//日期
-												//(((i%12)*2<10?"0":"")+(i%12)*2)+":00";//+//时间
-												"</div>"+tips.join("<br/>");
-									},
-									legend : {
-										enable : true,
-										row:1,//设置在一行上显示，与column配合使用
-										column : 'max',
-										valign:'top',
-										sign:'bar',
-										background_color:null,//设置透明背景
-										offsetx:-80,//设置x轴偏移，满足位置需要
-										border : true,
-										color:'#ffffff',
-									},
-									crosshair:{
-										enable:true,
-										line_color:'#62bce9'//十字线的颜色
-									},
-									sub_option : {
-										label:false,
-										point_size:10
-									},
-									coordinate:{
-										width:800,
-										height:440,
-										axis:{
-											color:'#dcdcdc',//
-											width:1
-										},
-										scale:[{
-											 position:'left',	
-											 start_scale:0,
-											 end_scale:60,
-											 scale_space:10,
-											 scale_size:2,
-											 scale_color:"#9f9f9f",//''
-										},{
-											 position:'bottom',	
-											 labels:labels,
-											
-										}],
-										grids: {
-											vertical:{
-											way:'share_alike',
-											value:12
-											 }
-											}
-									}
-								});
-								
-								//开始画图
-								//chart.draw();*/
-
-								//var myChart = echarts.init(document.getElementById('main'));
-								/*var option = {
-									    /*title : {
-											text : '温度变化趋势图',
-											textAlign : 'rght',
-										},*/
-								/*		backgroundColor:"#afafaf",
-										color:['#FFFF00','#00FF00','#FF0000'],
-										tooltip : {
-											trigger: 'item',
-											formatter : function (params) {
-												var date = new Date(params.value[0]);
-												data = date.getFullYear() + '-'
-													   + (date.getMonth()+1 ) + '-'
-													   + date.getDate() + ' '
-													   + date.getHours() + ':'
-													   + date.getMinutes();
-												return data + '<br/>'
-													   + params.value[1];
-											}
-										},
-										toolbox: {
-											show : true,
-											feature : {
-												//mark : {show: true},
-												dataView : {show: true, readOnly: false},
-												restore : {show: true},
-												magicType : {show: true, type: ['line', 'bar']},
-												saveAsImage : {show: true}
-											}
-										},
-										dataZoom: {
-											show: true,
-											start : 0
-										},
-										legend : {
-											data : [document.getElementById("jdcmc").options[document.getElementById("jdcmc").selectedIndex].text,document.getElementById("jdcmc2").options[document.getElementById("jdcmc2").selectedIndex].text,document.getElementById("jdcmc3").options[document.getElementById("jdcmc3").selectedIndex].text]
-										},
-										grid: {
-											y2: 80
-										},
-										xAxis : [
-											{
-												type : 'time',
-												splitNumber:10
-											}
-										],
-										yAxis : [
-											{
-												type : 'value'
-											}
-										],
-										series : [
-											{
-												name: document.getElementById("jdcmc").options[document.getElementById("jdcmc").selectedIndex].text,
-												type: 'line',
-												showAllSymbol: true,
-												symbolSize: 1,
-												data:pa/* (function () {
-													var d = [];
-													var len = 0;
-													var now = new Date();
-													var value;
-													while (len++ < 200) {
-														d.push([
-															new Date(2014, 9, 1, 0, len * 10000),
-															(Math.random()*30).toFixed(2) - 0,
-															(Math.random()*100).toFixed(2) - 0
-														]);
-													}
-													return d;
-												})()*/
-								/*		
-											},
-											{
-												name: document.getElementById("jdcmc2").options[document.getElementById("jdcmc2").selectedIndex].text,
-												type: 'line',
-												showAllSymbol: true,
-												symbolSize: 1,
-												data:pb
-											},
-											{
-												name: document.getElementById("jdcmc3").options[document.getElementById("jdcmc3").selectedIndex].text,
-												type: 'line',
-												showAllSymbol: true,
-												symbolSize: 1,
-												data:pc
-											}
-										]
-									};
-								//myChart.on('georoam', function (params) {
-								// 控制台打印数据的名称
-								//console.log(params);
-								//});
-								myChart.hideLoading();
-								myChart.setOption(option); */
 								drawchart();
 							} else {
 								//Alert(sessionStorage.thirdname+" 没有符合条件的记录");
@@ -2266,11 +2019,11 @@ function drawchart() {
 				}
 			}
 		});
-	}
+	}*/
 
 	//绘制图形线条
 	function drawchart() {
-		var myChart = echarts.init(document.getElementById('main'));
+		//var myChart = echarts.init(document.getElementById('main'));
 		var option = {
 			color: ['#FFFF00', '#00ff00', '#ff0000'],
 			backgroundColor: '#c0c0c0',
@@ -2341,27 +2094,28 @@ function drawchart() {
 					}
 				},
 			}],
-			series: [{
-				name: document.getElementById("jdcmc").options[document.getElementById("jdcmc").selectedIndex].text,
+			series: [/**/{
+				name: document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
 				type: 'line',
 				showAllSymbol: true,
 				symbolSize: 1,
 				data: pa
 			},
 			{
-				name: document.getElementById("jdcmc2").options[document.getElementById("jdcmc2").selectedIndex].text,
+				name: document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"18",
 				type: 'line',
 				showAllSymbol: true,
 				symbolSize: 1,
 				data: pb
 			},
 			{
-				name: document.getElementById("jdcmc3").options[document.getElementById("jdcmc3").selectedIndex].text,
+				name: document.getElementById("jcdd3").options[document.getElementById("jcdd3").selectedIndex].text+"345",
 				type: 'line',
 				showAllSymbol: true,
 				symbolSize: 1,
 				data: pc
-			}]
+			}/**/
+			]
 		};
 
 		myChart.hideLoading();

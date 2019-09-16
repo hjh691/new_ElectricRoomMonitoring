@@ -16,7 +16,7 @@
 	
 	<script  type="text/javascript" src="js/function.js"></script>
 </head>
-<body ><!--"showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>-->
+<body onload="initIndex()"><!--"showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>-->
 	<div class="header" id="header" style="height:80px;position:relative;overflow: auto;">
       	<div class="topbar" id="topbar" >
 			<div id="app_name" style="position:relative;float:left;left:15px;font-size:30px;font-style:bold;color:white" ><i></i></div>
@@ -69,7 +69,7 @@
 			</div>
 
 			<div class="mainarea" id="mainarea" >
-				<iframe  name="iframe_main" id="iframe_main" style="width:100%;height:100%" frameborder="0">
+				<iframe  name="iframe_main" id="iframe_main" style="width:100%;height:99%" frameborder="0">
 				</iframe>
 			</div>
 		</div>
@@ -171,8 +171,8 @@
 		document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
 		document.getElementById('company_log').src = jfjk_base_config.log_src;
 		document.getElementById('company_info').href = jfjk_base_config.company_url;
-		//sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
-		//sessionStorage.jssj = getCurrentDate(1) + " 23:59:59"; //"2012-09-05T08:00:00";//
+		sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
+		sessionStorage.jssj = getCurrentDate(1) + " 23:59:59"; //"2012-09-05T08:00:00";//
 		//sessionStorage.pageindex = 1;
 		//getgraphics();
 		//document.getElementById("iframe_main").src = 'page1.html';
@@ -538,12 +538,12 @@
 				dataType: 'json',
 				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
-					inittreeview();
-					layer.alert('获取系统系统列表数据失败');
+					//inittreeview();
+					layer.alert('获取系统列表数据失败');
 					errortime++;
 				},
 				success: function(data, status) {
-					var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 					if (status == "success") {
 						errortime = 0;
 						if (data.Error == null) {

@@ -20,27 +20,27 @@
         }
     </style>
 </head>
-<body onload="inithistorychart()">
+<body >
 	<div align="center">
 	<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
 		<h3 align="center" >趋势图</h3>
 	</div>
 	<div style="height:80px;" align="center" style="overflow:scroll;">
-		<table class="table" align="center" width="1000px">
+		<table class="table" align="center" width="1000px"style="display:none">
 			<tr >
 			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td>
 			<td style="width:100px;border:0px;width:120px;">	
-				<select id="jdcmc" style="font-size:16px;width:153px;">
+				<select id="jcdd1" style="font-size:16px;width:153px;">
 					<option value="0">测温0</option>
 				</select>
 			</td>
 			<td style="width:100px;border:0px;width:120px;">	
-				<select id="jdcmc2" style="font-size:16px;width:153px;">
+				<select id="jcdd2" style="font-size:16px;width:153px;display:none">
 					<option value="0">测温0</option>
 				</select>
 			</td>
 			<td style="width:100px;border:0px;width:120px;">	
-				<select id="jdcmc3" style="font-size:16px;width:153px;">
+				<select id="jcdd3" style="font-size:16px;width:153px;display: none">
 					<option value="0">测温0</option>
 				</select>
 			</td>
@@ -48,6 +48,12 @@
 		<table class="table" align="center" width="1000px">
 			</tr>
 			<tr>
+			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td>
+			<td style="width:100px;border:0px;width:120px;">	
+				<select id="jcdd" style="font-size:16px;width:153px;">
+					<option value="0">测温0</option>
+				</select>
+			</td>
 			<td class="condition" style="width:100px;"> 起止时间:</td>
 			<td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="kssj_chart" style="width:190px;" ></input></td>
 			<td class="condition" style="width:30px;">至</td>
@@ -56,8 +62,47 @@
 			</tr>
 		</table>
 		</div>
-	<div id="main" align="center" style="height:500px;width:1000px;align:center">
+		<div id="main" align="center" style="height:500px;width:1000px;">
 	</div>
 	</div>
+	<script>
+	//初始化历史数据图形显示页面（在进入趋势图页面时触发）。
+	inithistorychart();
+	function inithistorychart() {
+		//sessionStorage.pageindex = 4;
+		document.getElementById("kssj_chart").value = sessionStorage.kssj;
+		document.getElementById("jssj_chart").value = sessionStorage.jssj;
+		var sel_sensor=document.getElementById("jcdd");
+		////var sel2 = document.getElementById('jcdd2');
+		var sel3 = document.getElementById('jcdd3');
+		for (var i = 0; i < sel_sensor.length; i++) {
+			sel_sensor.removeChild(sel_sensor.options[0]);
+			sel_sensor.remove(0);
+			sel_sensor.options[0] = null;
+			/*sel2.removeChild(sel2.options[0]);
+			sel2.remove(0);
+			sel2.options[0] = null;
+			sel3.removeChild(sel3.options[0]);
+			sel3.remove(0);
+			sel3.options[0] = null;*/
+		}
+		var sensors=JSON.parse(localStorage.getItem("sensors"));
+		for(var i=0;i<sensors.length;i++){
+			var op=document.createElement("option");
+			//var op2=document.createElement("option");
+			//var op3=document.createElement("option");
+			op.setAttribute("value",sensors[i].id);
+			op.innerHTML=sensors[i].Value.Name;
+			sel_sensor.appendChild(op);
+			/*op2.setAttribute("value",sensors[i].Id);
+			op2.innerHTML=sensors[i].Value.Name;
+			op3.setAttribute("value",sensors[i].Id);
+			op3.innerHTML=sensors[i].Value.Name;
+			sel2.appendChild(op2);
+			sel3.appendChild(op3);*/
+		}
+		setSelectOption("jcdd",sessionStorage.SensorId);
+	}
+	</script>
 </body>
 </html>
