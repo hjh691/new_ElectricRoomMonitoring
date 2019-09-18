@@ -101,11 +101,15 @@
 				sel_sensor.appendChild(op);
 			}
 			setSelectOption("jcdd", sessionStorage.SensorId);
-
+			queryhistorydata();
 		}
 		//查询历史记录
 		function queryhistorydata() {
 			var sel=document.getElementById("jcdd");
+			if(sel.options.length<=0){
+				layer.alert("请选择要查询的测量点名称");
+				return;
+			}
 			sessionStorage.SensorId = sel.value;
 			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
 			xs=sensors[sel.selectedIndex].Value.Factor;

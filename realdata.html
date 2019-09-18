@@ -71,7 +71,7 @@
 			</ul-->
 		</div>
 		<div align="center" >
-			<div id="realdata_gaugechart" style="width: 1220px;height: 200px;background-color: rgb(207, 203, 203);">fgdg
+			<div id="realdata_gaugechart" style="width: 600px;height: 200px;background-color: rgb(207, 203, 203);">fgdg
 				
 			</div>
 			
@@ -128,7 +128,7 @@
 			//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
 			var t1 = window.setInterval("getrealdatabystation(1);",30000);
 		}*/
-		var t_pt=0;
+		//var t_pt=0;
 		var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
 		var sname;
 		//表格排序使用插件
@@ -143,16 +143,16 @@
 		var datas=[];
 		datas.splice(0,datas.length);//
 		for(var i=0;i<1;i++){
-			var value=(Math.random() * 100).toFixed(2) - 0;
+			var value=0;//(Math.random() * 100).toFixed(2) - 0;
 			datas.push(JSON.parse('{"name":"峰值'+i+'","value":'+value+'}'));
-			var value=(Math.random() * 100).toFixed(2) - 0;
+			var value=0;//(Math.random() * 100).toFixed(2) - 0;
 			datas.push(JSON.parse('{"name":"均值'+i+'","value":'+value+'}'));
 		}
 		initseries(datas);
 		var obj_realdata=new Object();
 
 	function getrealdatabynodeid(nodeid){
-		sessionStorage.pageindex = 2;
+		
 		if (nodeid!=undefined&&nodeid!==null) {
 			var url = jfjk_base_config.baseurl + "GetRealsNew?dataId=" + nodeid;
 			url = encodeURI(url);
@@ -181,12 +181,14 @@
 						if (status == "success") {
 							errortime = 0;
 							sessionStorage.islogin = true;
+							value0=0;value1=0;sname="";
 							if (data.Error == null) {
 								if (jQuery.isEmptyObject(data.Result.Datas)) {
-									if (id == 0) {
+									//if (id == 0) {
 										//layer.alert("没有符合条件的记录",2000);
 										layer.alert("没有符合条件的记录");
-									}
+									//}
+									refreshData();
 									return;
 								}
 								obj_realdata=data.Result.Datas;
@@ -236,73 +238,81 @@
 		var sensors=JSON.parse(localStorage.getItem("sensors"));
 		var obj_data=new Object();
 		var pt=0;
-		for(var i=0;i<sensors.length;i++){
-			var sid=sensors[i].id+"";
-			if(obj_realdata.hasOwnProperty(sid)){
-				sname=sensors[i].Value.Name;
-				var xs=sensors[i].Value.Factor;
-				obj_data=(obj_realdata)[sid];////
-				//添加数据列表项
-				var tr = document.createElement('tr');
-				tr.setAttribute("onclick","tableclick(this)");
-				//
-				var tdename = document.createElement('td');
-				//var tdsalary=document.createElement('td');
-				var tdtime = document.createElement('td');
-				var tdvalue = document.createElement('td');
-				var tdvalue2 = document.createElement('td');
-				var tdhistory = document.createElement('td');
-				var tdwarnlog = document.createElement('td');
-				tdename.innerHTML = sname;
-				tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
-				tdvalue.innerHTML=(obj_data[0].Value*xs).toFixed(Number_of_decimal);
-				tdvalue2.innerHTML = (obj_data[0].Value*xs).toFixed(Number_of_decimal);
-				tdhistory.setAttribute('backgroundColor', '#ffffff');
-				tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
-				tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
-				tdwarnlog.setAttribute('onclick', 'towarnlog(' +sid + ')');
-				tdwarnlog.setAttribute('backgroundColor', '#ffffff');
-				tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
-				tr.appendChild(tdename);
-				tr.appendChild(tdtime);
-				tr.appendChild(tdvalue);
-				tr.appendChild(tdvalue2);
-				tr.appendChild(tdhistory);
-				tr.appendChild(tdwarnlog);
-				
-				//隔行显示不同的延时
-				if (pt % 2 == 0) {
-					tr.cells[0].style.backgroundColor = "#16b9c9";
-					tr.cells[1].style.backgroundColor = "#16b9c9";
-					tr.cells[2].style.backgroundColor = "#16b9c9";
-					tr.cells[3].style.backgroundColor = "#16b9c9";
-				} else {
-					tr.cells[0].style.backgroundColor = "#FFFFFF";
-					tr.cells[1].style.backgroundColor = "#FFFFFF";
-					tr.cells[2].style.backgroundColor = "#FFFFFF";
-					tr.cells[3].style.backgroundColor = "#FFFFFF";
+		if(sensors!=null){
+			for(var i=0;i<sensors.length;i++){
+				var sid=sensors[i].id+"";
+				if(obj_realdata.hasOwnProperty(sid)){
+					sname=sensors[i].Value.Name;
+					var xs=sensors[i].Value.Factor;
+					obj_data=(obj_realdata)[sid];////
+					//添加数据列表项
+					var tr = document.createElement('tr');
+					tr.setAttribute("onclick","tableclick(this)");
+					//
+					var tdename = document.createElement('td');
+					//var tdsalary=document.createElement('td');
+					var tdtime = document.createElement('td');
+					var tdvalue = document.createElement('td');
+					var tdvalue2 = document.createElement('td');
+					var tdhistory = document.createElement('td');
+					var tdwarnlog = document.createElement('td');
+					tdename.innerHTML = sname;
+					tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
+					tdvalue.innerHTML=(obj_data[0].Value*xs).toFixed(Number_of_decimal);
+					tdvalue2.innerHTML = (obj_data[0].Value*xs).toFixed(Number_of_decimal);
+					tdhistory.setAttribute('backgroundColor', '#ffffff');
+					tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
+					tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
+					tdwarnlog.setAttribute('onclick', 'towarnlog(' +sid + ')');
+					tdwarnlog.setAttribute('backgroundColor', '#ffffff');
+					tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
+					tr.appendChild(tdename);
+					tr.appendChild(tdtime);
+					tr.appendChild(tdvalue);
+					tr.appendChild(tdvalue2);
+					tr.appendChild(tdhistory);
+					tr.appendChild(tdwarnlog);
+					
+					//隔行显示不同的延时
+					if (pt % 2 == 0) {
+						tr.cells[0].style.backgroundColor = "#16b9c9";
+						tr.cells[1].style.backgroundColor = "#16b9c9";
+						tr.cells[2].style.backgroundColor = "#16b9c9";
+						tr.cells[3].style.backgroundColor = "#16b9c9";
+					} else {
+						tr.cells[0].style.backgroundColor = "#FFFFFF";
+						tr.cells[1].style.backgroundColor = "#FFFFFF";
+						tr.cells[2].style.backgroundColor = "#FFFFFF";
+						tr.cells[3].style.backgroundColor = "#FFFFFF";
+					}
+					pt++;
+					//tdage.setAttribute('class','time');
+					//tdid.setAttribute('class','sensorid');
+					//tddiscr.setAttribute('class','tmpvalue');
+					//tdename.setAttribute('class','sensorname');
+					var tbody = document.getElementById('realdata-tbody');
+					tbody.appendChild(tr);
 				}
-				pt++;
-				//tdage.setAttribute('class','time');
-				//tdid.setAttribute('class','sensorid');
-				//tddiscr.setAttribute('class','tmpvalue');
-				//tdename.setAttribute('class','sensorname');
-				var tbody = document.getElementById('realdata-tbody');
-				tbody.appendChild(tr);
 			}
+			//document.getElementById('count_val').innerHTML = pt + "条";
+			//document.getElementById('normal_count').innerHTML=count-err_count+"条";
+			//document.getElementById('err_count').innerHTML = 0 + "条";
+			if(pt>0){
+				sname=tbody.rows[localStorage.t_pt].cells[0].innerHTML;
+				value0=parseFloat(tbody.rows[localStorage.t_pt].cells[2].innerHTML)/100;
+				value1=parseFloat(tbody.rows[localStorage.t_pt].cells[2].innerHTML)/100;
+			}else{
+				layer.alert("没有符合条件的数据");
+			}
+		}else{
+			layer.alert("没有符合条件的数据");
 		}
-		//document.getElementById('count_val').innerHTML = pt + "条";
-		//document.getElementById('normal_count').innerHTML=count-err_count+"条";
-		//document.getElementById('err_count').innerHTML = 0 + "条";
-		sname=tbody.rows[t_pt].cells[0].innerHTML;
-		value0=parseFloat(tbody.rows[t_pt].cells[2].innerHTML)/100;
-		value1=parseFloat(tbody.rows[t_pt].cells[2].innerHTML)/100;
 		//tbody.rows[t_pt].scrollIntoView();
 		refreshData();
 	}
 
 	function tableclick(tr){
-		t_pt=tr.rowIndex-1;
+		localStorage.t_pt=tr.rowIndex-1;
 		sname=tr.cells[0].innerHTML;
 		value0=parseFloat(tr.cells[2].innerHTML)/100;
 		value1=parseFloat(tr.cells[3].innerHTML)/100;
@@ -478,7 +488,7 @@
 		};
 		myChart.setOption(option);
 	}
-	window.setInterval("getrealdatabynodeid(-1)",60000)
+	window.setInterval("getrealdatabynodeid(-1)",60000);
 	function refreshData(){
 		//var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
 		for(var i=0;i<option.series.length;i++){

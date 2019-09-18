@@ -53,7 +53,7 @@
 			<div class="navigation" style="vertical-align:center;overflow:auto">
 				<div class="row-navigation" style="vertical-align:center;min-width:500px;"align="center">
 						<ul class="pc-nav" >
-							<li ><a href="totalview.html"  target="iframe_main" >信息总览</a></li>
+							<li ><a href="javascript:void(0)"  onclick="inittotalpage()" >信息总览</a></li>
 							<li ><a href="javascript:void(0)" onclick="initdrawing()" style="display:none" id="realstate">实时状态</a></li>
 							<li ><a id="realdata"href="javascript:void(0)"  onclick="initrealdata()">实时数据</a></li>
 							<li ><a id="historydata" href="javascript:void(0)" onclick="loadstations_historydata()">历史数据</a></li>
@@ -108,7 +108,7 @@
 	<script>
 		
 		function refreshwindow(){
-		
+		sessionStorage.framepage=document.getElementById("iframe_main").src;
 		var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
 		var fdheight=document.getElementById("KeFuDiv").offsetHeight;
 		var fdwidth=document.getElementById("KeFuDiv").offsetWidth;
@@ -181,89 +181,15 @@
 		}else{
 			inittreeview();
 		}
-		document.getElementById("iframe_main").src="totalview.html"
+		if(sessionStorage.framepage==""){
+			document.getElementById("iframe_main").src="realdata.html"
+		}else{
+			document.getElementById("iframe_main").src=sessionStorage.framepage;
+		}
 		
 	}
 	function inittreeview(anodes){
-		/*var tree = [
-		{
-			text: "王京站",
-			id:1,
-			nodes: [
-			{
-				text: "温度监测",
-				id:2,
-				nodes: [
-				{
-					text: "Grandchild 1",
-					id:3,
-				},
-				{
-					text: "Grandchild 2",
-					id:4
-				}
-				]
-			},
-			{
-				text: "局部放电",
-				id:5,
-				nodes:[
-				{
-					text: "Grandchild 1",
-					id:3,
-				},
-				{
-					text: "Grandchild 2",
-					id:4,
-				}
-				]
-			},
-			{
-				text:"弧光保护",
-				id:6
-			}
-			]
-		},
-		{
-			text: "城南站",
-			id:7,
-			nodes:[
-			{
-				text: "Grandchild 1",
-				id:3,
-			},
-			{
-				text: "Grandchild 2",
-				id:4,
-			}
-			]
-			
-		},
-		{
-			text: "伏城战",
-			id:8,
-			nodes:[
-			{
-				text: "Grandchild 1",
-				id:3,
-			},
-			{
-				text: "Grandchild 2",
-				id:4,
-			}
-			]
-		},
-		{
-			text: "城关站",
-			id:9
-		},
-		{
-			text: "电厂站",
-			id:10
-		}];*/
-	
 		//var obj=tree[1];
-		
 		//obj.nodes=(JSON.parse( node));
 		//tree[1]=obj;
 		var mnodes=[];
@@ -273,7 +199,6 @@
 			mnodes=anodes;
 		}
 		$('#tree').treeview({
-			
 			data: mnodes,    // 数据源
 			showCheckbox: false,   //是否显示复选框
 			highlightSelected: true,    //是否高亮选中
@@ -297,19 +222,15 @@
 			//multiSelect: false, //是否可以同时选择多个节点      Boolean
 			//onhoverColor: "#F5F5F5", //光标停在节点上激活的默认背景色      String
 			//selectedIcon: "glyphicon glyphicon-stop", //节点被选中时显示的图标     String
-
 			//searchResultBackColor: "", //当节点被选中时的背景色
 			//searchResultColor: "", //当节点被选中时的前景色
-
 			//selectedBackColor: "", //当节点被选中时的背景色
 			//selectedColor: "#FFFFFF", //当节点被选中时的前景色
-
 			//showBorder: true, //是否在节点周围显示边框
 			//showCheckbox: false, //是否在节点上显示复选框
 			//showIcon: true, //是否显示节点图标
 			//showTags: false, //是否显示每个节点右侧的标记。前提是这个标记必须在每个节点基础上提供数据结构中的值。
 			//uncheckedIcon: "glyphicon glyphicon-unchecked", //未选中的复选框时显示的图标，可以与showCheckbox一起使用
-
 			//onNodeChecked: function (event,data) {
 			//	console.log("nodeId = "+data.nodeId);
 			//	console.log("id = "+data.id);
@@ -324,8 +245,12 @@
 				console.log("levels = "+data.level);
 				//loaddata(data);
 				maps=[];
-				GetSensorsByNode(data.id);
-				
+				if(data.id!=sessionStorage.nodeId){
+					localStorage.setItem("sensors",null);
+					GetSensorsByNode(data.id);
+					sessionStorage.nodeId=data.id;
+					localStorage.t_pt = 0;
+				}
 			}
 			/**方法
 			 * checkAll(options);//选中所有树节点
@@ -569,6 +494,20 @@
 			Alert("用户未登录，您无权完成此次操作", 2000);
 			inittreeview(null,0);
 		}
+		switch(sessionStorage.pageindex){
+			case '2':
+				document.getElementById("iframe_main").src="realdata.html";//getrealdatabynodeid(-1);
+				break;
+			case '3' :
+				document.getElementById("iframe_main").src="historydata.html";
+				break;
+			case '4':
+				document.getElementById("iframe_main").src="chart.html";
+				break;
+			case '5':
+				document.getElementById("iframe_main").src="warnlog.html";
+				break;
+		}
 	}
 	
 	function buildsensor(aSensors){
@@ -598,6 +537,7 @@
 			return (maps.sort(compare));
 		}
 	}
+	window.setInterval("sendbeat()",60000);
 	</script>
   
 </body>

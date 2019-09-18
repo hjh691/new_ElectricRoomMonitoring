@@ -17,8 +17,8 @@ function KeyUp() {
 } //end function
 //获取当前日期和时间
 /**
-format=1时，精确到日，
-format=2时，精确到分。
+format=1时，精确到日，  
+format=2时，精确到分。  used by electricroommonitor 
 */
 function getCurrentDate(format) {
 	var now = new Date();
@@ -58,17 +58,17 @@ function getJsonFile(fileName) {
 		});
 	});
 }
-//获取区间的随机整数
+//获取区间的随机整数   used by electricroommonitor 
 function rnd(n, m) {
 	var random = Math.floor(Math.random() * (m - n + 1) + n);
 	return random;
 }
-//初始化登录页面：
+//初始化登录页面： used by electricroommonitor 
 function initlogin() {
 	document.getElementById("login_pic").src = jfjk_base_config.login_src;
 	document.getElementById("company_name").innerHTML = jfjk_base_config.app_name;
 }
-//判断用户名和密码输入是否符合语法
+//判断用户名和密码输入是否符合语法  used by electricroommonitor 
 function LoginOrder(name, ps) {
 	var url = jfjk_base_config.baseurl + "Login?name=" + name + "&pass=" + ps;
 	url = encodeURI(url);
@@ -130,7 +130,6 @@ function login() {
 				sessionStorage.username = sname;
 				sessionStorage.password = sps;
 				LoginOrder(sname, sps);
-
 			}
 		}
 	}
@@ -168,14 +167,11 @@ function logout() {
 						sessionStorage.islogin = false;
 						window.location.href = "index.html";
 					} else {
-						//layer.alert(data.Error);
-						//islogin=ture;
 						sessionStorage.username = "未登录";
 						sessionStorage.islogin = false;
 						window.location.href = "index.html";
 					}
 				}
-
 			}
 		});
 	} else {
@@ -183,7 +179,6 @@ function logout() {
 		sessionStorage.islogin = false;
 		window.location.href = "index.html";
 	}
-	
 }
 //获取用户详细信息 used by electricroommonitor
 function GetUserProfile() {
@@ -199,7 +194,6 @@ function GetUserProfile() {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-
 				layer.alert('获取用户详细信息操作失败');
 				document.getElementById("up-yhmc").value = sessionStorage.username;
 				errortime++;
@@ -210,10 +204,6 @@ function GetUserProfile() {
 					errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
-						//username="未登录";
-						//islogin=false;
-						//window.location.href="index.html";
-						//document.getElementById("iframe_main").src="userprofile.html";
 						document.getElementById("up-yhbh").value = data.Result.Id;
 						document.getElementById("up-yhmc").value = data.Result.Name;
 						document.getElementById("up-yhmm").value = ""; //data.Result.UserPass;
@@ -240,10 +230,18 @@ function initpage1() {
 	document.getElementById("jssj_chart").value =  getCurrentDate(1) + " 23:59:59";
 	//drawchart()
 }
+function inittotalpage(){  // used by electricroommonitor
+	document.getElementById("iframe_main").src="totalview.html";
+}
 // 初始化实时数据页面，根据不同站点、不同子系统来调用不同的页面 used by electricroommonitor 
 function initrealdata(){
-	var data=$("#tree").treeview("getSelected");
-	switch (data[0].text){
+	var pages=document.getElementById("iframe_main");
+	//var data=$("#tree").treeview("getSelected");
+	if(pages.src.indexOf("/realdata.html")<=0){
+		document.getElementById("iframe_main").src="realdata.html";
+	}
+	sessionStorage.pageindex=2;
+	/*switch (data[0].text){
 		case "行唐":
 		case "测温":
 			document.getElementById("iframe_main").src="realdata.html";
@@ -286,15 +284,15 @@ function initrealdata(){
 		case "红外":
 			document.getElementById("iframe_main").src="infrared.html";
 			break;
-	}
+	}*/
 }
 
-//网络连接心跳包
+//网络连接心跳包 re_use used by electricroommonitor 
 function sendbeat() {
 	var url = jfjk_base_config.baseurl; //+"GetGraphic?graphicId="+stationID;
 	url = encodeURI(url);
 	if ((sessionStorage.islogin == "true") && (errortime < 2)) {
-		/*$.ajax({
+		$.ajax({
 			beforeSend: function(request) {
 				request.setRequestHeader("_token", sessionStorage.token);
 			},
@@ -319,8 +317,8 @@ function sendbeat() {
 					}
 				}
 			}
-		});*/
-		getrealsbydataid();
+		});/**/
+		//getrealsbydataid();
 	} else {
 		sessionStorage.islogin = false;
 		Alert("与服务器连接失败", 2000);
@@ -340,9 +338,8 @@ function initIndex() {
 	//getgraphics();
 	//document.getElementById("iframe_main").src = 'drawmap.html';
 }*/
-//主页面显示用户名称
+//主页面显示用户名称 re_use  used by electricroommonitor 
 function showusername() {
-
 	if (sessionStorage.islogin == "true") {
 		var yhname = document.getElementById('yhname');
 		yhname.innerHTML = "<a href=userprofile.html target='iframe_main' style='color:white;text-decoration: none;'>" + sessionStorage.username + "</a>"; //#屏蔽href=userprofile.html
@@ -351,7 +348,7 @@ function showusername() {
 		document.getElementById('yhout').innerHTML = "<a href='index.html' style='color:white;text-decoration: none;'>[登录]</a>";
 	}
 }
-//获取指定站点的实时数据
+//获取指定站点的实时数据 no_use
 function getrealdatabystation(id) {
 	sessionStorage.pageindex = 2;
 	var count = 0,
@@ -538,7 +535,7 @@ function hidefudongdiv() {
 	document.getElementById("KeFuDiv").show;
 	//parent.window.document.getElementById('iframe_main').src='realwarning.html';
 }
-//获取全部的实时数据
+//获取全部的实时数据//nouse
 function getrealsbydataid() {
 	var stationname = "",
 	sensorname = "",
@@ -882,29 +879,29 @@ function loadstations_realdata() {
 	}
 	document.getElementById("iframe_main").src = 'realdata.html';
 }
-//load
+//load//////reuse  used by electricroommonitor 
 function loadstations_historydata() {
 	sessionStorage.pageindex = 3;
-	var slistname = $("#head_list_name").text();
-	if (slistname != "请选择站点:") {
+	//var slistname = $("#head_list_name").text();
+	//if (slistname != "请选择站点:") {
 		//initlist();
-	}
+	//}
 	document.getElementById("iframe_main").src = 'historydata.html';
 }
-function loadstations_chart() {
+function loadstations_chart() {////reuse  used by electricroommonitor 
 	sessionStorage.pageindex = 4;
-	var slistname = $("#head_list_name").text();
-	if (slistname != "请选择站点:") {
+	//var slistname = $("#head_list_name").text();
+	//if (slistname != "请选择站点:") {
 		//initlist();
-	}
+	//}
 	document.getElementById("iframe_main").src = 'chart.html';
 }
 function loadstations_warnlog() {
 	sessionStorage.pageindex = 5;
-	var slistname = $("#head_list_name").text();
-	if (slistname != "请选择站点:") {
+	//var slistname = $("#head_list_name").text();
+	//if (slistname != "请选择站点:") {
 		//initlist();
-	}
+	//}
 	document.getElementById("iframe_main").src = 'warnlog.html';
 }
 function loadstations_smslog() {
@@ -1182,7 +1179,21 @@ function initwarnlog() {
 	sessionStorage.pageindex = 5;
 	document.getElementById("kssj_warning").value = sessionStorage.kssj;
 	document.getElementById("jssj_warning").value = sessionStorage.jssj;
-	GetSensorsByStation();
+	var sel_sensor=document.getElementById("jcdd");
+	for (var i = 0; i < sel_sensor.length; i++) {
+		sel_sensor.removeChild(sel_sensor.options[0]);
+		sel_sensor.remove(0);
+		sel_sensor.options[0] = null;
+	}
+	sensors=JSON.parse(localStorage.getItem("sensors"));
+	for(var i=0;i<sensors.length;i++){
+		var op=document.createElement("option");
+		op.setAttribute("value",sensors[i].id);
+		op.innerHTML=sensors[i].Value.Name;
+		sel_sensor.appendChild(op);
+	}
+	setSelectOption("jcdd", sessionStorage.SensorId);
+	//GetSensorsByStation();
 }
 //初始化短信日志查询页面（在进入短信日志页面时触发）。
 function initsmslog() {
@@ -1313,7 +1324,7 @@ function GetSensorsByStation() {
 		layer.alert('与服务器连接断开');
 	}
 }
-//根据标签名称确定下，拉列表框的选中项///////已用
+//根据标签名称确定下，拉列表框的选中项///////已用  used by electricroommonitor 
 function setSelectOption(objid, sensor) {
 	var sel = document.getElementById(objid);
 	var options = sel.options;
@@ -1402,7 +1413,7 @@ function closewin(ranid) {
 	document.getElementById("alertmsgDiv" + ranid).removeChild(document.getElementById("alertmsgTitle"));
 	document.body.removeChild(document.getElementById("alertmsgDiv" + ranid));
 }
-//获取历史数据
+//获取历史数据    used by electricroommonitor 
 function gethistorydata(sensorid,kssj, jssj) {
 	if (sessionStorage.islogin == "true") {
 		if (sensorid != undefined) {
@@ -1435,10 +1446,10 @@ function gethistorydata(sensorid,kssj, jssj) {
 									//if(data.Result.Datas.hasOwnProperty("Tmp")){
 										decodedatas( data.Result.Datas[sensorid]);
 								} else {
-									layer.alert("没有符合条件的记录");
+									layer.alert("没有符合条件的记录",3000);
 								}
 							} else {
-								layer.alert("没有符合条件的记录");
+								layer.alert("没有符合条件的记录",2000);
 							}
 						} else {
 							layer.alert(data.Error);
@@ -1565,7 +1576,7 @@ function GetWarnLog(mkssj, mjssj) {
 function GetWarnLogBySensorId(mkssj, mjssj) {
 	var count = 0;
 	if (sessionStorage.islogin == "true") {
-		ajaxLoadingShow();
+		//ajaxLoadingShow();
 		//$('#indicatorContainer').radialIndicator();
 		if ((sessionStorage.SensorId == undefined) || (sessionStorage.SensorId == null)) {
 			var url = jfjk_base_config.baseurl + "GetWarnLogsByStation?stationId=" + sessionStorage.stationID + "&from=" + mkssj + "&to=" + mjssj;
@@ -1779,6 +1790,7 @@ function getchartvalue(msensorid, kssj, jssj) {
 		});
 	}
 }
+////  used by electricroommonitor 
 function querychartvalue() {
 	var kssj = document.getElementById("kssj_chart").value;
 	if ((kssj == null) || (kssj == "") || (kssj == undefined)) {
@@ -1793,23 +1805,29 @@ function querychartvalue() {
 	sessionStorage.kssj = kssj;
 	sessionStorage.jssj = jssj;
 	var first = document.getElementById("jcdd");
+	if(first.options.length<=0){
+		layer.alert("请选择要查询的测量点名称");
+		return;
+	}
 	sessionStorage.sensorid=first.value;
 	sessionStorage.firstname = document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text;
+	var myChart = echarts.init(document.getElementById('main'));
+	myChart.clear();
 	gethistorydata(sessionStorage.sensorid,kssj,jssj);
 	//drawchart();
 }
 
-//绘图变化趋势图
+//绘图变化趋势图   used by electricroommonitor 
 function decodedatas(obj_chartdata) {
-	var iserror = false,
-	err_info = "获取";
-	var isnull = false,
-	nullname = "";
+	//var iserror = false,
+	//err_info = "获取";
+	//var isnull = false,
+	//nullname = "";
 	var pa = [],
 	pb = [],
-	pc = [],
-	labels = [],
-	t;
+	pc = [];
+	//labels = [],
+	//t;
 	var myChart = echarts.init(document.getElementById('main'));
 	myChart.clear();
 	for (var i = 0; i <obj_chartdata.length; i++) {
@@ -1819,9 +1837,9 @@ function decodedatas(obj_chartdata) {
 	}
 	
 	var lengenddata = [];
-	lengenddata[0] = document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text;
-	lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177");
-	lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457");
+	lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"峰值");
+	lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"均值");
+	//lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457");
 	drawchart();
 	/*var sencondid = document.getElementById("jcdd2").value;
 	sessionStorage.sencondname = document.getElementById("jcdd2").options[document.getElementById("jcdd2").selectedIndex].text;
@@ -2025,13 +2043,13 @@ function decodedatas(obj_chartdata) {
 	function drawchart() {
 		//var myChart = echarts.init(document.getElementById('main'));
 		var option = {
-			color: ['#FFFF00', '#00ff00', '#ff0000'],
+			color: ['#FFFF00', '#FF0000'],//,'#00ff00'
 			backgroundColor: '#c0c0c0',
 
-			/*title : {
-						//text : '温度变化趋势图',
-						
-					},*/
+			title : {
+						text : '变化趋势图',
+						x:"center",
+					},/**/
 			tooltip: {
 				trigger: 'item',
 				formatter: function(params) {
@@ -2070,7 +2088,10 @@ function decodedatas(obj_chartdata) {
 
 			legend: {
 				data: lengenddata,
-				color: 'white',
+				orient:"horizontal",//"vertical",
+				x:'center',
+        		y:'30',
+				//color: 'white',
 			},
 			grid: {
 				y2: 80
@@ -2095,26 +2116,26 @@ function decodedatas(obj_chartdata) {
 				},
 			}],
 			series: [/**/{
-				name: document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
+				name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
 				type: 'line',
 				showAllSymbol: true,
 				symbolSize: 1,
 				data: pa
 			},
 			{
-				name: document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"18",
+				name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
 				type: 'line',
 				showAllSymbol: true,
 				symbolSize: 1,
 				data: pb
-			},
+			}/*,
 			{
-				name: document.getElementById("jcdd3").options[document.getElementById("jcdd3").selectedIndex].text+"345",
+				name: document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457",
 				type: 'line',
 				showAllSymbol: true,
 				symbolSize: 1,
 				data: pc
-			}/**/
+			}*/
 			]
 		};
 
@@ -2134,7 +2155,7 @@ function strtodatetime(str) {
 }
 //初始化绘图页面
 function initdrawing() {
-	//sessionStorage.pageindex = 1;
+	sessionStorage.pageindex = 1;
 	//var slistname = $("#head_list_name").text();
 	//if (slistname != "请选择图形:") {
 	//	initlist();
@@ -3222,7 +3243,7 @@ function refreshpages() {
 		break;
 	}
 }
-var i = 0;
+var i =0;
 function sortt(className) {
 	/*var listName=new Array();
 	var listNameOld=new Array();
@@ -3293,18 +3314,18 @@ function sortt(className) {
 		
 		}
 		
-	}*/
-
+	}
+*/
 	if (i % 2 == 0) {
-		$(className).text('▲');
-		i++;
-	} else {
 		$(className).text('▼');
 		i++;
+	} else {
+		$(className).text('▲');
+		i++;
 	}
-	setTimeout("moduletable('arclist-tbody')", 200)
+	setTimeout("moduletable('realdata-tbody')", 200)
 }
-function moduletable(atableid) {
+function moduletable(atableid) {  //used by electricroommonitor 
 	var tbody = document.getElementById(atableid);
 	if (tbody == null) {
 		tbody = iframe_main.document.getElementById(atableid);
@@ -3388,12 +3409,12 @@ function toUtf8(str) {
 	}
 	return out;
 }
-//生成二维码
+//生成二维码  used by electricroommonitor 
 function madecode(str) {
 	//var str = toUtf8("钓鱼岛是中国的！"); 
 	$('#code').qrcode(str);
 }
-//初始化客户端下载页面，根据字符串生成二维码
+//初始化客户端下载页面，根据字符串生成二维码   used by electricroommonitor 
 function initmakecode() {
 	var str = toUtf8(this.location.href.substr(0, this.location.href.lastIndexOf('/')) + jfjk_base_config.app_path_name); // "/res/SubstationTemperature.apk");
 	$("#a_code")[0].href = str;
@@ -3425,7 +3446,7 @@ function initrealwarning() {
 	counter.innerHTML = tbl.rows.length;
 	moduletable('realwarning-tbody');
 }
-function initcontactus() {
+function initcontactus() {  //used by electricroommonitor 
 	document.getElementById('p1').innerHTML = jfjk_base_config.part1;
 	document.getElementById('p2').innerHTML = jfjk_base_config.part2;
 	document.getElementById('p3').innerHTML = jfjk_base_config.part3;

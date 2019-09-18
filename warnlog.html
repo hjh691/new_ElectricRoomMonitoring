@@ -4,10 +4,12 @@
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
 	<title>告警信息</title>
+	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
-	<script  type="text/javascript" src="js/radialIndicator.js"></script>
-	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
+	<!--<script  type="text/javascript" src="js/radialIndicator.js"></script>-->
+	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+	<!--<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>-->
 	<style>
 	*{
        margin:0px;
@@ -78,13 +80,13 @@
 			<tr >
 			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td><!---->
 			<td style="width:100px;border:0px;width:120px;">	
-				<select id="jdcmc" style="font-size:16px;width:153px;">
+				<select id="jcdd" style="font-size:16px;width:153px;">
 				</select>
 			</td>
 			<td class="condition"style="width:100px;"> 起止时间:</td>
-			<td class="condition"><input input type="datetime-local" value="2015-09-24T13:59:59" id="kssj_warning" style="width:190px;"></input></td>
+			<td class="condition"><input  type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:190px;"></input></td>
 			<td class="condition" style="width:30px;">至</td>
-			<td class="condition"><input input type="datetime-local" value="2015-09-24T13:59:59"id="jssj_warning" style="width:190px;"></input></td>
+			<td class="condition"><input  type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_warning" style="width:190px;"></input></td>
 			<td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="querywarnlog(0)" ></input><input class="button"type="button" id="chaxun"style="width:100px" value="查询全站" onclick="querywarnlog(1)" ></input></td>
 			
 			</tr>
@@ -119,12 +121,12 @@
 				<th>测量点编号</th>
 				<th>测量点名称</th>
 				<th>测量时间</th>
-				<th>温度（℃）</th>	
+				<th>数值</th>	
 				<th>告警内容</th>
 				<!--<th style="width:18px;border:0px solid black;"></th>-->
 				</tr>
 			</thead>
-			<tbody id='warnlogdata-tbody'>
+			<tbody id='warnlogdata-tbody' style="width:1020px;height:600px; overflow:auto;">
      
 			</tbody>
 		</table>
