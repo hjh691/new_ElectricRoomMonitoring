@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+        <link rel="stylesheet" href="css/electricroommonitoring.css"/>
+        <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+        <script type="text/javascript" src="dist/echarts-all.js"></script>
+        <script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+        <script  type="text/javascript" src="js/function.js"></script>
+        <script  type="text/javascript" src="js/config.js"></script>
+    </head>
+    <body>
+        <h2 id="title" align="center">弧光保护数据</h2>
+        <div class="tab-head" id="tab-head" style="height: 40px">
+            <div id="h1"><img src="res/lock2.png" style="float:left"></img>仪表显示</div>
+            <div id="h2" class="selected" ><img src="res/lock2.png" style="float:left">数据列表</div>
+            <div id="h3"><img src="res/lock2.png" style="float:left">波形显示</div>
+        </div>
+        <div style="height:40px;display: block"></div>
+        <div class="tab-content" id="tab-content">
+            <div class="tab-div parent" >
+                <div class="column" id="column0" align="center" ></div>
+               <!-- <div class="column" id="column1" align="center"></div>
+                <div class="column" id="column2" align="center"></div>
+                <div class="column" id="column3" align="center"></div>-->
+            </div>
+            <div class="tab-div parent show" id="reallist" >
+                <div class="column" align="center" style="width:100%;overflow-x:auto;">
+                    <div class="pagecard" id="pagecard1" style="margin-bottom:10px;widows: 100%;">
+                        <h3 align="center" >数据列表</h3>
+                        <!--ul class="pc-nav" >
+                            <li ><a href="#" target="iframe_main"><i>数据列表</i></a></li>
+                            <li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
+                        </ul-->
+                    </div>
+                    <div  align="center" style="overflow:auto;">
+                        <table id="list-table" width="1000px" >
+                            <thead>
+                                <tr >
+                                <th style="color:#0000ff" onclick="sortt('.sensorid')"><a href="javascript:">监测点编号 <span class="sensorid"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.sensorname')" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
+                                <!--th>数据编号</thonclick="sortt('.tmpvalue')"-->
+                                <th style="color:#0000ff" onclick="sortt('.time')"><a href="javascript:">发生时间 <span class="time"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.tmpvalue')"><a href="javascript:">强度<span class="tmpvalue"></span></a></th>
+                                <th style="color:#0000ff" onclick="sortt('.frevalue')"><a href="javascript:">频次<span class="frevalue"></span></a></th>
+                                <!--<th style="color:#0000ff">查看历史数据</th>
+                                <th style="color:#0000ff">查看告警信息</th> 
+                                <th style="width:18px;border:0px solid black;"></th>-->
+                                </tr>
+                            </thead>
+                            <tbody id='arclist-tbody'>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-div parent" id="chartmain" align="center" >
+                <div class="column" align="center" style="overflow: auto">
+                    <h3 align="center" style="height:40px;line-height: 40px" >波形图</h3>
+                    <table class="table" width="800px" >
+                        <tr >
+                        <td  class="condition" style="width:120px;border:0px;"> 监测点名称 :</td>
+                        <td  class="condition" style="border:0px;width:190px">	
+                            <select id="jdcmc" style="font-size:16px;width:190px;">
+                                <option value="0">测量点1</option>
+                            </select>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td class="condition" style="width:120px;"> 起 止 时 间  :</td>
+                            <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="kssj_chart" style="width:190px;" ></input></td>
+                            <td class="condition" style="width:30px;">至</td>
+                            <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_chart" style="width:190px;" ></input></td>
+                            <td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="initData('chart_bar')" ></input></td>
+                        </tr>
+                    </table>
+                    <div id="chart_bar" align="center" style="height:400px;width:800px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            var tabs = document.getElementsByClassName('tab-head')[0].getElementsByTagName('div'),
+            contents = document.getElementsByClassName('tab-content')[0].getElementsByClassName('tab-div');
+            var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
+            var chart;
+            var datas=[];
+            function refreshwindow(){
+               
+                var tabhead=document.getElementById("tab-content");
+                var title=document.getElementById("title");
+                wwidth=bodyfrm.clientWidth-5;
+                wheight=bodyfrm.clientHeight-title.offsetHeight-28;
+                tabhead.style.width=wwidth+"px";
+                tabhead.style.height=wheight+"px";
+                for(var j=0;j<contents.length;j++){
+                    contents[j].style.width=wwidth+"px";
+                    contents[j].style.height=wheight+"px";
+                }
+                initpage1();
+                //形成图表数据对象数组
+                
+                datas.splice(0,datas.length);
+                for(var i=0;i<7;i++){
+                    //var value=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"监测位置'+i+'","value":0}'));
+                    var value=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"Ia'+i+'","value":'+value+'}'));
+                    var value1=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"B相'+i+'","value":'+value1+'}'));
+                    var value2=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"C相'+i+'","value":'+value2+'}'));
+                    var value3=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"弧光'+i+'","value":'+value3+'}'));
+                }
+                //画仪表盘式图表（多个）
+                var mychart=document.getElementById("chart");
+                if(mychart!==null){
+                    document.getElementById("column0").removeChild(mychart);
+                };
+                (function changeTab(tab) {
+                    for(var i = 0, len = tabs.length; i < len; i++) {
+                    tabs[i].onclick = showTab;
+                    }
+                })();
+
+                drawmeters("column0",datas);
+                
+            }; 
+            window.onload=window.onresize=refreshwindow;
+            function showTab() {
+                for(i=0;i<tabs.length;i++){
+                    if(tabs[i]===this){
+                        tabs[i].className="selected";
+                        contents[i].className="tab-div parent show";
+                        if(i===0){
+                            //drawmeters("column0",datas);
+                            refreshwindow();
+                        }
+                    }else{
+                        tabs[i].className="";
+                        contents[i].className="tab-div parent";
+                    }
+                }
+            }
+            function initseries(myChart,data){
+                // 基于准备好的dom，初始化echarts实例
+                //var myChart = echarts.init(document.getElementById('main'));
+
+                // 指定图表的配置项和数据
+                option = {
+                    backgroundColor: '#000',
+                    tooltip: {
+                        formatter: "{a} <br/>{c} {b}"
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            mark: {
+                                show: true
+                            },
+                            restore: {
+                                show: true
+                            },
+                            saveAsImage: {
+                                show: true
+                            }
+                        }
+                    },
+                    series: data,
+                };
+                myChart.hideLoading();
+                myChart.setOption(option);
+                //var option = myChart.getOption();
+                for(var i=0;i<data.length;i++){
+                    var value =data[i].data[0].value;
+                    option.series[i].data[0].value=value; 
+                    //形成进度条式的填充仪表效果并分段显示不同延时用于指示不同状态。    
+                    /*if(value<20){
+                        option.series[i].axisLine.lineStyle.color[0]=[value/100,option.series[i].axisLine.lineStyle.color[0][1]];
+                    }else if(value<80){
+                        option.series[i].axisLine.lineStyle.color[0]=[value/100,option.series[i].axisLine.lineStyle.color[0][1]];
+                    }else{
+                        option.series[i].axisLine.lineStyle.color[0]=[value/100,option.series[i].axisLine.lineStyle.color[0][1]];
+                    }*/
+                    option.series[i].axisLine.lineStyle.color[0]=[value/100,option.series[i].axisLine.lineStyle.color[0][1]];
+                }
+                    //option.series[5].axisLine.lineStyle.color[0][0]=value/220;
+                myChart.setOption(option);
+            }
+            function initSeriesData(type,rad,center,data){
+                var serie=new Object();
+                var toffset=0,tshow=true,titlelab="",tcolor="yellow",ecolor="#333",labshow=false,axisshow=true,dshow=true;
+                var maxvalue=100,minvalue=0,split=10,subsplit=5,start=220,end=-40,axiswidth=10;
+                switch(type){
+                case 0:
+                    offsety="20%"
+                    toffset="0";
+                    tshow=false;
+                    labshow=false;
+                    titlelab="Ia：";
+                    tcolor="#f0FF00";
+                    ecolor="#550";
+                    break;
+                case 1:
+                    offsety="45%"
+                    toffset=0;
+                    tshow=false;
+                    labshow=false;
+                    titlelab="Ib："
+                    tcolor="#3f0"
+                    ecolor="#050"
+                    break;
+                case 2:
+                    offsety="80%"
+                    toffset=0;
+                    tshow=false;
+                    labshow=false;
+                    titlelab="Ic："
+                    tcolor="#f03";
+                    ecolor="#500"
+                    break;
+                case 3:
+                    offsety="-10%"
+                    toffset="100%";
+                    tshow=true;
+                    labshow=true;
+                    axisshow=false;
+                    dshow=false;
+                    titlelab="Ia：";
+                    tcolor="black";
+                    ecolor="black";
+                    break;
+                case 4:
+                    offsety="160%"
+                    toffset=0;
+                    tshow=false;
+                    labshow=true;
+                    titlelab="弧光："
+                    tcolor="#0095ff";
+                    ecolor="#163777";
+                    maxvalue=10;
+                    minvalue=0;
+                    split=5;
+                    subsplit=4;
+                    //start=200;
+                    //end=-20;
+                    axiswidth=15;
+                    break;
+                }
+                serie={
+                        name: data.name,//'温度',
+                        type: 'gauge',
+                        center: center,//['50%', 150], // 默认全局居中
+                        radius: rad,//半径
+                        min: minvalue,
+                        max: maxvalue,
+                        startAngle: start,//起始角度
+                        endAngle: end,//终止角度
+                        splitNumber: split,//
+                        axisLine: { // 坐标轴线
+                            show:axisshow,
+                            lineStyle: { // 属性lineStyle控制线条样式
+                                color: [
+                                    [0.2, tcolor],
+                                    [1, ecolor]
+                                ],
+                                width: axiswidth,
+                                //shadowColor: 'yellow', //默认透明
+                                //shadowOffsetX:2,
+                                //shadowBlur: 10
+                            }
+                        },
+                        axisTick: { // 坐标轴小标记
+                            show: axisshow,
+                            splitNumber:subsplit,
+                            length:5,
+                            lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                                width: 2,
+                                color: '#000',
+                                //shadowColor: '#fff', //默认透明
+                                //shadowBlur: 10
+                            }
+                        },
+                        axisLabel: {
+                            show:labshow,
+                            position:"outer",
+                            distance: -170,//数字刻度距离
+                            textStyle: { // 
+                                fontWeight: 'bolder',
+                                color: '#fff',
+                                //shadowColor: '#fff', //默认透明
+                                //shadowBlur: 10
+                                //fontSize:16,
+                            },
+                            
+                        },
+                        splitLine: { // 分隔线
+                            show: axisshow,
+                            length: 13, // 属性length控制线长
+                            lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                                width: 2,
+                                color: '#000',
+                                //shadowColor: '#fff', //默认透明
+                                //shadowBlur: 10
+                            }
+                        },
+                        pointer: {
+                            show:false,
+                            width: 2,
+                            //shadowColor: '#fff', //默认透明
+                            //shadowBlur: 5
+                        },
+                        title: {
+                            show: tshow,
+                            offsetCenter: [0, toffset], // x, y，单位px
+                            textStyle: {
+                                color: 'white',
+                                fontSize: 20
+                            }
+                        },
+                        detail: {
+                            show: dshow,
+                            offsetCenter: [0, offsety],
+                            formatter: titlelab+'{value}  ',
+                            textStyle: {
+                                fontSize: 16,
+                                color: tcolor,//#F8F43C
+                            }
+
+                        },
+                        data: [data],//[{value: 20,name: '温度'}]
+                    }
+                return serie;
+            }
+            function drawmeters(chartparentid,datas){
+                if(datas===null||datas===undefined){
+                    return;
+                }
+                mcount=datas.length/5;
+                
+                var col_width=document.getElementById(chartparentid).offsetWidth;
+                var col_height=document.getElementById(chartparentid).offsetHeight;
+                mcol=Math.floor(col_width/300);
+                var widthofdiv=mcol>0?col_width:300;
+                mcol=mcol>0?mcol:1;
+                var moffsetx=1/mcol;
+                
+                var row=Math.floor(mcount/mcol);
+                var mod=(mcount%mcol);
+                row=mod>0?(row+1):row;
+                row=(mcol===1)?(row+1):row;
+                
+                var heightofdiv=(col_height>row*300)?col_height:row*300;
+                
+                var moffsety=1/row;
+                var divChart=document.getElementById("chart");//如果已经存在此图表div，则进行刷新，没有则创建添加，下同
+                if(divChart===null || divChart===undefined){
+                    divChart=document.createElement("div");
+                    divChart.setAttribute("style","width:"+widthofdiv+"px;height:"+heightofdiv+"px;");
+                    divChart.setAttribute("id","chart");
+                    document.getElementById(chartparentid).appendChild(divChart); 
+                    chart=echarts.init(document.getElementById("chart"));
+                }
+                chart.showLoading();
+                var series=[];
+                
+                for(var r=0;r<row-1;r++){
+                    for(var c=0;c<mcol;c++){
+                        var x=(1/mcol/2)+moffsetx*c;
+                        var y=(1/row/2)+moffsety*r;
+                        var rad_v=115;
+                        var centerpoint=[x.toFixed(2)*100+"%",y.toFixed(2)*100+"%"];
+                        series.push(initSeriesData(3,150,centerpoint,datas[(r*mcol+c)*5]));
+                        series.push(initSeriesData(0,rad_v,centerpoint,datas[(r*mcol+c)*5+1]));
+                        var x=(1/mcol/2)+moffsetx*c;
+                        var y=(1/row/2)+moffsety*r;
+                        var rad_v=95;
+                        var centerpoint=[x.toFixed(2)*100+"%",y.toFixed(2)*100+"%"];
+                        series.push(initSeriesData(1,rad_v,centerpoint,datas[(r*mcol+c)*5+2]));
+                        var rad_v=75;
+                        var centerpoint=[x.toFixed(2)*100+"%",y.toFixed(2)*100+"%"];
+                        series.push(initSeriesData(2,rad_v,centerpoint,datas[(r*mcol+c)*5+3]));
+                        var rad_v=50;
+                        var centerpoint=[x.toFixed(2)*100+"%",y.toFixed(2)*100+"%"];
+                        series.push(initSeriesData(4,rad_v,centerpoint,datas[(r*mcol+c)*5+4]));
+                    }
+                }
+                for(var m=0;m<mod;m++){
+                    var x=(1/mcol/2)+moffsetx*m;
+                    var y=(1/row/2)+moffsety*r;
+                    var rad_v=115;
+                    var centerpoint=[x.toFixed(2)*100+"%",y.toFixed(2)*100+"%"];
+                    series.push(initSeriesData(3,150,centerpoint,datas[(r*mcol+m)*4]));
+                    series.push(initSeriesData(0,rad_v,centerpoint,datas[(r*mcol+m)*5+1]));
+                    var x=(1/mcol/2)+moffsetx*m;
+                    var y=(1/row/2)+moffsety*r;
+                    var rad_v=95;
+                    var centerpoint=[x.toFixed(2)*100+"%",y.toFixed(2)*100+"%"];
+                    series.push(initSeriesData(1,rad_v,centerpoint,datas[(r*mcol+m)*5+2]));
+                    var rad_v=75;
+                    var centerpoint=[x.toFixed(2)*100+"%",y.toFixed(2)*100+"%"];
+                    series.push(initSeriesData(2,rad_v,centerpoint,datas[(r*mcol+m)*5+3]));
+                    var rad_v=50;
+                    var centerpoint=[x.toFixed(2)*100+"%",y.toFixed(2)*100+"%"];
+                    series.push(initSeriesData(4,rad_v,centerpoint,datas[(r*mcol+m)*5+4]));
+                }
+                initseries(chart,series);
+            }
+            function refreshData(){
+                //if(!myChart){
+                //    return;
+                //}
+                
+                //更新数据
+                //var option = myChart.getOption();
+                //option.series[0].data = data;
+                var datas=[];
+                for(var i=0;i<7;i++){
+                    //var value=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"监测位置'+i+'","value":0}'));
+                    var value=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"Ia'+i+'","value":'+value+'}'));
+                    var value1=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"Ib'+i+'","value":'+value1+'}'));
+                    var value2=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"Ic'+i+'","value":'+value2+'}'));
+                    var value3=(Math.random() * 100).toFixed(2) - 0;
+                    datas.push(JSON.parse('{"name":"弧光'+i+'","value":'+value3+'}'));
+                }   
+                //myChart.setOption(option);
+                drawmeters("column0",datas)    
+            }
+            window.setInterval("refreshData()",5000);//自动刷新图表数据
+             //生成数据
+            function initData(chartid) {
+                var legendData = ['强度', '频次'];
+                var bgColorList = ['#FBB730', '#31BDF2','#6197fb'];
+                var axisLabel = ['监测1', '监测2', '监测3', '监测4', '监测5', '监测6', '监测7', '监测8', '监测9', '监测10', '监测11', '监测12', '监测13'];
+                var seriesValue = [];
+
+                for (var i = 0; i < legendData.length; i++) {
+                    var arrData = [];
+                    var seriesDataVal = null;
+                    for (var j = 0; j < axisLabel.length; j++) {
+                        arrData.push(Math.floor(Math.random() * 100));
+                    }
+                    seriesDataVal = {
+                        barWidth: 10,//柱状条宽度
+                        name:legendData[i],
+                        type:'bar',
+                        itemStyle: {
+                            normal: {
+                                show: true,//鼠标悬停时显示label数据
+                                barBorderRadius: [10, 10, 10, 10],//柱形图圆角，初始化效果
+                                color: bgColorList[i]
+                            }
+                        },
+                        label: {
+                            normal: {
+                                show: true, //显示数据
+                                position: 'top'//显示数据位置 'top/right/left/insideLeft/insideRight/insideTop/insideBottom'
+                            }
+                        } ,
+                        data:arrData
+                    };
+                    seriesValue.push(seriesDataVal);
+                }
+                buildChart(chartid,legendData, axisLabel, seriesValue);
+
+            }
+            //生成Echarts图形
+            function buildChart(chartid,legendData, axisLabel, seriesValue) {
+                var chart = document.getElementById(chartid);
+                var echart = echarts.init(chart);
+                var option = {
+                    title: {
+                        text: "弧光保护监测数据",//正标题
+                        x: "center", //标题水平方向位置
+                        y: "0", //标题竖直方向位置
+                        textStyle: {
+                            fontSize: 18,
+                            fontWeight: 'normal',
+                            color: '#666'
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'//阴影，若需要为直线，则值为'line'
+                        }
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            saveAsImage: {show: true},
+                            magicType: {
+                            show: true,
+                            type: ['line', 'bar']
+					},
+					//, 'stack', 'tiled'
+                        }
+                    },
+                    legend: {
+                        data: legendData,
+                        //y: 'top',//图例说明文字设置
+                        x:'right',
+
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '10%',
+                        top:'10%',
+                        containLabel: true
+                    },
+                    dataZoom :// [
+                        {
+                            type: 'slider',
+                            show: true,
+                            start: 0,
+                            end: 100,
+                            handleSize: 8,
+                            //handleColor: '#ddd',//h滑动图标的颜色
+                        },
+                        /*{
+                            type: 'inside',
+                            start: 0,
+                            end: 100
+                        },
+                        {
+                            type: 'slider',
+                            show: true,
+                            yAxisIndex: 0,
+                            filterMode: 'empty',
+                            width: 12,
+                            height: '70%',
+                            handleSize: 8,
+                            showDataShadow: false,
+                            left: '93%'
+                        }
+                    ],*/
+                    xAxis: [{
+                        min: 0,
+                        type: 'category', //纵向柱状图，若需要为横向，则此处值为'value'， 下面 yAxis 的type值为'category'
+                        data: axisLabel
+                    }],
+                    yAxis: [{
+                        min: 0,
+                        type: 'value',
+                        splitArea: {show: false}
+                    }],
+                    label: {
+                        normal: { //显示bar数据
+                            show: true,
+                            position: 'top'
+                        }
+                    },
+                    
+                    series: seriesValue
+                };
+
+                echart.setOption(option);
+            }
+        </script>        
+    </body>
+</html>
