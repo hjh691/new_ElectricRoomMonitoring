@@ -231,7 +231,7 @@ function initpage1() {
 	//drawchart()
 }
 function inittotalpage(){  // used by electricroommonitor
-	document.getElementById("iframe_main").src="totalview.html";
+	document.getElementById("iframe_main").src="infototal.html";
 }
 // 初始化实时数据页面，根据不同站点、不同子系统来调用不同的页面 used by electricroommonitor 
 function initrealdata(){
@@ -1174,7 +1174,7 @@ function inithistorychart() {
 	}
 	//drawchart()
 }*/
-//初始化告警信息查询页面（在进入告警信息页面时触发）。
+//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
 function initwarnlog() {
 	sessionStorage.pageindex = 5;
 	document.getElementById("kssj_warning").value = sessionStorage.kssj;
@@ -1462,7 +1462,7 @@ function gethistorydata(sensorid,kssj, jssj) {
 		layer.alert('与服务器连接失败');
 	}
 }
-//告警信息查询按钮
+//告警信息查询按钮  used by electricroommonitor
 function querywarnlog(num) {
 	sessionStorage.SensorId = document.getElementById("jcdd").value;
 	sessionStorage.SensorName = document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text;
@@ -1486,7 +1486,7 @@ function querywarnlog(num) {
 		GetWarnLog(kssj, jssj);
 	}
 }
-//获取告警信息列表
+//获取告警信息列表  used by electricroommonitor
 function GetWarnLog(mkssj, mjssj) {
 	var count = 0;
 	if (sessionStorage.islogin == "true") {
@@ -1571,7 +1571,7 @@ function GetWarnLog(mkssj, mjssj) {
 	document.getElementById('station_name').innerHTML = sessionStorage.stationName;
 
 }
-//获取单个标签的告警信息
+//获取单个标签的告警信息  used by electricroommonitor
 //获取告警信息列表
 function GetWarnLogBySensorId(mkssj, mjssj) {
 	var count = 0;
@@ -1809,11 +1809,11 @@ function querychartvalue() {
 		layer.alert("请选择要查询的测量点名称");
 		return;
 	}
-	sessionStorage.sensorid=first.value;
-	sessionStorage.firstname = document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text;
+	sessionStorage.SensorId=first.value;
+	sessionStorage.SensorName = document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text;
 	var myChart = echarts.init(document.getElementById('main'));
 	myChart.clear();
-	gethistorydata(sessionStorage.sensorid,kssj,jssj);
+	gethistorydata(sessionStorage.SensorId,kssj,jssj);
 	//drawchart();
 }
 

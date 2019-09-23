@@ -51,7 +51,7 @@
 			
 			<!-- 导航栏 -->
 			<div class="navigation" style="vertical-align:center;overflow:auto">
-				<div class="row-navigation" style="vertical-align:center;min-width:500px;"align="center">
+				<div class="row-navigation" style="vertical-align:center;min-width:500px;" align="center">
 						<ul class="pc-nav" >
 							<li ><a href="javascript:void(0)"  onclick="inittotalpage()" >信息总览</a></li>
 							<li ><a href="javascript:void(0)" onclick="initdrawing()" style="display:none" id="realstate">实时状态</a></li>
@@ -106,7 +106,8 @@
 		</div>
 	</div>
 	<script>
-		
+		var infotreedata=[];
+		var infotreeobj=new Object();
 		function refreshwindow(){
 		sessionStorage.framepage=document.getElementById("iframe_main").src;
 		var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
@@ -182,6 +183,7 @@
 			inittreeview();
 		}
 		if(sessionStorage.framepage==""){
+			sessionStorage.pageindex=2;
 			document.getElementById("iframe_main").src="realdata.html"
 		}else{
 			document.getElementById("iframe_main").src=sessionStorage.framepage;
@@ -243,6 +245,7 @@
 				console.log("Config = "+data.Config);
 				console.log("Catalog = "+data.Catalog);
 				console.log("levels = "+data.level);
+				sessionStorage.name=data.text;
 				//loaddata(data);
 				maps=[];
 				if(data.id!=sessionStorage.nodeId){
@@ -251,6 +254,15 @@
 					sessionStorage.nodeId=data.id;
 					localStorage.t_pt = 0;
 				}
+				infotreedata=[];
+				infotreeobj.name=data.text;
+				infotreeobj.value=data.nodes.length;
+				infotreeobj.children=[];
+				if(data.nodes.length>0){
+					infotreeobj.children=decode(data.nodes);
+				}
+				infotreedata.push(infotreeobj);
+				//infotreedata=[{"name":"局","children":[{"name":"站1"},{"name":"站2"}]}]
 			}
 			/**方法
 			 * checkAll(options);//选中所有树节点
@@ -298,8 +310,10 @@
 			*/
 		});
 		$("#tree").treeview('collapseAll');//关闭展开
-		var name=mnodes[0].text;
-		var firstNode = $("#tree").treeview('search',[name+"",{ ignoreCase: false, exactMatch: false }]);//得到第一个节点
+		if(sessionStorage.name==""||sessionStorage.name==null){
+			sessionStorage.name=mnodes[0].text;//如果没有选择项，则选择第一项。
+		}
+		var firstNode = $("#tree").treeview('search',[sessionStorage.name+"",{ ignoreCase: false, exactMatch: false }]);//得到第一个节点//在页面尺寸变化时保持选项不变
 		sessionStorage.nodeid=firstNode[0].id;//保存nodeid，用于获取指定node的sensors。
 		$("#tree").treeview('expandNode',[firstNode, { levels: 2, silent: true } ]);//展开第一个节点
 		//$('#tree').treeview('expandNode', [ tree[0].id, { levels: 2, silent: true } ]);
@@ -308,6 +322,21 @@
 		//获取指定node的sensors
 		//GetSensorsByNode(sessionStorage.nodeid);
 	}
+	function decode(adata){
+		var infotree=[];
+		for(var i=0;i<adata.length;i++){
+			var tempobj=new Object();
+			tempobj.name=adata[i].text;
+			tempobj.value=adata[i].nodes.length;
+			if(adata[i].nodes.length>0){
+				tempobj.children=[];
+				tempobj.children=decode(adata[i].nodes);
+			}
+			infotree.push(tempobj);
+		}
+		return infotree;
+	}
+
 	function getNodes(){
 		var url = jfjk_base_config.baseurl + "/GetNodes";
 		url = encodeURI(url);
@@ -322,7 +351,7 @@
 				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
 					inittreeview();
-					layer.alert('获取系统系统列表数据失败');
+					layer.alert('获取系统目录列表数据失败');
 					errortime++;
 				},
 				success: function(data, status) {
