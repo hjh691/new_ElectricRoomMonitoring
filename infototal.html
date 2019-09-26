@@ -20,7 +20,7 @@
     <script>
         (function(){
     
-    //var data=parent.infotreedata;//JSON.parse(JSON.stringify(parent.infotreedata));//[{"name":"局","children":[{"name":"站1"},{"name":"站2"}]}];//
+    //var data=parent.infotreedata;//JSON.parse(JSON.stringify(parent.infotreedata));//
     //var data=data1;
     
     var myChar=echarts.init(document.getElementById("main")); 
@@ -47,25 +47,30 @@
                 right: '10%',
                 orient: 'horizontal', 
                 symbolSize: 7,
-
-                label: {
-                normal: {
-                    position: 'left',
-                    verticalAlign: 'middle',
-                    align: 'right'
-                }
-                },
-
-                leaves: {
                 label: {
                     normal: {
-                        position: 'right',
+                        position: 'left',
                         verticalAlign: 'middle',
-                        align: 'left'
-                    }
-                }
-                },
+                        align: 'right',
+                        fontSize:25,
+                        offset:[0,20],
+                        formatter: " {b} \n\n{c}",
+                    },
+                    
+                   
+                    },
 
+                    leaves: {
+                        label: {
+                            normal: {
+                                position: 'right',
+                                verticalAlign: 'middle',
+                                align: 'left'
+                            },
+                            formatter: "{name}:{value}",
+                        }
+                    },
+                
                 expandAndCollapse: true,
                 
                 data:parent.infotreedata,//data,/

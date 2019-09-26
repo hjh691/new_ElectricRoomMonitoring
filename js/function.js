@@ -231,6 +231,7 @@ function initpage1() {
 	//drawchart()
 }
 function inittotalpage(){  // used by electricroommonitor
+	sessionStorage.pageindex=0;
 	document.getElementById("iframe_main").src="infototal.html";
 }
 // 初始化实时数据页面，根据不同站点、不同子系统来调用不同的页面 used by electricroommonitor 
@@ -1833,7 +1834,7 @@ function decodedatas(obj_chartdata) {
 	for (var i = 0; i <obj_chartdata.length; i++) {
 		pa.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
 		pb.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/5, i])
-		pc.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/2, i])
+		//pc.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/2, i])
 	}
 	
 	var lengenddata = [];
