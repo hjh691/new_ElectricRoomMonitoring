@@ -248,13 +248,9 @@
 				sessionStorage.name=data.text;
 				//loaddata(data);
 				maps=[];
-				if(data.id!=sessionStorage.nodeId){
-					localStorage.setItem("sensors",null);
-					GetSensorsByNode(data.id);
-					sessionStorage.nodeId=data.id;
-					localStorage.t_pt = 0;
-				}
+				
 				infotreedata=[];
+				infotreeobj.id=data.id;
 				infotreeobj.name=data.text;
 				infotreeobj.value=data.nodes.length;
 				infotreeobj.children=[];
@@ -262,7 +258,13 @@
 					infotreeobj.children=decode(data.nodes);
 				}
 				infotreedata.push(infotreeobj);
-				//infotreedata=[{"name":"局","children":[{"name":"站1"},{"name":"站2"}]}]
+
+				if(data.id!=sessionStorage.nodeId){
+					localStorage.setItem("sensors",null);
+					GetSensorsByNode(data.id,0);
+					sessionStorage.nodeId=data.id;
+					localStorage.t_pt = 0;
+				}
 			}
 			/**方法
 			 * checkAll(options);//选中所有树节点
@@ -321,18 +323,37 @@
 		//$("#tree").treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
 		//获取指定node的sensors
 		//GetSensorsByNode(sessionStorage.nodeid);
+		infotreedata=[];
+		infotreeobj.id=firstNode[0].id;
+		infotreeobj.name=firstNode[0].text;
+		infotreeobj.value=firstNode[0].nodes.length;
+		infotreeobj.children=[];
+		if(firstNode[0].nodes.length>0){
+			infotreeobj.children=decode(firstNode[0].nodes);
+			
+		}
+		infotreedata.push(infotreeobj);
+		GetSensorsByNode(infotreeobj.id)
+		setTimeout(function(){if(sessionStorage.pageindex==0){
+			document.getElementById("iframe_main").src="infototal.html";
+		}},3000);
 	}
 	function decode(adata){
 		var infotree=[];
 		for(var i=0;i<adata.length;i++){
 			var tempobj=new Object();
 			tempobj.name=adata[i].text;
+			tempobj.id=adata[i].id
 			tempobj.value=adata[i].nodes.length;
+			tempobj.children=[];
 			if(adata[i].nodes.length>0){
-				tempobj.children=[];
 				tempobj.children=decode(adata[i].nodes);
 			}
 			infotree.push(tempobj);
+			if(adata[i].level==2){
+				//GetSensorsByNode(tempobj.id,1);
+				setTimeout("GetSensorsByNode(tempobj.id,1)",500);
+			}
 		}
 		return infotree;
 	}
@@ -479,7 +500,7 @@
 			document.getElementById("realstate").style.display="none";
 		}
 	}
-	function GetSensorsByNode(anodeid){
+	function GetSensorsByNode(anodeid,atype){
 		var url = jfjk_base_config.baseurl + "/GetSensorsByNode?nodeId="+anodeid;
 		url = encodeURI(url);
 		if (sessionStorage.islogin == "true") {
@@ -505,11 +526,14 @@
 							var result=data.Result;
 							if(!jQuery.isEmptyObject(result.Sensors)){
 								//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
-								localStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
-								//var sensors=(JSON.parse(sessionStorage.getItem("sensors")));
-								//for(var j=0;j<sensors.length;j++){
-								//	result=sensors[j].Value;
-								//}
+								var sensors=buildsensor(data.Result.Sensors);//(JSON.parse(localStorage.getItem("sensors")));
+								if(atype==0){
+									localStorage.setItem("sensors",JSON.stringify(sensors));
+								}
+								//var sensors=(JSON.parse(localStorage.getItem("sensors")));
+								//var localsensors=buildsensor(data.Result.Sensors);
+								updatainfotree(infotreedata, anodeid,sensors.length);
+								
 							}
 							
 						} else {
@@ -523,22 +547,37 @@
 			Alert("用户未登录，您无权完成此次操作", 2000);
 			inittreeview(null,0);
 		}
-		switch(sessionStorage.pageindex){
-			case '2':
-				document.getElementById("iframe_main").src="realdata.html";//getrealdatabynodeid(-1);
-				break;
-			case '3' :
-				document.getElementById("iframe_main").src="historydata.html";
-				break;
-			case '4':
-				document.getElementById("iframe_main").src="chart.html";
-				break;
-			case '5':
-				document.getElementById("iframe_main").src="warnlog.html";
-				break;
+		if(atype==0){
+			switch(sessionStorage.pageindex){
+				case '0':
+					document.getElementById("iframe_main").src="infototal.html";
+					break;
+				case '2':
+					document.getElementById("iframe_main").src="realdata.html";//getrealdatabynodeid(-1);
+					break;
+				case '3' :
+					document.getElementById("iframe_main").src="historydata.html";
+					break;
+				case '4':
+					document.getElementById("iframe_main").src="chart.html";
+					break;
+				case '5':
+					document.getElementById("iframe_main").src="warnlog.html";
+					break;
+			}
 		}
 	}
-	
+	function updatainfotree(treedata,tnodeid,tvalue){
+		for(var j=0;j<treedata.length;j++){
+			if(treedata[j].id==tnodeid){
+				treedata[j].value=tvalue;
+				return;
+			}
+			if(treedata[j].children.length>0){
+				updatainfotree(treedata[j].children,tnodeid,tvalue);
+			}
+		}
+	}
 	function buildsensor(aSensors){
 		if((aSensors!=undefined)&&(aSensors!=null)){
 			for(var i=0;i<aSensors.length;i++){
