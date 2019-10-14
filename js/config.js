@@ -3,7 +3,7 @@
 var jfjk_base_config={};
 // 1. 后台服务器地址：用引号括起来默认："http://localhost";"http://192.168.1.10";"http://www.bdjka.com"等。
 
- jfjk_base_config.baseurl="http://192.168.10.250/_api/";//"http://192.168.10.67:88/_api/";http://localhost:88/_api/
+ jfjk_base_config.baseurl="http://192.168.10.250:20000/_api/";//"http://192.168.10.67:88/_api/";http://localhost:88/_api/
  jfjk_base_config.speechurl="http://localhost:/_speeh/";//"http://192.168.10.67:88/_speech/";
 
 // 手机app存放目录和名称：要求在web的资源目录中，

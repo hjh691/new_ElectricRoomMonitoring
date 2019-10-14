@@ -343,11 +343,15 @@ function initIndex() {
 function showusername() {
 	if (sessionStorage.islogin == "true") {
 		var yhname = document.getElementById('yhname');
-		yhname.innerHTML = "<a href=userprofile.html target='iframe_main' style='color:white;text-decoration: none;'>" + sessionStorage.username + "</a>"; //#屏蔽href=userprofile.html
+		yhname.innerHTML = "<a href='javascript:void(0)' onclick='loaduserprofile()' style='color:white;text-decoration: none;'>" + sessionStorage.username + "</a>"; //#屏蔽href=userprofile.html
 		document.getElementById('yhout').innerHTML = "<a href='javascript:logout()' style='color:white;text-decoration: none;'>[退出]</a>";
+		//document.getElementById("iframe_main").src="userprofile.html";
 	} else {
 		document.getElementById('yhout').innerHTML = "<a href='index.html' style='color:white;text-decoration: none;'>[登录]</a>";
 	}
+}
+function loaduserprofile(){
+	document.getElementById("iframe_main").src="userprofile.html";
 }
 //获取指定站点的实时数据 no_use
 function getrealdatabystation(id) {
@@ -1418,6 +1422,7 @@ function closewin(ranid) {
 function gethistorydata(sensorid,kssj, jssj) {
 	if (sessionStorage.islogin == "true") {
 		if (sensorid != undefined) {
+			ajaxLoadingShow();
 			var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sensorid + "&from=" + kssj + "&to=" + jssj;
 			url = encodeURI(url);
 			$.ajax({
@@ -1430,6 +1435,8 @@ function gethistorydata(sensorid,kssj, jssj) {
 				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
 					errortime++;
+					ajaxLoadingHidden();
+					myChart.hideLoading();
 					if (errorThrown == "Unauthorized") {
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
 					} else {
@@ -1438,6 +1445,8 @@ function gethistorydata(sensorid,kssj, jssj) {
 				},
 				success: function(data, status) {
 					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+					ajaxLoadingHidden();
+					//myChart.hideLoading();
 					if (status == "success") {
 						errortime = 0;
 						sessionStorage.islogin = true;
@@ -1814,6 +1823,7 @@ function querychartvalue() {
 	sessionStorage.SensorName = document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text;
 	var myChart = echarts.init(document.getElementById('main'));
 	myChart.clear();
+	//myChart.showLoading();
 	gethistorydata(sessionStorage.SensorId,kssj,jssj);
 	//drawchart();
 }
@@ -3244,7 +3254,7 @@ function refreshpages() {
 		break;
 	}
 }
-var i =0;
+var ij =0;
 function sortt(className) {
 	/*var listName=new Array();
 	var listNameOld=new Array();
@@ -3317,12 +3327,12 @@ function sortt(className) {
 		
 	}
 */
-	if (i % 2 == 0) {
-		$(className).text('▼');
-		i++;
-	} else {
+	if (ij % 2 == 0) {
 		$(className).text('▲');
-		i++;
+		ij++;
+	} else {
+		$(className).text('▼');
+		ij++;
 	}
 	setTimeout("moduletable('realdata-tbody')", 200)
 }

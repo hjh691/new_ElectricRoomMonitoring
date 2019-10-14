@@ -8,6 +8,7 @@
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
+	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	<style>
@@ -126,6 +127,7 @@
 			sessionStorage.kssj = kssj;
 			sessionStorage.jssj = jssj;
 			$("#historydata-tbody tr").empty();
+			
 			gethistorydata(sessionStorage.SensorId,kssj, jssj);
 		}
 

@@ -106,7 +106,7 @@
 		</div>
 	</div>
 	<script>
-		var infotreedata=[];
+		var infotreedata=[],maps=[];
 		var infotreeobj=new Object();
 		function refreshwindow(){
 		sessionStorage.framepage=document.getElementById("iframe_main").src;
@@ -118,6 +118,7 @@
 		var menu = document.getElementById("leftmenu");
 		var content = document.getElementById("content");
 		var footer = document.getElementById("footer");
+		//isfree="true";
 		//获取窗口宽度
 		if (window.innerWidth)
             winWidth = window.innerWidth;
@@ -238,6 +239,14 @@
 			//	console.log("id = "+data.id);
 			//},
 			onNodeSelected: function (event, data) {
+				if(data.id!=sessionStorage.nodeId){
+					localStorage.setItem("sensors",null);
+					//while(isfree=="false"){}
+					//isfree="false";
+					GetSensorsByNode(data.id,0);
+					sessionStorage.nodeId=data.id;
+					localStorage.t_pt = 0;
+				}
 				console.log("nodeId = "+data.nodeId);
 				console.log("id = "+data.id);
 				console.log("name = "+data.text);
@@ -250,21 +259,19 @@
 				maps=[];
 				
 				infotreedata=[];
+				infotreeobj={};
 				infotreeobj.id=data.id;
 				infotreeobj.name=data.text;
 				infotreeobj.value=data.nodes.length;
 				infotreeobj.children=[];
+				infotreeobj.level=data.level;
+				//infotreeobj.isload="false";
 				if(data.nodes.length>0){
 					infotreeobj.children=decode(data.nodes);
 				}
 				infotreedata.push(infotreeobj);
 
-				if(data.id!=sessionStorage.nodeId){
-					localStorage.setItem("sensors",null);
-					GetSensorsByNode(data.id,0);
-					sessionStorage.nodeId=data.id;
-					localStorage.t_pt = 0;
-				}
+				
 			}
 			/**方法
 			 * checkAll(options);//选中所有树节点
@@ -328,12 +335,14 @@
 		infotreeobj.name=firstNode[0].text;
 		infotreeobj.value=firstNode[0].nodes.length;
 		infotreeobj.children=[];
+		infotreeobj.level=firstNode[0].level;
+		//infotreeobj.isload="false";
 		if(firstNode[0].nodes.length>0){
 			infotreeobj.children=decode(firstNode[0].nodes);
 			
 		}
 		infotreedata.push(infotreeobj);
-		GetSensorsByNode(infotreeobj.id)
+		GetSensorsByNode(infotreeobj.id,0)
 		setTimeout(function(){if(sessionStorage.pageindex==0){
 			document.getElementById("iframe_main").src="infototal.html";
 		}},3000);
@@ -346,14 +355,16 @@
 			tempobj.id=adata[i].id
 			tempobj.value=adata[i].nodes.length;
 			tempobj.children=[];
+			tempobj.level=adata[i].level;
 			if(adata[i].nodes.length>0){
 				tempobj.children=decode(adata[i].nodes);
 			}
 			infotree.push(tempobj);
-			if(adata[i].level==2){
+			/*if(adata[i].level==2){
 				//GetSensorsByNode(tempobj.id,1);
-				setTimeout("GetSensorsByNode(tempobj.id,1)",500);
-			}
+				isfree="false";
+				setTimeout("GetSensorsByNode("+tempobj.id+",1)",10);
+			}*/
 		}
 		return infotree;
 	}
@@ -500,6 +511,9 @@
 			document.getElementById("realstate").style.display="none";
 		}
 	}
+	function reloadDataGrid(){
+		isfree="true";
+	}
 	function GetSensorsByNode(anodeid,atype){
 		var url = jfjk_base_config.baseurl + "/GetSensorsByNode?nodeId="+anodeid;
 		url = encodeURI(url);
@@ -516,11 +530,13 @@
 					//inittreeview();
 					layer.alert('获取系统列表数据失败');
 					errortime++;
+					isfree="true";
 				},
 				success: function(data, status) {
 					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 					if (status == "success") {
 						errortime = 0;
+						isfree="true";
 						if (data.Error == null) {
 							var obj_sensors=[];
 							var result=data.Result;
@@ -532,7 +548,7 @@
 								}
 								//var sensors=(JSON.parse(localStorage.getItem("sensors")));
 								//var localsensors=buildsensor(data.Result.Sensors);
-								updatainfotree(infotreedata, anodeid,sensors.length);
+								//updatainfotree(infotreedata, anodeid,sensors.length,sensors);
 								
 							}
 							
@@ -567,16 +583,34 @@
 			}
 		}
 	}
-	function updatainfotree(treedata,tnodeid,tvalue){
+	function updatainfotree(treedata,tnodeid,tvalue,tsensors){
 		for(var j=0;j<treedata.length;j++){
 			if(treedata[j].id==tnodeid){
 				treedata[j].value=tvalue;
+				var sumnode=sumseneor(tsensors);
 				return;
 			}
 			if(treedata[j].children.length>0){
-				updatainfotree(treedata[j].children,tnodeid,tvalue);
+				updatainfotree(treedata[j].children,tnodeid,tvalue,tsensors);
 			}
 		}
+	}
+	function sumseneor(asensors){
+		if((asensors!=undefined)&&(asensors!=null)){
+			var map1=new Object();
+			for(var i=0;i<asensors.length;i++){
+				if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
+					var key=asensors[i].Value.Catalog;
+					if(map1.hasOwnProperty(key)){
+						map1[key]++
+					}else{
+						map1[key]=1;//value++
+					}
+					//map1.push(map2);
+				}
+			}
+		}
+		return map1;
 	}
 	function buildsensor(aSensors){
 		if((aSensors!=undefined)&&(aSensors!=null)){

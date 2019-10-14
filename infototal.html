@@ -11,6 +11,7 @@
     <script  type="text/javascript" src="js/function.js"></script>
 </head>
 <body>
+    <progress id="p1" style="width:100%;height:5px;display: none; " >您的浏览器不支持progress元素</progress>
     <div>
         <h2 align="center">信息总览</h2>
         <div class="main" id="main" style="width:1500px;height:700px">
@@ -18,67 +19,208 @@
         </div>
     </div>
     <script>
-        (function(){
+        //(function(){
     
     //var data=parent.infotreedata;//JSON.parse(JSON.stringify(parent.infotreedata));//
     //var data=data1;
-    
-    var myChar=echarts.init(document.getElementById("main")); 
-    myChar.setOption(option = {
-        title : {
-            text: '信息总览'
-        },
-        toolbox: {
-            show : true,
-            feature : {
-                mark : {show: true},
-                dataView : {show: true, readOnly: false},
-                restore : {show: true},
-                saveAsImage : {show: true}
-            }
-        },
-        series : [
-            {
-                type: 'tree',
-                name: 'tree1',
-                top: '5%',
-                left: '7%',
-                bottom: '2%',
-                right: '10%',
-                orient: 'horizontal', 
-                symbolSize: 7,
-                label: {
-                    normal: {
-                        position: 'left',
-                        verticalAlign: 'middle',
-                        align: 'right',
-                        fontSize:25,
-                        offset:[0,20],
-                        formatter: " {b} \n\n{c}",
-                    },
+    var isfree="true",maps=[];
+    if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
+        if(typeof(w1) == "undefined") {
+            w1 = new Worker("delay_worker.js");
+        }
+		i=0;
+        w1.onmessage = function(event) {
+            //document.getElementById("result").innerHTML = event.data;
+			i++
+			//if(i%3==0){
+				getNode(parent.infotreedata);
+			//}
+        };
+    } else {
+        //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
+        //var t1 = window.setInterval("getrealdatabynodeid(-1);",30000);
+    }
+        var myChar=echarts.init(document.getElementById("main")); 
+        var option = {
+            tooltip: {
+                show:true,
+                trigger: 'item',
+                triggerOn: 'mousemove'
+            },
+            title : {
+                text: '信息总览'
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            series : [
+                {
+                    type: 'tree',
+                    name: 'tree1',
+                    top: '5%',
+                    left: '7%',
+                    bottom: '2%',
+                    right: '10%',
+                    orient: 'horizontal', 
+                    symbolSize: 7,
+                    label: {
+                        normal: {
+                            position: 'left',
+                            verticalAlign: 'middle',
+                            align: 'right',
+                            fontSize:20,
+                            offset:[0,15],
+                            formatter: " {b} \n{c}",
+                        },
+                        
                     
-                   
-                    },
+                        },
 
-                    leaves: {
-                        label: {
-                            normal: {
-                                position: 'right',
-                                verticalAlign: 'middle',
-                                align: 'left'
-                            },
-                            formatter: "{name}:{value}",
-                        }
-                    },
-                
-                expandAndCollapse: true,
-                
-                data:parent.infotreedata,//data,/
-                
+                        leaves: {
+                            label: {
+                                normal: {
+                                    position: 'right',
+                                    verticalAlign: 'middle',
+                                    align: 'left'
+                                },
+                                formatter: "{name}:{value}",
+                            }
+                        },
+                    initialTreeDepth:4,
+                    expandAndCollapse: true,
+                    
+                    data:parent.infotreedata,//data,/
+                    
+                }
+            ]
+        } ;
+        myChar.setOption(option);     
+        //})();
+    function getNode(atree){//解读节点属性，当为第二级时，获取其标签数据进行分类统计
+        for(var i=0;i<atree.length;i++){
+            if((atree[i].level==2)&&(!atree[i].hasOwnProperty("isload")||(atree[i].isload!="true"))&&(isfree=="true")){
+                maps=[];
+                GetSensorsByNode(atree[i].id);//获取指定节点的标签数据
+                atree[i].isload="true";
+                isfree="false";
             }
-        ]
-    }) ;     
-        })();
+            if((atree[i].hasOwnProperty("children"))&&(atree[i].children.length>0)){
+                getNode(atree[i].children);
+            }
+        }
+        //document.getElementById("p1").style.display="none";
+        //var option = myChar.getOption();
+        //option.series[0].data = atree;
+        myChar.setOption(option);
+    }
+    function GetSensorsByNode(anodeid){//,atype
+		var url = jfjk_base_config.baseurl + "/GetSensorsByNode?nodeId="+anodeid;
+		url = encodeURI(url);
+		if (sessionStorage.islogin == "true") {
+			$.ajax({
+				beforeSend: function(request) {
+					request.setRequestHeader("_token", sessionStorage.token);
+				},
+				url: url,
+				type: 'GET',
+				dataType: 'json',
+				timeout: 10000,
+				error: function(jqXHR, textStatus, errorThrown) {
+					layer.alert('获取系统列表数据失败');
+					errortime++;
+					isfree="true";
+				},
+				success: function(data, status) {
+					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+					if (status == "success") {
+						errortime = 0;
+						if (data.Error == null) {
+							var result=data.Result;
+							if(!jQuery.isEmptyObject(result.Sensors)){
+								var sensors=buildsensor(data.Result.Sensors);//(JSON.parse(localStorage.getItem("sensors")));
+								updatainfotree(parent.infotreedata, anodeid,sensors.length,sensors);
+								//isfree="true";
+							}
+						} else {
+							layer.alert(data.Error);
+							sessionStorage.islogin = ture;
+                        }
+                        isfree="true";
+					}
+				}
+			});
+		} else {
+			Alert("用户未登录，您无权完成此次操作", 2000);
+			inittreeview(null,0);
+        }
+    }
+    function updatainfotree(treedata,tnodeid,tvalue,tsensors){//更新树形列表的数据内容,将标签分类统计结果归入树形列表
+		for(var j=0;j<treedata.length;j++){
+			if(treedata[j].id==tnodeid){
+				treedata[j].value=tvalue;
+                var sumnode=sumseneor(tsensors);
+                for(var i in sumnode){
+                    var ch1=new Object();
+                    ch1.name=i;
+                    ch1.value=sumnode[i];
+                    treedata[j].children.push(ch1);
+                }
+				return;
+			}
+			if((treedata[j].hasOwnProperty("children"))&&(treedata[j].children.length>0)){
+				updatainfotree(treedata[j].children,tnodeid,tvalue,tsensors);
+			}
+		}
+    }
+    function sumseneor(asensors){//对标签进行分类统计，并存入以对象内。
+		if((asensors!=undefined)&&(asensors!=null)){
+			var map1=new Object();
+			for(var i=0;i<asensors.length;i++){
+				if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
+					var key=asensors[i].Value.Catalog;
+					if(map1.hasOwnProperty(key)){
+						map1[key]++
+					}else{
+						map1[key]=1;//value++
+					}
+				}
+			}
+		}
+		return map1;
+	}
+    function buildsensor(aSensors){
+		if((aSensors!=undefined)&&(aSensors!=null)){
+			for(var i=0;i<aSensors.length;i++){
+				if((aSensors[i]!=null)&&(!jQuery.isEmptyObject(aSensors[i].Value))){
+					var map=new Object();
+					map.id=aSensors[i].Value.Id;
+					map.Value=aSensors[i].Value;
+					maps.push(map);
+				}
+				if((aSensors[i]!=null)&&(!jQuery.isEmptyObject(aSensors[i].Children))){
+					buildsensor(aSensors[i].Children);
+				}
+			}
+			var compare = function (obj1, obj2) {
+				var val1 = obj1.Value.name;
+				var val2 = obj2.Value.name;
+				if (val1 < val2) {
+					return -1;
+				} else if (val1 > val2) {
+					return 1;
+				} else {
+					return 0;
+				}            
+			} 
+			return (maps.sort(compare));
+		}
+	}
     </script>
 </body>
 </html>
