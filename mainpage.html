@@ -16,7 +16,7 @@
 	
 	<script  type="text/javascript" src="js/function.js"></script>
 </head>
-<body onload="initIndex()"><!--"showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>-->
+<body ><!--onload="initIndex()""showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>-->
 	<div class="header" id="header" style="height:80px;position:relative;overflow: auto;">
       	<div class="topbar" id="topbar" >
 			<div id="app_name" style="position:relative;float:left;left:15px;font-size:30px;font-style:bold;color:white" ><i></i></div>
@@ -71,6 +71,20 @@
 			<div class="mainarea" id="mainarea" >
 				<iframe  name="iframe_main" id="iframe_main" style="width:100%;height:99%" frameborder="0">
 				</iframe>
+				<table id="warningtable" style="display:none" >
+					<thead>
+						<tr >
+						<th>测量点编号</th>
+						<th>测量点名称</th>
+						<th>测量时间</th>
+						<th>数值</th>	
+						<th>告警信息</th>
+						<!--<th style="width:18px;border:0px solid black;"></th>-->
+						</tr>
+					</thead>
+					<tbody id='realwarningdata-tbody'>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
@@ -85,8 +99,8 @@
 				</ul>
 			</div>
 		</div>
-		<!--告警信息悬浮窗-->
-		<div id="KeFuDiv" class="KeFuDiv" onmousedown="hidefudongdiv();" style="display:none" >
+		<!--告警信息悬浮窗style="display:none"-->
+		<div id="KeFuDiv" class="KeFuDiv" onmousedown="hidefudongdiv();"  >
 			<!--屏幕滚动设置 <div class="affiche_text" id="alert_info">
 			</div>
 			 <marquee id="affiche" align="middle" behavior="scroll"  direction="left" height="50" width="500" hspace="100" vspace="50" loop="-1" scrollamount="10" scrolldelay="100" onMouseOut="this.start()" onMouseOver="this.stop()" ></marquee>-->
@@ -108,7 +122,80 @@
 	<script>
 		var infotreedata=[],maps=[];
 		var infotreeobj=new Object();
-		function refreshwindow(){
+		var allsensors=null;
+		var nodes=null;
+	//滚动插件实现，只用于横向滚动。
+	(function($) {  
+	$.fn.extend({        
+		roll: function(options) { 
+		var defaults = {
+			speed:1         
+		};
+		var options = $.extend(defaults, options); 
+		var speed=(document.all) ? options.speed : Math.max(1,options.speed-1);
+		if ($(this) == null) return ; 
+		var $container = $(this);
+		var $content = $("#alert_info");
+		var init_left = $container.width();
+		$content.css({left:parseInt(init_left) + "px"});
+		var This = this;
+		var time = setInterval(function(){This.move($container,$content,speed);},20); //setInterval会改变this指向，即使加了This=this，也要用匿名函数封装，这里调试了n久
+	
+		$container.bind("mouseover",function()
+		{
+			clearInterval(time);
+		});
+		$container.bind("mouseout",function()
+		{
+			time = setInterval(function(){This.move($container,$content,speed);},20);
+		});
+	
+		return this;    
+		},
+		move:function($container,$content,speed){
+		var fdck=document.getElementById("KeFuDiv");
+		if(fdck.style.display=="none"){return}
+	
+		var container_width = $container.width();
+		var content_width = $content.width();
+		if (parseInt($content.css("left")) + content_width > 0)
+		{
+			$content.css({left:parseInt($content.css("left")) - speed + "px"});
+		}
+		else
+		{
+			$content.css({left:parseInt(container_width) + "px"});
+			fdck.style.display="none";
+		}
+		}
+	});
+	})(jQuery);  
+		$(document).ready(
+		function(){
+			$("#KeFuDiv").roll({speed:3});//字幕滚动
+		
+		if(typeof(Worker) !== "undefined") {//定时器多任务
+        if(typeof(w) == "undefined") {
+            w = new Worker("delay_worker.js");
+        }
+		i=0;
+        w.onmessage = function(event) {//接收定时器返回的消息
+            //document.getElementById("result").innerHTML = event.data;
+			i++
+			if(i%30==0){
+				//sendbeat();//getrealsbydataid();
+				getrealdatabynodeid(-1);
+			}
+        };
+		} else {
+			//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
+			var t1 = window.setInterval(sendbeat,30000);//getrealsbydataid
+		}
+		//initIndex();
+		refreshwindow();
+		}
+	);
+		function refreshwindow(){//重画窗口，规定 尺寸,尤其是浮动窗口的位置
 		sessionStorage.framepage=document.getElementById("iframe_main").src;
 		var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
 		var fdheight=document.getElementById("KeFuDiv").offsetHeight;
@@ -166,8 +253,8 @@
 		}
 		initIndex();
 	}
-	window.onload=window.onresize = window.onscroll=refreshwindow;//    
-	//index页面初始化
+	window.onresize = window.onscroll=refreshwindow;//  
+	//index页面初始化window.onload=
 	function initIndex() {
 		showusername();
 		document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
@@ -184,13 +271,14 @@
 			inittreeview();
 		}
 		if(sessionStorage.framepage==""){
-			sessionStorage.pageindex=2;
-			document.getElementById("iframe_main").src="realdata.html"
+			sessionStorage.pageindex=0;
+			document.getElementById("iframe_main").src="infototal.html"
 		}else{
 			document.getElementById("iframe_main").src=sessionStorage.framepage;
 		}
 		
 	}
+	//初始化目录树
 	function inittreeview(anodes){
 		//var obj=tree[1];
 		//obj.nodes=(JSON.parse( node));
@@ -238,40 +326,38 @@
 			//	console.log("nodeId = "+data.nodeId);
 			//	console.log("id = "+data.id);
 			//},
-			onNodeSelected: function (event, data) {
-				if(data.id!=sessionStorage.nodeId){
+			onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
+				if(data.id!=sessionStorage.nodeId&&data.level<=2){
 					localStorage.setItem("sensors",null);
-					//while(isfree=="false"){}
-					//isfree="false";
-					GetSensorsByNode(data.id,0);
+					GetSensorsByNode(data.id);
 					sessionStorage.nodeId=data.id;
-					localStorage.t_pt = 0;
+					sessionStorage.t_p = 0;
 				}
-				console.log("nodeId = "+data.nodeId);
-				console.log("id = "+data.id);
-				console.log("name = "+data.text);
-				console.log("Time = "+data.Time);
-				console.log("Config = "+data.Config);
-				console.log("Catalog = "+data.Catalog);
-				console.log("levels = "+data.level);
-				sessionStorage.name=data.text;
-				//loaddata(data);
-				maps=[];
 				
+				sessionStorage.name=data.text;
+				if(data.level<=2){
+				maps=[];
 				infotreedata=[];
 				infotreeobj={};
 				infotreeobj.id=data.id;
 				infotreeobj.name=data.text;
-				infotreeobj.value=data.nodes.length;
+				
 				infotreeobj.children=[];
 				infotreeobj.level=data.level;
 				//infotreeobj.isload="false";
-				if(data.nodes.length>0){
+				if((data.hasOwnProperty("nodes"))&&(data.nodes.length>0)&&(data.level<2)){
+					infotreeobj.value=data.nodes.length;
 					infotreeobj.children=decode(data.nodes);
+				}else{
+					infotreeobj.value=0;
 				}
 				infotreedata.push(infotreeobj);
-
-				
+				//iframe_main.window.num=0;
+				}else{
+					sessionStorage.SensorId=data.id;
+					sessionStorage.nodeId=getThe_Second_level_nodeid(data);
+					GetSensorsByNode(sessionStorage.nodeId);
+				}
 			}
 			/**方法
 			 * checkAll(options);//选中所有树节点
@@ -333,42 +419,54 @@
 		infotreedata=[];
 		infotreeobj.id=firstNode[0].id;
 		infotreeobj.name=firstNode[0].text;
-		infotreeobj.value=firstNode[0].nodes.length;
+		if(firstNode[0].hasOwnProperty("nodes")){
+			infotreeobj.value=firstNode[0].nodes.length;
+		}else{
+			infotreeobj.value=0;
+		}
 		infotreeobj.children=[];
 		infotreeobj.level=firstNode[0].level;
 		//infotreeobj.isload="false";
-		if(firstNode[0].nodes.length>0){
+		if((firstNode[0].hasOwnProperty("nodes"))&&(firstNode[0].nodes.length>0)&&(firstNode[0].level<2)){
 			infotreeobj.children=decode(firstNode[0].nodes);
 			
 		}
 		infotreedata.push(infotreeobj);
-		GetSensorsByNode(infotreeobj.id,0)
-		setTimeout(function(){if(sessionStorage.pageindex==0){
-			document.getElementById("iframe_main").src="infototal.html";
-		}},3000);
+		maps=[];
+		GetSensorsByNode(infotreeobj.id)//获取指定节点下的标签信息
+		//setTimeout(function(){if(sessionStorage.pageindex==0){
+		//	document.getElementById("iframe_main").src="infototal.html";
+		//}},3000);
+	}
+	function getThe_Second_level_nodeid(anode){
+		while(anode.level>2){
+			anode=($("#tree").treeview("getParent",anode))
+		}
+		return anode.id;
 	}
 	function decode(adata){
 		var infotree=[];
 		for(var i=0;i<adata.length;i++){
 			var tempobj=new Object();
 			tempobj.name=adata[i].text;
-			tempobj.id=adata[i].id
-			tempobj.value=adata[i].nodes.length;
-			tempobj.children=[];
+			tempobj.id=adata[i].id			
 			tempobj.level=adata[i].level;
-			if(adata[i].nodes.length>0){
-				tempobj.children=decode(adata[i].nodes);
-			}
-			infotree.push(tempobj);
-			/*if(adata[i].level==2){
-				//GetSensorsByNode(tempobj.id,1);
-				isfree="false";
-				setTimeout("GetSensorsByNode("+tempobj.id+",1)",10);
-			}*/
+			if(adata[i].level<2){
+				if((adata[i].hasOwnProperty("nodes"))&&adata[i].nodes.length>0){
+					tempobj.value=adata[i].nodes.length;
+					tempobj.children=[];
+					tempobj.children=decode(adata[i].nodes);
+				}
+			}else{
+				tempobj.value=0;
+				}
+			infotree.push(tempobj); 
+			
 		}
 		return infotree;
 	}
-
+	//从后台获取节点信息 China,Canada,United State of American,England,Japen,Indian,German,Sweden,Greece,Poland,Franch,Itali,Kore,
+	//book,math,english,chinese,lab,library,office,classroom,glass,class,
 	function getNodes(){
 		var url = jfjk_base_config.baseurl + "/GetNodes";
 		url = encodeURI(url);
@@ -396,9 +494,12 @@
 							var result=data.Result;
 							if(!jQuery.isEmptyObject(result.Nodes)){
 								obj_nodes=data.Result.Nodes;
+							}else{
+								obj_nodes=null;
 							}
-							var nodes=buildnode(obj_nodes,0);
-							inittreeview(nodes);
+							nodes=buildnode(obj_nodes,0);
+							//inittreeview(nodes);
+							GetSensors();
 						} else {
 							layer.alert(data.Error);
 							sessionStorage.islogin = ture;
@@ -434,6 +535,9 @@
 				nodes.Config=data[j].Value.Config;
 				nodes.Time=data[j].Value.Time;
 				nodes.level=level;
+				if(data[j].Value.hasOwnProperty("NodeId")){
+					nodes.NodeId=data[j].Value.NodeId;
+				}
 				var icon='glyphicon glyphicon-user';
 				switch(data[j].Value.Name){
 					case "石家庄":
@@ -485,7 +589,8 @@
 					icon="glyphicon glyphicon-home"
 				}
 				nodes.icon=icon;
-				if(data[j].Children.lenght!=0){
+				var chi_len=data[j].Children.length;
+				if(chi_len!=0){
 					nodes.nodes=[];
 					nodes.nodes=buildnode(data[j].Children,level+1)
 				}
@@ -514,7 +619,7 @@
 	function reloadDataGrid(){
 		isfree="true";
 	}
-	function GetSensorsByNode(anodeid,atype){
+	function GetSensorsByNode(anodeid){
 		var url = jfjk_base_config.baseurl + "/GetSensorsByNode?nodeId="+anodeid;
 		url = encodeURI(url);
 		if (sessionStorage.islogin == "true") {
@@ -543,18 +648,19 @@
 							if(!jQuery.isEmptyObject(result.Sensors)){
 								//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
 								var sensors=buildsensor(data.Result.Sensors);//(JSON.parse(localStorage.getItem("sensors")));
-								if(atype==0){
-									localStorage.setItem("sensors",JSON.stringify(sensors));
-								}
+								localStorage.setItem("sensors",JSON.stringify(sensors));
 								//var sensors=(JSON.parse(localStorage.getItem("sensors")));
 								//var localsensors=buildsensor(data.Result.Sensors);
 								//updatainfotree(infotreedata, anodeid,sensors.length,sensors);
 								
+							}else{
+								localStorage.setItem("sensors",null);
+								sessionStorage.islogin = true;
 							}
-							
 						} else {
+							localStorage.setItem("sensors",null);
 							layer.alert(data.Error);
-							sessionStorage.islogin = ture;
+							sessionStorage.islogin = true;
 						}
 					}
 				}
@@ -563,7 +669,7 @@
 			Alert("用户未登录，您无权完成此次操作", 2000);
 			inittreeview(null,0);
 		}
-		if(atype==0){
+		//if(atype==0){
 			switch(sessionStorage.pageindex){
 				case '0':
 					document.getElementById("iframe_main").src="infototal.html";
@@ -581,17 +687,74 @@
 					document.getElementById("iframe_main").src="warnlog.html";
 					break;
 			}
+		//}
+	}
+	function GetSensors(){
+		var url = jfjk_base_config.baseurl + "/GetSensors";
+		url = encodeURI(url);
+		if (sessionStorage.islogin == "true") {
+			$.ajax({
+				beforeSend: function(request) {
+					request.setRequestHeader("_token", sessionStorage.token);
+				},
+				url: url,
+				type: 'GET',
+				dataType: 'json',
+				timeout: 10000,
+				error: function(jqXHR, textStatus, errorThrown) {
+					//inittreeview();
+					layer.alert('获取系统列表数据失败');
+					errortime++;
+					isfree="true";
+				},
+				success: function(data, status) {
+					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+					if (status == "success") {
+						errortime = 0;
+						isfree="true";
+						if (data.Error == null) {
+							var obj_sensors=[];
+							var result=data.Result;
+							if(!jQuery.isEmptyObject(result.Sensors)){
+								//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
+								allsensors=buildnode(data.Result.Sensors,3);//(JSON.parse(localStorage.getItem("sensors")));
+								//localStorage.setItem("allsensors",JSON.stringify(allsensors));
+								//var sensors=(JSON.parse(localStorage.getItem("sensors")));
+								//var localsensors=buildsensor(data.Result.Sensors);
+								updatanodetree();
+								
+							}else{
+								allsensors=null;
+								//localStorage.setItem("allsensors",null);
+							}
+							
+						} else {
+							localStorage.setItem("allsensors",null);
+							layer.alert(data.Error);
+							sessionStorage.islogin = ture;
+						}
+					}
+				}
+			});
+		} else {
+			Alert("用户未登录，您无权完成此次操作", 2000);
+			inittreeview(null,0);
 		}
 	}
-	function updatainfotree(treedata,tnodeid,tvalue,tsensors){
-		for(var j=0;j<treedata.length;j++){
-			if(treedata[j].id==tnodeid){
-				treedata[j].value=tvalue;
-				var sumnode=sumseneor(tsensors);
-				return;
-			}
-			if(treedata[j].children.length>0){
-				updatainfotree(treedata[j].children,tnodeid,tvalue,tsensors);
+	function updatainfotree(treedata,tnodeid,tsensors){//,tvalue
+		if(treedata!=null&&treedata!=undefined){
+			for(var j=0;j<treedata.length;j++){
+				if(treedata[j].id==tnodeid){
+					if(!treedata[j].hasOwnProperty("nodes")){
+						treedata[j].nodes=[];
+					}
+					treedata[j].nodes.push(tsensors);
+					//var sumnode=sumseneor(tsensors);
+					return;
+				}
+				if((treedata[j].hasOwnProperty("nodes"))&&(treedata[j].nodes.length>0)&&(treedata[j].level<2)){
+					updatainfotree(treedata[j].nodes,tnodeid,tsensors);//tvalue,
+				}
 			}
 		}
 	}
@@ -639,7 +802,137 @@
 			return (maps.sort(compare));
 		}
 	}
-	window.setInterval("sendbeat()",60000);
+	//window.setInterval("getrealdatabynodeid(-1)",60000);
+
+	function decoderealdata(obj_realdata){
+		var sensorname = "",
+		alerttime = "",
+		alertinfo = "",
+		alertvalue = "";
+		var tbody = document.getElementById('realwarningdata-tbody');
+		var tableLength = tbody.rows.length;
+		for(var int = 0;int < tableLength;int++) {
+			tbody.deleteRow(0);
+	    }
+		var sensors=allsensors;JSON.parse(localStorage.getItem("allsensors"));
+		var obj_data=new Object();
+		var pt=0;
+		if(sensors!=null){
+			var str_alert = "告警：";
+			var gaojing = document.getElementById("alert_info");
+			if (gaojing == null) {
+				gaojing = parent.window.document.getElementById("alert_info");
+			}
+			var fdck = document.getElementById("KeFuDiv");
+			if (fdck == null) {
+				fdck = parent.window.document.getElementById("KeFuDiv");
+			}
+			var speech = document.getElementById("chatData");
+			if (speech == null) {
+				speech = parent.window.document.getElementById("chatData");
+			}
+			for(var i=0;i<sensors.length;i++){
+				var sid=sensors[i].id+"";
+				if(obj_realdata.hasOwnProperty(sid)){
+					obj_data=(obj_realdata)[sid];////
+					var msg=obj_data[0].Message;
+					if(msg==null||msg==""||msg==undefined||msg.trim()==""){
+						continue;
+					}
+					alerttime = errs[i].Time.substr(11);
+					alertinfo = errs[i].msg;
+					alertvalue = parseFloat(errs[i].Value).toFixed(Number_of_decimal);
+					sname=sensors[i].Value.Name;
+					var xs=1;//sensors[i].Value.Factor;  数据结构修改，value为已经乘过系数的数值，svalue为未乘以系统的原始值
+					var type_td=sensors[i].Value.Catalog;
+					//添加数据列表项
+					var tr = document.createElement('tr');
+					//tr.setAttribute("ondblclick","tableclick(this)");
+					var tdename = document.createElement('td');
+					var tdid=document.createElement('td');
+					var tdtype=document.createElement('td');
+					var tdtime = document.createElement('td');
+					var tdvalue = document.createElement('td');
+					//var tdvalue2 = document.createElement('td');
+					//var tdhistory = document.createElement('td');
+					//var tdwarnlog = document.createElement('td');
+					var tdmessage = document.createElement('td');
+					tdename.innerHTML = sname;
+					tdid.innerHTML=sid;
+					//tdid.style.cssText="display:none";
+					tdtype.innerHTML=type_td;
+					tdtype.style.cssText="display:none";
+					tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
+					tdvalue.innerHTML=(obj_data[0].Value*xs).toFixed(Number_of_decimal);
+					//tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);
+					//tdhistory.setAttribute('backgroundColor', '#ffffff');
+					//tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
+					//tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
+					//tdwarnlog.setAttribute('onclick', 'towarnlog(' +sid + ')');
+					//tdwarnlog.setAttribute('backgroundColor', '#ffffff');
+					//tdwarnlog.style.cssText="display:none";
+					//tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
+					tdmessage.innerHTML=msg;
+					//tdmessage.style.cssText="display:none";
+					tr.appendChild(tdid);
+					tr.appendChild(tdename);
+					tr.appendChild(tdtime);
+					tr.appendChild(tdvalue);
+					//tr.appendChild(tdvalue2);
+					//tr.appendChild(tdhistory);
+					//tr.appendChild(tdwarnlog);//z不显示不显示
+					tr.appendChild(tdtype);//不显示//不显示
+					tr.appendChild(tdmessage);// 告警信息
+					var cl="#FFFFFF";
+					//隔行显示不同的颜色
+					if (pt % 2 == 0) {
+						cl="#16b9c9";
+					}
+					tr.cells[0].style.backgroundColor = cl;
+					tr.cells[1].style.backgroundColor = cl;
+					tr.cells[2].style.backgroundColor = cl;
+					tr.cells[3].style.backgroundColor = cl;
+					pt++;
+					tbody.appendChild(tr);
+					if((alertvalue!==null)&&(alertvalue!=="NaN")){
+						str_speech = "告警" + stationname + sensorname + alertinfo + "数值" + alertvalue;
+						str_alert = str_alert + " " + alerttime + "  " + stationname + ": " + sensorname + " " + alertinfo + " 数值为:" + alertvalue;
+					}else{
+						str_speech = "告警" + stationname + sensorname + alertinfo ;
+						str_alert = str_alert + " " + alerttime + "  " + stationname + ": " + sensorname + " " + alertinfo + " ";// + alertvalue;
+					}
+				}
+			}
+			if(pt>0){
+				gaojing.innerHTML = "<pre>" + str_alert + "</pre>";
+				speech.innerHTML = str_speech;
+				speech.click();
+				fdck.style.display = "block";
+			}else{
+				gaojing.innerText = "";
+				speech.innerHTML = "";
+				fdck.style.display = "none";
+			}
+		}/*else{
+			layer.alert("没有符合条件的数据");
+		}*/
+		//tbody.rows[t_pt].scrollIntoView();
+		//refreshData();
+	}
+	/*function refreshData(){
+
+	}*/
+	function updatanodetree(){
+		if(allsensors!=undefined&&allsensors!=null){
+			for(var i=0;i<allsensors.length;i++){
+				if(allsensors[i]!=null){
+					var s_nodeid=allsensors[i].NodeId;
+					updatainfotree(nodes,s_nodeid,allsensors[i]);
+				}
+			}
+			inittreeview(nodes);
+		}
+	};
 	</script>
   
 </body>

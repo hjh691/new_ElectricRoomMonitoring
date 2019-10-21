@@ -1,6 +1,8 @@
-	/*多种选择器介绍：通用*{}，类型 p{}，类.classname{},代码 #id{}，子选择器 div>p{},后继选择器 div p{}，多个选择器可以用逗号分隔。
+	/**多种选择器介绍：通用*{}，类型 p{}，类.classname{},代码 #id{}，子选择器 div>p{},后继选择器 div p{}，多个选择器可以用逗号分隔。
 	*元素：head，body，div，h1，ul，li，ol，p，b，span，table，tr，td，input，a，image，br，pre，i，
-	*/
+	*属性：margin，padding，position,background,background-color,width,height,border,color,border-style,border-widht,border-color,
+	*line-height,vertical-align,align,text-align,font,font-size,float,display,visible,overflow
+	**/
 	*{
        margin:0px;
        padding:0px;
@@ -280,5 +282,12 @@
 		border-radius: 5px;
 		text-align: center;
 	}
-	
+	#alert_info{
+		position:absolute;
+		left:0;
+		top:0;
+		white-space:nowrap; 
+		line-height: 50px;
+		font-weight:bold;
+	}
 	

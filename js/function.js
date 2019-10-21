@@ -46,6 +46,31 @@ function getCurrentDate(format) {
 	}
 	return time;
 }
+function dateToString(now,format){
+	var year = now.getFullYear(); //得到年份
+	var month = now.getMonth(); //得到月份
+	var date = now.getDate(); //得到日期
+	var day = now.getDay(); //得到周几
+	var hour = now.getHours(); //得到小时
+	var minu = now.getMinutes(); //得到分钟
+	var sec = now.getSeconds(); //得到秒
+	month = month + 1;
+	if (month < 10) month = "0" + month;
+	if (date < 10) date = "0" + date;
+	if (hour < 10) hour = "0" + hour;
+	if (minu < 10) minu = "0" + minu;
+	if (sec < 10) sec = "0" + sec;
+	var time = "";
+	//精确到天
+	if (format == 1) {
+		time = year + "-" + month + "-" + date;
+	}
+	//精确到分
+	else if (format == 2) {
+		time = year + "-" + month + "-" + date + " " + hour + ":" + minu + ":" + sec;
+	}
+	return time;
+}
 //读取本地json文件userinfo.txt"：
 function getJsonFile(fileName) {
 	$.getJSON("js/" + fileName,
@@ -339,7 +364,7 @@ function initIndex() {
 	//getgraphics();
 	//document.getElementById("iframe_main").src = 'drawmap.html';
 }*/
-//主页面显示用户名称 re_use  used by electricroommonitor 
+//主页面显示用户名称  used by electricroommonitor 
 function showusername() {
 	if (sessionStorage.islogin == "true") {
 		var yhname = document.getElementById('yhname');
@@ -496,7 +521,7 @@ function getrealdatabystation(id) {
 		document.getElementById('station_name').innerHTML = sessionStorage.stationName;
 	}
 }
-//跳转到历史数据
+//跳转到历史数据  used by electricroommonitor
 function tohistory(sorid) {
 	/*var tbody=document.getElementById('realdata-tbody');
 		var trs = tbody.getElementsByTagName("tr");
@@ -509,7 +534,7 @@ function tohistory(sorid) {
 	sessionStorage.SensorId = sorid;
 	parent.window.document.getElementById('iframe_main').src = 'historydata.html';
 }
-//跳转到告警信息查询
+//跳转到告警信息查询  used by electricroommonitor
 function towarnlog(sorid) {
 	/*var tbody=document.getElementById('realdata-tbody');
 		var trs = tbody.getElementsByTagName("tr");
@@ -525,7 +550,7 @@ function towarnlog(sorid) {
 	parent.window.document.getElementById('iframe_main').src = 'warnlog.html';
 	//querywarnlog(0);
 }
-//显示或关闭浮动窗口
+//显示或关闭浮动窗口 
 function showfudongdiv() {
 	//document.getElementById("alert_info").innerHTML="告警：温度过高，数值：12345.876";
 	if (document.getElementById("KeFuDiv").style.display == "none") {
@@ -1419,10 +1444,12 @@ function closewin(ranid) {
 	document.body.removeChild(document.getElementById("alertmsgDiv" + ranid));
 }
 //获取历史数据    used by electricroommonitor 
-function gethistorydata(sensorid,kssj, jssj) {
+function gethistorydata(sensorid,kssj, jssj,aparent) {
 	if (sessionStorage.islogin == "true") {
 		if (sensorid != undefined) {
-			ajaxLoadingShow();
+			if((aparent==undefined)||(aparent!=1)){
+				ajaxLoadingShow();
+			}
 			var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sensorid + "&from=" + kssj + "&to=" + jssj;
 			url = encodeURI(url);
 			$.ajax({
@@ -3368,7 +3395,7 @@ function moduletable(atableid) {  //used by electricroommonitor
 }
 //进度条
 /*
- * 显示圆圈加载进度条
+ * 显示圆圈加载进度条  used by electricroommonitor
  */
 function ajaxLoadingShow() {
 	$.ajax({
@@ -3393,7 +3420,7 @@ function ajaxLoadingShow() {
 	});
 }
 /*
- * 取消圆圈加载进度条
+ * 取消圆圈加载进度条  used by electricroommonitor
  */
 function ajaxLoadingHidden() {
 	$("#viewport").removeAttr("style");
@@ -3466,4 +3493,62 @@ function initcontactus() {  //used by electricroommonitor
 	document.getElementById('postcode').innerHTML = jfjk_base_config.post_code;
 	document.getElementById('email1').innerHTML = jfjk_base_config.email1;
 	document.getElementById('email2').innerHTML = jfjk_base_config.email2;
+}
+//获取实时数据  used by electricroommonitor
+function getrealdatabynodeid(nodeid){
+		
+	if (nodeid!=undefined&&nodeid!==null) {
+		var url = jfjk_base_config.baseurl + "GetRealsNew?dataId=" + nodeid;
+		url = encodeURI(url);
+		if (sessionStorage.islogin == "true") {
+			$.ajax({
+				beforeSend: function(request) {
+					request.setRequestHeader("_token", sessionStorage.token);
+				},
+				url: url,
+				type: 'GET',
+				dataType: 'json',
+				timeout: 10000,
+				error: function(jqXHR, textStatus, errorThrown) {
+					errortime++;
+					if (errorThrown == "Unauthorized") {
+						value0=0;value1=0;sname="";
+						refreshData();
+						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败');
+						sessionStorage.islogin = "false"
+					} else {
+						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败');
+					}
+				},
+				success: function(data, status) {
+					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+					if (status == "success") {
+						errortime = 0;
+						sessionStorage.islogin = true;
+						value0=0;value1=0;sname="";
+						if (data.Error == null) {
+							if (jQuery.isEmptyObject(data.Result.Datas)) {
+								//if (id == 0) {
+									//layer.alert("没有符合条件的记录",2000);
+									layer.alert("没有符合条件的记录");
+								//}
+								localStorage.setItem("realdata",null);
+								refreshData();
+								return;
+							}
+							var obj_realdata=data.Result.Datas;
+							localStorage.setItem("realdata",JSON.stringify(obj_realdata));
+							decoderealdata(obj_realdata);
+						} else {
+							layer.alert(data.Error, 2000);
+						}
+					}
+				}
+			});
+		} else {
+			layer.alert("与服务器连接失败");
+			//window.location.href="index.html";
+		}
+		//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
+	}
 }

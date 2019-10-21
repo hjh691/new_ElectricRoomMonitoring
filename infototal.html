@@ -8,6 +8,7 @@
     <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="js/echarts.js"></script>
     <script  type="text/javascript" src="js/config.js"></script>
+    <script  type="text/javascript" src="js/layer/layer.js"></script>
     <script  type="text/javascript" src="js/function.js"></script>
 </head>
 <body>
@@ -23,16 +24,16 @@
     
     //var data=parent.infotreedata;//JSON.parse(JSON.stringify(parent.infotreedata));//
     //var data=data1;
-    var isfree="true",maps=[];
+    var isfree="true",maps=[];//,num=0
     if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
         if(typeof(w1) == "undefined") {
             w1 = new Worker("delay_worker.js");
         }
-		i=0;
+		//ab=0;
         w1.onmessage = function(event) {
             //document.getElementById("result").innerHTML = event.data;
-			i++
-			//if(i%3==0){
+			//ab++
+			//if(num<parent.infotreedata[0].children.length||parent.infotreedata[0].level!=1){
 				getNode(parent.infotreedata);
 			//}
         };
@@ -48,6 +49,7 @@
                 triggerOn: 'mousemove'
             },
             title : {
+                show:false,
                 text: '信息总览'
             },
             toolbox: {
@@ -109,7 +111,11 @@
                 GetSensorsByNode(atree[i].id);//获取指定节点的标签数据
                 atree[i].isload="true";
                 isfree="false";
+                
             }
+            /*if(i==atree.length-1){
+                    iscomplete=true;
+                }*/
             if((atree[i].hasOwnProperty("children"))&&(atree[i].children.length>0)){
                 getNode(atree[i].children);
             }
@@ -117,6 +123,7 @@
         //document.getElementById("p1").style.display="none";
         //var option = myChar.getOption();
         //option.series[0].data = atree;
+        
         myChar.setOption(option);
     }
     function GetSensorsByNode(anodeid){//,atype
@@ -146,11 +153,13 @@
 								var sensors=buildsensor(data.Result.Sensors);//(JSON.parse(localStorage.getItem("sensors")));
 								updatainfotree(parent.infotreedata, anodeid,sensors.length,sensors);
 								//isfree="true";
+                                //myChar.setOption(option);
 							}
 						} else {
 							layer.alert(data.Error);
 							sessionStorage.islogin = ture;
                         }
+                        //num++;
                         isfree="true";
 					}
 				}
@@ -169,7 +178,12 @@
                     var ch1=new Object();
                     ch1.name=i;
                     ch1.value=sumnode[i];
-                    treedata[j].children.push(ch1);
+                    if(treedata[j].hasOwnProperty("children")){
+                        treedata[j].children.push(ch1);
+                    }else{
+                        treedata[j].children=[];
+                        treedata[j].children.push(ch1);
+                    }
                 }
 				return;
 			}
@@ -183,7 +197,10 @@
 			var map1=new Object();
 			for(var i=0;i<asensors.length;i++){
 				if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
-					var key=asensors[i].Value.Catalog;
+                    var key=asensors[i].Value.Catalog;//Group;
+                    if(key==null||key==''||key.trim()==''){//空、空字符、空格都按空对待，提示未分组。
+                        key="未分组";
+                    }
 					if(map1.hasOwnProperty(key)){
 						map1[key]++
 					}else{

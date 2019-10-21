@@ -8,8 +8,9 @@
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js" ></script>
 	<script  type="text/javascript" src="js/config.js"></script>
+	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	<script  type="text/javascript" src="js/jquery.tablesort.min.js"></script>
-	<script type="text/javascript" src="dist/echarts-all.js"></script>
+	<script type="text/javascript" src="js/echarts.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	
@@ -70,12 +71,14 @@
 				<li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
 			</ul
 		</div>-->
-		<div text-align="center" >
-			<div id="realdata_gaugechart" style="width: 600px;height: 200px;background-color: rgb(207, 203, 203);MARGIN-RIGHT: auto; MARGIN-LEFT: auto;">fgdg
-				
+		<div align="center">
+		<div  class="parent" >
+			<div class="column" id="realdata_gaugechart" style="width: 600px;height: 300px;background-color: rgb(207, 203, 203);MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;">
 			</div>
-			
+			<div class="column" id="realdata_chart" style="width: 600px;height: 300px;background-color: rgb(107, 103, 103);MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;">
+			</div>
 		</div>
+	</div>
 		<div  class="row" style="margin-bottom:10px;width:100%;overflow:auto;display: none;" align="center">
 			<ul class="count_info" text-align="center" widht="1000px" >
 				<li style="width:50px"><b>站名：</b></li>
@@ -92,7 +95,7 @@
 		</div>
 		
 		<div align="center" >
-		<table class="tabtop13" id="realtable" width="1200px" >
+		<table class="tabtop13" id="realtable" width="1000px" >
 			<thead>
 				<tr >
 				<th style="color:#0000ff" onclick="sortt('.sensorname')" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
@@ -101,11 +104,11 @@
 				<th style="color:#0000ff" onclick="sortt('.value1')"><a href="javascript:">峰值<span class="value1"></span></a></th>
 				<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>
 				<th style="color:#0000ff">查看历史数据</th>
-				<th style="color:#0000ff">查看告警信息</th> 
-				<th style="width:18px;border:0px solid black;"></th><!---->
+				 
+				<th style="width:18px;border:0px solid black;"></th><!--<th style="color:#0000ff">查看告警信息</th>-->
 				</tr>
 			</thead>
-			<tbody id='realdata-tbody' style="width:1220px;height:540px; overflow:auto;" >
+			<tbody id='realdata-tbody' style="width:1020px;height:420px; overflow:auto;" >
 			</tbody>
 		</table>
 	</div>
@@ -113,16 +116,19 @@
 	<script type="text/javascript">
 		//var t1 = window.setInterval("getrealdatabystation(1);",30000);
 		var chart_type,chart_unit="",chart_max=100,chart_min=0,chart_sigle="";
+		var myChart2 = echarts.init(document.getElementById('realdata_chart'));
+		let isfirst="true";
 		if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
         if(typeof(w1) == "undefined") {
             w1 = new Worker("delay_worker.js");
         }
-		i=0;
+		var i=0;
         w1.onmessage = function(event) {
             //document.getElementById("result").innerHTML = event.data;
 			i++
-			if(i%30==0){
-				getrealdatabynodeid(-1);
+			if(i%60==0){
+				//getrealdatabynodeid(-1);
+				decoderealdata();
 			}
         };
 		} else {
@@ -150,87 +156,12 @@
 			datas.push(JSON.parse('{"name":"均值'+i+'","value":'+value+'}'));
 		}
 		initseries(datas);
-		var obj_realdata=new Object();
-
-	function getrealdatabynodeid(nodeid){
+		initchart2();
 		
-		if (nodeid!=undefined&&nodeid!==null) {
-			var url = jfjk_base_config.baseurl + "GetRealsNew?dataId=" + nodeid;
-			url = encodeURI(url);
-			if (sessionStorage.islogin == "true") {
-				$.ajax({
-					beforeSend: function(request) {
-						request.setRequestHeader("_token", sessionStorage.token);
-					},
-					url: url,
-					type: 'GET',
-					dataType: 'json',
-					timeout: 10000,
-					error: function(jqXHR, textStatus, errorThrown) {
-						errortime++;
-						if (errorThrown == "Unauthorized") {
-							value0=0;value1=0;sname="";
-							refreshData();
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败');
-							sessionStorage.islogin = "false"
-						} else {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败');
-						}
-					},
-					success: function(data, status) {
-						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-						if (status == "success") {
-							errortime = 0;
-							sessionStorage.islogin = true;
-							value0=0;value1=0;sname="";
-							if (data.Error == null) {
-								if (jQuery.isEmptyObject(data.Result.Datas)) {
-									//if (id == 0) {
-										//layer.alert("没有符合条件的记录",2000);
-										layer.alert("没有符合条件的记录");
-									//}
-									refreshData();
-									return;
-								}
-								obj_realdata=data.Result.Datas;
-								decoderealdata();
-								/*if (data.Result.Datas.hasOwnProperty("Err")) {
-									for (var i = 0; i < data.Result.Datas.Err.length; i++) {
-										if (jQuery.isEmptyObject(data.Result.Datas.Err[i].Value)) {
-											for (var j = 0; j < trs.length; j++) {
-												if (trs[j].cells[0].childNodes[0].data == data.Result.Datas.Err[i].SensorId) {
-													trs[j].cells[3].style.backgroundColor = trs[j].cells[2].style.backgroundColor;
-													//err_count++;
-													break;
-												}
-											}
-											continue;
-										}
-										for (var j = 0; j < trs.length; j++) {
-											if (trs[j].cells[0].childNodes[0].data == data.Result.Datas.Err[i].SensorId) {
-												trs[j].cells[3].style.backgroundColor = "#FFFF00";
-												err_count++;
-												break;
-											}
-										}
-									}
-									//err_count=data.Result.Datas.Err.length;
-								}*/
-							} else {
-								layer.alert(data.Error, 2000);
-							}
-						}
-					}
-				});
-			} else {
-				layer.alert("与服务器连接失败");
-				//window.location.href="index.html";
-			}
-			//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
-		}
-	}
+
 	function decoderealdata(){
 		//$("#realdata-tbody tr").empty();
+		obj_realdata=JSON.parse(localStorage.getItem("realdata"));
 		var tbody = document.getElementById('realdata-tbody');
 		var tableLength = tbody.rows.length;
 		for(var int = 0;int < tableLength;int++) {
@@ -244,13 +175,13 @@
 				var sid=sensors[i].id+"";
 				if(obj_realdata.hasOwnProperty(sid)){
 					sname=sensors[i].Value.Name;
-					var xs=sensors[i].Value.Factor;
+					var xs=1;//sensors[i].Value.Factor;  //数据结构修改，后台的value数据已经乘上系数，svalue为未乘以系数的原始数据
 					var type_td=sensors[i].Value.Catalog;
 					//if(type_td=="pd"){xs=xs*-1}
 					obj_data=(obj_realdata)[sid];////
 					//添加数据列表项
 					var tr = document.createElement('tr');
-					tr.setAttribute("onclick","tableclick(this)");
+					tr.setAttribute("ondblclick","tableclick(this)");
 					var tdename = document.createElement('td');
 					//var tdsalary=document.createElement('td');
 					var tdid=document.createElement('td');
@@ -260,6 +191,7 @@
 					var tdvalue2 = document.createElement('td');
 					var tdhistory = document.createElement('td');
 					var tdwarnlog = document.createElement('td');
+					var tdmessage = document.createElement('td');
 					tdename.innerHTML = sname;
 					tdid.innerHTML=sid;
 					tdid.style.cssText="display:none";
@@ -267,34 +199,40 @@
 					tdtype.style.cssText="display:none";
 					tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
 					tdvalue.innerHTML=(obj_data[0].Value*xs).toFixed(Number_of_decimal);
-					tdvalue2.innerHTML = (obj_data[0].Value*xs).toFixed(Number_of_decimal);
+					tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);//此处应为第二个数值，目前没有意义
 					tdhistory.setAttribute('backgroundColor', '#ffffff');
 					tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
 					tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
 					tdwarnlog.setAttribute('onclick', 'towarnlog(' +sid + ')');
 					tdwarnlog.setAttribute('backgroundColor', '#ffffff');
+					tdwarnlog.style.cssText="display:none";
 					tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
+					var mes=obj_data[0].Message;
+					tdmessage.innerHTML=mes;
+					tdmessage.style.cssText="display:none";
 					tr.appendChild(tdename);
 					tr.appendChild(tdtime);
 					tr.appendChild(tdvalue);
 					tr.appendChild(tdvalue2);
 					tr.appendChild(tdhistory);
-					tr.appendChild(tdwarnlog);
-					tr.appendChild(tdid);
-					tr.appendChild(tdtype);
-					
-					//隔行显示不同的延时
+					tr.appendChild(tdwarnlog);//z不显示
+					tr.appendChild(tdid);//不显示
+					tr.appendChild(tdtype);//不显示
+					tr.appendChild(tdmessage);//不显示 告警信息
+					var cl="#FFFFFF";
+					//隔行显示不同的颜色
 					if (pt % 2 == 0) {
-						tr.cells[0].style.backgroundColor = "#16b9c9";
-						tr.cells[1].style.backgroundColor = "#16b9c9";
-						tr.cells[2].style.backgroundColor = "#16b9c9";
-						tr.cells[3].style.backgroundColor = "#16b9c9";
-					} else {
-						tr.cells[0].style.backgroundColor = "#FFFFFF";
-						tr.cells[1].style.backgroundColor = "#FFFFFF";
-						tr.cells[2].style.backgroundColor = "#FFFFFF";
-						tr.cells[3].style.backgroundColor = "#FFFFFF";
+						cl="#16b9c9";
 					}
+					if(mes==null||mes==""||mes.trim()==""){
+
+					} else{
+						cl="#ff0";
+					}
+					tr.cells[0].style.backgroundColor = cl;
+					tr.cells[1].style.backgroundColor = cl;
+					tr.cells[2].style.backgroundColor = cl;
+					tr.cells[3].style.backgroundColor = cl;
 					pt++;
 					tbody.appendChild(tr);
 					$(".time").text('');
@@ -307,11 +245,35 @@
 			//document.getElementById('normal_count').innerHTML=count-err_count+"条";
 			//document.getElementById('err_count').innerHTML = 0 + "条";
 			if(pt>0){
-				sname=tbody.rows[localStorage.t_pt].cells[0].innerHTML;
-				chart_type=tbody.rows[localStorage.t_pt].cells[7].innerHTML;
+				if(sessionStorage.t_p!=undefined){
+				sname=tbody.rows[sessionStorage.t_p].cells[0].innerHTML;
+				chart_type=tbody.rows[sessionStorage.t_p].cells[7].innerHTML;
+				sensor_Id=parseInt(tbody.rows[sessionStorage.t_p].cells[6].innerHTML);
+				var lasttime=tbody.rows[sessionStorage.t_p].cells[1].innerHTML;
+				//var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 				updatachart(chart_type);
-				value0=parseFloat(tbody.rows[localStorage.t_pt].cells[2].innerHTML);
-				value1=parseFloat(tbody.rows[localStorage.t_pt].cells[2].innerHTML);
+				value0=parseFloat(tbody.rows[sessionStorage.t_p].cells[2].innerHTML);
+				value1=parseFloat(tbody.rows[sessionStorage.t_p].cells[3].innerHTML);
+				var heightpx=$("#realdata-tbody tr").height()+1;//加1是网格线的宽度
+				var ppt=+sessionStorage.t_p;
+				$("#realdata-tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行
+				if(isfirst!="true"){
+					var temp_option=myChart2.getOption();
+					if(temp_option.series[0].data[temp_option.series[0].data.length-1][0]<strtodatetime(lasttime)){
+							temp_option.series[0].data.push([strtodatetime(lasttime),value0,temp_option.series[0].data.length]);
+							temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
+							myChart2.setOption(temp_option);
+						}
+				}else{
+					isfirst="false";
+					var kssj=getCurrentDate(1) + " 00:00:00";
+					var jssj=getCurrentDate(2);
+					myChart2.showLoading();
+					gethistorydata(sensor_Id,kssj,jssj,1);
+				}
+			}else{
+				tbody.rows[0].ondblclick();
+			}
 			}else{
 				layer.alert("没有符合条件的数据");
 			}
@@ -336,20 +298,31 @@
 		}
 	}
 	function tableclick(tr){
-		localStorage.t_pt=tr.rowIndex-1;
+		sessionStorage.t_p=tr.rowIndex-1;
 		sname=tr.cells[0].innerHTML;
 		chart_type=tr.cells[7].innerHTML;
 		updatachart(chart_type);
 		value0=parseFloat(tr.cells[2].innerHTML);
 		value1=parseFloat(tr.cells[3].innerHTML);
+		if(parseInt(tr.cells[6].innerHTML)!=sessionStorage.SensorId){
+			sessionStorage.SensorId=parseInt(tr.cells[6].innerHTML);
+			var kssj=getCurrentDate(1) + " 00:00:00";
+			var jssj=getCurrentDate(2);
+			myChart2.showLoading();
+			gethistorydata(sessionStorage.SensorId,kssj,jssj,1);
+		}
+		
+		
 		refreshData();
+		//var myChart2 = echarts.init(document.getElementById('realdata_chart'));
+		
 	}
 
 	function initseries(data){
 		// 基于准备好的dom，初始化echarts实例
 		// 指定图表的配置项和数据
 		option = {
-			backgroundColor: '#4b4b4b',
+			backgroundColor: '#5b5b5b',
 			tooltip: {
 				formatter: "{a} <br/>{c} {b}"
 			},
@@ -429,8 +402,8 @@
                     },
                     detail: {
                         show: true,
-                        offsetCenter: [0, '-20%'],
-                        formatter: '峰值: \n'+' '+' {value}  '+chart_unit,
+                        offsetCenter: [0, '-10%'],
+                        formatter: '峰值: \n\n'+' '+' {value}  '+chart_unit,
                         textStyle: {
                             fontSize: 16,
                             color:'#F8F43C'
@@ -440,7 +413,7 @@
                     data: [data[0]],//[{value: 20,name: '温度'}]
 				},
 				{
-					name: '均值：',
+					name: '均值',
                     type: 'gauge',
                     center: ['75%', "50%"], // 默认全局居中
                     radius: '70%',//半径
@@ -500,8 +473,8 @@
                     },
                     detail: {
                         show: true,
-                        offsetCenter: [0, '-20%'],
-                        formatter: '均值:\n'+' '+' {value}  '+chart_unit,
+                        offsetCenter: [0, '-10%'],
+                        formatter: '均值:\n\n'+' '+' {value}  '+chart_unit,
                         textStyle: {
                             fontSize: 16,
                             color:'#F8F43C'
@@ -520,7 +493,7 @@
 		for(var i=0;i<option.series.length;i++){
 			value= eval("value"+i);
 			option.series[i].max=chart_max;
-			option.series[i].detail.formatter=option.series[i].name+': \n'+chart_sigle+value0+' '+chart_unit;
+			option.series[i].detail.formatter=option.series[i].name+': \n\n'+chart_sigle+value+' '+chart_unit;
 			option.series[i].data[0].name=sname;
 			option.series[i].data[0].value=value; 
 			//形成进度条式的填充仪表效果并分段显示不同延时用于指示不同状态。    
@@ -534,6 +507,236 @@
 		}
 			//option.series[5].axisLine.lineStyle.color[0][0]=value/220;
 		myChart.setOption(option);
+	}
+	function decodedatas(obj_chartdata) {
+		//var iserror = false,
+		//err_info = "获取";
+		//var isnull = false,
+		//nullname = "";
+		var pa = [],
+		pb = [],
+		pc = [];
+		//labels = [],
+		//t;
+		myChart2.clear();
+		for (var i = 0; i <obj_chartdata.length; i++) {
+			pa.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
+			pb.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/1.5, i])
+			//pc.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/2, i])
+		}
+		
+		var lengenddata = [];
+		lengenddata.push("峰值");
+		lengenddata.push("均值");
+		//lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457");
+		drawchart();
+		//绘制图形线条
+	function drawchart() {
+		//var myChart = echarts.init(document.getElementById('main'));
+		var option2 = {
+			color: ['#FFFF00', '#FF0000'],//,'#00ff00'
+			backgroundColor: '#c0c0c0',
+
+			title : {
+						text : '当天变化趋势图',
+						x:"center",
+					},/**/
+			tooltip: {
+				trigger: 'item',
+				formatter: function(params) {
+					var date = new Date(params.value[0]);
+					data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+					return data + '<br/>' + params.value[1];
+				}
+			},
+			toolbox: {
+				show: true,
+				feature: {
+					mark: {
+						show: true
+					},
+					dataView: {
+						show: true,
+						readOnly: false
+					},
+					magicType: {
+						show: true,
+						type: ['line']
+					},
+					//, 'bar', 'stack', 'tiled'
+					restore: {
+						show: true
+					},
+					saveAsImage: {
+						show: true
+					}
+				}
+			},
+			dataZoom: {
+				show: true,
+				start: 0
+			},
+
+			legend: {
+				data: lengenddata,
+				orient:"horizontal",//"vertical",
+				x:'center',
+        		y:'30',
+				//color: 'white',
+			},
+			grid: {
+				y2: 80
+			},
+			xAxis: [{
+				type: 'time',
+				splitNumber: 10,
+				axisLine: {
+					lineStyle: {
+						color: 'yellow',
+						width: 2
+					}
+				},
+			}],
+			yAxis: [{
+				type: 'value',
+				axisLine: {
+					lineStyle: {
+						color: 'yellow',
+						width: 2
+					}
+				},
+			}],
+			series: [/**/{
+				name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
+				type: 'line',
+				showAllSymbol: true,
+				symbolSize: 1,
+				data: pa,
+				smooth: true//平滑曲线
+			},
+			{
+				name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
+				type: 'line',
+				showAllSymbol: true,
+				symbolSize: 1,
+				data: pb,
+				smooth: true//平滑曲线
+			}/*,
+			{
+				name: document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457",
+				type: 'line',
+				showAllSymbol: true,
+				symbolSize: 1,
+				data: pc
+			}*/
+			]
+		};
+
+		myChart2.hideLoading();
+		myChart2.setOption(option2);
+		}
+	}
+	function initchart2(){
+		var option2 = {
+			color: ['#FFFF00', '#FF0000'],//,'#00ff00'
+			backgroundColor: '#c0c0c0',
+
+			title : {
+						text : '当天变化趋势图',
+						x:"center",
+					},/**/
+			tooltip: {
+				trigger: 'item',
+				formatter: function(params) {
+					var date = new Date(params.value[0]);
+					data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+					return data + '<br/>' + params.value[1];
+				}
+			},
+			toolbox: {
+				show: true,
+				feature: {
+					mark: {
+						show: true
+					},
+					dataView: {
+						show: true,
+						readOnly: false
+					},
+					magicType: {
+						show: true,
+						type: ['line']
+					},
+					//, 'bar', 'stack', 'tiled'
+					restore: {
+						show: true
+					},
+					saveAsImage: {
+						show: true
+					}
+				}
+			},
+			dataZoom: {
+				show: true,
+				start: 0
+			},
+
+			legend: {
+				data: [],//lengenddata,
+				orient:"horizontal",//"vertical",
+				x:'center',
+        		y:'30',
+				//color: 'white',
+			},
+			grid: {
+				y2: 80
+			},
+			xAxis: [{
+				type: 'time',
+				splitNumber: 10,
+				axisLine: {
+					lineStyle: {
+						color: 'yellow',
+						width: 2
+					}
+				},
+			}],
+			yAxis: [{
+				type: 'value',
+				axisLine: {
+					lineStyle: {
+						color: 'yellow',
+						width: 2
+					}
+				},
+			}],
+			series: [/**/{
+				name: '',//lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
+				type: 'line',
+				showAllSymbol: true,
+				symbolSize: 1,
+				data: []
+			},
+			{
+				name: '',//lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
+				type: 'line',
+				showAllSymbol: true,
+				symbolSize: 1,
+				data: []
+			}/*,
+			{
+				name: document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457",
+				type: 'line',
+				showAllSymbol: true,
+				symbolSize: 1,
+				data: pc
+			}*/
+			]
+		};
+
+		//myChart2.hideLoading();
+		myChart2.setOption(option2);
+		
 	}
 	</script>
 </body>
