@@ -43,7 +43,7 @@
 		<!--左侧站名列表 <h4 id="head_list_name" align="left"  >变电站:</h4>-->
 		<div class="leftmenu" id="leftmenu" style="float:left;width:15%;overflow:auto;min-width:200px;">
 			
-			<div id="tree" >
+			<div id="tree" style="width:400px;overflow:auto;">
 			
 			</div>
 		</div>
@@ -51,10 +51,10 @@
 			
 			<!-- 导航栏 -->
 			<div class="navigation" style="vertical-align:center;overflow:auto">
-				<div class="row-navigation" style="vertical-align:center;min-width:500px;" align="center">
+				<div class="row-navigation" style="vertical-align:center;min-width:500px;text-align:center" >
 						<ul class="pc-nav" >
 							<li ><a href="javascript:void(0)"  onclick="inittotalpage()" >信息总览</a></li>
-							<li ><a href="javascript:void(0)" onclick="initdrawing()" style="display:none" id="realstate">实时状态</a></li>
+							<li ><a href="javascript:void(0)" onclick="initdrawing()" id="realstate">状态图</a></li>
 							<li ><a id="realdata"href="javascript:void(0)"  onclick="initrealdata()">实时数据</a></li>
 							<li ><a id="historydata" href="javascript:void(0)" onclick="loadstations_historydata()">历史数据</a></li>
 							<li ><a id="historychart" href="javascript:void(0)" onclick="loadstations_chart()">趋势图</a></li>
@@ -123,7 +123,7 @@
 		var infotreedata=[],maps=[];
 		var infotreeobj=new Object();
 		var allsensors=null;
-		var nodes=null;
+		var nodes=null,nodeid=-1;
 	//滚动插件实现，只用于横向滚动。
 	(function($) {  
 	$.fn.extend({        
@@ -185,6 +185,7 @@
 			if(i%30==0){
 				//sendbeat();//getrealsbydataid();
 				getrealdatabynodeid(-1);
+				GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 			}
         };
 		} else {
@@ -327,13 +328,8 @@
 			//	console.log("id = "+data.id);
 			//},
 			onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
-				if(data.id!=sessionStorage.nodeId&&data.level<=2){
-					localStorage.setItem("sensors",null);
-					GetSensorsByNode(data.id);
-					sessionStorage.nodeId=data.id;
-					sessionStorage.t_p = 0;
-				}
-				
+				//var selectnode=$("#tree").treeview('getSelected');
+				$("#tree").treeview('collapseAll')//,nodeid);//关闭展开
 				sessionStorage.name=data.text;
 				if(data.level<=2){
 				maps=[];
@@ -352,12 +348,61 @@
 					infotreeobj.value=0;
 				}
 				infotreedata.push(infotreeobj);
+				if(data.nodeId!=nodeid&&data.level<=2){
+					localStorage.setItem("sensors",null);
+					sessionStorage.nodeId=data.id;
+					GetSensorsByNode(data.id);
+					GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
+					sessionStorage.t_p = 0;
+					nodeid=data.nodeId;
+				}
 				//iframe_main.window.num=0;
 				}else{
 					sessionStorage.SensorId=data.id;
-					sessionStorage.nodeId=getThe_Second_level_nodeid(data);
+					nodeid=data.nodeId;
+					var p_node=getThe_level_nodeid(data,2);
+					sessionStorage.nodeId=p_node.id;
 					GetSensorsByNode(sessionStorage.nodeId);
+					GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
+					maps=[];
+					infotreedata=[];
+					infotreeobj={};
+					infotreeobj.id=data.id;
+					infotreeobj.name=data.text;
+					infotreeobj.level=data.level;
+					
+					//infotreeobj.value=0;
+					infotreeobj.children=[];
+					//infotreeobj.level=data.level;
+					if((data.hasOwnProperty("nodes"))&&(data.nodes.length>0)){
+						infotreeobj.value=data.nodes.length;
+						var arr_node=buildsensor1(data.nodes);
+						infotreeobj.value=arr_node.length;
+						var sumnode=sumseneor(arr_node);
+						for(var j in sumnode){
+							var ch1=new Object();
+							ch1.name=j;
+							ch1.value=sumnode[j];
+							infotreeobj.children.push(ch1);
+						}
+					}else{
+						var temp=new Object();
+						var leaf_name=data.Catalog;
+						if(leaf_name=="null"||leaf_name==undefined||leaf_name.trim()==""){
+							leaf_name="未定义"
+						}
+						temp.name=leaf_name;
+						temp.value=1;
+						infotreeobj.value=1;
+						infotreeobj.children.push(temp);
+					}
+					infotreedata.push(infotreeobj);
 				}
+				for(var i=0;i<data.level;i++){//逐级展开所选节点的父节点。
+					p_node=getThe_level_nodeid(data,i);
+					$("#tree").treeview('expandNode',[p_node.nodeId, { levels: 1, silent: true }]);
+				}
+				$("#tree").treeview('expandNode',[data.nodeId, { levels: 1, silent: true }]);
 			}
 			/**方法
 			 * checkAll(options);//选中所有树节点
@@ -410,7 +455,13 @@
 		}
 		var firstNode = $("#tree").treeview('search',[sessionStorage.name+"",{ ignoreCase: false, exactMatch: false }]);//得到第一个节点//在页面尺寸变化时保持选项不变
 		sessionStorage.nodeid=firstNode[0].id;//保存nodeid，用于获取指定node的sensors。
+		nodeid=firstNode[0].nodeId;
 		$("#tree").treeview('expandNode',[firstNode, { levels: 2, silent: true } ]);//展开第一个节点
+		for(var i=0;i<firstNode[0].level;i++){//逐级展开所选节点的父节点。
+			var p_node=getThe_level_nodeid(firstNode[0],i);
+			$("#tree").treeview('expandNode',[p_node.nodeId, { levels: 1, silent: true }]);
+		}
+		$("#tree").treeview('expandNode',[firstNode[0].nodeId, { levels: 1, silent: true }]);
 		//$('#tree').treeview('expandNode', [ tree[0].id, { levels: 2, silent: true } ]);
 		$('#tree').treeview('selectNode', [ firstNode, { silent: true } ]);
 		//$("#tree").treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
@@ -434,15 +485,16 @@
 		infotreedata.push(infotreeobj);
 		maps=[];
 		GetSensorsByNode(infotreeobj.id)//获取指定节点下的标签信息
+		GetBinariesByType("NodeGraphic",infotreeobj.id);
 		//setTimeout(function(){if(sessionStorage.pageindex==0){
 		//	document.getElementById("iframe_main").src="infototal.html";
 		//}},3000);
 	}
-	function getThe_Second_level_nodeid(anode){
-		while(anode.level>2){
+	function getThe_level_nodeid(anode,alevel){
+		while(anode.level>alevel){
 			anode=($("#tree").treeview("getParent",anode))
 		}
-		return anode.id;
+		return anode;
 	}
 	function decode(adata){
 		var infotree=[];
@@ -456,17 +508,47 @@
 					tempobj.value=adata[i].nodes.length;
 					tempobj.children=[];
 					tempobj.children=decode(adata[i].nodes);
+				}else{
+					tempobj.value=0;
 				}
 			}else{
 				tempobj.value=0;
-				}
+			}
 			infotree.push(tempobj); 
 			
 		}
 		return infotree;
 	}
-	//从后台获取节点信息 China,Canada,United State of American,England,Japen,Indian,German,Sweden,Greece,Poland,Franch,Itali,Kore,
-	//book,math,english,chinese,lab,library,office,classroom,glass,class,
+	function decode_sensors(adata){
+		var infotree=[];
+		var ishavechild=false;
+		for(var i=0;i<adata.nodes.length;i++){
+			if((adata.hasOwnProperty("nodes"))&&adata.nodes.length>0){
+				//adata=adata.nodes;
+				var tempobj=new Object();
+				tempobj.name=adata.text;
+				tempobj.id=adata.id;			
+				tempobj.level=adata.level;
+				tempobj.value=adata.nodes.length;
+				tempobj.children=[];
+				ishavechild=true;
+				//var tempobj=new Object();
+				//if((adata[i].hasOwnProperty("nodes"))&&adata[i].nodes.length>0){
+					tempobj.children=decode_sensors(adata.nodes);
+				//}
+			}
+		}
+		
+		return infotree;
+	}
+	//book,math,english,chinese,lab,library,office,classroom,glass,class,white，blue，red，green，black，yellow，gray，brown，upon，eyes，ears，legs，arms，
+	//feet，body，head，nose，mouth，figer，heat，teeth，tongue，face，hand，tall，short，fat，thin，hair，erase，pen，pencil，ruler，ruber I,my,mine,me,you,you
+	//your,yours,he(she),him(her),his(her),his(hers),it,it,its.they,them,their,theirs,we,us,our,ours,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday
+	//one two three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,hundred,thousand,million,billion, computer,picture,jump,sit,stant,stay,
+	//page,data,up,on,in,at,look,out,of,for,from,form,list,short,tall,hight,small,big,bed,bee,bear,wolf,fox,fish,meat,nodle,rice,fine,nine,fly,sky,run,play,bath,
+	//water,what,when,where,how,who,whose,name,age,thin,hair,shop,stor,school,walk,work,doctor,teacher,student,driver,bus,car,job,
+	//从后台获取节点信息 China,Canada,United State of American,England,Japen,Indian,German,Sweden,Greece,Poland,Franch,Itali,Kore,here,there,game,glass,cup,bottle,
+	
 	function getNodes(){
 		var url = jfjk_base_config.baseurl + "/GetNodes";
 		url = encodeURI(url);
@@ -498,8 +580,8 @@
 								obj_nodes=null;
 							}
 							nodes=buildnode(obj_nodes,0);
-							//inittreeview(nodes);
-							GetSensors();
+							inittreeview(nodes);
+							//GetSensors();//将标签挂接到节点树。
 						} else {
 							layer.alert(data.Error);
 							sessionStorage.islogin = ture;
@@ -550,7 +632,7 @@
 						break;
 					case "烟感":
 					case "清苑":
-						icon="glyphicon glyphicon-fire";//glyphicon glyphicon-leaf  glyphicon glyphicon-tint  glyphicon glyphicon-flash
+						icon="glyphicon glyphicon-refresh";//glyphicon glyphicon-leaf  glyphicon glyphicon-tint  glyphicon glyphicon-flash
 						break;
 					case "局部放电":
 					case "安国":
@@ -619,6 +701,60 @@
 	function reloadDataGrid(){
 		isfree="true";
 	}
+	//获取指定节点的图形列表
+function GetBinariesByType(atype,anodeid){
+	var url = jfjk_base_config.baseurl + "/GetBinariesByType?type="+atype+"&typeid="+anodeid;
+	url = encodeURI(url);
+	if (sessionStorage.islogin == "true") {
+		$.ajax({
+			beforeSend: function(request) {
+				request.setRequestHeader("_token", sessionStorage.token);
+			},
+			url: url,
+			type: 'GET',
+			dataType: 'json',
+			timeout: 10000,
+			error: function(jqXHR, textStatus, errorThrown) {
+				//inittreeview();
+				layer.alert('获取系统列表数据失败');
+				errortime++;
+				//isfree="true";
+			},
+			success: function(data, status) {
+				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+				if (status == "success") {
+					errortime = 0;
+					//isfree="true";
+					if (data.Error == null) {
+						var obj_Binaries=[];
+						var result=data.Result;
+						if(!jQuery.isEmptyObject(result.Binaries)){
+							//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
+							obj_Binaries=data.Result.Binaries;
+							//var binaries=buildbinaries(data.Result.Binaries);//(JSON.parse(localStorage.getItem("sensors")));
+							localStorage.setItem("binaries",JSON.stringify(obj_Binaries));
+							//localStorage.binaries=obj_Binaries;
+							//refreshiframe();
+						}else{
+							localStorage.setItem("binaries",null);
+							sessionStorage.islogin = true;
+						}
+					} else {
+						localStorage.setItem("binaries",null);
+						layer.alert(data.Error);
+						sessionStorage.islogin = true;
+					}
+				}
+			}
+		});
+	} else {
+		Alert("用户未登录，您无权完成此次操作", 2000);
+		//inittreeview(null,0);
+	}
+	//if(atype==0){
+		refreshiframe();	
+	//}
+}
 	function GetSensorsByNode(anodeid){
 		var url = jfjk_base_config.baseurl + "/GetSensorsByNode?nodeId="+anodeid;
 		url = encodeURI(url);
@@ -652,7 +788,7 @@
 								//var sensors=(JSON.parse(localStorage.getItem("sensors")));
 								//var localsensors=buildsensor(data.Result.Sensors);
 								//updatainfotree(infotreedata, anodeid,sensors.length,sensors);
-								
+								refreshiframe();
 							}else{
 								localStorage.setItem("sensors",null);
 								sessionStorage.islogin = true;
@@ -670,7 +806,11 @@
 			inittreeview(null,0);
 		}
 		//if(atype==0){
-			switch(sessionStorage.pageindex){
+			refreshiframe();	
+		//}
+	}
+	function refreshiframe(){
+		switch(sessionStorage.pageindex){
 				case '0':
 					document.getElementById("iframe_main").src="infototal.html";
 					break;
@@ -687,7 +827,6 @@
 					document.getElementById("iframe_main").src="warnlog.html";
 					break;
 			}
-		//}
 	}
 	function GetSensors(){
 		var url = jfjk_base_config.baseurl + "/GetSensors";
@@ -762,18 +901,49 @@
 		if((asensors!=undefined)&&(asensors!=null)){
 			var map1=new Object();
 			for(var i=0;i<asensors.length;i++){
-				if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
-					var key=asensors[i].Value.Catalog;
+				if((asensors[i]!=null)){
+                    var key=asensors[i].Catalog;//Group;
+                    if(key==null||key==''||key.trim()==''){//空、空字符、空格都按空对待，提示未分组。
+                        key="未分组";
+                    }
 					if(map1.hasOwnProperty(key)){
 						map1[key]++
 					}else{
 						map1[key]=1;//value++
 					}
-					//map1.push(map2);
 				}
 			}
 		}
 		return map1;
+	}
+	function buildsensor1(aSensors){
+		if((aSensors!=undefined)&&(aSensors!=null)){
+			for(var j=0;j<aSensors.length;j++){
+				var nodes=new Object();
+				nodes.name=aSensors[j].text;
+				nodes.id=aSensors[j].id;
+				nodes.Catalog=aSensors[j].Catalog;
+				nodes.Config=aSensors[j].Config;
+				nodes.Time=aSensors[j].Time;
+				maps.push(nodes);
+				
+				if((aSensors[j].hasOwnProperty("nodes")&&(aSensors[j].nodes.length>0))){
+					buildsensor1(aSensors[j].nodes);
+				}
+			}
+			var compare = function (obj1, obj2) {
+				var val1 = obj1.name;
+				var val2 = obj2.name;
+				if (val1 < val2) {
+					return -1;
+				} else if (val1 > val2) {
+					return 1;
+				} else {
+					return 0;
+				}            
+			} 
+			return (maps.sort(compare));
+		}
 	}
 	function buildsensor(aSensors){
 		if((aSensors!=undefined)&&(aSensors!=null)){
@@ -888,10 +1058,10 @@
 					if (pt % 2 == 0) {
 						cl="#16b9c9";
 					}
-					tr.cells[0].style.backgroundColor = cl;
-					tr.cells[1].style.backgroundColor = cl;
-					tr.cells[2].style.backgroundColor = cl;
-					tr.cells[3].style.backgroundColor = cl;
+					tr.style.backgroundColor = cl;
+					//tr.cells[1].style.backgroundColor = cl;
+					//tr.cells[2].style.backgroundColor = cl;
+					//tr.cells[3].style.backgroundColor = cl;
 					pt++;
 					tbody.appendChild(tr);
 					if((alertvalue!==null)&&(alertvalue!=="NaN")){

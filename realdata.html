@@ -115,7 +115,7 @@
 	</div>
 	<script type="text/javascript">
 		//var t1 = window.setInterval("getrealdatabystation(1);",30000);
-		var chart_type,chart_unit="",chart_max=100,chart_min=0,chart_sigle="";
+		var chart_type,chart_unit="",chart_max=100,chart_min=0,chart_sigle="",is_have=false;
 		var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 		let isfirst="true";
 		if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
@@ -181,7 +181,7 @@
 					obj_data=(obj_realdata)[sid];////
 					//添加数据列表项
 					var tr = document.createElement('tr');
-					tr.setAttribute("ondblclick","tableclick(this)");
+					tr.setAttribute("onclick","tableclick(this)");//ondblclick
 					var tdename = document.createElement('td');
 					//var tdsalary=document.createElement('td');
 					var tdid=document.createElement('td');
@@ -229,10 +229,10 @@
 					} else{
 						cl="#ff0";
 					}
-					tr.cells[0].style.backgroundColor = cl;
-					tr.cells[1].style.backgroundColor = cl;
-					tr.cells[2].style.backgroundColor = cl;
-					tr.cells[3].style.backgroundColor = cl;
+					tr.style.backgroundColor = cl;
+					//tr.cells[1].style.backgroundColor = cl;
+					//tr.cells[2].style.backgroundColor = cl;
+					//tr.cells[3].style.backgroundColor = cl;
 					pt++;
 					tbody.appendChild(tr);
 					$(".time").text('');
@@ -245,6 +245,12 @@
 			//document.getElementById('normal_count').innerHTML=count-err_count+"条";
 			//document.getElementById('err_count').innerHTML = 0 + "条";
 			if(pt>0){
+				var tableLength = tbody.rows.length;
+				for(var int = 0;int < tableLength;int++) {
+					if(tbody.rows[int].cells[6].innerHTML==sessionStorage.SensorId){
+						sessionStorage.t_p=int;
+					}
+			    }
 				if(sessionStorage.t_p!=undefined){
 				sname=tbody.rows[sessionStorage.t_p].cells[0].innerHTML;
 				chart_type=tbody.rows[sessionStorage.t_p].cells[7].innerHTML;
@@ -298,6 +304,8 @@
 		}
 	}
 	function tableclick(tr){
+		
+		//$(tr).siblings().css("background","");
 		sessionStorage.t_p=tr.rowIndex-1;
 		sname=tr.cells[0].innerHTML;
 		chart_type=tr.cells[7].innerHTML;
@@ -311,9 +319,10 @@
 			myChart2.showLoading();
 			gethistorydata(sessionStorage.SensorId,kssj,jssj,1);
 		}
-		
-		
+	
 		refreshData();
+		moduletable("realdata-tbody");
+		$(tr).css("background","#85e494");//区分选中行
 		//var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 		
 	}

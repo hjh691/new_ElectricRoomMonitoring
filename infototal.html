@@ -23,18 +23,21 @@
         //(function(){
     
     //var data=parent.infotreedata;//JSON.parse(JSON.stringify(parent.infotreedata));//
-    //var data=data1;
+    //var data=data1;两湖两广两河山，五江云贵福吉安，四西二宁青甘陕，海俞内台北上天。北京天津上海重庆广州武汉沈阳西安成都南京
     var isfree="true",maps=[];//,num=0
     if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
         if(typeof(w1) == "undefined") {
             w1 = new Worker("delay_worker.js");
         }
-		//ab=0;
+		ab=0;
         w1.onmessage = function(event) {
             //document.getElementById("result").innerHTML = event.data;
-			//ab++
+			ab++
 			//if(num<parent.infotreedata[0].children.length||parent.infotreedata[0].level!=1){
-				getNode(parent.infotreedata);
+				if(ab=1){
+                getNode(parent.infotreedata);
+                ab=0;
+                }
 			//}
         };
     } else {

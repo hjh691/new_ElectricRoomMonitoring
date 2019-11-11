@@ -88,19 +88,21 @@
 			sel3.options[0] = null;*/
 		}
 		var sensors=JSON.parse(localStorage.getItem("sensors"));
-		for(var i=0;i<sensors.length;i++){
-			var op=document.createElement("option");
-			//var op2=document.createElement("option");
-			//var op3=document.createElement("option");
-			op.setAttribute("value",sensors[i].id);
-			op.innerHTML=sensors[i].Value.Name;
-			sel_sensor.appendChild(op);
-			/*op2.setAttribute("value",sensors[i].Id);
-			op2.innerHTML=sensors[i].Value.Name;
-			op3.setAttribute("value",sensors[i].Id);
-			op3.innerHTML=sensors[i].Value.Name;
-			sel2.appendChild(op2);
-			sel3.appendChild(op3);*/
+		if(sensors!=null){
+			for(var i=0;i<sensors.length;i++){
+				var op=document.createElement("option");
+				//var op2=document.createElement("option");
+				//var op3=document.createElement("option");
+				op.setAttribute("value",sensors[i].id);
+				op.innerHTML=sensors[i].Value.Name;
+				sel_sensor.appendChild(op);
+				/*op2.setAttribute("value",sensors[i].Id);
+				op2.innerHTML=sensors[i].Value.Name;
+				op3.setAttribute("value",sensors[i].Id);
+				op3.innerHTML=sensors[i].Value.Name;
+				sel2.appendChild(op2);
+				sel3.appendChild(op3);*/
+			}
 		}
 		setSelectOption("jcdd",sessionStorage.SensorId);
 		querychartvalue();
