@@ -454,8 +454,12 @@
 			sessionStorage.name=mnodes[0].text;//如果没有选择项，则选择第一项。
 		}
 		var firstNode = $("#tree").treeview('search',[sessionStorage.name+"",{ ignoreCase: false, exactMatch: false }]);//得到第一个节点//在页面尺寸变化时保持选项不变
-		sessionStorage.nodeid=firstNode[0].id;//保存nodeid，用于获取指定node的sensors。
-		nodeid=firstNode[0].nodeId;
+		if(firstNode[0].id!=sessionStorage.nodeid){
+			nodeid=mnodes[0].id;sessionStorage.nodeid=firstNode[0].id;
+		}else{
+		//保存nodeid，用于获取指定node的sensors。
+			nodeid=firstNode[0].nodeId;
+		}
 		$("#tree").treeview('expandNode',[firstNode, { levels: 2, silent: true } ]);//展开第一个节点
 		for(var i=0;i<firstNode[0].level;i++){//逐级展开所选节点的父节点。
 			var p_node=getThe_level_nodeid(firstNode[0],i);
@@ -644,11 +648,9 @@
 						icon="glyphicon glyphicon-bullhorn";//
 						break;
 					case "机房监控":
-					
 						icon='glyphicon glyphicon-inbox';//
 						break;
 					case "门禁":
-					
 						icon='glyphicon glyphicon-lock';//
 						break;
 					case "灯光":

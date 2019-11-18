@@ -1925,26 +1925,60 @@ function querychartvalue() {
 }
 
 //绘图变化趋势图   used by electricroommonitor 
-function decodedatas(obj_chartdata) {
+function decodedatas(obj_chartdatas) {
 	//var iserror = false,
 	//err_info = "获取";
 	//var isnull = false,
 	var jiange="";
 	var stime=new Date(sessionStorage.kssj).getTime();
 	var etime=new Date(sessionStorage.jssj).getTime();
-	var senconds=etime-stime;
+	//var senconds=etime-stime;
 	var pa = [],pb = [],pc = [];
-	var maxvalue=0,minvalue=0,avgvalue=0,ps=0,count=1,maxval=0,minval=0;
-	//labels = [],
-	//t;
+	var maxvalue=0,minvalue=0,maxval=0,minval=0;//avgvalue=0,ps=0,count=1,
+	var lengenddata = [];
+	var obj_chartdata=[];
+	var seriess=[];
+
 	var myChart = echarts.init(document.getElementById('main'));
 	myChart.clear();
-	if(obj_chartdata.length<=0){
+	if(obj_chartdatas.length<=0){
 		return;
 	}
-	/*if(Math.ceil(senconds/1000/60)<1430){
-		jiange="按分钟统计"
-		maxvalue=minvalue=avgvalue=obj_chartdata[0].Value;
+	if(check_val.length>0){
+		for(var i=0;i<check_val.length;i++){
+			var sensorid=check_val[i];
+			var series=new Object();
+			series.name=check_name[i]
+			lengenddata.push(check_name[i]);
+			obj_chartdata=obj_chartdatas[sensorid];
+			if(obj_chartdata){
+				pb= new Array();
+				maxvalue=minvalue=parseFloat(obj_chartdata[0].Value);
+				for (var j = 0; j <obj_chartdata.length; j++) {
+					pb.push([strtodatetime(obj_chartdata[j].Time), obj_chartdata[j].Value, j]);
+					if(parseFloat(obj_chartdata[j].Value)>maxvalue){
+						maxvalue=parseFloat(obj_chartdata[j].Value);
+					}
+					if(parseFloat(obj_chartdata[j].Value)<minvalue){
+						minvalue=parseFloat(obj_chartdata[j].Value);
+					}
+				}
+				if(i==0){
+					maxval=maxvalue;
+					minval=minvalue;
+				}else{
+					maxval=maxval>maxvalue?maxval:maxvalue;
+					minval=minval<minvalue?minval:minvalue;
+				}
+			}
+			series.type='line',
+			series.showAllSymbol=true,
+			series.symbolSize= 1,
+			series.data= pb
+			seriess.push(series);
+		}
+	}
+	/*//if(Math.ceil(senconds/1000/60)<1430){
 		for (var i = 0; i <obj_chartdata.length; i++) {
 			pa.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
 			pb.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
@@ -1979,8 +2013,8 @@ function decodedatas(obj_chartdata) {
 		pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
 		pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
 		pc.push([strtodatetime(strtime+":00"),minvalue , ps])
-	}else */
-	if(Math.ceil(senconds/1000/60)<=1440){
+	//}else 
+	/*if(Math.ceil(senconds/1000/60)<=1440){
 		jiange="按小时统计";
 		maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[0].Value);
 		maxval=minval=maxvalue;
@@ -2060,217 +2094,19 @@ function decodedatas(obj_chartdata) {
 	var lengenddata = [];
 	lengenddata.push("最大值");
 	lengenddata.push("平均值");
-	lengenddata.push("最小值");
+	lengenddata.push("最小值");*/
 	maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
 	minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
 	drawchart();
-	/*var sencondid = document.getElementById("jcdd2").value;
-	sessionStorage.sencondname = document.getElementById("jcdd2").options[document.getElementById("jcdd2").selectedIndex].text;
-	var thirdid = document.getElementById("jcdd3").value;
-	sessionStorage.thirdname = document.getElementById("jcdd3").options[document.getElementById("jcdd3").selectedIndex].text;
-	
-	
-	if (sencondid != firstid) {
-		lengenddata.push(document.getElementById("jcdd2").options[document.getElementById("jcdd2").selectedIndex].text);
-	}
-	if ((thirdid != firstid) && (thirdid != sencondid)) {
-		lengenddata.push(document.getElementById("jcdd3").options[document.getElementById("jcdd3").selectedIndex].text);
-	}
-	if (firstid != undefined) {
-		getfirst();
-	}
-
-	function getfirst() {
-		var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + firstid + "&from=" + kssj + "&to=" + jssj;
-		//var url=jfjk_base_config.baseurl+"GetHistoriesBySensor?sensorId=186&from=2012-09-04&to=2012-09-05";
-		url = encodeURI(url);
-		$.ajax({
-			beforeSend: function(request) {
-				request.setRequestHeader("_token", sessionStorage.token);
-			},
-			url: url,
-			type: 'GET',
-			dataType: 'json',
-			timeout: 10000,
-			error: function() {
-				//layer.alert('获取'+sessionStorage.firstname+"数据操作失败");
-				iserror = true;
-				err_info = err_info + sessionStorage.firstname;
-				getsencond();
-			},
-			success: function(data, status) {
-				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-				if (status == "success") {
-					sessionStorage.islogin = true;
-					if (data.Error == null) {
-						if (data.Result.Datas != null) {
-
-							if ((data.Result.Datas.hasOwnProperty("Tmp")) && (!jQuery.isEmptyObject(data.Result.Datas.Tmp))) {
-								for (var i = 0; i < data.Result.Datas.Tmp.length; i++) { //data.Result.Datas.Tmp.length;
-									if (data.Result.Datas.hasOwnProperty("Tmp"))
-									//pa.push(data.Result.Datas.Tmp[i].Value);
-									//labels.push(data.Result.Datas.Tmp[i].Time);
-									//strtodatetime(data.Result.Datas.Tmp[i].Time);
-									pa.push([strtodatetime(data.Result.Datas.Tmp[i].Time), data.Result.Datas.Tmp[i].Value, i])
-								}
-							} else {
-								//Alert(sessionStorage.firstname+"  没有符合条件的记录");
-								isnull = true;
-								nullname = sessionStorage.firstname;
-							}
-						} else {
-							layer.alert("没有符合条件的记录");
-						}
-					} else {
-						layer.alert(data.Error);
-					}
-					getsencond();
-				}
-			}
-		});
-	}
-	function getsencond() {
-		if (firstid == sencondid) {
-			getthird();
-			return;
-		}
-		var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sencondid + "&from=" + kssj + "&to=" + jssj;
-		//var url=jfjk_base_config.baseurl+"GetHistoriesBySensor?sensorId=186&from=2012-09-04&to=2012-09-05";
-		url = encodeURI(url);
-		$.ajax({
-			beforeSend: function(request) {
-				request.setRequestHeader("_token", sessionStorage.token);
-			},
-			url: url,
-			type: 'GET',
-			dataType: 'json',
-			timeout: 10000,
-			error: function() {
-				//layer.alert('获取'+sencondid+"数据操作失败");
-				iserror = true;
-				err_info = err_info + " " + sessionStorage.sencondname;
-				getthird();
-			},
-			success: function(data, status) {
-				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-				if (status == "success") {
-					sessionStorage.islogin = true;
-					if (data.Error == null) {
-						if (data.Result.Datas != null) {
-
-							if ((data.Result.Datas.hasOwnProperty("Tmp")) && (!jQuery.isEmptyObject(data.Result.Datas.Tmp))) {
-								for (var i = 0; i < data.Result.Datas.Tmp.length; i++) { //data.Result.Datas.Tmp.length;
-									if (data.Result.Datas.hasOwnProperty("Tmp"))
-									//pb.push(data.Result.Datas.Tmp[i].Value);
-									//labels.push(data.Result.Datas.Tmp[i].Time);
-									pb.push([strtodatetime(data.Result.Datas.Tmp[i].Time), data.Result.Datas.Tmp[i].Value, i])
-								}
-							} else {
-								//Alert(sessionStorage.sencondname+" 没有符合条件的记录");
-								isnull = true;
-								nullname = nullname + " " + sessionStorage.sencondname;
-							}
-						} else {
-							layer.alert("没有符合条件的记录");
-						}
-					} else {
-						layer.alert(data.Error);
-					}
-					getthird();
-				}
-			}
-		});
-	}*/
-	/*function getthird() {
-		if ((thirdid == sencondid) || (thirdid == firstid)) {
-			//myChart.hideLoading();
-			drawchart();
-			return;
-		}
-		var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + thirdid + "&from=" + kssj + "&to=" + jssj;
-		//var url=jfjk_base_config.baseurl+"GetHistoriesBySensor?sensorId=186&from=2012-09-04&to=2012-09-05";
-		url = encodeURI(url);
-		$.ajax({
-			beforeSend: function(request) {
-				request.setRequestHeader("_token", sessionStorage.token);
-			},
-			url: url,
-			type: 'GET',
-			dataType: 'json',
-			timeout: 10000,
-			error: function() {
-				//layer.alert('获取'+thirdid+"数据操作失败");
-				iserror = true;
-				err_info = err_info + " " + sessionStorage.thirdname;
-				errortime++;
-				var myChart = echarts.init(document.getElementById('main'));
-				myChart.hideLoading();
-			},
-			success: function(data, status) {
-				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-				if (status == "success") {
-					errortime = 0;
-					sessionStorage.islogin = true;
-					if (data.Error == null) {
-						if (data.Result.Datas != null) {
-
-							if ((data.Result.Datas.hasOwnProperty("Tmp")) && (!jQuery.isEmptyObject(data.Result.Datas.Tmp))) {
-								for (var i = 0; i < data.Result.Datas.Tmp.length; i++) { //data.Result.Datas.Tmp.length;
-									if (data.Result.Datas.hasOwnProperty("Tmp"))
-									//pc.push(data.Result.Datas.Tmp[i].Value);
-									//labels.push(data.Result.Datas.Tmp[i].Time);
-									pc.push([strtodatetime(data.Result.Datas.Tmp[i].Time), data.Result.Datas.Tmp[i].Value, i])
-								}
-								drawchart();
-							} else {
-								//Alert(sessionStorage.thirdname+" 没有符合条件的记录");
-								if ((pa.length == 0) && (pb.length == 0) && (pc.length == 0)) {
-									var myChart = echarts.init(document.getElementById('main'));
-									myChart.hideLoading();
-									layer.alert("没有符合条件的记录");
-									return;
-								}
-								isnull = true;
-								nullname = nullname + " " + sessionStorage.thirdname;
-								drawchart();
-							}
-						} else {
-							//Alert(sessionStorage.thirdname+" 没有符合条件的记录");
-							if ((pa.length == 0) && (pb.length == 0) && (pc.length == 0)) {
-								var myChart = echarts.init(document.getElementById('main'));
-								myChart.hideLoading();
-								layer.alert("没有符合条件的记录");
-								return;
-							}
-							isnull = true;
-							nullname = nullname + " " + sessionStorage.thirdname;
-
-							drawchart();
-
-						}
-						if (iserror) {
-							layer.alert(err_info + "数据失败");
-						}
-						if (isnull) {
-							layer.alert(nullname + "数据为空");
-						}
-					} else {
-						layer.alert(data.Error);
-					}
-				}
-			}
-		});
-	}*/
-
 	//绘制图形线条
 	function drawchart() {
 		//var myChart = echarts.init(document.getElementById('main'));
 		var option = {
-			color: ['#FFFF00', '#FF0000','#00ff00'],//
+			color: ['#ff8c00', '#FF0000','#00ff00',"#9400D3","#00BFFF","#4B0082","#20B2AA","#0000CD"," #FF4500 "],//
 			backgroundColor: '#d0d0d0',
 
 			title : {
-						text : document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+' 变化趋势图  ',
+						text : ' 变化趋势比对  ',
 						x:"center",
 						subtext:jiange+"   "+sessionStorage.kssj+"——"+sessionStorage.jssj,
 						subtextStyle:{
@@ -2317,7 +2153,7 @@ function decodedatas(obj_chartdata) {
 				data: lengenddata,
 				orient:"horizontal",//"vertical",
 				x:'left',
-        		y:'30',
+        		y:'45',
 				//color: 'white',
 			},
 			grid: {
@@ -2345,7 +2181,7 @@ function decodedatas(obj_chartdata) {
 				min:minval,
 				max:maxval,
 			}],
-			series: [/**/{
+			series: seriess,/*[{
 				name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
 				type: 'line',
 				showAllSymbol: true,
@@ -2365,8 +2201,8 @@ function decodedatas(obj_chartdata) {
 				showAllSymbol: true,
 				symbolSize: 1,
 				data: pc
-			}/**/
-			]
+			}/
+			]**/
 		};
 
 		myChart.hideLoading();

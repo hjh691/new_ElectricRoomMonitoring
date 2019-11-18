@@ -24,16 +24,13 @@
 			width: 100%;
 			height: 100%;
 		}
-
-		ul li {
-			display: inline;
-			background: #F93;
-			padding: 5px;
+		.title-right {
+			width:100px;
 		}
-
-		span {
-			margin-left: 10px;
-		}
+		input:checked + span {
+        color: #337ab7;
+        font-weight: bold;
+    }
 	</style>
 </head>
 
@@ -42,74 +39,49 @@
 		<div class="pagecard" id="pagecard1">
 			<p style="text-align:center;font-size:20px"><b>历史数据</b></p>
 		</div>
-		<!--<div style="height:40px;" align="center" style="overflow:scroll;">
-			<table class="table" align="center" width="1000px"style="display:none">
-			<tr >
-			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td>
-			<td style="width:100px;border:0px;width:120px;">	
-				<select id="jcdd1" style="font-size:16px;width:153px;">
-					<option value="0">测温0</option>
-				</select>
-			</td>
-			<td style="width:100px;border:0px;width:120px;">	
-				<select id="jcdd2" style="font-size:16px;width:153px;display:none">
-					<option value="0">测温0</option>
-				</select>
-			</td>
-			<td style="width:100px;border:0px;width:120px;">	
-				<select id="jcdd3" style="font-size:16px;width:153px;display: none">
-					<option value="0">测温0</option>
-				</select>
-			</td>
-		</table>
-		<table class="table" align="center" width="1000px">
-			</tr>
-			<tr>
-			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td>
-			<td style="width:100px;border:0px;width:120px;">	
-				<select id="jcdd" style="font-size:16px;width:153px;">
-					<option value="0">测温0</option>
-				</select>
-			</td>
-			<td class="condition" style="width:100px;"> 起止时间:</td>
-			<td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="kssj_chart" style="width:190px;" ></input></td>
-			<td class="condition" style="width:30px;">至</td>
-			<td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_chart" style="width:190px;" ></input></td>
-			<td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="querychartvalue()" ></input></td>
-			</tr>
-		</table>
-
-		</div>-->
 		<div class="parent" style="text-align: center;">
 			<div class="column" id="main" align="center"
 				style="height:600px;width:1000px;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 20px;flex:2.5;">
 			</div>
-			<div class="column" id="fine" align="center"
-				style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;">
-				<div class="rowlay" style="width:100%;text-align: center;font-size:16px;vertical-align: -10%;display: none;"><b>
+			<div class="column" id="fine" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;text-align: left;">
+				<!--<div class="rowlay" style="width:100%;text-align: center;font-size:16px;vertical-align: -10%;display: none;"><b>
 						<span><a href="javascript:viod(0)" onclick="seletime(0)">当天</a> </span><span><a
 								href="javascript:viod(0)" onclick="seletime(1)">昨天</a> </span><span><a
 								href="javascript:viod(0)" onclick="seletime(2)">当月</a> </span>
 						<span><a href="javascript:viod(0)" onclick="seletime(3)">上月</a> </span><span><a
 								href="javascript:viod(0)" onclick="seletime(4)">自定义</a></span>
 						<span id="timedefine" > 起止时间
-							
-								id="kssj_chart" style="width:160px;font-size:16px;height: 30px;"></input>至
+							<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="kssj_chart" 
+							style="width:160px;font-size:16px;height: 30px;"></input>至
 							<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"
 								id="jssj_chart" style="width:160px;font-size:16px;height: 30px;"></input>
 							<input class="button" type="button" id="chaxun" value="查询" onclick="querychartvalue()"
 								style="font-size:16px;height: 30px;line-height: 30px;"></input>
 						</span></b>
-				</div>
-				<input>
-					<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"></input>
-				</div>
-				<div>
+				</div>-->
+				<div sytle="text-align:left;float:left">
+				<p><label class="title-right" style="font-size:16px">时间选择：</label><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" id="cxsj" style="width:130px;font-size:16px;height: 30px;"></input>
+				</p>
+				<p><label class="title-right">
 					计量点名称：
-					<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">
-					</select>
+					</label>
 					<a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)"
 						style="margin-left:20px;margin-right: 20px;" onclick="refreshsensorslist()"></a>
+						<!--<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">
+					</select>-->
+					<input class="button" type="button" id="chaxun" value="对比" onclick="oneChoice()"
+						style="font-size:16px;height: 30px;line-height: 30px;"></input>
+					<input class="button" type="button" id="allcheck" value="全选" onclick="allChoice()"
+						style="font-size:16px;height: 30px;line-height: 30px;"></input>
+				</p>
+				<form  id="jcdd" style="background-color: #dcdcdc;height: 550px;overflow: auto;font-size:16px;">
+				<p><input type="checkbox" value="0" οnclick="allChoice()" id="allCheck" name="checks"/>全选 </p>
+		
+	
+				</form>
+				</div>
+				<div id="list-seneors;text-align:left;margin=left:20px;width:90%;height:100%">
+
 				</div>
 
 			</div>
@@ -117,28 +89,18 @@
 	</div>
 	<script>
 		//初始化历史数据图形显示页面（在进入趋势图页面时触发）。
+		var check_val = [],check_name=[];
 		inithistorychart();
 		function inithistorychart() {
 
 			//return;
-			//sessionStorage.pageindex = 4;
+			sessionStorage.pageindex = 4;
 			var parentid = -100, parentname = "";
 			var maps = [];
-			document.getElementById("kssj_chart").value = sessionStorage.kssj;
-			document.getElementById("jssj_chart").value = sessionStorage.jssj;
+			document.getElementById("cxsj").value = (sessionStorage.jssj).substr(0,11);
 			var sel_sensor = document.getElementById("jcdd");
-			////var sel2 = document.getElementById('jcdd2');
-			//var sel3 = document.getElementById('jcdd3');
-			for (var i = 0; i < sel_sensor.length; i++) {
-				sel_sensor.removeChild(sel_sensor.options[0]);
-				sel_sensor.remove(0);
-				sel_sensor.options[0] = null;
-				/*sel2.removeChild(sel2.options[0]);
-				sel2.remove(0);
-				sel2.options[0] = null;
-				sel3.removeChild(sel3.options[0]);
-				sel3.remove(0);
-				sel3.options[0] = null;*/
+			for (var i = sel_sensor.length-1; i >= 0; i--) {
+				sel_sensor.removeChild(sel_sensor.children[i]);
 			}
 			var sensors = JSON.parse(localStorage.getItem("sensors"));
 			if (sensors != null) {
@@ -152,18 +114,6 @@
 							}
 						}
 					}
-					//var op=document.createElement("option");
-					//var op2=document.createElement("option");
-					//var op3=document.createElement("option");
-					/*op.setAttribute("value",sensors[i].id);
-					op.innerHTML=sensors[i].Value.Name;
-					sel_sensor.appendChild(op);
-					op2.setAttribute("value",sensors[i].Id);
-					op2.innerHTML=sensors[i].Value.Name;
-					op3.setAttribute("value",sensors[i].Id);
-					op3.innerHTML=sensors[i].Value.Name;
-					sel2.appendChild(op2);
-					sel3.appendChild(op3);*/
 					var map = new Object();
 					map.value = sensors[i].id;
 					map.name = parentname + sensors[i].Value.Name;
@@ -182,17 +132,110 @@
 				}
 				maps.sort(compare);
 				for (var k = 0; k < maps.length; k++) {
-					var op = document.createElement("option");
-					op.setAttribute("value", maps[k].value);
-					op.innerHTML = maps[k].name;
-					sel_sensor.appendChild(op);
+					var p = document.createElement("p");
+					var lab=document.createElement("label");
+					var input=document.createElement("input");
+					input.setAttribute("type","checkbox");
+					input.setAttribute("name","checks");
+					input.setAttribute("id",maps[k].name);
+					input.setAttribute("value",maps[k].value);
+					var spn=document.createElement("span");
+					spn.innerHTML=maps[k].name;
+					lab.appendChild(input);
+					lab.appendChild(spn);
+					p.appendChild(lab);
+					sel_sensor.appendChild(p);
 				}
 			}
-			setSelectOption("jcdd", sessionStorage.SensorId);
-			querychartvalue();
+			//setSelectOption("jcdd", sessionStorage.SensorId);
+			//querychartvalue();
 		}
 		function refreshsensorslist() {
 			window.parent.GetSensorsByNode(sessionStorage.nodeId);
+		}
+		function allChoice(){
+			var obj = $('[name="checks"]');
+			var btn=document.getElementById("allcheck")
+			if(btn.value=="全选"){
+				for(var i=0;i<obj.length;i++){
+					obj[i].checked=true;
+				}
+				btn.value="全不选";
+			}else{
+				for(var i=0;i<obj.length;i++){
+					obj[i].checked=false;
+				}
+				btn.value="全选";
+			}
+		}
+		function oneChoice(){
+			sessionStorage.kssj=document.getElementById("cxsj").value+" 00:00:00"
+			sessionStorage.jssj=document.getElementById("cxsj").value+" 23:59:59"
+			var obj = $('[name="checks"]');
+			check_name=[];check_val=[];
+			for(k in obj){
+				if(obj[k].checked && obj[k].value != "-1"){
+					check_val.push(parseInt(obj[k].value));
+					check_name.push(obj[k].id);
+				}
+			}
+			if(check_val.length<10){
+				gethistorybysensors(check_val);
+			}else{
+				alert("选择的标签数量过多，请选择少于10个标签进行对比！")
+			}
+		}
+		function gethistorybysensors(arr_sensors){
+			var url = jfjk_base_config.baseurl + "/GetHistoriesBySensors?from="+sessionStorage.kssj+"&to="+sessionStorage.jssj;
+			url = encodeURI(url);
+			if (sessionStorage.islogin == "true") {
+				$.ajax({
+					beforeSend: function(request) {
+						request.setRequestHeader("_token", sessionStorage.token);
+					},
+					url: url,
+					type: 'POST',
+					dataType: 'json',
+					contentType: "application/json",
+					data:JSON.stringify(arr_sensors),
+					timeout: 10000,
+					error: function(jqXHR, textStatus, errorThrown) {
+						errortime++;
+						ajaxLoadingHidden();
+						//myChart.hideLoading();
+						if (errorThrown == "Unauthorized") {
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
+						} else {
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
+						}
+					},
+					success: function(data, status) {
+						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+						ajaxLoadingHidden();
+						//myChart.hideLoading();
+						if (status == "success") {
+							errortime = 0;
+							sessionStorage.islogin = true;
+							if (data.Error == null) {
+								if (!jQuery.isEmptyObject(data.Result.Datas)) {
+									//if (!jQuery.isEmptyObject(data.Result.Datas[sensorid])) {
+										//if(data.Result.Datas.hasOwnProperty("Tmp")){
+											decodedatas( data.Result.Datas);
+									//} else {
+									//	layer.alert("没有符合条件的记录",3000);
+									//}
+								} else {
+									layer.alert("没有符合条件的记录",2000);
+								}
+							} else {
+								layer.alert(data.Error);
+							}
+						}
+					}
+				});
+			} else {
+				Alert("用户未登录，您无权完成此次操作", 2000);
+			}
 		}
 		function seletime(id) {
 			var oneday = 1000 * 60 * 60 * 24;
