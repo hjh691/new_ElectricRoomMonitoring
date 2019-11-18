@@ -14,7 +14,7 @@ var jfjk_base_config={};
  jfjk_base_config.login_src="res/login.png";
 
 //系统名称
- jfjk_base_config.app_name="智能机房综合监测系统";
+ jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
  jfjk_base_config.ver_id="1.0";
 //公司名称

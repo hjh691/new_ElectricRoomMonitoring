@@ -6,11 +6,11 @@
 	<link rel="stylesheet" href="css/bootstrap.min.css" />
 	<link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
 	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
-	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<title>机房监控</title>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
+	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js" ></script>
 	<script type="text/javascript" src="js/bootstrap-treeview.min.js" ></script>
 	
@@ -59,10 +59,10 @@
 							<li ><a id="historydata" href="javascript:void(0)" onclick="loadstations_historydata()">历史数据</a></li>
 							<li ><a id="historychart" href="javascript:void(0)" onclick="loadstations_chart()">趋势图</a></li>
 							<li ><a href="javascript:void(0)" onclick="loadstations_warnlog()" >告警信息</a></li>
-							<!--<li ><a href="realwarning.html" target="iframe_main" >当前告警</a></li>
-							target="iframe_main"-->
-							<!--<li ><a href="app_download.html" target="iframe_main"  >客户端下载</a></li>
-							<li ><a href="help.html" target="iframe_main" >使用指南</a></li>
+							<li ><a href="javascript:void(0)" target="iframe_main" >设备信息</a></li>
+							<!--target="iframe_main"realwarning.html-->
+							<li ><a href="javascript:void(0)" target="iframe_main"  >系统设置</a></li>
+							<!--<li ><a href="help.html" target="iframe_main" >使用指南</a></li>
 							<li ><a href="ContactUs.html" target="iframe_main">联系我们</a></li>-->
 						</ul>
 				</div>
@@ -91,14 +91,14 @@
 	
 	<!--底部公司版权 -->
 	<div>
-		<div class="navigation" id="footer" style="height:30px;position: absolute;bottom:0px;left:0px;right:0px">	
+		<!--<div class="navigation" id="footer" style="height:30px;position: absolute;bottom:0px;left:0px;right:0px;">	
 			<div class="pc-footer" >
 				<ul class="pc-footer" align="center" style="margin:0 150px;">
 					<li ><a id="company_info" href="" target="_blank" ><img id="company_log" src="" width="20px" height="20px" > 保定金凯澳自动化设备有限公司</a></li>
-					<!--<li ><a href="#" style="margin-left:500px" >实时告警窗口</a></li>-->
+					<li ><a href="#" style="margin-left:500px" >实时告警窗口</a></li>display: none;
 				</ul>
 			</div>
-		</div>
+		</div>-->
 		<!--告警信息悬浮窗style="display:none"-->
 		<div id="KeFuDiv" class="KeFuDiv" onmousedown="hidefudongdiv();"  >
 			<!--屏幕滚动设置 <div class="affiche_text" id="alert_info">
@@ -185,7 +185,7 @@
 			if(i%30==0){
 				//sendbeat();//getrealsbydataid();
 				getrealdatabynodeid(-1);
-				GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
+				//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 			}
         };
 		} else {
@@ -205,7 +205,7 @@
 		var header = document.getElementById("header");
 		var menu = document.getElementById("leftmenu");
 		var content = document.getElementById("content");
-		var footer = document.getElementById("footer");
+		//var footer = document.getElementById("footer");
 		//isfree="true";
 		//获取窗口宽度
 		if (window.innerWidth)
@@ -226,12 +226,12 @@
 		var m = (/MSIE [67]/.test(navigator.userAgent) && (event.type=="load"))?1:2;
 		if(/MSIE [567]/.test(navigator.userAgent)){
 			var fwidth = main.offsetWidth;
-			if(footer.style.borderWidth){
+			/*if(footer.style.borderWidth){
 				fwidth -= m * footer.style.borderWidth.replace("px","");
 			}
-			footer.style.width = fwidth + "px";
+			footer.style.width = fwidth + "px";*/
 		}
-		var height = footer.offsetTop - main.offsetTop;
+		var height = winHeight- main.offsetTop;//footer.offsetTop 
 		if(main.style.borderWidth){
 			height -= m * main.style.borderWidth.replace("px","");
 		}	
@@ -259,10 +259,10 @@
 	function initIndex() {
 		showusername();
 		document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
-		document.getElementById('company_log').src = jfjk_base_config.log_src;
-		document.getElementById('company_info').href = jfjk_base_config.company_url;
+		//document.getElementById('company_log').src = jfjk_base_config.log_src;
+		//document.getElementById('company_info').href = jfjk_base_config.company_url;
 		sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
-		sessionStorage.jssj = getCurrentDate(1) + " 23:59:59"; //"2012-09-05T08:00:00";//
+		sessionStorage.jssj = getCurrentDate(2) ; //"2012-09-05T08:00:00";//+ " 23:59:59"
 		//sessionStorage.pageindex = 1;
 		//getgraphics();
 		//document.getElementById("iframe_main").src = 'page1.html';
@@ -546,7 +546,8 @@
 	//your,yours,he(she),him(her),his(her),his(hers),it,it,its.they,them,their,theirs,we,us,our,ours,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday
 	//one two three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,hundred,thousand,million,billion, computer,picture,jump,sit,stant,stay,
 	//page,data,up,on,in,at,look,out,of,for,from,form,list,short,tall,hight,small,big,bed,bee,bear,wolf,fox,fish,meat,nodle,rice,fine,nine,fly,sky,run,play,bath,
-	//water,what,when,where,how,who,whose,name,age,thin,hair,shop,stor,school,walk,work,doctor,teacher,student,driver,bus,car,job,
+	//water,what,when,where,how,who,whose,name,age,thin,hair,shop,stor,school,walk,work,doctor,teacher,student,driver,bus,car,job,sun,daughter,policeman,drive,
+	//member,talk,rodio,family,photo,Smith.listen to,upon,early,near,by,front,back,left,right,up,down,box,fox,cup,run,jump,paper,pen,ruler,ruber,erase
 	//从后台获取节点信息 China,Canada,United State of American,England,Japen,Indian,German,Sweden,Greece,Poland,Franch,Itali,Kore,here,there,game,glass,cup,bottle,
 	
 	function getNodes(){
@@ -702,10 +703,13 @@
 		isfree="true";
 	}
 	//获取指定节点的图形列表
-function GetBinariesByType(atype,anodeid){
+	function GetBinariesByType(atype,anodeid){
 	var url = jfjk_base_config.baseurl + "/GetBinariesByType?type="+atype+"&typeid="+anodeid;
 	url = encodeURI(url);
 	if (sessionStorage.islogin == "true") {
+		//if((aparent==undefined)||(aparent!=1)){
+				//ajaxLoadingShow();
+		//}
 		$.ajax({
 			beforeSend: function(request) {
 				request.setRequestHeader("_token", sessionStorage.token);
@@ -716,12 +720,14 @@ function GetBinariesByType(atype,anodeid){
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
 				//inittreeview();
+				ajaxLoadingHidden();
 				layer.alert('获取系统列表数据失败');
 				errortime++;
 				//isfree="true";
 			},
 			success: function(data, status) {
 				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+				ajaxLoadingHidden();
 				if (status == "success") {
 					errortime = 0;
 					//isfree="true";
@@ -734,15 +740,17 @@ function GetBinariesByType(atype,anodeid){
 							//var binaries=buildbinaries(data.Result.Binaries);//(JSON.parse(localStorage.getItem("sensors")));
 							localStorage.setItem("binaries",JSON.stringify(obj_Binaries));
 							//localStorage.binaries=obj_Binaries;
-							//refreshiframe();
+							refreshiframe();
 						}else{
 							localStorage.setItem("binaries",null);
 							sessionStorage.islogin = true;
+							refreshiframe();
 						}
 					} else {
 						localStorage.setItem("binaries",null);
 						layer.alert(data.Error);
 						sessionStorage.islogin = true;
+						refreshiframe();
 					}
 				}
 			}
@@ -783,6 +791,7 @@ function GetBinariesByType(atype,anodeid){
 							var result=data.Result;
 							if(!jQuery.isEmptyObject(result.Sensors)){
 								//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
+								maps=[];
 								var sensors=buildsensor(data.Result.Sensors);//(JSON.parse(localStorage.getItem("sensors")));
 								localStorage.setItem("sensors",JSON.stringify(sensors));
 								//var sensors=(JSON.parse(localStorage.getItem("sensors")));
@@ -792,11 +801,13 @@ function GetBinariesByType(atype,anodeid){
 							}else{
 								localStorage.setItem("sensors",null);
 								sessionStorage.islogin = true;
+								refreshiframe();
 							}
 						} else {
 							localStorage.setItem("sensors",null);
 							layer.alert(data.Error);
 							sessionStorage.islogin = true;
+							refreshiframe();
 						}
 					}
 				}
@@ -814,14 +825,21 @@ function GetBinariesByType(atype,anodeid){
 				case '0':
 					document.getElementById("iframe_main").src="infototal.html";
 					break;
+				case "1":
+					//document.getElementById("iframe_main").src="drawmap.html";
+					iframe_main.window.initpage();
+					break;
 				case '2':
 					document.getElementById("iframe_main").src="realdata.html";//getrealdatabynodeid(-1);
+					//iframe_main.window.initpage();
 					break;
 				case '3' :
 					document.getElementById("iframe_main").src="historydata.html";
+					//iframe_main.window.initpage();
 					break;
 				case '4':
 					document.getElementById("iframe_main").src="chart.html";
+					//iframe_main.window.inithistorychart();
 					break;
 				case '5':
 					document.getElementById("iframe_main").src="warnlog.html";
@@ -932,8 +950,8 @@ function GetBinariesByType(atype,anodeid){
 				}
 			}
 			var compare = function (obj1, obj2) {
-				var val1 = obj1.name;
-				var val2 = obj2.name;
+				var val1 = obj1.Name;
+				var val2 = obj2.Name;
 				if (val1 < val2) {
 					return -1;
 				} else if (val1 > val2) {
@@ -959,8 +977,8 @@ function GetBinariesByType(atype,anodeid){
 				}
 			}
 			var compare = function (obj1, obj2) {
-				var val1 = obj1.Value.name;
-				var val2 = obj2.Value.name;
+				var val1 = obj1.Value.Name;
+				var val2 = obj2.Value.Name;
 				if (val1 < val2) {
 					return -1;
 				} else if (val1 > val2) {

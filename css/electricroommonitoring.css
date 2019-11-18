@@ -10,7 +10,91 @@
 	body{
 		background-color:#ffFFFF;
 		color:#000;
+		opacity: 0;
+		animation: page-fade-in 1s forwards;
 	}
+	@keyframes page-fade-in {
+		0% {
+		opacity: 0
+		}
+		
+		100% {
+		opacity: 1
+		}
+	}
+	/**
+	@keyframes page-scale-up {
+    0% {
+        opacity: 0;
+        transform: scale(.9)
+    }
+ 
+    100% {
+        opacity: 1;
+        transform: scale(1)
+    }
+}
+ 
+@keyframes page-scale-down {
+    0% {
+        opacity: 0;
+        transform: scale(1.8)
+    }
+ 
+    100% {
+        opacity: 1;
+        transform: scale(1)
+    }
+}
+ 
+@keyframes page-slide-top {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%)
+    }
+ 
+    100% {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+ 
+@keyframes page-slide-bottom {
+    0% {
+        opacity: 0;
+        transform: translateY(100%)
+    }
+ 
+    100% {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+ 
+@keyframes page-slide-left {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%)
+    }
+ 
+    100% {
+        opacity: 1;
+        transform: translateX(0)
+    }
+}
+ 
+@keyframes page-slide-right {
+    0% {
+        opacity: 0;
+        transform: translateX(100%)
+    }
+ 
+    100% {
+        opacity: 1;
+        transform: translateX(0)
+    }
+}**/
+	/*body.active{opacity: 1;}*/
 	.mainarea{
 		position:relative;
 		height:100%;
@@ -54,6 +138,7 @@
 	.count_info,.pc-nav{
 		display:inline;
 		vertical-align:center;
+		font-size: 18px;
 	}
 	.count_info li,.pc-nav li {
 		display:inline;

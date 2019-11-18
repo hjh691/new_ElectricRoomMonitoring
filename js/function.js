@@ -182,6 +182,7 @@ function logout() {
 				sessionStorage.islogin = false;
 				sessionStorage.username = "未登录";
 				window.location.href = "index.html";
+				init_var();
 			},
 			success: function(data, status) {
 				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
@@ -197,13 +198,24 @@ function logout() {
 						window.location.href = "index.html";
 					}
 				}
+				init_var();
 			}
 		});
 	} else {
 		sessionStorage.username = "未登录";
 		sessionStorage.islogin = false;
 		window.location.href = "index.html";
+		init_var();
 	}
+}
+function init_var(){
+	sessionStorage.SensorId=-1;
+	sessionStorage.BinariesId=-1;
+	sessionStorage.SensorName="";
+	sessionStorage.dataId=0;
+	sessionStorage.sensors=[];
+	sessionStorage.nodeId=-1;
+	sessionStorage.name="";
 }
 //获取用户详细信息 used by electricroommonitor
 function GetUserProfile() {
@@ -255,6 +267,7 @@ function initpage1() {
 	document.getElementById("jssj_chart").value =  getCurrentDate(1) + " 23:59:59";
 	//drawchart()
 }
+//初始化信息汇总页面
 function inittotalpage(){  // used by electricroommonitor
 	sessionStorage.pageindex=0;
 	document.getElementById("iframe_main").src="infototal.html";
@@ -376,6 +389,7 @@ function showusername() {
 		document.getElementById('yhout').innerHTML = "<a href='index.html' style='color:white;text-decoration: none;'>[登录]</a>";
 	}
 }
+//用户属性页面
 function loaduserprofile(){
 	document.getElementById("iframe_main").src="userprofile.html";
 }
@@ -551,7 +565,7 @@ function towarnlog(sorid) {
 	parent.window.document.getElementById('iframe_main').src = 'warnlog.html';
 	//querywarnlog(0);
 }
-//显示或关闭浮动窗口 
+//显示或关闭浮动窗口 userd by ele
 function showfudongdiv() {
 	//document.getElementById("alert_info").innerHTML="告警：温度过高，数值：12345.876";
 	if (document.getElementById("KeFuDiv").style.display == "none") {
@@ -608,7 +622,7 @@ function getrealsbydataid() {
 						tmps = new Object(),
 						vals = new Object(),
 						errs = new Object();
-						var obj = data.Result,
+						/*var obj = data.Result,
 						str_binding = '';
 						var graphic = JSON.parse(sessionStorage.contents);
 						if (jQuery.isEmptyObject(obj.Sensors)) {
@@ -649,19 +663,21 @@ function getrealsbydataid() {
 								//Alert("数据为空");
 								return;
 							}
-						}
+						}*/
 						//温度值
 						var datas = new Object();
 						if (jQuery.isEmptyObject(data.Result.Datas)) {
 							//Alert("数据为空");
 							return;
 						} else {
-							datas = data.Result.Datas;
-						}
-						if (!jQuery.isEmptyObject(datas.Tmp)) {
-							tmps = data.Result.Datas.Tmp;
+							//datas = data.Result.Datas;
+						//}
+						//if (!jQuery.isEmptyObject(datas.Tmp)) {
+							tmps = data.Result.Datas;//.Tmp
+							var tbody = document.getElementById('realdata-tbody');
+							var trs = tbody.getElementsByTagName("tr");
 							for (var i = 0; i < tmps.length; i++) {
-								for (var j = 0; j < sensors.length; j++) {
+								/*for (var j = 0; j < sensors.length; j++) {
 									if (tmps[i].SensorId == sensors[j].Id) {
 										var collectorid = sensors[j].CollectorId;
 										var adr = sensors[j].Addr;
@@ -676,8 +692,9 @@ function getrealsbydataid() {
 								}
 								if (j >= sensors.length) {
 									continue;
-								}
-								try {
+								}*/
+								//刷新图形对应数据值
+								/*try {
 									for (var k = 0; k < graphic.length; k++) {
 										if (!graphic[k]) {
 											continue;
@@ -692,7 +709,66 @@ function getrealsbydataid() {
 									}
 								} catch(err) {
 
+								}*/
+								//刷新实时数据列表内容
+								for (var j = 0; j < trs.length; j++) {
+									if (trs[j].cells[0].childNodes[0].data == data.Result.Datas.Tmp[i].SensorId) {
+										trs[j].cells[2].innerHTML = data.Result.Datas.Tmp[i].Time;
+										trs[j].cells[3].innerHTML = data.Result.Datas.Tmp[i].Value;
+										break;
+									}
 								}
+								if (j >= trs.length) {
+									var tr = document.createElement('tr');
+									var tdid = document.createElement('td');
+									var tdename = document.createElement('td');
+									//var tdsalary=document.createElement('td');
+									var tdage = document.createElement('td');
+									var tddiscr = document.createElement('td');
+									var tdhistory = document.createElement('td');
+									var tdwarnlog = document.createElement('td'); {
+										tdid.innerHTML = data.Result.Datas.Tmp[i].SensorId;
+									}
+									for (j = 0; j < data.Result.Sensors.Sensors.length; j++) {
+										if (data.Result.Datas.Tmp[i].SensorId == data.Result.Sensors.Sensors[j].Id) {
+											tdename.innerHTML = data.Result.Sensors.Sensors[j].Name;
+											break;
+										}
+									}
+									//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
+									tdage.innerHTML = data.Result.Datas.Tmp[i].Time; //jsonObject[i].color;
+									tddiscr.innerHTML = data.Result.Datas.Tmp[i].Value;
+									tdhistory.setAttribute('backgroundColor', '#ffffff');
+									tdhistory.setAttribute('onclick', 'tohistory(' + tdid.innerHTML + ')');
+									tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
+									tdwarnlog.setAttribute('onclick', 'towarnlog(' + tdid.innerHTML + ')');
+									tdwarnlog.setAttribute('backgroundColor', '#ffffff');
+									tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
+									tr.appendChild(tdid);
+									tr.appendChild(tdename);
+									tr.appendChild(tdage);
+									tr.appendChild(tddiscr);
+									tr.appendChild(tdhistory);
+									tr.appendChild(tdwarnlog);
+									if (i % 2 == 0) {
+										tr.cells[0].style.backgroundColor = "#16b9c9";
+										tr.cells[1].style.backgroundColor = "#16b9c9";
+										tr.cells[2].style.backgroundColor = "#16b9c9";
+										tr.cells[3].style.backgroundColor = "#16b9c9";
+									} else {
+										tr.cells[0].style.backgroundColor = "#FFFFFF";
+										tr.cells[1].style.backgroundColor = "#FFFFFF";
+										tr.cells[2].style.backgroundColor = "#FFFFFF";
+										tr.cells[3].style.backgroundColor = "#FFFFFF";
+									}
+									//tdage.setAttribute('class','time');
+									//tdid.setAttribute('class','sensorid');
+									//tddiscr.setAttribute('class','tmpvalue');
+									//tdename.setAttribute('class','sensorname');
+									var tbody = document.getElementById('realdata-tbody');
+									tbody.appendChild(tr);
+								}
+
 							}
 							/*if(sessionStorage.pageindex==1){
 									drawmap(graphic);
@@ -700,15 +776,6 @@ function getrealsbydataid() {
 								}*/
 							if (sessionStorage.dataId < parseInt(tmps[tmps.length - 1].Id)) {
 								sessionStorage.dataId = parseInt(tmps[tmps.length - 1].Id);
-							}
-						}
-						//电压电流值，备用
-						if (data.Result.Datas.hasOwnProperty("Val")) {
-							if (!jQuery.isEmptyObject(datas.Tmp)) {
-								vals = data.Result.Datas.Val;
-								if (sessionStorage.dataId < parseInt(vals[vals.length - 1].Id)) {
-									sessionStorage.dataId = parseInt(vals[vals.length - 1].Id);
-								}
 							}
 						}
 						//告警标签信息；
@@ -1464,7 +1531,7 @@ function gethistorydata(sensorid,kssj, jssj,aparent) {
 				error: function(jqXHR, textStatus, errorThrown) {
 					errortime++;
 					ajaxLoadingHidden();
-					myChart.hideLoading();
+					//myChart.hideLoading();
 					if (errorThrown == "Unauthorized") {
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
 					} else {
@@ -1854,6 +1921,7 @@ function querychartvalue() {
 	//myChart.showLoading();
 	gethistorydata(sessionStorage.SensorId,kssj,jssj);
 	//drawchart();
+	document.getElementById("timedefine").style.display="none";
 }
 
 //绘图变化趋势图   used by electricroommonitor 
@@ -1866,7 +1934,7 @@ function decodedatas(obj_chartdata) {
 	var etime=new Date(sessionStorage.jssj).getTime();
 	var senconds=etime-stime;
 	var pa = [],pb = [],pc = [];
-	var maxvale=0,minvalue=0,avgvalue=0,ps=0,count=1;
+	var maxvalue=0,minvalue=0,avgvalue=0,ps=0,count=1,maxval=0,minval=0;
 	//labels = [],
 	//t;
 	var myChart = echarts.init(document.getElementById('main'));
@@ -1874,22 +1942,21 @@ function decodedatas(obj_chartdata) {
 	if(obj_chartdata.length<=0){
 		return;
 	}
-	if(Math.ceil(senconds/1000/60)<1430){
+	/*if(Math.ceil(senconds/1000/60)<1430){
 		jiange="按分钟统计"
+		maxvalue=minvalue=avgvalue=obj_chartdata[0].Value;
 		for (var i = 0; i <obj_chartdata.length; i++) {
 			pa.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
 			pb.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
 			pc.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
 		}
-	}else if(Math.ceil(senconds/1000/60)<2880){
-		jiange="按小时统计"
-		maxvale=minvalue=avgvalue=parseFloat(obj_chartdata[0].Value);
+		maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[0].Value);
 		var strtime=obj_chartdata[0].Time.substr(0,13);
 		var temp=parseInt(strtime.substr(11));
 		for (var i = 1; i <obj_chartdata.length; i++) {
 			if(parseInt(obj_chartdata[i].Time.substr(11,13))==temp){
-				if(parseFloat(obj_chartdata[i].Value)>maxvale){
-					maxvale=parseFloat(obj_chartdata[i].Value);
+				if(parseFloat(obj_chartdata[i].Value)>maxvalue){
+					maxvalue=parseFloat(obj_chartdata[i].Value);
 				}
 				if(parseFloat(obj_chartdata[i].Value)<minvalue){
 					minvalue=parseFloat(obj_chartdata[i].Value);
@@ -1898,10 +1965,10 @@ function decodedatas(obj_chartdata) {
 				count++;
 			}else{
 				avgvalue=(avgvalue/count);
-				pa.push([strtodatetime(strtime+":00"), maxvale, ps])
+				pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
 				pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
 				pc.push([strtodatetime(strtime+":00"),minvalue , ps])
-				maxvale=minvalue=avgvalue=parseFloat(obj_chartdata[i].Value);
+				maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[i].Value);
 				strtime=obj_chartdata[i].Time.substr(0,13);
 				temp=parseInt(strtime.substr(11));
 				ps++;
@@ -1909,30 +1976,76 @@ function decodedatas(obj_chartdata) {
 			}
 		}
 		avgvalue=(avgvalue/count);
-		pa.push([strtodatetime(strtime+":00"), maxvale, ps])
+		pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
 		pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
 		pc.push([strtodatetime(strtime+":00"),minvalue , ps])
-	}else{
-		jiange="按日统计"
-		maxvale=minvalue=avgvalue=parseFloat(obj_chartdata[0].Value);
-		var strtime=obj_chartdata[0].Time.substr(0,10);
-		var temp=parseInt(strtime.substr(8));
+	}else */
+	if(Math.ceil(senconds/1000/60)<=1440){
+		jiange="按小时统计";
+		maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[0].Value);
+		maxval=minval=maxvalue;
+		var strtime=obj_chartdata[0].Time.substr(0,13);
+		var temp=parseInt(strtime.substr(11));
 		for (var i = 1; i <obj_chartdata.length; i++) {
-			if(parseInt(obj_chartdata[i].Time.substr(8,10))==temp){
-				if(parseFloat(obj_chartdata[i].Value)>maxvale){
-					maxvale=parseFloat(obj_chartdata[i].Value);
+			if(parseInt(obj_chartdata[i].Time.substr(11,13))==temp){
+				if(parseFloat(obj_chartdata[i].Value)>maxvalue){
+					maxvalue=parseFloat(obj_chartdata[i].Value);
 				}
 				if(parseFloat(obj_chartdata[i].Value)<minvalue){
 					minvalue=parseFloat(obj_chartdata[i].Value);
+				}
+				if(parseFloat(obj_chartdata[i].Value)>maxval){
+					maxval=parseFloat(obj_chartdata[i].Value);
+				}
+				if(parseFloat(obj_chartdata[i].Value)<minval){
+					minval=parseFloat(obj_chartdata[i].Value);
 				}
 				avgvalue=(parseFloat(avgvalue)+parseFloat(obj_chartdata[i].Value));
 				count++;
 			}else{
 				avgvalue=(avgvalue/count);
-				pa.push([strtodatetime(strtime), maxvale, ps])
+				pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
+				pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
+				pc.push([strtodatetime(strtime+":00"),minvalue , ps])
+				maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[i].Value);
+				strtime=obj_chartdata[i].Time.substr(0,13);
+				temp=parseInt(strtime.substr(11));
+				ps++;
+				count=1;
+			}
+		}
+		avgvalue=(avgvalue/count);
+		pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
+		pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
+		pc.push([strtodatetime(strtime+":00"),minvalue , ps])
+	}else{
+		jiange="按日统计";
+		maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[0].Value);
+		maxval=minval=maxvalue;
+		var strtime=obj_chartdata[0].Time.substr(0,10);
+		var temp=parseInt(strtime.substr(8));
+		for (var i = 1; i <obj_chartdata.length; i++) {
+			if(parseInt(obj_chartdata[i].Time.substr(8,10))==temp){
+				if(parseFloat(obj_chartdata[i].Value)>maxvalue){
+					maxvalue=parseFloat(obj_chartdata[i].Value);
+				}
+				if(parseFloat(obj_chartdata[i].Value)<minvalue){
+					minvalue=parseFloat(obj_chartdata[i].Value);
+				}
+				if(parseFloat(obj_chartdata[i].Value)>maxval){
+					maxval=parseFloat(obj_chartdata[i].Value);
+				}
+				if(parseFloat(obj_chartdata[i].Value)<minval){
+					minval=parseFloat(obj_chartdata[i].Value);
+				}
+				avgvalue=(parseFloat(avgvalue)+parseFloat(obj_chartdata[i].Value));
+				count++;
+			}else{
+				avgvalue=(avgvalue/count);
+				pa.push([strtodatetime(strtime), maxvalue, ps])
 				pb.push([strtodatetime(strtime), avgvalue.toFixed(Number_of_decimal), ps])
 				pc.push([strtodatetime(strtime),minvalue , ps])
-				maxvale=minvalue=avgvalue=parseFloat(obj_chartdata[i].Value);
+				maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[i].Value);
 				strtime=obj_chartdata[i].Time.substr(0,10);
 				temp=parseInt(strtime.substr(8));
 				ps++;
@@ -1940,7 +2053,7 @@ function decodedatas(obj_chartdata) {
 			}
 		}
 		avgvalue=(avgvalue/count);
-		pa.push([strtodatetime(strtime), maxvale, ps])
+		pa.push([strtodatetime(strtime), maxvalue, ps])
 		pb.push([strtodatetime(strtime), avgvalue.toFixed(Number_of_decimal), ps])
 		pc.push([strtodatetime(strtime),minvalue , ps])
 	}
@@ -1948,6 +2061,8 @@ function decodedatas(obj_chartdata) {
 	lengenddata.push("最大值");
 	lengenddata.push("平均值");
 	lengenddata.push("最小值");
+	maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
+	minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
 	drawchart();
 	/*var sencondid = document.getElementById("jcdd2").value;
 	sessionStorage.sencondname = document.getElementById("jcdd2").options[document.getElementById("jcdd2").selectedIndex].text;
@@ -2152,12 +2267,12 @@ function decodedatas(obj_chartdata) {
 		//var myChart = echarts.init(document.getElementById('main'));
 		var option = {
 			color: ['#FFFF00', '#FF0000','#00ff00'],//
-			backgroundColor: '#c0c0c0',
+			backgroundColor: '#d0d0d0',
 
 			title : {
 						text : document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+' 变化趋势图  ',
 						x:"center",
-						subtext:jiange,
+						subtext:jiange+"   "+sessionStorage.kssj+"——"+sessionStorage.jssj,
 						subtextStyle:{
 							color: "#000",
 						}
@@ -2213,19 +2328,22 @@ function decodedatas(obj_chartdata) {
 				splitNumber: 10,
 				axisLine: {
 					lineStyle: {
-						color: 'yellow',
+						color: 'black',
 						width: 2
-					}
+					},
+					onZero:false
 				},
 			}],
 			yAxis: [{
 				type: 'value',
 				axisLine: {
 					lineStyle: {
-						color: 'yellow',
+						color: 'black',
 						width: 2
 					}
 				},
+				min:minval,
+				max:maxval,
 			}],
 			series: [/**/{
 				name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
@@ -2393,8 +2511,15 @@ function GetBinary() {
 						errortime = 0;
 						sessionStorage.islogin = true;
 						if (data.Error == null) {
-							if (data.Result.Value == null) {
+							if(jQuery.isEmptyObject(data.Result)){
+							//if (data.Result.Value == null) {
 								layer.alert("没有符合条件的记录");
+								sessionStorage.contents = null;
+								try {
+									drawmap(JSON.parse(sessionStorage.contents));
+								} catch(err) {
+
+								}
 								return;
 							}
 							
@@ -2406,7 +2531,7 @@ function GetBinary() {
 
 							}
 							sessionStorage.dataId = 0;
-							getrealsbydataid();
+							getrealdatabynodeid(0);
 						} else {
 							layer.alert(data.Error);
 						}
@@ -2442,7 +2567,12 @@ function drawmap(arr) {
 	mCanvasDiv.style.height= cheight + 'px';
 	var background_color="#cccccc";
 	mCanvasDiv.style.backgroundColor = mCanvas.style.backgroundColor =background_color;
-	
+	if(arr==null){
+		var ctx = mCanvas.getContext("2d");
+		ctx.save();
+		ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+		return;
+	}
 	for (var i = 0; i < arr.length; i++) {
 		if (!arr[i]) {
 			continue;
@@ -3478,6 +3608,22 @@ function sortt(className) {
 		ij++;
 	}
 	setTimeout("moduletable('realdata-tbody')", 200)
+}
+function sortarray(arrs){
+	var arr=[];
+	arr=arrs;
+	var compare = function (obj1, obj2) {
+		var val1 = obj1.Value.Name;
+		var val2 = obj2.Value.Name;
+		if (val1 < val2) {
+			return -1;
+		} else if (val1 > val2) {
+			return 1;
+		} else {
+			return 0;
+		}            
+	} 
+	arr.sort(compare);
 }
 function moduletable(atableid) {  //used by electricroommonitor 
 	var tbody = document.getElementById(atableid);
