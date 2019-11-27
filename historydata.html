@@ -41,21 +41,21 @@
 		<div class="pagecard" id="pagecard1" >
 			<p style="text-align:center;font-size:20px" ><b>历史数据</b></p>
 		</div>
-		<div align="center"style="height:50px;overflow:auto;" >
+		<div align="center"style="height:80px;overflow:auto;" >
 			<div class="rowlay" style="width:100%;text-align: center;font-size:16px;vertical-align: 0;"><b>
 				计量点名称：
 				<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">
 				
 			</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" style="margin-left:20px;margin-right: 20px;" onclick="refreshsensorslist()"></a>
-			<span ><a href="javascript:viod(0)" onclick="seletime(0)">当天</a> </span><span ><a href="javascript:viod(0)" onclick="seletime(1)">昨天</a> </span><span ><a href="javascript:viod(0)" onclick="seletime(2)">当月</a> </span>
-			<span ><a href="javascript:viod(0)" onclick="seletime(3)">上月</a> </span><span ><a href="javascript:viod(0)" onclick="seletime(4)">自定义</a></span>
+			<span ><a href="javascript:void(0)" onclick="seletime(0)">当天</a> </span><span ><a href="javascript:void(0)" onclick="seletime(1)">昨天</a> </span><span ><a href="javascript:viod(0)" onclick="seletime(2)">当月</a> </span>
+			<span ><a href="javascript:void(0)" onclick="seletime(3)">上月</a> </span><span ><a href="javascript:void(0)" onclick="seletime(4)">自定义</a></span>
 			<span id="timedefine" style="display: none;">
 			起止时间
 			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_history" style="width:160px;font-size:16px;height: 30px;"></input>至
 			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_history" style="width:160px;font-size:16px;height: 30px;" ></input>
 			<input class="button" type="button" id="chaxun" value="查询" onclick="queryhistorydata()" style="font-size:16px;height: 30px;line-height: 30px;" ></input></b></span>
 			</div>			
-			<div  class="rowlay" style="margin-bottom:10px;width:100%;font-size:16px;text-align: center;display: none;" >
+			<div  class="rowlay" style="margin-bottom:10px;width:100%;font-size:16px;text-align: center;" >
 				<ul class="count_info" align="center" >
 					<!--<li style="width:50px"><b>站名：</b></li>
 					<li id="station_name"style="width:100px;margin-right:0px"> </li>-->
@@ -63,7 +63,7 @@
 					<li id="normal_count"style="width:100px;margin-right:10px"> </li>
 					<li style="width:50px;margin-right:0px"><b>记录数：</b></li>
 					<li id="count_val"style="width:50px;margin-right:0px"> </li>
-					<li style="width:100px;margin-right:0px"><a href="javascript:void(0)" style="margin-left:20px;" onclick="method5('realtable')">导出Excel</a></li>
+					<li style="width:100px;margin-right:0px"><a href="javascript:void(0)" style="margin-left:20px;" onclick="method5('historytable')">导出Excel</a></li>
 				</ul>
 			</div>
 		</div>
@@ -94,6 +94,8 @@
 		var sensors;
 		var isfirst=true;
 		var sel_sensor=document.getElementById("jcdd");
+		var type;
+		var jssj=getCurrentDate(2);
 		initpage();
 		
 
@@ -164,55 +166,14 @@
 				title.innerText="数据列表";
 			}
 		}
-		function seletime(id){
-		var oneday=1000*60*60*24;
-		var today = new Date();
-		var ckssj,cjssj;
-		switch(id){
-			case 0:
-				sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
-				sessionStorage.jssj = getCurrentDate(2) ;
-				$("#historydata-tbody tr").empty();
-				gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
-				break;
-			case 1:
-				ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
-				var yesterdaystar=ckssj-oneday;
-				sessionStorage.kssj=dateToString(new Date(yesterdaystar),2);
-				cjssj=new Date((getCurrentDate(1)+" 23:59:59").replace(/-/g,"/"));
-				var yesterdayend=cjssj-oneday;
-				sessionStorage.jssj=dateToString(new Date(yesterdayend),2);
-				$("#historydata-tbody tr").empty();
-				gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
-				break;
-			case 2:
-				ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
-				sessionStorage.kssj=dateToString(new Date(ckssj.setDate(1)),2);
-				sessionStorage.jssj=getCurrentDate(2);
-				$("#historydata-tbody tr").empty();
-				gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
-				break;
-			case 3:
-				ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
-				var lastMonthFirst = new Date(ckssj - oneday * ckssj.getDate());
-				sessionStorage.kssj = dateToString(new Date(lastMonthFirst - oneday * (lastMonthFirst.getDate() - 1)),2);
-				cjssj=new Date((getCurrentDate(1)+" 23:59:59").replace(/-/g,"/"));
-				sessionStorage.jssj = dateToString(new Date(cjssj - oneday * cjssj.getDate()),2);
-				$("#historydata-tbody tr").empty();
-				gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
-			break;
-			case  4:
-				var timedefine=document.getElementById("timedefine");
-				if(timedefine.style.display=="none"){
-				timedefine.style.display="inline";
-				}else{
-					timedefine.style.display="none";
-				}
-				break;
-			}
-		}
+		
 		//查询历史记录
 		function queryhistorydata() {
+			for(var i=0;i<sensors.length;i++){
+				if(sensors[i].id==sessionStorage.SensorId){
+					type=sensors[i].Value.Catalog;
+				}
+			}
 			var sel=document.getElementById("jcdd");
 			if(sel.options.length<=0){
 				layer.alert("请选择要查询的测量点名称");
@@ -255,7 +216,10 @@
 			var myChart = echarts.init(document.getElementById('main'));
 			myChart.clear();
 			//数据以表格行的形式添加进table中，其实现隔行颜色区分。
-			if(obj_data.length<=0){
+			if((!obj_data)||(obj_data.length<=0)){
+				document.getElementById('count_val').innerHTML = count + "条";
+				//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
+				document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
 				return;
 			}
 			/*if(Math.ceil(senconds/1000/60)<1430){
@@ -329,12 +293,17 @@
 						var tdvalue3=document.createElement("td");
 						tdvalue3.setAttribute("class",'value3');
 						tdname.innerHTML=sessionStorage.SensorName;
-						tdvalue1.innerHTML = maxvalue;
+						if(type=="pd"){
+							tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+							tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+						}else{
+							tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+							tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+						}
 
 						//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 						tdtime.innerHTML = strtime+":00"; //jsonObject[i].color;
 						tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
-						tdvalue3.innerHTML = minvalue;
 						//tr.appendChild(tdname);
 						tr.appendChild(tdtime);
 						tr.appendChild(tdvalue1);
@@ -368,12 +337,17 @@
 				var tdvalue3=document.createElement("td");
 				tdvalue3.setAttribute("class",'value3');
 				tdname.innerHTML=sessionStorage.SensorName;
-				tdvalue1.innerHTML = maxvalue;
+				if(type=="pd"){
+					tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+					tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+				}else{
+					tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+					tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+				}
 
 				//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 				tdtime.innerHTML = strtime+":00"; //jsonObject[i].color;
 				tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
-				tdvalue3.innerHTML = minvalue;
 				//tr.appendChild(tdname);
 				tr.appendChild(tdtime);
 				tr.appendChild(tdvalue1);
@@ -423,12 +397,17 @@
 						var tdvalue3=document.createElement("td");
 						tdvalue3.setAttribute("class",'value3');
 						tdname.innerHTML=sessionStorage.SensorName;
-						tdvalue1.innerHTML = maxvalue;
+						if(type=="pd"){
+							tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+							tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+						}else{
+							tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+							tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+						}
 
 						//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 						tdtime.innerHTML = strtime; //jsonObject[i].color;
 						tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
-						tdvalue3.innerHTML = minvalue;
 						//tr.appendChild(tdname);
 						tr.appendChild(tdtime);
 						tr.appendChild(tdvalue1);
@@ -462,12 +441,17 @@
 				var tdvalue3=document.createElement("td");
 				tdvalue3.setAttribute("class",'value3');
 				tdname.innerHTML=sessionStorage.SensorName;
-				tdvalue1.innerHTML = maxvalue;
-
+				if(type=="pd"){
+					tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+					tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+				}else{
+					tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+					tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+				}
 				//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 				tdtime.innerHTML = strtime; //jsonObject[i].color;
 				tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
-				tdvalue3.innerHTML = minvalue;
+				
 				//tr.appendChild(tdname);
 				tr.appendChild(tdtime);
 				tr.appendChild(tdvalue1);
@@ -601,6 +585,7 @@
 			}
 		}
 		function gradeChange() {
+			$("#historydata-tbody tr").empty();
 			var objS = document.getElementById("jcdd");
 			sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
 			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);

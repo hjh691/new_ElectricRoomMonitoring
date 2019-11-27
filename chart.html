@@ -30,6 +30,58 @@
 		input:checked + span {
         color: #337ab7;
         font-weight: bold;
+
+		*{
+       margin:0px;
+       padding:0px;
+    }
+    /**/
+    th,td{
+        border:1px solid black;
+        text-align:center;
+        line-height:center;
+        width:200px;
+        height:30px;
+    }
+    td{
+        border:1px solid black;
+        text-align:center;
+        line-height:center;
+    }
+	
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            
+            table {
+                /*设置相邻单元格的边框间的距离*/
+                border-spacing: 0;
+                /*表格设置合并边框模型*/
+                border-collapse: collapse;
+                text-align: center;
+            }
+            /*关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
+            table tbody {
+                display: block;
+                
+                
+            }
+            
+            table thead,
+            tbody tr {
+                display: table;
+                table-layout: fixed;
+            }
+            /*关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
+            
+            table thead {
+                width: calc( tbody.width )
+            }
+            
+            table thead th {
+                background: #ccc;
+            }*/
     }
 	</style>
 </head>
@@ -37,11 +89,11 @@
 <body>
 	<div>
 		<div class="pagecard" id="pagecard1">
-			<p style="text-align:center;font-size:20px"><b>历史数据</b></p>
+			<p style="text-align:center;font-size:20px"><b>趋势对比</b></p>
 		</div>
 		<div class="parent" style="text-align: center;">
 			<div class="column" id="main" align="center"
-				style="height:600px;width:1000px;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 20px;flex:2.5;">
+				style="background-color: #dcdcdc; height:600px;width:1000px;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 20px;flex:2.5;">
 			</div>
 			<div class="column" id="fine" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;text-align: left;">
 				<!--<div class="rowlay" style="width:100%;text-align: center;font-size:16px;vertical-align: -10%;display: none;"><b>
@@ -71,8 +123,9 @@
 					</select>-->
 					<input class="button" type="button" id="chaxun" value="对比" onclick="oneChoice()"
 						style="font-size:16px;height: 30px;line-height: 30px;"></input>
-					<input class="button" type="button" id="allcheck" value="全选" onclick="allChoice()"
-						style="font-size:16px;height: 30px;line-height: 30px;"></input>
+					<input class="button" type="button" id="allcheck" value="取消选择" onclick="allChoice()"
+						style="font-size:16px;width:100px;height: 30px;line-height: 30px;"></input>
+						<a href="javascript:void(0)" style="margin-left:20px;" onclick="method5('compratetable')">导出Excel</a>
 				</p>
 				<form  id="jcdd" style="background-color: #dcdcdc;height: 550px;overflow: auto;font-size:16px;">
 				<p><input type="checkbox" value="0" οnclick="allChoice()" id="allCheck" name="checks"/>全选 </p>
@@ -83,10 +136,28 @@
 				<div id="list-seneors;text-align:left;margin=left:20px;width:90%;height:100%">
 
 				</div>
+				
 
 			</div>
 		</div>
+		<div align="center" >
+			<table id="compratetable" style="display: none;">
+				<thead id="comprate-head">
+					<!--<th style="width:18px;border:0px solid black;"></th>-->
+					<tr >
+						<th>测量点名称</th>
+						<th>测量时间</th>
+						<th>数值</th>	
+						<th>备注</th>
+					</tr>
+				</thead>
+				<tbody id='comprate-tbody' style="width:1020px;height:600px; overflow:auto;">
+		 
+				</tbody>
+			</table>
+		</div>
 	</div>
+
 	<script>
 		//初始化历史数据图形显示页面（在进入趋势图页面时触发）。
 		var check_val = [],check_name=[];
@@ -156,18 +227,19 @@
 		function allChoice(){
 			var obj = $('[name="checks"]');
 			var btn=document.getElementById("allcheck")
-			if(btn.value=="全选"){
-				for(var i=0;i<obj.length;i++){
-					obj[i].checked=true;
-				}
-				btn.value="全不选";
-			}else{
+			//if(btn.value=="全选"){
+			//	for(var i=0;i<obj.length;i++){
+			//		obj[i].checked=true;
+			//	}
+			//	btn.value="全不选";
+			//}else{
 				for(var i=0;i<obj.length;i++){
 					obj[i].checked=false;
 				}
-				btn.value="全选";
-			}
+			//	btn.value="全选";
+			//}
 		}
+		//对比按钮
 		function oneChoice(){
 			sessionStorage.kssj=document.getElementById("cxsj").value+" 00:00:00"
 			sessionStorage.jssj=document.getElementById("cxsj").value+" 23:59:59"
@@ -180,6 +252,18 @@
 				}
 			}
 			if(check_val.length<10){
+				/*$("#comprate-head tr").empty();
+				var thead=document.getElementById("comprate-head");
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				td1.innerHTML="测量时间";
+				tr.appendChild(td1);
+				for(j=0;j<check_name.length;j++){
+					var td=document.createElement("td");
+					td.innerHTML=check_name[j];
+					tr.appendChild(td);
+				}
+				thead.appendChild(tr);*/
 				gethistorybysensors(check_val);
 			}else{
 				alert("选择的标签数量过多，请选择少于10个标签进行对比！")
@@ -212,18 +296,12 @@
 					success: function(data, status) {
 						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 						ajaxLoadingHidden();
-						//myChart.hideLoading();
 						if (status == "success") {
 							errortime = 0;
 							sessionStorage.islogin = true;
 							if (data.Error == null) {
 								if (!jQuery.isEmptyObject(data.Result.Datas)) {
-									//if (!jQuery.isEmptyObject(data.Result.Datas[sensorid])) {
-										//if(data.Result.Datas.hasOwnProperty("Tmp")){
-											decodedatas( data.Result.Datas);
-									//} else {
-									//	layer.alert("没有符合条件的记录",3000);
-									//}
+									decodedatas( data.Result.Datas);
 								} else {
 									layer.alert("没有符合条件的记录",2000);
 								}

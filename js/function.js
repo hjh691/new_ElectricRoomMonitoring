@@ -4,6 +4,13 @@ sessionStorage.dataId = 0;
 sessionStorage.sensors=[];
 var maps=[];
 var str_speech = "告警";//告警信息
+if(jfjk_base_config.baseurl.indexOf("localhost")>-1){
+	jfjk_base_config.baseurl=jfjk_base_config.baseurl.replace("localhost",window.location.hostname);
+	jfjk_base_config.speechurl=jfjk_base_config.speechurl.replace("localhost",window.location.hostname);
+}else if(jfjk_base_config.baseurl.indexOf("127.0.0.1")>-1){
+	jfjk_base_config.baseurl=jfjk_base_config.baseurl.replace("127.0.0.1",window.location.hostname);
+	jfjk_base_config.speechurl=jfjk_base_config.speechurl.replace("127.0.0.1",window.location.hostname);
+}
 function KeyUp() {
 	if (event.keyCode == 13) {
 		event.keyCode = 9;
@@ -601,7 +608,7 @@ function getrealsbydataid() {
 			url: url,
 			type: 'GET',
 			dataType: 'json',
-			timeout: 6000,
+			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
 				errortime++;
 				if (errorThrown == "Unauthorized") {
@@ -1274,6 +1281,8 @@ function inithistorychart() {
 }*/
 //初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
 function initwarnlog() {
+	var parentid=-100,parentname="";
+	var maps=[];
 	sessionStorage.pageindex = 5;
 	document.getElementById("kssj_warning").value = sessionStorage.kssj;
 	document.getElementById("jssj_warning").value = sessionStorage.jssj;
@@ -1284,11 +1293,41 @@ function initwarnlog() {
 		sel_sensor.options[0] = null;
 	}
 	sensors=JSON.parse(localStorage.getItem("sensors"));
-	for(var i=0;i<sensors.length;i++){
-		var op=document.createElement("option");
-		op.setAttribute("value",sensors[i].id);
-		op.innerHTML=sensors[i].Value.Name;
-		sel_sensor.appendChild(op);
+	if(sensors!=null){
+		for(var i=0;i<sensors.length;i++){
+			if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
+				parentid=sensors[i].Value.ParentId;
+				for(var j=0;j<sensors.length;j++){
+					if(sensors[j].id==parentid){
+						parentname=sensors[j].Value.Name+"_";
+						break;
+					}
+				}
+			}
+			var map=new Object();
+			map.value=sensors[i].id;
+			map.name=parentname+sensors[i].Value.Name;
+			maps.push(map);
+		}
+		var compare = function (obj1, obj2) {
+			var val1 = obj1.name;
+			var val2 = obj2.name;
+			if (val1 < val2) {
+				return -1;
+			} else if (val1 > val2) {
+				return 1;
+			} else {
+				return 0;
+			}            
+		} 
+		maps.sort(compare);
+		for(var k=0;k<maps.length;k++){
+			var op=document.createElement("option");
+			op.setAttribute("value",maps[k].value);
+			op.innerHTML=maps[k].name;
+			sel_sensor.appendChild(op);
+		}
+		
 	}
 	setSelectOption("jcdd", sessionStorage.SensorId);
 	//GetSensorsByStation();
@@ -1552,9 +1591,11 @@ function gethistorydata(sensorid,kssj, jssj,aparent) {
 										decodedatas( data.Result.Datas[sensorid]);
 								} else {
 									layer.alert("没有符合条件的记录",3000);
+									decodedatas(null);
 								}
 							} else {
 								layer.alert("没有符合条件的记录",2000);
+								decodedatas(null);
 							}
 						} else {
 							layer.alert(data.Error);
@@ -1944,6 +1985,8 @@ function decodedatas(obj_chartdatas) {
 	if(obj_chartdatas.length<=0){
 		return;
 	}
+	$("#comprate-tbody tr").empty();
+	var tbody=document.getElementById("comprate-tbody");
 	if(check_val.length>0){
 		for(var i=0;i<check_val.length;i++){
 			var sensorid=check_val[i];
@@ -1962,6 +2005,19 @@ function decodedatas(obj_chartdatas) {
 					if(parseFloat(obj_chartdata[j].Value)<minvalue){
 						minvalue=parseFloat(obj_chartdata[j].Value);
 					}
+					var tr=document.createElement("tr")
+					var td_name=document.createElement("td");
+					td_name.innerHTML=check_name[i];
+					var td_time=document.createElement("td");
+					td_time.innerHTML=obj_chartdata[j].Time;
+					var td_value=document.createElement("td");
+					td_value.innerHTML=obj_chartdata[j].Value;//.toFixed(2);
+					var td_bz=document.createElement("td");
+					tr.appendChild(td_name);
+					tr.appendChild(td_time);
+					tr.appendChild(td_value);
+					tr.appendChild(td_bz);
+					tbody.appendChild(tr);
 				}
 				if(i==0){
 					maxval=maxvalue;
@@ -2319,10 +2375,10 @@ function getgraphics() {
 	}
 }
 //获取指定编号的图形属性信息，从而来绘制图形。
-function GetBinary() {
+function GetBinary(binariesid) {
 	sessionStorage.pageindex = 1;
-	if (sessionStorage.BinariesId != undefined) {
-		var url = jfjk_base_config.baseurl + "GetBinary?id=" + sessionStorage.BinariesId;
+	if (binariesid != undefined) {
+		var url = jfjk_base_config.baseurl + "GetBinary?id=" + binariesid;
 		url = encodeURI(url);
 		if (sessionStorage.islogin == 'true') {
 			$.ajax({
@@ -2358,9 +2414,36 @@ function GetBinary() {
 								}
 								return;
 							}
-							
+							//var allsensors=JSON.parse(localStorage.getItem("allsensors"));
+							var obj_data=new Object();
 							var contents = ($.base64.atob(data.Result.Value,true)).split("\r\n");
-							sessionStorage.contents = JSON.stringify(contents);
+							//if(jQuery.hasOwnProperty(localStorage.realdata))
+							var obj_rd=JSON.parse(localStorage.getItem("realdata"));
+							var obj=[];
+							if(obj_rd){
+								contents.forEach(g=>{
+									if ($.trim(g).length > 0) {
+										g = JSON.parse(g);
+										if (g && g._shape && g._shape.Binding && g._shape.Text) {
+											if(window.parent.allsensors[g._shape.Binding]){
+												var sid=window.parent.allsensors[g._shape.Binding].id;
+												if (obj_rd.hasOwnProperty(sid)) {
+			
+													obj_data = (obj_rd)[sid];////
+													g._shape.Text =(obj_data[0].Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
+													if(obj_data[0].Message){
+														g._shape.IsError=true;
+													}else{
+														g._shape.isError=false;
+													}
+												}
+										}
+									}
+										obj.push(JSON.stringify(g));
+									}
+								});
+							}
+							sessionStorage.contents = JSON.stringify(obj);
 							try {
 								drawmap(JSON.parse(sessionStorage.contents));
 							} catch(err) {
@@ -3469,20 +3552,22 @@ function moduletable(atableid) {  //used by electricroommonitor
 	var trs = tbody.getElementsByTagName("tr");
 	for (var i = 0; i < trs.length; i++) {
 		if (i % 2 == 0) {
-			trs[i].style.backgroundColor = "#16b9c9";
+			//trs[i].style.backgroundColor = "#16b9c9";
 			//trs[i].cells[1].style.backgroundColor = "#16b9c9";
 			//trs[i].cells[2].style.backgroundColor = "#16b9c9";
-			if (trs[i].style.backgroundColor != "rgb(255, 255, 0)") {
+			var cl1=trs[i].style.backgroundColor;
+			if (cl1 != "rgb(255, 255, 0)") {
 				trs[i].style.backgroundColor = "#16b9c9";
 			}
 			if (atableid == "realwarning-tbody") {
 				trs[i].cells[4].style.backgroundColor = "#16b9c9";
 			}
 		} else {
-			trs[i].style.backgroundColor = "#FFFFFF";
+			//trs[i].style.backgroundColor = "#FFFFFF";
 			//trs[i].cells[1].style.backgroundColor = "#FFFFFF";
 			//trs[i].cells[2].style.backgroundColor = "#FFFFFF";
-			if (trs[i].style.backgroundColor != "rgb(255, 255, 0)") {
+			var cl=trs[i].style.backgroundColor;
+			if (cl!= "rgb(255, 255, 0)") {
 				trs[i].style.backgroundColor = "#FFFFFF";
 			}
 			if (atableid == "realwarning-tbody") {
@@ -3648,5 +3733,71 @@ function getrealdatabynodeid(nodeid){
 			//window.location.href="index.html";
 		}
 		//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
+	}
+}
+function getname(key){
+	key=key.toLowerCase();
+	if(key==null||key==''||key.trim()==''){//空、空字符、空格都按空对待，提示未分组。
+		key="未分组";
+	}else if(key=="temp"||key=="tmp"){
+		key="温度";
+	}else if(key=="pd"){
+		key="局放";
+	}else if(key=="yx"||key=="yaoxin"){
+		key="遥信";
+	}else if(key=="cwcj"){
+		key="测温采集器"
+	}
+	return key;
+}
+function seletime(id){
+	var oneday=1000*60*60*24;
+	var today = new Date();
+	var ckssj,cjssj,ttime;
+	$("#warnlogdata-tbody tr").empty();
+	document.getElementById("count_val").innerHTML="";
+	switch(id){
+		case 0:
+			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
+			sessionStorage.jssj = getCurrentDate(2) ;
+			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+			$("#warnlogdata-tbody tr").empty();
+			//layer.alert("没有符合条件的记录",3000);
+			break;
+		case 1:
+			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
+			var yesterdaystar=ckssj-oneday;
+			sessionStorage.kssj=dateToString(new Date(yesterdaystar),2);
+			cjssj=new Date((getCurrentDate(1)+" 23:59:59").replace(/-/g,"/"));
+			var yesterdayend=cjssj-oneday;
+			sessionStorage.jssj=dateToString(new Date(yesterdayend),2);
+			//$("#warnlogdata-tbody tr").empty();
+			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+			//layer.alert("没有符合条件的记录",3000);
+			break;
+		case 2:
+			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
+			sessionStorage.kssj=dateToString(new Date(ckssj.setDate(1)),2);
+			sessionStorage.jssj=getCurrentDate(2);
+			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+			break;
+		case 3:
+			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
+			var lastMonthFirst = new Date(ckssj - oneday * ckssj.getDate());
+			sessionStorage.kssj = dateToString(new Date(lastMonthFirst - oneday * (lastMonthFirst.getDate() - 1)),2);
+			cjssj=new Date((getCurrentDate(1)+" 23:59:59").replace(/-/g,"/"));
+			sessionStorage.jssj = dateToString(new Date(cjssj - oneday * cjssj.getDate()),2);
+			//$("#warnlogdata-tbody tr").empty();
+			//layer.alert("没有符合条件的记录",3000);
+			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+		break;
+		case  4:
+			var timedefine=document.getElementById("timedefine");
+			if(timedefine.style.display=="none"){
+			timedefine.style.display="inline";
+			}else{
+				timedefine.style.display="none";
+			}
+			break;
 	}
 }

@@ -24,7 +24,7 @@
         //(function(){
     
     //var data=parent.infotreedata;//JSON.parse(JSON.stringify(parent.infotreedata));//
-    //var data=data1;两湖两广两河山，五江云贵福吉安，四西二宁青甘陕，海俞内台北上天。北京天津上海重庆广州武汉沈阳西安成都南京
+    //var data=data1;
     var isfree="true",maps=[];//,num=0
     if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
         if(typeof(w1) == "undefined") {
@@ -202,8 +202,8 @@
 			for(var i=0;i<asensors.length;i++){
 				if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
                     var key=asensors[i].Value.Catalog;//Group;
-                    if(key==null||key==''||key.trim()==''){//空、空字符、空格都按空对待，提示未分组。
-                        key="未分组";
+                    if(key){
+                        key=getname(key);
                     }
 					if(map1.hasOwnProperty(key)){
 						map1[key]++

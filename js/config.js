@@ -7,7 +7,7 @@ var jfjk_base_config={};
  jfjk_base_config.speechurl="http://localhost:/_speeh/";//"http://192.168.10.67:88/_speech/";
 
 // 手机app存放目录和名称：要求在web的资源目录中，
- jfjk_base_config.app_path_name="/res/SubstationTemperature.apk"
+ jfjk_base_config.app_path_name="/res/cloud.apk"
 
 //界面用图片信息：
 //登录页面图片：

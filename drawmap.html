@@ -16,7 +16,7 @@
 	<style type="text/css"></style>
 	
 </head>
-<body onload="GetBinary()">
+<body >
 	<div>
 	<div id="head_map">
 	<div class="pagecard"  style="text-align: center;font-size:20px;font-style:normal;;"><b>站示意图<!--onclick="getrealsbydataid()"--></b></div>
@@ -44,6 +44,7 @@
 </div>
 	<script type="text/javascript">
 		var j=0;
+		var BinariesId=-1;
 		$(document).ready(function(){
 			$.base64.utf8encode = true;
 			if(sessionStorage.map_module==1){
@@ -57,6 +58,23 @@
 			//GetGraphic();
 			initpage();
 			//refresh();
+			if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
+			if(typeof(w1) == "undefined") {
+				w1 = new Worker("delay_worker.js");
+			}
+			var i=0;
+			w1.onmessage = function(event) {
+					//document.getElementById("result").innerHTML = event.data;
+					i++
+					if(i%2==0){
+						//getrealdatabynodeid(-1);
+						refresh();
+					}
+				};
+			} else {
+				//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
+				var t1 = window.setInterval("refresh();",1000);
+			}
 			});
 		function initpage(){
 			var sel_sensor=document.getElementById("txlb");
@@ -74,13 +92,13 @@
 					sel_sensor.appendChild(op);
 				}
 			}else{
-				sessionStorage.BinariesId=-1;
+				BinariesId=-1;
 			}
-			setSelectOption("txlb", sessionStorage.BinariesId);
-			if(binaries!=null&&sessionStorage.BinariesId==-1){
+			setSelectOption("txlb", BinariesId);
+			if(binaries!=null&&BinariesId==-1){
 				var opts=sel_sensor.getElementsByTagName("option");
 				//opts[0].selected=true;
-				sessionStorage.BinariesId=opts[0].value;
+				BinariesId=opts[0].value;
 				//GetBinary();
 			}
 			
@@ -93,7 +111,7 @@
 			 },false);
 			 j=0;*/
 			//queryhistorydata();
-			GetBinary();
+			GetBinary(BinariesId);
 		}
 		function refresh(){
 			var graphic = JSON.parse(sessionStorage.contents);
@@ -119,8 +137,8 @@
 		}
 		function getbinary(){
 			var txlb= document.getElementById("txlb");
-			sessionStorage.BinariesId=txlb.value;
-			GetBinary();
+			BinariesId=txlb.value;
+			GetBinary(BinariesId);
 		}
 		</script>
 </body>
