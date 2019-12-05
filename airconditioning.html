@@ -63,11 +63,11 @@
                                     <li>上限：</li>
                                     <li>下限：</li>
                                 </td>
-                                <td align="center" >
+                                <td style="text-align:center" >
                                     <li></li>
-                                    <li align="center" class="ac-ht" id="t_set" >36</li>
-                                    <li align="center" class="ac-ht" id="t_top">59</li>
-                                    <li align="center" class="ac-ht" id="t_bottom">20</li>
+                                    <li style="text-align:center" class="ac-ht" id="t_set" >36</li>
+                                    <li style="text-align:center" class="ac-ht" id="t_top">59</li>
+                                    <li style="text-align:center" class="ac-ht" id="t_bottom">20</li>
                                 </td>
                             </tr>
                             <tr style="width:300px;margin-top:10px;">
@@ -81,21 +81,21 @@
                                     <li>上限：</li>
                                     <li>下限：</li>
                                 </td>
-                                <td align="center">
+                                <td style="text-align:center">
                                     <li></li>
-                                    <li align="center" class="ac-ht" id="s_set">36</li>
-                                    <li align="center" class="ac-ht" id="s_top">59</li>
-                                    <li align="center" class="ac-ht" id="s_bottom">20</li>
+                                    <li style="text-align:center" class="ac-ht" id="s_set">36</li>
+                                    <li style="text-align:center" class="ac-ht" id="s_top">59</li>
+                                    <li style="text-align:center" class="ac-ht" id="s_bottom">20</li>
                                 </td>
                             </tr>
                         </table>
                     </td>
-                    <td class="ac" align="center" style="background-color: darkgray;color:white;border-radius: 5px;">
+                    <td class="ac" style="text-align:center" style="background-color: darkgray;color:white;border-radius: 5px;">
                         <img src="res/ac.jpg" />
                     </td>
                     <td class="ac" style="background-color: gray;color:white;border-radius: 5px;">
-                        <p align="center" style="margin: 0px;">原件状态</p>
-                        <table align="center" style="width:100%;height:90%">
+                        <p style="text-align:center" style="margin: 0px;">原件状态</p>
+                        <table style="text-align:center" style="width:100%;height:90%">
                             <td>
                                 <li class="lable">1#加热器工作状态</li>
                                 <li class="lable">2#加热器工作状态</li>
@@ -109,6 +109,13 @@
                                 <li class="unnormal" id="jsq">异常</li>
                                 <li class="normal" id="csq">正常</li>
                                 <li class="normal" id="fj">正常</li>
+                            </td>
+                            <td>
+                                <li class="lable1" id="jrq1"><a href="Javascript:void(0)">停止</a></li>
+                                <li class="lable1" id="jrq2"><a href="Javascript:void(0)">停止</a></li>
+                                <li class="lable1" id="jsq"><a href="Javascript:void(0)">停止</a></li>
+                                <li class="lable1" id="csq"><a href="Javascript:void(0)">停止</a></li>
+                                <li class="lable1" id="fj"><a href="Javascript:void(0)">停止</a></li>
                             </td>
                         </table>
                     </td>
@@ -171,5 +178,11 @@
                 </tr>
             </table>
         </div>
+        <script>
+            function initpage(){
+                var temp=document.getElementById("state11");
+                temp.innerHTML="kkkkkkk";
+            }
+        </script>
     </body>
 </html>

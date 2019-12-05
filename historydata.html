@@ -47,7 +47,7 @@
 				<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">
 				
 			</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" style="margin-left:20px;margin-right: 20px;" onclick="refreshsensorslist()"></a>
-			<span ><a href="javascript:void(0)" onclick="seletime(0)">当天</a> </span><span ><a href="javascript:void(0)" onclick="seletime(1)">昨天</a> </span><span ><a href="javascript:viod(0)" onclick="seletime(2)">当月</a> </span>
+			<span ><a href="javascript:void(0)" onclick="seletime(0)">当天</a> </span><span ><a href="javascript:void(0)" onclick="seletime(1)">昨天</a> </span><span ><a href="javascript:void(0)" onclick="seletime(2)">当月</a> </span>
 			<span ><a href="javascript:void(0)" onclick="seletime(3)">上月</a> </span><span ><a href="javascript:void(0)" onclick="seletime(4)">自定义</a></span>
 			<span id="timedefine" style="display: none;">
 			起止时间
@@ -215,6 +215,7 @@
 			var jiange="";
 			var myChart = echarts.init(document.getElementById('main'));
 			myChart.clear();
+			$("#historydata-tbody tr").empty();
 			//数据以表格行的形式添加进table中，其实现隔行颜色区分。
 			if((!obj_data)||(obj_data.length<=0)){
 				document.getElementById('count_val').innerHTML = count + "条";

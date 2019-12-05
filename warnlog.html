@@ -82,7 +82,7 @@
 			</ul-->
 			
 		</div>
-		<div align="center"style="height:50px;" >
+		<div align="center"style="height:30px;" >
 		<!--<table class="table" style="border:0px;"align="center">
 			<tr >
 			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td>
@@ -104,8 +104,10 @@
 				<select id="jcdd" onchange="gradeChange()" style="font-size:18px;width:253px;vertical-align:-10%;">
 				
 			</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" style="margin-left:20px;margin-right: 20px;" onclick="refreshsensorslist()"></a>
-			<span ><a href="javascript:void(0)" onclick="seletime(0)">当天</a> </span><span ><a href="javascript:void(0)" onclick="seletime(1)">昨天</a> </span><span ><a href="javascript:viod(0)" onclick="seletime(2)">当月</a> </span>
+			
+			<span ><a href="javascript:void(0)" onclick="seletime(0)">当天</a> </span><span ><a href="javascript:void(0)" onclick="seletime(1)">昨天</a> </span><span ><a href="javascript:void(0)" onclick="seletime(2)">当月</a> </span>
 			<span ><a href="javascript:void(0)" onclick="seletime(3)">上月</a> </span><span ><a href="javascript:void(0)" onclick="seletime(4)">自定义</a></span>
+			</span><span ><a href="javascript:void(0)" onclick="showrealworning()">实时</a></span>
 			<span id="timedefine" style="display: none;">
 			起止时间
 			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"></input>至
@@ -115,9 +117,9 @@
 			</span>
 			</div>
 		
-		<div  class="rowlay" style="margin-bottom:10px; width:100%;" align="center">
+		<div  class="rowlay" style="margin-bottom:10px; width:100%;display: none;" align="center">
 			<ul class="count_info" align="center" >
-				<!--<li style="width:50px"><b>站名：</b></li>-->
+				<!--<li style="width:50px"><b>站名：</b></li><span> <a id="realwarnlog" href="javascript:void(0)" onclick="disrealwarnlog()">当前</a></span>-->
 				<li id="station_name"style="width:50px;margin-right:10px;display:none"> </li>
 				
 				<li style="width:50px;margin-right:10px">记录数：</li>
@@ -128,18 +130,29 @@
 				<li style="width:50px;margin-right:10px"><b>异常数：</b></li>
 				<li id="err_count"style="width:50px;margin-right:10px"> </li>
 				 -->
-				 <li style="width:50px;margin-right:10px"><a href="javascript:void(0)" style="left:300px;text-align:right;margin-left:200px;" onclick="method5('warnlogtable')">导出Excel表格</a></li>
+				 <li style="width:50px;margin-right:10px"></li>
 			</ul>
 			
 		</div>
 		
 		<div align="center">
-		
+			<div style="text-align: center;margin:6px;font-size: 18px;">
+			<a id="btn0"></a>
+			<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
+			<a id="sjzl"></a>&nbsp;
+			<a  href="javascript:void(0)" id="btn1" onclick="firstPage()">首页</a>
+			<a  href="javascript:void(0)" id="btn2" onclick="frontPage()">上一页</a>
+			<a  href="javascript:void(0)" id="btn3" onclick="nextPage()">下一页</a>
+			<a  href="javascript:void(0)" id="btn4" onclick="lastPage()">尾页</a>&nbsp;
+			<a>转到&nbsp;</a>
+			<input id="changePage" type="text" size="1" maxlength="4"/>
+			<a>页&nbsp;</a>
+			<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
+			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="method5('warnlogtable')">导出Excel表格</a>
+			</div>
 		<table id="warnlogtable" >
-
 			<thead>
 				<tr >
-				
 				<th>测量点名称</th>
 				<th>告警时间</th>
 				<th>数值</th>	
@@ -147,45 +160,59 @@
 				<!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>-->
 				</tr>
 			</thead>
-			<tbody id='warnlogdata-tbody' style="width:1020px;height:600px; overflow:auto;">
+			<tbody id='warnlogdata-tbody' style="width:820px;height:610px; overflow:auto;">
      
 			</tbody>
 		</table>
 	</div>
 	<div id="indicatorContainer"></div>
 	</div>
-	<script>
 	
+	<script>
+	var pageSize = 18;    //每页显示的记录条数
+	var curPage=0;        //当前页
+	var lastPage;        //最后页
+	var direct=0;        //方向
+	var len;            //总行数
+	var page;            //总页数
+	var begin;
+	var end;
+	var count;
+	var $table;
 	function decodedatas(obj_data){
 		objS = document.getElementById("jcdd");
-		var count = 0;
+		var name=objS.options[objS.selectedIndex].innerText;
+		count = 0;
 			$("#warnlogdata-tbody tr").empty();
-			var tbody=document.getElementById("warnlogdata-tbody");
+			$table=document.getElementById("warnlogdata-tbody");
+			for(var j=$table.rows.length-1;j>=0;j--){
+				$table.removeChild($table.rows[j]);
+			}
 			//if(Math.ceil(senconds/1000/60)<1430){
 				for (var i = 0; i <obj_data.length; i++) {
 					if(obj_data[i].Message){
 						var tr=document.createElement("tr");
-						if (i % 2 == 0) {
+						if (count % 2 == 0) {
 							tr.setAttribute('style', "background-color:#16b9c9");
 						}
 						//var td_did=document.createElement("td");
 						//td_did.innerHTML=objS.options[objS.selectedIndex].value;;
 						var td_dname=document.createElement("td");
-						td_dname.innerHTML=objS.options[objS.selectedIndex].innerText;
+						td_dname.innerHTML=name;
 						var td_dtime=document.createElement("td");
 						var time=obj_data[i].Time;//(ttime-oneday*(2*i+5));
-						td_dtime.innerHTML=dateToString(new Date(time),2);
+						td_dtime.innerHTML=time;//dateToString(new Date(time),2);
 						var td_dadr=document.createElement("td");
 						var value=obj_data[i].Value;//(Math.random() * 10) - 0;
 						td_dadr.innerHTML=(value*1).toFixed(Number_of_decimal);
 						var td_dtype=document.createElement("td");
-						td_dtype.innerHTML=obj_data[i].Message;//"数值越限";
+						td_dtype.innerHTML=obj_data[i].Message;//"数值越限";/**/
 						//tr.appendChild(td_did);
 						tr.appendChild(td_dname);
 						tr.appendChild(td_dtime);
 						tr.appendChild(td_dadr);
 						tr.appendChild(td_dtype);
-						tbody.appendChild(tr);
+						$table.appendChild(tr);
 						count++
 					}
 				}
@@ -197,7 +224,7 @@
 				}
 				//ps=obj_data.length;
 			//}
-		
+		display();
 	}
 	function gradeChange() {
 		$("#warnlogdata-tbody tr").empty();
@@ -206,6 +233,115 @@
 		sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
 		gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
 	}
+	function showrealworning(){
+		
+	}
+	function display(){   
+		
+		//var $table=$("#warnlogdata-tbody");
+		len =$table.rows.length - 1;    // 求这个表的总行数，剔除第一行介绍
+		page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
+		// alert("page==="+page);
+		curPage=1;    // 设置当前为第一页
+		displayPage(1);//显示第一页
+		
+		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
+		document.getElementById("sjzl").innerHTML="数据总量 " + len + "";        // 显示数据量
+		document.getElementById("pageSize").value = pageSize;
+	}
+		
+		
+		function firstPage(){    // 首页
+			curPage=1;
+			direct = 0;
+			displayPage();
+		}
+		function frontPage(){    // 上一页
+			direct=-1;
+			displayPage();
+		}
+		function nextPage(){    // 下一页
+			direct=1;
+			displayPage();
+		}
+		function lastPage(){    // 尾页
+			curPage=page;
+			direct = 0;
+			displayPage();
+		}
+		function changePage(){    // 转页
+			curPage=document.getElementById("changePage").value * 1;
+			if (!/^[1-9]\d*$/.test(curPage)) {
+				layer.alert("请输入正整数");
+				return ;
+			}
+			if (curPage > page) {
+				layer.alert("超出数据页面");
+				return ;
+			}
+			direct = 0;
+			displayPage();
+		}
+		
+		
+		function setPageSize(){    // 设置每页显示多少条记录
+			pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
+			if (!/^[1-9]\d*$/.test(pageSize)) {
+				layer.alert("请输入正整数");
+				return ;
+			}
+			len =$table.rows.length - 1;
+			page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
+			curPage=1;        //当前页
+				direct=0;        //方向
+				firstPage();
+				displayPage();
+		}
+	
+
+	function displayPage(){
+		if(curPage <=1 && direct==-1){
+			direct=0;
+			layer.alert("已经是第一页了");
+			return;
+		} else if (curPage >= page && direct==1) {
+			direct=0;
+			layer.alert("已经是最后一页了");
+			return ;
+		}
+		
+		lastPage = curPage;
+		
+		// 修复当len=1时，curPage计算得0的bug
+		if (len > pageSize) {
+			curPage = ((curPage + direct + len) % len);
+		} else {
+			curPage = 1;
+		}
+	
+		
+		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";        // 显示当前多少页
+		
+		begin=(curPage-1)*pageSize ;// 起始记录号
+		end = begin + 1*pageSize ;    // 末尾记录号
+		
+		
+		if(end > len ) end=len;
+		//var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
+		for ( var i = 0; i<=len; i++ ) {
+			$table.rows[i].style.display = 'none';
+		}
+		for ( var i = begin; i<end; i++ ) {
+			$table.rows[i].style.display = '';
+		}
+		/*$table.find("tr").hide();    // 首先，设置这行为隐藏
+		$table.find("tr").each(function(i){    // 然后，通过条件判断决定本行是否恢复显示
+			if((i>=begin && i<=end) )//显示begin<=x<=end的记录
+				$(this).show();
+		});*/
+
+		}
+
 	</script>
 </body>
 </html>

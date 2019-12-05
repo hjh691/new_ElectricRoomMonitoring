@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8"/>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
 	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
 	<title>实时数据</title>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
@@ -87,7 +88,7 @@
 				<li id="count_val"style="width:30px;margin-right:0px"> </li>
 				<!-- 
 				<li style="width:50px;margin-right:0px"><b>正常数：</b> </li>
-				<li id="normal_count"style="width:150px;margin-right:0px"> </li>-->
+				<li id="normal_count"style="width:150px;margin-right:0px"> </li>display: none;-->
 				<li style="width:30px;margin-right:0px"><b>异常：</b></li>
 				<li id="err_count"style="width:30px;margin-right:0px"> </li>
 				<li style="width:100px;margin-right:0px"><a href="javascript:void(0)" style="text-align:right;margin-left:20px;" onclick="method5('realtable')">导出Excel</a></li>
@@ -95,6 +96,19 @@
 		</div>
 		
 		<div align="center" style="overflow: auto;" >
+			<div style="text-align: center;font-size: 18px;">
+				<a id="btn0"></a>
+				<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
+				<a id="sjzl"></a>&nbsp;
+				<a  href="javascript:void(0)" id="btn1" onclick="firstPage()">首页</a>
+				<a  href="javascript:void(0)" id="btn2" onclick="frontPage()">上一页</a>
+				<a  href="javascript:void(0)" id="btn3" onclick="nextPage()">下一页</a>
+				<a  href="javascript:void(0)" id="btn4" onclick="lastPage()">尾页</a>&nbsp;
+				<a>转到&nbsp;</a>
+				<input id="changePage" type="text" size="1" maxlength="4"/>
+				<a>页&nbsp;</a>
+				<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
+			</div>
 		<table class="tabtop13" id="realtable" width="1000px" >
 			<thead>
 				<tr >
@@ -111,6 +125,7 @@
 			<tbody id='realdata-tbody' style="width:1020px;height:420px; overflow:auto;" >
 			</tbody>
 		</table>
+		
 	</div>
 	</div>
 	<script type="text/javascript">
@@ -123,7 +138,18 @@
 		let isfirst="true";
 		var maxval=0,minval=0;
 		var colors=[];
-		
+
+		var pageSize = 12;    //每页显示的记录条数
+		var curPage=0;        //当前页
+		var lastPage;        //最后页
+		var direct=0;        //方向
+		var len;            //总行数
+		var page;            //总页数
+		var begin;
+		var end;
+		var count;
+		var $table;
+			
 		function initpage(){
 		
 				if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
@@ -171,10 +197,10 @@
 	function decoderealdata(){
 		//$("#realdata-tbody tr").empty();
 		obj_realdata=JSON.parse(localStorage.getItem("realdata"));
-		var tbody = document.getElementById('realdata-tbody');
-		var tableLength = tbody.rows.length;
+		$table = document.getElementById('realdata-tbody');
+		var tableLength = $table.rows.length;
 		for(var int = 0;int < tableLength;int++) {
-			tbody.deleteRow(0);
+			$table.deleteRow(0);
 	    }
 		var sensors=JSON.parse(localStorage.getItem("sensors"));
 		var obj_data=new Object();
@@ -238,7 +264,7 @@
 					}
 					tr.style.backgroundColor = cl;
 					pt++;
-					tbody.appendChild(tr);
+					$table.appendChild(tr);
 					$(".time").text('');
 					$(".sensorname").text('');
 					$(".value1").text('');
@@ -249,25 +275,25 @@
 			//document.getElementById('normal_count').innerHTML=count-err_count+"条";
 			//document.getElementById('err_count').innerHTML = 0 + "条";
 			if(pt>0){
-				var tableLength = tbody.rows.length;
+				var tableLength = $table.rows.length;
 				for(var int = 0;int < tableLength;int++) {
-					if(tbody.rows[int].cells[5].innerHTML==sessionStorage.SensorId){
+					if($table.rows[int].cells[5].innerHTML==sessionStorage.SensorId){
 						sessionStorage.t_p=int;
 					}
 			    }
 				if(sessionStorage.t_p!=undefined){
-				sname=tbody.rows[sessionStorage.t_p].cells[0].innerHTML;
-				chart_type=tbody.rows[sessionStorage.t_p].cells[6].innerHTML;
-				sensor_Id=parseInt(tbody.rows[sessionStorage.t_p].cells[5].innerHTML);
-				var lasttime=tbody.rows[sessionStorage.t_p].cells[1].innerHTML;
+				sname=$table.rows[sessionStorage.t_p].cells[0].innerHTML;
+				chart_type=$table.rows[sessionStorage.t_p].cells[6].innerHTML;
+				sensor_Id=parseInt($table.rows[sessionStorage.t_p].cells[5].innerHTML);
+				var lasttime=$table.rows[sessionStorage.t_p].cells[1].innerHTML;
 				//var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 				updatachart(chart_type);
-				value0=parseFloat(tbody.rows[sessionStorage.t_p].cells[2].innerHTML);
-				//value1=parseFloat(tbody.rows[sessionStorage.t_p].cells[3].innerHTML);
+				value0=parseFloat($table.rows[sessionStorage.t_p].cells[2].innerHTML);
+				//value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
 				var heightpx=$("#realdata-tbody tr").height()+1;//加1是网格线的宽度
 				var ppt=+sessionStorage.t_p;
 				$("#realdata-tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行
-				tbody.rows[ppt].style.backgroundColor="#85e494";
+				$table.rows[ppt].style.backgroundColor="#85e494";
 				if(isfirst!="true"){
 					var temp_option=myChart2.getOption();
 					if(temp_option.series[0].data[temp_option.series[0].data.length-1][0]<strtodatetime(lasttime)){
@@ -289,7 +315,7 @@
 					gethistorydata(sensor_Id,kssj,jssj,1);
 				}
 			}else{
-				//tbody.rows[0].ondblclick();
+				//$table.rows[0].ondblclick();
 			}
 			}else{
 				layer.alert("没有符合条件的数据");
@@ -297,8 +323,9 @@
 		}else{
 			layer.alert("没有符合条件的数据");
 		}
-		//tbody.rows[t_pt].scrollIntoView();
+		//$table.rows[t_pt].scrollIntoView();
 		//refreshData();
+		display();
 	}
 	function updatachart(atype){
 		switch(atype.toLowerCase()){
@@ -389,7 +416,7 @@
                                 [0.2, 'green'],
                                 [1, '#1f1f1f']
                             ],
-							//color: [[0.2,'#1e90ff'],[0.8,'lime'],[1,'#ff4500']],
+							color: [[0.2,'#1e90ff'],[0.8,'lime'],[1,'#ff4500']],
                             width: 10,
                             shadowColor: 'yellow', //默认透明
                             shadowOffsetX:2,
@@ -664,7 +691,7 @@
 				max:maxval,
 			}],
 			series: [/**/{
-				name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
+				name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
 				type: 'line',
 				showAllSymbol: true,
 				symbolSize: 1,
@@ -799,6 +826,113 @@
 		myChart2.setOption(option2);
 		
 	}
+	
+	function display(){   
+		
+		//var $table=$("#warnlogdata-tbody");
+		len =$table.rows.length - 1;    // 求这个表的总行数，剔除第一行介绍
+		page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
+		// alert("page==="+page);
+		curPage=1;    // 设置当前为第一页
+		displayPage(1);//显示第一页
+		
+		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
+		document.getElementById("sjzl").innerHTML="数据总量 " + len + "";        // 显示数据量
+		document.getElementById("pageSize").value = pageSize;
+	}
+		
+		
+		function firstPage(){    // 首页
+			curPage=1;
+			direct = 0;
+			displayPage();
+		}
+		function frontPage(){    // 上一页
+			direct=-1;
+			displayPage();
+		}
+		function nextPage(){    // 下一页
+			direct=1;
+			displayPage();
+		}
+		function lastPage(){    // 尾页
+			curPage=page;
+			direct = 0;
+			displayPage();
+		}
+		function changePage(){    // 转页
+			curPage=document.getElementById("changePage").value * 1;
+			if (!/^[1-9]\d*$/.test(curPage)) {
+				layer.alert("请输入正整数");
+				return ;
+			}
+			if (curPage > page) {
+				layer.alert("超出数据页面");
+				return ;
+			}
+			direct = 0;
+			displayPage();
+		}
+		
+		
+		function setPageSize(){    // 设置每页显示多少条记录
+			pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
+			if (!/^[1-9]\d*$/.test(pageSize)) {
+				layer.alert("请输入正整数");
+				return ;
+			}
+			len =$table.rows.length - 1;
+			page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
+			curPage=1;        //当前页
+				direct=0;        //方向
+				firstPage();
+				displayPage();
+		}
+	
+
+	function displayPage(){
+		if(curPage <=1 && direct==-1){
+			direct=0;
+			layer.alert("已经是第一页了");
+			return;
+		} else if (curPage >= page && direct==1) {
+			direct=0;
+			layer.alert("已经是最后一页了");
+			return ;
+		}
+		
+		lastPage = curPage;
+		
+		// 修复当len=1时，curPage计算得0的bug
+		if (len > pageSize) {
+			curPage = ((curPage + direct + len) % len);
+		} else {
+			curPage = 1;
+		}
+	
+		
+		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";        // 显示当前多少页
+		
+		begin=(curPage-1)*pageSize ;// 起始记录号
+		end = begin + 1*pageSize ;    // 末尾记录号
+		
+		
+		if(end > len ) end=len;
+		//var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
+		for ( var i = 0; i<=len; i++ ) {
+			$table.rows[i].style.display = 'none';
+		}
+		for ( var i = begin; i<end; i++ ) {
+			$table.rows[i].style.display = '';
+		}
+		/*$table.find("tr").hide();    // 首先，设置这行为隐藏
+		$table.find("tr").each(function(i){    // 然后，通过条件判断决定本行是否恢复显示
+			if((i>=begin && i<=end) )//显示begin<=x<=end的记录
+				$(this).show();
+		});*/
+
+		}
+
 	</script>
 </body>
 </html>

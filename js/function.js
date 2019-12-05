@@ -1132,12 +1132,12 @@ function GetStations() {
 }
 //显示新密码输入选项	
 function showeditpassword() {
-	document.getElementById("up-editpassword").style.display = "block";
-	document.getElementById("up-yhmmqr").style.display = "block";
-	document.getElementById("info_ok").style.display = "block";
+	document.getElementById("up-editpassword").style.display = "inline";
+	document.getElementById("up-yhmmqr").style.display = "inline";
+	document.getElementById("txt_postpassword").style.display = "inline";
 }
 //提交密码修改内容
-function infook() {
+function postpassword() {
 	//var yhbh=document.getElementById("up-yhbh").value;
 	//var yhmc=document.getElementById("up-yhmc").value;
 	var yhmm = document.getElementById("up-yhmm").value;
@@ -1330,7 +1330,11 @@ function initwarnlog() {
 		
 	}
 	setSelectOption("jcdd", sessionStorage.SensorId);
+	sessionStorage.SensorId = sel_sensor.value;
+	if(sessionStorage.SensorId=="")
+	sessionStorage.SensorId=-1;
 	//GetSensorsByStation();
+	seletime(0);
 }
 //初始化短信日志查询页面（在进入短信日志页面时触发）。
 function initsmslog() {
@@ -3754,14 +3758,14 @@ function seletime(id){
 	var oneday=1000*60*60*24;
 	var today = new Date();
 	var ckssj,cjssj,ttime;
-	$("#warnlogdata-tbody tr").empty();
+	
 	document.getElementById("count_val").innerHTML="";
 	switch(id){
 		case 0:
 			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
 			sessionStorage.jssj = getCurrentDate(2) ;
 			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
-			$("#warnlogdata-tbody tr").empty();
+			
 			//layer.alert("没有符合条件的记录",3000);
 			break;
 		case 1:

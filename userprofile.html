@@ -41,15 +41,17 @@
 			</td>
 			</tr>
 			</span>
+			<span>
 			<tr >
-			<td class="table-lable"id="up-editpassword" style="display:none">新密码:</td>
-			<td>	<input id="up-yhmmqr" type="password" style="display:none;width:150px;" value=""></input>
+			<td class="table-lable"id="up-editpassword" style="display: none;">新密码:</td>
+			<td>	<input id="up-yhmmqr" type="password" style="width:150px;display: none;" value=""></input><span id="txt_postpassword" style="color:red;font-size:12px;margin-left:10px;display: none;"><a href="javascript:postpassword()">提交修改</a></span>
 			</td>
 			</tr>
+			</span>
 			<span>
 			<tr>
 			<td class="table-lable"> 用户权限:</td>
-			<td><input id="up-yhqx" type="text" readonly="readonly" style="width:150px" value=""></input>
+			<td><input id="up-yhqx" type="text" style="width:150px" value=""></input>
 			</td>
 			</tr>
 				
@@ -57,7 +59,7 @@
 			<span>
 				<tr>
 				<td class="table-lable"> 联系电话:</td>
-				<td><input id="up-tel" type="text" readonly="readonly" style="width:150px" value=""></input>
+				<td><input id="up-tel" type="text" style="width:150px" value=""></input>
 				</td>
 				</tr>
 					
@@ -65,7 +67,7 @@
 			<span>
 				<tr>
 				<td class="table-lable"> 电子信箱:</td>
-				<td><input id="up-email" type="text" readonly="readonly" style="width:150px" value=""></input>
+				<td><input id="up-email" type="text" style="width:150px" value=""></input>
 				</td>
 				</tr>
 					
@@ -73,40 +75,71 @@
 			<tr>
 			<td class="table-lable"> 详细说明:</td>
 			<td>
-				<input type="text" id="up-yhsm" type="text" readonly="readonly" style="width:150px;" value="">
+				<input type="text" id="up-yhsm" type="text" style="width:150px;" value="">
 				</input>
 			</td>
-				<!--span id="info_sbxh" style="color:red;display:none;font-size:10px;">请输入设备型号</span
-			</tr>
-			<tr>
-			<td style="color:#0000b0;font-size:20px"> 生产厂家:</td>
-			<td><input id="sccj" placeholder="请输入厂家名称"></input>
-			</td>
-			</tr>
-			<tr>
-			<td style="color:#0000b0;font-size:20px;position:relative"> 通信接口:</td>
-			<td>	<select id="jkxy" style="font-size:20px;width:120px;"onchange="document.getElementById('input-jkxy').value=this.value">
-					<option value="RS485">RS485</option>
-					<option value="zgbee">zgbee</option>
-					<option value="mudbus">mudbus</option>
-					</select>
-				<input id="input-jkxy" name="input" class="iInput" ></input>
-			
-			</td>-->
 			</tr>
 			<tr style="height:30px">
 			</tr>
 			<tr>
 			
 			<td class="table-lable">
-				<input type="button" id="info_ok" onclick="infook()" style="margin-left:10px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);display:none" value="确定"/></td>
-			<td class="table-lable">	<input type="button" name="reset" id="reset" style="margin-left:10px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);display:none;" value="取消"/>
-			<!-- background: -webkit-gradient(linear, left top, left bottom, from(#D2691E), color-stop(1, #ffffff), to(rgb(0,0,0)));-->
+				<input type="button" id="info_ok" onclick="infook()" style="margin-left:10px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);" value="确定"/></td>
+			<td class="table-lable">	<input type="button" name="reset" id="reset" style="margin-left:10px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);" onclick="javascript:history.go(-1)" value="取消"/>
+			<!-- background: -webkit-gradient(linear, left top, left bottom, from(#D2691E), color-stop(1, #ffffff), to(rgb(0,0,0)));display:none-->
 			</td>
 			</tr>
 			</table>
 			
 		</form>
 	</div>
+	<script>
+		function infook(){
+			var userinfo=new Object();
+			userinfo.Id=document.getElementById("up-yhbh").value;
+			userinfo.Name=document.getElementById("up-yhmc").value;
+			userinfo.Roles=document.getElementById("up-yhqx").value;
+			userinfo.Tele=document.getElementById("up-tel").value;
+			userinfo.Email=document.getElementById("up-email").value;
+			userinfo.Display=document.getElementById("up-yhsm").value;
+			if (confirm("你确定提交吗？")) {  
+				postuserinfo(userinfo);
+			}  
+			else {  
+				
+			}  
+  
+		}
+		function postuserinfo(arruserinfo){
+			var url = jfjk_base_config.baseurl + "UpdateProfile";
+			url = encodeURI(url);
+			$.ajax({
+				beforeSend: function(request) {
+					request.setRequestHeader("_token", sessionStorage.token);
+				},
+				url: url,
+				type: 'POST',
+				dataType: 'json',
+				contentType: "application/json",
+				data:JSON.stringify(arruserinfo),
+				timeout: 10000,
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					layer.alert('密码修改操作失败');
+				},
+				success: function(data, status) {
+					if (status == "success") {
+						if (data.Error == null) {
+							layer.alert("密码修改成功，请用新密码登录");
+							window.location.href = "javascript:void(0)";
+							top.location = "index.html";
+							return;
+						} else {
+							layer.alert(data.Error);
+						}
+					}
+				}
+			});
+		}
+	</script>
 </body>
 </html>

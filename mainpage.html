@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -17,7 +16,7 @@
 	<script type="text/javascript" src="js/function.js"></script>
 </head>
 
-<body>
+<body >
 	<!--onload="initIndex()""showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>-->
 	<div class="header" id="header" style="height:80px;position:relative;overflow: auto;">
 		<div class="topbar" id="topbar">
@@ -33,7 +32,6 @@
 				未登录
 			</span>
 			<!--end No.1value="系统设置"-->
-
 			<span id="yhout" style="position:relative;float:left;left:80px;color:white;font-size:12px;"><a
 					href="javascript:void(0)" style="color:white;">[登录]</a></span>
 			<input type="button" class="topbar-bigbutton" value="联系我们"
@@ -41,12 +39,10 @@
 				onclick="showcontactus()"></input>
 			<input type="button" class="topbar-bigbutton" value="APP下载"
 				style="background:url(res/chilun.jpg) no-repeat center top;margin-top:10px;" onclick="showdownload()">
-
 			</input>
 			<!--<input type="button"  class="topbar-bigbutton" value="数据浏览" style="background:url(res/sanse.jpg) no-repeat center top;margin-top:10px;"></input>-->
 			<input type="button" class="topbar-bigbutton" value="操作指南"
 				style="background:url(res/bar.jpg) no-repeat center top;margin-top:10px;" onclick="showhelp()"></input>
-
 		</div>
 		<hr style="display:none" />
 	</div>
@@ -55,13 +51,10 @@
 	<div id="chuangti" style="position: relative;">
 		<!--左侧站名列表 <h4 id="head_list_name" align="left"  >变电站:</h4>-->
 		<div class="leftmenu" id="leftmenu" style="float:left;width:15%;overflow:auto;min-width:200px;">
-
 			<div id="tree" style="width:400px;overflow:auto;">
-
 			</div>
 		</div>
 		<div id="content" style="overflow: hidden;">
-
 			<!-- 导航栏 -->
 			<div class="navigation" style="vertical-align:center;overflow:auto">
 				<div class="row-navigation" style="vertical-align:center;min-width:500px;text-align:center">
@@ -73,15 +66,14 @@
 						</li>
 						<li><a id="historychart" href="javascript:void(0)" onclick="loadstations_chart()">趋势对比</a></li>
 						<li><a href="javascript:void(0)" onclick="loadstations_warnlog()">告警信息</a></li>
-						<li><a href="device.html" target="iframe_main">设备信息</a></li>
+						<li><a href="javascript:void(0)" onclick="showdevice()">设备信息</a></li>
 						<!--target="iframe_main"realwarning.html-->
-						<li><a href="javascript:void(0)"  >系统设置</a></li>
+						<li><a href="javascript:void(0)" onclick="showpage(1)" >系统信息</a></li>
 						<!--<li ><a href="help.html" target="iframe_main" >使用指南</a></li>
-							<li ><a href="ContactUs.html" target="iframe_main">联系我们</a></li>target="iframe_main"-->
+						<li ><a href="ContactUs.html" target="iframe_main">联系我们</a></li>target="iframe_main"-->
 					</ul>
 				</div>
 			</div>
-
 			<div class="mainarea" id="mainarea">
 				<iframe name="iframe_main" id="iframe_main" style="width:100%;height:99%" frameborder="0">
 				</iframe>
@@ -102,7 +94,6 @@
 			</div>
 		</div>
 	</div>
-
 	<!--底部公司版权 -->
 	<div>
 		<!--<div class="navigation" id="footer" style="height:30px;position: absolute;bottom:0px;left:0px;right:0px;">	
@@ -120,13 +111,11 @@
 			 <marquee id="affiche" align="middle" behavior="scroll"  direction="left" height="50" width="500" hspace="100" vspace="50" loop="-1" scrollamount="10" scrolldelay="100" onMouseOut="this.start()" onMouseOver="this.stop()" ></marquee>-->
 			<div id="alert_info" style="vertical-align:center;background-color: rgba(255,255,0,0.2);">
 			</div>
-
 		</div>
 		<!--KeFuDiv endhttp://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=<embed height="0" width="0" src="">-->
 		<div id="wrapSpk">
 			<audio id="spkAudio">
 				<source src="" type="audio/wav">
-
 			</audio>
 			<textarea id="chatData" style="width:300px;height:40px;display:none" onclick="spack()" ;>asd
 			</textarea>
@@ -507,6 +496,17 @@
 			//	document.getElementById("iframe_main").src="infototal.html";
 			//}},3000);
 		}
+		//测试显示机房监控模块的页面
+		function showpage(pid){
+			switch(pid){
+				case 0:
+					document.getElementById("iframe_main").src="systeminfo.html";
+					break;
+				case 1:
+				document.getElementById("iframe_main").src="airconditioning.html";
+				break;
+			}
+		}
 		function getThe_level_nodeid(anode, alevel) {
 			while (anode.level > alevel) {
 				anode = ($("#tree").treeview("getParent", anode))
@@ -561,12 +561,15 @@
 		//book,math,english,chinese,lab,library,office,classroom,glass,class,white，blue，red，green，black，yellow，gray，brown，upon，eyes，ears，legs，arms，
 		//feet，body，head，nose，mouth，figer，heat，teeth，tongue，face，hand，tall，short，fat，thin，hair，erase，pen，pencil，ruler，ruber I,my,mine,me,you,you
 		//your,yours,he(she),him(her),his(her),his(hers),it,it,its.they,them,their,theirs,we,us,our,ours,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday
-		//one two three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,hundred,thousand,million,billion, computer,picture,jump,sit,stant,stay,
+		//one two three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,hundred,thousand,million,billion, computer,picture,jump,sit,stay,
 		//page,data,up,on,in,at,look,out,of,for,from,form,list,short,tall,hight,small,big,bed,bee,bear,wolf,fox,fish,meat,nodle,rice,fine,nine,fly,sky,run,play,bath,
 		//water,what,when,where,how,who,whose,name,age,thin,hair,shop,stor,school,walk,work,doctor,teacher,student,driver,bus,car,job,sun,daughter,policeman,drive,
-		//member,talk,rodio,family,photo,Smith.listen to,upon,early,near,by,front,back,left,right,up,down,box,fox,cup,run,jump,paper,pen,ruler,ruber,erase
-		//从后台获取节点信息 China,Canada,United State of American,England,Japen,Indian,German,Sweden,Greece,Poland,Franch,Itali,Kore,here,there,game,glass,cup,bottle,
-
+		//member,talk,rodio,family,photo,Smith.listen to,upon,early,near,by,front,back,left,right,up,down,box,cup,paper,pen,ruler,ruber,erase
+		//从后台获取节点信息 China,Canada,United State of American,England,Japen,Indian,German,Sweden,Greece,Poland,Franch,Itali,Kore,here,there,game,glass,bottle,
+		//fifteen,sixteen,seventeem;eighteen,nineteen,twenty,January,February,March,April,spring,summer,season,autumn,winter,year,month,day,date,file,user,
+		//May,June,July,August,September,October,November,December;livingroom,bedroom,kitchen,playground,laboratory(lab),house,farm,horse,sheep,
+		//goat,dog,pig,cat,cow,hen,cock,chicken,douck,monkey,tager,lion,elephent,mouse,table,desk,chair,bench,speek,tall,say,sing,paly,tell,go,walk,
+		//stand,ride,fly,let,come,hurt,tide,thirsty,wind,rain,cloud,snow,sky,sun,daughter,mum,dad,mather,father,brother,sister,grad
 		function getNodes() {
 			var url = jfjk_base_config.baseurl + "/GetNodes";
 			url = encodeURI(url);
@@ -700,12 +703,19 @@
 
 		function showdownload() {
 			document.getElementById("iframe_main").src = "app_download.html"
+			sessionStorage.pageindex=200;
 		}
 		function showhelp() {
 			document.getElementById("iframe_main").src = "help.html"
+			sessionStorage.pageindex=100;
 		}
 		function showcontactus() {
 			document.getElementById("iframe_main").src = "ContactUs.html"
+			sessionStorage.pageindex=300;
+		}
+		function showdevice(){
+			document.getElementById("iframe_main").src="device.html";
+			sessionStorage.pageindex=6;
 		}
 		function loaddata(mdata) {
 			if ((mdata.text === "保定") || (mdata.text == "测温")) {
@@ -836,29 +846,42 @@
 			//}
 		}
 		function refreshiframe() {
+			var frame=document.getElementById("iframe_main");
 			switch (sessionStorage.pageindex) {
 				case '0':
-					document.getElementById("iframe_main").src = "infototal.html";
+					frame.src = "infototal.html";
 					break;
 				case "1":
-					document.getElementById("iframe_main").src = "drawmap.html";
+					frame.src = "drawmap.html";
 					//getrealdatabynodeid(-1);
 					//iframe_main.window.initpage();
 					break;
 				case '2':
-					document.getElementById("iframe_main").src = "realdata.html";//getrealdatabynodeid(-1);
+					frame.src = "realdata.html";//getrealdatabynodeid(-1);
 					//iframe_main.window.initpage();
 					break;
 				case '3':
-					document.getElementById("iframe_main").src = "historydata.html";
+					frame.src = "historydata.html";
 					//iframe_main.window.initpage();
 					break;
 				case '4':
-					document.getElementById("iframe_main").src = "chart.html";
+					frame.src = "chart.html";
 					//iframe_main.window.inithistorychart();
 					break;
 				case '5':
-					document.getElementById("iframe_main").src = "warnlog.html";
+					frame.src = "warnlog.html";
+					break;
+				case "6":
+					frame.src="device.html";
+					break;
+				case "100":
+					frame.src="Help.html";
+					break;
+				case "200":
+					frame.src="app_download.html";
+					break;
+				case "300":
+					frame.src="ContactUs.html";
 					break;
 			}
 		}
@@ -1036,6 +1059,7 @@
 		//window.setInterval("getrealdatabynodeid(-1)",60000);
 
 		function decoderealdata(obj_realdata) {
+			var parentid=-100,parentname="";
 			var sensorname = "",
 				alerttime = "",
 				alertinfo = "",
@@ -1095,6 +1119,15 @@
 				var sensors=JSON.parse(localStorage.getItem("allsensors"));
 				for (var i = 0; i < sensors.length; i++) {
 					var sid = sensors[i].id + "";
+					if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
+						parentid=sensors[i].Value.ParentId;
+						for(var j=0;j<sensors.length;j++){
+							if(sensors[j].id==parentid){
+								parentname=sensors[j].Value.Name+"_";
+								break;
+							}
+						}
+					}
 					if (obj_realdata.hasOwnProperty(sid)) {
 						obj_data = (obj_realdata)[sid];////
 						var msg = obj_data[0].Message;
@@ -1104,7 +1137,7 @@
 						alerttime = obj_data[0].Time.substr(11);
 						alertinfo = msg;
 						alertvalue = parseFloat(obj_data[0].Value).toFixed(Number_of_decimal);
-						sname = sensors[i].Value.Name;
+						sname =parentname+ sensors[i].Value.Name;
 						var xs = 1;//sensors[i].Value.Factor;  数据结构修改，value为已经乘过系数的数值，svalue为未乘以系统的原始值
 						var type_td = getname(sensors[i].Value.Catalog);
 						//添加数据列表项
@@ -1196,7 +1229,5 @@
 			}
 		};
 	</script>
-
 </body>
-
 </html>
