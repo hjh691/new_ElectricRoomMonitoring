@@ -62,39 +62,39 @@
 			background: -webkit-linear-gradient(left top, red , blue);  Safari 5.1 - 6.0 */
 			/*background: -o-linear-gradient(bottom right, red, blue);  Opera 11.1 - 12.0 */
 			/*background: -moz-linear-gradient(bottom right, red, blue);  Firefox 3.6 - 15 */
-			//background: linear-gradient(to bottom right,#6666FF,#006666,#55aa66);  /*标准的语法（必须放在最后） */
+			/*background: linear-gradient(to bottom right,#6666FF,#006666,#55aa66);  标准的语法（必须放在最后） */
 			background-size: 100% 100%;
 		}
 </style>
 </head>
-<body onload="initlogin()" style="background:url(res/bj04.jpg) no-repeat center top ;background-size:100%"><!--height:850px;style="background-image:url(rec/zzpic12708.jpg)"-->
+<body id="main" onload="initlogin()" style="background: no-repeat center top ;background-size:100%"><!--height:850px;style="background-image:url(rec/zzpic12708.jpg)"-->
 	<div align="center" id="page" style="margin:0;padding:0;width:100%; font-size:20px;" >
 		<br>
 		<h1 id="company_name" style="color:#FF6666"></h1><br><br>
 		<table>
-		<tr>
-		<td>
-		<img id="login_pic" src="" align="center" style="position:relative;display:inline;float:right;margin-right:20px;display: none" />
-
-	</td>
-	<td><form id="form1" align="center" style="margin-left:30Px" >
-		<div style="color:#FFFFFF">用户名<input id="username" type="text" name="username"  style="margin-left:10px;padding:2px;padding-left:30px;height:30px;font-size:20px;background-image:url(./res/touxiang.png);background-repeat:no-repeat;border-radius:8px;"></input></div><br><br>
-		<div style="color:#FFFFFF">密&nbsp  码<input id="password" type="password" name="password" style="margin-left:10px;padding:2px;padding-left:30px;height:30px;font-size:20px;background-image:url(res/lock.png);background-repeat:no-repeat;border-radius:8px" onkeypress="return KeyUp()" autocomplete="new-password"></input></div>
-		<br>
-		<div style="display:none">
-			<a href="iframe_regist.html" target="main-frame" style="font-style:{'bold'};text-decoration:none;" ><b>注册新用户</b></a>
-			<div style="color:red;font-size:20px;display:inline;left:40px;position:relative" >
-				<a href="#"style="color:red; text-decoration:none;">忘记密码</a>
-			</div>
-		</div>
-		<br><br>
-		<input class="button" id="btn_login" type="button"  value="登陆"  onclick="login()"style="font-size:20px;background-image:url(res/jianbian_orange.jpg);width:100px;height:40px;line-height:40px;margin-left:20px;"></input>
-		<input class="button" type="submit" value="重置"  style="font-size:20px;width:100px;height:40px;line-height:40px;background-image:url(res/jianbian_orange.jpg);margin-left:20px;"></input>
-		<br>
-		
-	</form></td>
-	</tr>
-	<table>
+			<tr>
+				<td>
+					<img id="login_pic" src="" align="center" style="position:relative;display:inline;float:right;margin-right:20px;display: none" />
+				</td>
+				<td>
+					<form id="form1" align="center" style="margin-left:30Px" >
+						<div style="color:#FFFFFF">用户名<input id="username" type="text" name="username"  style="margin-left:10px;padding:2px;padding-left:30px;height:30px;font-size:20px;background-image:url(./res/touxiang.png);background-repeat:no-repeat;border-radius:8px;"></input></div><br><br>
+						<div style="color:#FFFFFF">密&nbsp  码<input id="password" type="password" name="password" style="margin-left:10px;padding:2px;padding-left:30px;height:30px;font-size:20px;background-image:url(res/lock.png);background-repeat:no-repeat;border-radius:8px" onkeypress="return KeyUp()" autocomplete="new-password"></input></div>
+						<br>
+						<div style="display:none">
+							<a href="iframe_regist.html" target="main-frame" style="font-style:{'bold'};text-decoration:none;" ><b>注册新用户</b></a>
+							<div style="color:red;font-size:20px;display:inline;left:40px;position:relative" >
+								<a href="#"style="color:red; text-decoration:none;">忘记密码</a>
+							</div>
+						</div>
+						<br><br>
+						<input class="button" id="btn_login" type="button"  value="登陆"  onclick="login()"style="font-size:20px;background-image:url(res/jianbian_orange.jpg);width:100px;height:40px;line-height:40px;margin-left:20px;"></input>
+						<input class="button" type="submit" value="重置"  style="font-size:20px;width:100px;height:40px;line-height:40px;background-image:url(res/jianbian_orange.jpg);margin-left:20px;"></input>
+						<br>
+					</form>
+				</td>
+			</tr>
+		<table>
 	</div>
 </body>
 </html>

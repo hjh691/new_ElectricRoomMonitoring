@@ -18,7 +18,7 @@
 
 <body >
 	<!--onload="initIndex()""showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>-->
-	<div class="header" id="header" style="height:80px;position:relative;overflow: auto;">
+	<div class="header" id="header" >
 		<div class="topbar" id="topbar">
 			<div id="app_name"
 				style="position:relative;float:left;left:15px;font-size:30px;font-style:bold;color:white"><i></i></div>
@@ -56,21 +56,19 @@
 		</div>
 		<div id="content" style="overflow: hidden;">
 			<!-- 导航栏 -->
-			<div class="navigation" style="vertical-align:center;overflow:auto">
-				<div class="row-navigation" style="vertical-align:center;min-width:500px;text-align:center">
+			<div class="navigation" >
+				<div class="row-navigation">
 					<ul class="pc-nav">
 						<li><a href="javascript:void(0)" onclick="inittotalpage()">信息总览</a></li>
 						<li><a href="javascript:void(0)" onclick="initdrawing()" id="realstate">状态图</a></li>
-						<li><a id="realdata" href="javascript:void(0)" onclick="initrealdata()">实时数据</a></li>
-						<li><a id="historydata" href="javascript:void(0)" onclick="loadstations_historydata()">历史数据</a>
-						</li>
-						<li><a id="historychart" href="javascript:void(0)" onclick="loadstations_chart()">趋势对比</a></li>
-						<li><a href="javascript:void(0)" onclick="loadstations_warnlog()">告警信息</a></li>
+						<li id="li_realdata"><a id="realdata" href="javascript:void(0)" onclick="initrealdata()">实时数据</a></li>
+						<li id="li_preview" style="display: none;"><a id="preview" href="javascript:void(0)" onclick="showpreview()">实时预览</a></li>
+						<li id="li_historydata"><a id="historydata" href="javascript:void(0)" onclick="loadstations_historydata()">历史数据</a></li>
+						<li id="li_replay" style="display: none;"><a id="replay" href="javascript:void(0)" >实时数据</a></li>
+						<li id="li_historychart"><a id="historychart" href="javascript:void(0)" onclick="loadstations_chart()">趋势对比</a></li>
+						<li id="li_warnlog" ><a id="warnlog" href="javascript:void(0)" onclick="loadstations_warnlog()">告警信息</a></li>
 						<li><a href="javascript:void(0)" onclick="showdevice()">设备信息</a></li>
-						<!--target="iframe_main"realwarning.html-->
-						<li><a href="javascript:void(0)" onclick="showpage(1)" >系统信息</a></li>
-						<!--<li ><a href="help.html" target="iframe_main" >使用指南</a></li>
-						<li ><a href="ContactUs.html" target="iframe_main">联系我们</a></li>target="iframe_main"-->
+						<li><a href="javascript:void(0)" onclick="showpage(5)" >系统信息</a></li>
 					</ul>
 				</div>
 			</div>
@@ -202,7 +200,7 @@
 			var fdheight = document.getElementById("KeFuDiv").offsetHeight;
 			var fdwidth = document.getElementById("KeFuDiv").offsetWidth;
 			var main = document.getElementById("chuangti");
-			var header = document.getElementById("header");
+			//var header = document.getElementById("header");
 			var menu = document.getElementById("leftmenu");
 			var content = document.getElementById("content");
 			//var footer = document.getElementById("footer");
@@ -332,7 +330,36 @@
 					//var selectnode=$("#tree").treeview('getSelected');
 					$("#tree").treeview('collapseAll')//,nodeid);//关闭展开
 					sessionStorage.name = data.nodeId;
-					if (data.level <= 2) {
+					if(data.Catalog=="视频监控"){
+						
+						maps = [];
+						infotreedata = [];
+						infotreeobj = {};
+						infotreeobj.id = data.id;
+						infotreeobj.name = data.text;
+
+						infotreeobj.children = [];
+						infotreeobj.level = data.level;
+						//infotreeobj.isload="false";
+						if ((data.hasOwnProperty("nodes")) && (data.nodes.length > 0) && (data.level < 2)) {
+							infotreeobj.value = data.nodes.length;
+							infotreeobj.children = decode(data.nodes);
+						} else {
+							infotreeobj.value = 0;
+						}
+						infotreedata.push(infotreeobj);
+						if (data.nodeId != nodeid && data.level <= 2) {
+							localStorage.setItem("sensors", null);
+							sessionStorage.nodeId = data.id;
+							GetSensorsByNode(data.id);
+							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
+							sessionStorage.t_p = 0;
+							nodeid = data.nodeId;
+						}
+						//document.getElementById("iframe_main").src="http://192.168.10.164";
+						updatanav(0);
+					}else if ((data.Catalog =="测温" )||(data.Catalog=="局部放电")) {
+						
 						maps = [];
 						infotreedata = [];
 						infotreeobj = {};
@@ -358,7 +385,9 @@
 							nodeid = data.nodeId;
 						}
 						//iframe_main.window.num=0;
+						updatanav(1);
 					} else {
+						//updatanav(1);
 						sessionStorage.SensorId = data.id;
 						nodeid = data.nodeId;
 						var p_node = getThe_level_nodeid(data, 2);
@@ -398,6 +427,7 @@
 							infotreeobj.children.push(temp);
 						}
 						infotreedata.push(infotreeobj);
+						updatanav(1);
 					}
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 						p_node = getThe_level_nodeid(data, i);
@@ -492,9 +522,37 @@
 			maps = [];
 			GetSensorsByNode(infotreeobj.id)//获取指定节点下的标签信息
 			GetBinariesByType("NodeGraphic", infotreeobj.id);
+			if(firstNode.Catalog=="视频监控"){
+				updatanav(0);
+			}else{updatanav(1);}
 			//setTimeout(function(){if(sessionStorage.pageindex==0){
 			//	document.getElementById("iframe_main").src="infototal.html";
 			//}},3000);
+		}
+		//更新导航栏信息（主要用于区分视频监控与其他子系统的的操作信息
+		function updatanav(type){
+			switch(type){
+				case 0:
+				document.getElementById("li_realdata").style.display="none"
+				document.getElementById("li_historydata").style.display="none";
+				document.getElementById("li_warnlog").style.display="none"
+				document.getElementById("li_historychart").style.display="none";
+				document.getElementById("li_preview").style.display="inline";
+				if(sessionStorage.pageindex==2){
+				sessionStorage.pageindex=8;
+				}
+				break;
+				case 1:
+				document.getElementById("li_realdata").style.display="inline"
+				document.getElementById("li_historydata").style.display="inline";
+				document.getElementById("li_warnlog").style.display="inline"
+				document.getElementById("li_historychart").style.display="inline";
+				document.getElementById("li_preview").style.display="none";
+				if(sessionStorage.pageindex==8){
+					sessionStorage.pageindex=2;
+				}
+				break;
+			}
 		}
 		//测试显示机房监控模块的页面
 		function showpage(pid){
@@ -503,8 +561,18 @@
 					document.getElementById("iframe_main").src="systeminfo.html";
 					break;
 				case 1:
-				document.getElementById("iframe_main").src="airconditioning.html";
-				break;
+					document.getElementById("iframe_main").src="airconditioning.html";
+					break;
+				case 2:
+					document.getElementById("iframe_main").src="http://192.168.10.164"
+					break;
+				case 3:
+					document.getElementById("iframe_main").src = "flooding.html";
+					break;
+				case 4:
+					document.getElementById("iframe_main").src = "smokedetector.html";
+				case 5:
+					document.getElementById("iframe_main").src="video.html"
 			}
 		}
 		function getThe_level_nodeid(anode, alevel) {
@@ -717,6 +785,10 @@
 			document.getElementById("iframe_main").src="device.html";
 			sessionStorage.pageindex=6;
 		}
+		function showpreview(){
+			sessionStorage.pageindex=8;
+			document.getElementById("iframe_main").src="video.html";
+		}
 		function loaddata(mdata) {
 			if ((mdata.text === "保定") || (mdata.text == "测温")) {
 				document.getElementById("realstate").style.display = "inline";
@@ -873,6 +945,15 @@
 					break;
 				case "6":
 					frame.src="device.html";
+					break;
+				case "7":
+					frame.src="systeminfo.html";
+					break;
+				case "8":
+					frame.src="video.html";
+					break;
+				case "9":
+					frame.src="replay.html";
 					break;
 				case "100":
 					frame.src="Help.html";

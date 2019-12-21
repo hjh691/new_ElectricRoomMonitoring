@@ -1,3 +1,4 @@
+//改变状态，使用时需向服务器发送命令，成功返回后页面更改状态指示
 function changestated(obj,eId){
     var em=document.getElementById("sf_"+eId);
     if(obj.src.indexOf("res/on.png")>=0){
@@ -14,6 +15,7 @@ function changestated(obj,eId){
         }
     }
 }
+//复位，使用时需向服务器发送复位命令，返回状态后修改显示内容。
 function reset(eId){
     var reset=document.getElementById("sf_"+eId);
     if(reset.innerHTML=="正常"){
@@ -24,6 +26,7 @@ function reset(eId){
         reset.setAttribute("class","normal");
     }
 }
+//创建信息的遥控状态行（变化、名称、指示状态、运行状态、复位按钮、更多按钮。
 function createline(id,name,state){
     var filename="'res/on.png'";
     var ediv=document.createElement("div");
@@ -66,12 +69,16 @@ function createline(id,name,state){
     return ediv;
 }
 document.getElementById("main").appendChild(createline("flolddd1","name1","告警"));
+//浮动窗口，某个遥控装置的详细信息
 function other(obj,eid){
     document.getElementById("fudong").style.left=(obj.offsetLeft+obj.offsetWidth)+"px";
     document.getElementById("fudong").style.top=obj.offsetTop+"px";
     document.getElementById("fudong").style.display="block";
     document.getElementById("bind_name").innerHTML= document.getElementById("name_"+eid).innerHTML;
+    document.getElementById("bind_addr").innerHTML="1#控制柜";//运行时为实际安装地址
+    document.getElementById("bind_view").innerHTML="abcefj";//详细信息
 }
+//关闭浮动信息框。
 function hideself(obj){
     if((obj==null)||(obj==undefined)){
         obj=document.getElementById("fudong");

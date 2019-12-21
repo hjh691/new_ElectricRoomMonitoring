@@ -10,8 +10,8 @@
     <script type="text/javascript" src="dist/echarts-all.js"></script>
     <script type="text/javascript" src="js/bootstrap.js" ></script>
     <script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>    
-    <script  type="text/javascript" src="js/jquery.tablesort.min.js"></script>
-    <script  type="text/javascript" src="js/layer/layer.js"></script>
+    <script  type="text/javascript" src="js/jquery.tablesort.min.js"></script><!--表格内容排序插件-->
+    <script  type="text/javascript" src="js/layer/layer.js"></script><!--对话框和进度条指示层-->
     <script  type="text/javascript" src="js/function.js"></script>
 </head>
 <body >
@@ -115,7 +115,7 @@
             //形成图表数据对象数组
             
             datas.splice(0,datas.length);//
-            for(var i=0;i<1;i++){
+            for(var i=0;i<7;i++){
                 var value=(Math.random() * 100).toFixed(2) - 0;
                 datas.push(JSON.parse('{"name":"放电量'+i+'","value":'+value+'}'));
                 var value=(Math.random() * 100).toFixed(2) - 0;
@@ -430,7 +430,7 @@
                 document.getElementById(chartparentid).appendChild(divChart); 
                 chart=echarts.init(document.getElementById("chart"));
             }
-            
+            //heng
             var series=[];
             for(var r=0;r<row-1;r++){
                 for(var c=0;c<mcol;c++){

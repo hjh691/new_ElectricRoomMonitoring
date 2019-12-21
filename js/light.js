@@ -68,7 +68,7 @@ function createline(id,name,state,info){
     return ediv;
 }
 for(var i=3;i<10;i++){
-document.getElementById("main").appendChild(createline("light"+i,"name"+i,"故障","无法点亮"));
+    document.getElementById("main").appendChild(createline("light"+i,"name"+i,"故障","无法点亮"));
 }
 function other(obj,eid){
     document.getElementById("fudong").style.left=(obj.offsetLeft+obj.offsetWidth)+"px";

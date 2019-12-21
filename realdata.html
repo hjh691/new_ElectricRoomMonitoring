@@ -136,10 +136,10 @@
 		var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
 		var sname;
 		let isfirst="true";
-		var maxval=0,minval=0;
+		var maxval=0,minval=0,maxvalue=0,minvalue=0;
 		var colors=[];
 
-		var pageSize = 12;    //每页显示的记录条数
+		var pageSize = 100;    //每页显示的记录条数
 		var curPage=0;        //当前页
 		var lastPage;        //最后页
 		var direct=0;        //方向
@@ -297,16 +297,29 @@
 				if(isfirst!="true"){
 					var temp_option=myChart2.getOption();
 					if(temp_option.series[0].data[temp_option.series[0].data.length-1][0]<strtodatetime(lasttime)){
-							temp_option.series[0].data.push([strtodatetime(lasttime),value0,temp_option.series[0].data.length]);
-							//temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
-							myChart2.setOption(temp_option);
-							if(value0>maxval){
-								maxval=value0;
-								option.series[0].data[0].value=maxval;
-								//myChart.setOption(option);
-								refreshData();
-							}
+						temp_option.series[0].data.push([strtodatetime(lasttime),value0,temp_option.series[0].data.length]);
+						//temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
+						if(maxvalue<value0){
+							maxvalue=value0;
+							maxval=(maxvalue+(maxvalue-minvalue)*0.2).toFixed(Number_of_decimal);
+							temp_option.yAxis[0].max=maxval;
 						}
+						if(minvalue>value0){
+							minvalue=value0;
+							minval=(minvalue-(maxvalue-minvalue)*0.2).toFixed(Number_of_decimal);
+							temp_option.yAxis[0].min=minval;
+						}
+						myChart2.setOption(temp_option);
+						
+					}
+					if(maxvalue<value0){
+						maxvalue=value0;
+						option.series[0].data[0].value=maxvalue;
+						option.series[1].data[0].value=value0;
+						//myChart.setOption(option);
+						
+					}
+					refreshData();
 				}else{
 					isfirst="false";
 					var kssj=getCurrentDate(1) + " 00:00:00";
@@ -551,7 +564,7 @@
 	//window.setInterval("getrealdatabynodeid(-1)",60000);
 	function refreshData(){
 		//var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
-		option.series[0].data[0].value=maxval;
+		option.series[0].data[0].value=maxvalue;
 		val1= eval("value"+0);
 		option.series[1].data[0].value=val1;
 		for(var i=0;i<option.series.length;i++){
@@ -599,14 +612,14 @@
 			}
 			
 		}
-
+		maxvalue=(maxval*1).toFixed(Number_of_decimal);
 		maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
 		minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
 		var lengenddata = [];
 		lengenddata.push("当天峰值");
 		lengenddata.push("实时值");
 		//lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457");
-		option.series[0].data[0].value=maxval;
+		option.series[0].data[0].value=maxvalue;
 		option.series[0].data[0]
 		//myChart.setOption(option);
 		refreshData();

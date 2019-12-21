@@ -12,13 +12,18 @@ var jfjk_base_config={};
 //界面用图片信息：
 //登录页面图片：
  jfjk_base_config.login_src="res/login.png";
-
+//登录界面底图
+jfjk_base_config.bg_src="res/bj04.jpg"
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
- jfjk_base_config.ver_id="1.0";
+ jfjk_base_config.ver_id="Ver 1.0";
+ //发布日期
+ jfjk_base_config.date="2019-12-28"
 //公司名称
  jfjk_base_config.company="保定金凯澳自动化设备有限公司";
+ //版权时间
+ jfjk_base_config.copyright="copyright: @2030-12-31"
 //公司log
  jfjk_base_config.log_src="res/jka_100.png";
 //公司网站：
