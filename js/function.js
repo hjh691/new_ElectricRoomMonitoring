@@ -99,7 +99,7 @@ function rnd(n, m) {
 function initlogin() {
 	document.getElementById("login_pic").src = jfjk_base_config.login_src;
 	document.getElementById("company_name").innerHTML = jfjk_base_config.app_name;
-	document.getElementById("main").style.backgroundImage="url("+jfjk_base_config.bg_src;//+" no-repeat center top ;background-size:100%";
+	document.getElementById("main").style.backgroundImage="url("+jfjk_base_config.bg_src+" no-repeat center top ;background-size:100%";
 }
 //判断用户名和密码输入是否符合语法  used by electricroommonitor 
 function LoginOrder(name, ps) {
@@ -1335,7 +1335,8 @@ function initwarnlog() {
 	if(sessionStorage.SensorId=="")
 	sessionStorage.SensorId=-1;
 	//GetSensorsByStation();
-	seletime(0);
+	$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
+	querywarnlog(0);
 }
 //初始化短信日志查询页面（在进入短信日志页面时触发）。
 function initsmslog() {
@@ -2425,7 +2426,7 @@ function GetBinary(binariesid) {
 							var obj_rd=JSON.parse(localStorage.getItem("realdata"));
 							var obj=[];
 							if(obj_rd){
-								contents.forEach(g=>{
+								contents.forEach(function(g){
 									if ($.trim(g).length > 0) {
 										g = JSON.parse(g);
 										if (g && g._shape && g._shape.Binding && g._shape.Text) {
@@ -2553,7 +2554,7 @@ function drawmap(arr) {
 		cheight = sheight;
 	}
 	mCanvas.style.width= cwidth  + 'px';
-	mCanvas.style.height= cheight + 'px';
+	mCanvas.style.height= cheight-15 + 'px';
 	var ctx = mCanvas.getContext("2d");
 	ctx.save();
 	ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
@@ -3073,21 +3074,23 @@ function getname(key){
 	}
 	return key;
 }
-function seletime(id){
+function seletime(obj){
 	var oneday=1000*60*60*24;
 	var today = new Date();
 	var ckssj,cjssj,ttime;
-	
+	var timedefine=document.getElementById("timedefine");
 	document.getElementById("count_val").innerHTML="";
-	switch(id){
+	sessionStorage.timeindex=$('input[name="timeselect"]:checked').val();//obj.value*1;
+	switch(obj.value*1){
 		case 0:
 			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
 			sessionStorage.jssj = getCurrentDate(2) ;
 			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
-			
+			timedefine.style.display="none";
 			//layer.alert("没有符合条件的记录",3000);
 			break;
 		case 1:
+			timedefine.style.display="none";
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			var yesterdaystar=ckssj-oneday;
 			sessionStorage.kssj=dateToString(new Date(yesterdaystar),2);
@@ -3099,12 +3102,14 @@ function seletime(id){
 			//layer.alert("没有符合条件的记录",3000);
 			break;
 		case 2:
+			timedefine.style.display="none";
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			sessionStorage.kssj=dateToString(new Date(ckssj.setDate(1)),2);
 			sessionStorage.jssj=getCurrentDate(2);
 			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
 			break;
 		case 3:
+			timedefine.style.display="none";	
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			var lastMonthFirst = new Date(ckssj - oneday * ckssj.getDate());
 			sessionStorage.kssj = dateToString(new Date(lastMonthFirst - oneday * (lastMonthFirst.getDate() - 1)),2);

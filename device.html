@@ -78,7 +78,7 @@
 				<li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
 			</ul-->
         </div>
-        <div  class="rowlay" style="margin-bottom:10px;width:100%;font-size:16px;text-align: center;" >
+        <div  class="rowlay" >
             <ul class="count_info" align="center" >
                 <!--<li style="width:50px"><b>站名：</b></li>
                 <li id="station_name"style="width:100px;margin-right:0px"> </li>-->
@@ -181,7 +181,7 @@
         function display(){   
 		
 		//var tbody=$("#device-tbody");
-		len =tbody.rows.length - 1;    // 求这个表的总行数，剔除第一行介绍
+		len =tbody.rows.length ;//- 1;    // 求这个表的总行数，剔除第一行介绍
 		page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
 		// alert("page==="+page);
 		curPage=1;    // 设置当前为第一页
@@ -269,7 +269,7 @@
 		
 		if(end > len ) end=len;
 		//var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
-		for ( var i = 0; i<=len; i++ ) {
+		for ( var i = 0; i<len; i++ ) {
 			tbody.rows[i].style.display = 'none';
 		}
 		for ( var i = begin; i<end; i++ ) {

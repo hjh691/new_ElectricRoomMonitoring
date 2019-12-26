@@ -74,9 +74,9 @@
 		</div>
 		<div align="center"></div>-->
 		<div  class="parent" >
-			<div class="column" id="realdata_gaugechart" style="width: 600px;height: 300px;background-color: rgb(207, 203, 203);MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;">
+			<div class="column" id="realdata_gaugechart" >
 			</div>
-			<div class="column" id="realdata_chart" style="width: 600px;height: 300px;background-color: rgb(189, 187, 187);MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;">
+			<div class="column" id="realdata_chart" >
 			</div>
 		</div>
 	
@@ -103,7 +103,7 @@
 				<a  href="javascript:void(0)" id="btn1" onclick="firstPage()">首页</a>
 				<a  href="javascript:void(0)" id="btn2" onclick="frontPage()">上一页</a>
 				<a  href="javascript:void(0)" id="btn3" onclick="nextPage()">下一页</a>
-				<a  href="javascript:void(0)" id="btn4" onclick="lastPage()">尾页</a>&nbsp;
+				<a  href="javascript:void(0)" id="btn4" onclick="LastPage()">尾页</a>&nbsp;
 				<a>转到&nbsp;</a>
 				<input id="changePage" type="text" size="1" maxlength="4"/>
 				<a>页&nbsp;</a>
@@ -310,14 +310,12 @@
 							temp_option.yAxis[0].min=minval;
 						}
 						myChart2.setOption(temp_option);
-						
 					}
 					if(maxvalue<value0){
 						maxvalue=value0;
 						option.series[0].data[0].value=maxvalue;
 						option.series[1].data[0].value=value0;
 						//myChart.setOption(option);
-						
 					}
 					refreshData();
 				}else{
@@ -366,7 +364,6 @@
 		}
 	}
 	function tableclick(tr){
-		
 		//$(tr).siblings().css("background","");
 		sessionStorage.t_p=tr.rowIndex-1;
 		sname=tr.cells[0].innerHTML;
@@ -382,14 +379,11 @@
 			gethistorydata(sessionStorage.SensorId,kssj,jssj,1);
 		}
 		//maxval=0;
-		
 		refreshData();
 		moduletable("realdata-tbody");
 		$(tr).css("background","#85e494");//区分选中行
 		//var myChart2 = echarts.init(document.getElementById('realdata_chart'));
-		
 	}
-
 	function initseries(data){
 		// 基于准备好的dom，初始化echarts实例
 		// 指定图表的配置项和数据
@@ -447,7 +441,6 @@
                             shadowColor: '#fff', //默认透明
                             shadowBlur: 10
                         },
-                        
                     },
                     splitLine: { // 分隔线
                         length: 12, // 属性length控制线长
@@ -471,7 +464,6 @@
                             color: 'white',
                             fontSize: 16
                         }
-
                     },
                     detail: {
                         show: true,
@@ -481,7 +473,6 @@
                             fontSize: 16,
                             color:'#F8F43C'
                         }
-
                     },
                     data: [data[0]],//[{value: 20,name: '温度'}]
 				},
@@ -519,7 +510,6 @@
                             shadowColor: '#fff', //默认透明
                             shadowBlur: 10
                         },
-                        
                     },
                     splitLine: { // 分隔线
                         length: 12, // 属性length控制线长
@@ -543,7 +533,6 @@
                             color: 'white',
                             fontSize: 16
                         }
-
                     },
                     detail: {
                         show: true,
@@ -553,7 +542,6 @@
                             fontSize: 16,
                             color:'#F8F43C'
                         }
-
                     },
                     data: [data[1]],//[{value: 20,name: '温度'}]
 				}
@@ -583,7 +571,6 @@
 				option.series[i].axisLine.lineStyle.color[0]=[value/100,"red"];
 			}*/
 		}
-		
 		myChart.setOption(option);
 	}
 	function decodedatas(obj_chartdata) {
@@ -599,7 +586,6 @@
 		//t;
 		myChart2.clear();
 		minval=maxval=obj_chartdata[0].Value;
-		
 		for (var i = 0; i <obj_chartdata.length; i++) {
 			pa.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
 			//pb.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/1.5, i])
@@ -610,7 +596,6 @@
 			if(parseFloat(obj_chartdata[i].Value)<minval){
 				minval=obj_chartdata[i].Value;
 			}
-			
 		}
 		maxvalue=(maxval*1).toFixed(Number_of_decimal);
 		maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
@@ -630,7 +615,6 @@
 		var option2 = {
 			color: ['#FFFF00', '#FF0000'],//,'#00ff00'
 			backgroundColor: '#d0d0d0',
-
 			title : {
 						text : '当天变化趋势图',
 						x:"center",
@@ -670,7 +654,6 @@
 				show: true,
 				start: 0
 			},
-
 			legend: {
 				data: lengenddata,
 				orient:"horizontal",//"vertical",
@@ -728,7 +711,6 @@
 			}*/
 			]
 		};
-
 		myChart2.hideLoading();
 		myChart2.setOption(option2);
 		}
@@ -737,7 +719,6 @@
 		var option2 = {
 			color: ['#FFFF00', '#FF0000'],//,'#00ff00'
 			backgroundColor: '#c0c0c0',
-
 			title : {
 						text : '当天变化趋势图',
 						x:"center",
@@ -777,7 +758,6 @@
 				show: true,
 				start: 0
 			},
-
 			legend: {
 				data: [],//lengenddata,
 				orient:"horizontal",//"vertical",
@@ -795,7 +775,6 @@
 					lineStyle: {
 						color: 'black',
 						width: 2,
-						
 					},
 					onZero:false,
 				},
@@ -834,27 +813,20 @@
 			}*/
 			]
 		};
-
 		//myChart2.hideLoading();
 		myChart2.setOption(option2);
-		
 	}
-	
 	function display(){   
-		
 		//var $table=$("#warnlogdata-tbody");
-		len =$table.rows.length - 1;    // 求这个表的总行数，剔除第一行介绍
+		len =$table.rows.length;// - 1;    // 求这个表的总行数，剔除第一行介绍
 		page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
 		// alert("page==="+page);
 		curPage=1;    // 设置当前为第一页
 		displayPage(1);//显示第一页
-		
 		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
 		document.getElementById("sjzl").innerHTML="数据总量 " + len + "";        // 显示数据量
 		document.getElementById("pageSize").value = pageSize;
 	}
-		
-		
 		function firstPage(){    // 首页
 			curPage=1;
 			direct = 0;
@@ -868,7 +840,7 @@
 			direct=1;
 			displayPage();
 		}
-		function lastPage(){    // 尾页
+		function LastPage(){    // 尾页
 			curPage=page;
 			direct = 0;
 			displayPage();
@@ -886,8 +858,6 @@
 			direct = 0;
 			displayPage();
 		}
-		
-		
 		function setPageSize(){    // 设置每页显示多少条记录
 			pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
 			if (!/^[1-9]\d*$/.test(pageSize)) {
@@ -901,8 +871,6 @@
 				firstPage();
 				displayPage();
 		}
-	
-
 	function displayPage(){
 		if(curPage <=1 && direct==-1){
 			direct=0;
@@ -913,26 +881,19 @@
 			layer.alert("已经是最后一页了");
 			return ;
 		}
-		
 		lastPage = curPage;
-		
 		// 修复当len=1时，curPage计算得0的bug
 		if (len > pageSize) {
 			curPage = ((curPage + direct + len) % len);
 		} else {
 			curPage = 1;
 		}
-	
-		
 		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";        // 显示当前多少页
-		
 		begin=(curPage-1)*pageSize ;// 起始记录号
 		end = begin + 1*pageSize ;    // 末尾记录号
-		
-		
 		if(end > len ) end=len;
 		//var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
-		for ( var i = 0; i<=len; i++ ) {
+		for ( var i = 0; i<len; i++ ) {
 			$table.rows[i].style.display = 'none';
 		}
 		for ( var i = begin; i<end; i++ ) {
@@ -943,9 +904,7 @@
 			if((i>=begin && i<=end) )//显示begin<=x<=end的记录
 				$(this).show();
 		});*/
-
 		}
-
 	</script>
 </body>
 </html>

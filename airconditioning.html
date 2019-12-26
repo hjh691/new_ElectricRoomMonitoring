@@ -14,12 +14,15 @@
             .ac{
                 width:350px;
                 height:300px;
+                background-color: gray;
+                color:white;
+                border-radius: 5px;
             }
             .ac-ht{
                 border:solid white 1px;
                 width:75px;
                 /*height:25px;*/
-                
+                text-align:center;
                 background-color:rgba(11, 11, 15, 0.733);
                 color:white;
                 border-radius: 5px;
@@ -51,9 +54,9 @@
             <h2 align="center">精密空调实时参数状态</h2>
             <table style="background-color: gray;color:white;border-radius: 5px;">
                 <tr>
-                    <td class="ac" style="background-color: gray;color:white;border-radius: 5px;">
+                    <td class="ac" >
                         <p style="margin-top:10px;text-align:center" onclick="reset()">现场温湿度</p>
-                        <table align="center" style="width:100%;height:270px;">
+                        <table align="center">
                             <tr style="width:300px;margin-top:30px;">
                                 <td >
                                     <li style="list-style-image: url(res/t1.jpg);margin-left: 10px;"></li>
@@ -67,9 +70,9 @@
                                 </td>
                                 <td style="text-align:center" >
                                     <li></li>
-                                    <li style="text-align:center" class="ac-ht" id="t_set" >36</li>
-                                    <li style="text-align:center" class="ac-ht" id="t_top">59</li>
-                                    <li style="text-align:center" class="ac-ht" id="t_bottom">20</li>
+                                    <li  class="ac-ht" id="t_set" >36</li>
+                                    <li  class="ac-ht" id="t_top">59</li>
+                                    <li  class="ac-ht" id="t_bottom">20</li>
                                 </td>
                             </tr>
                             <tr style="width:300px;margin-top:10px;">
@@ -85,17 +88,17 @@
                                 </td>
                                 <td style="text-align:center">
                                     <li></li>
-                                    <li style="text-align:center" class="ac-ht" id="s_set">36</li>
-                                    <li style="text-align:center" class="ac-ht" id="s_top">59</li>
-                                    <li style="text-align:center" class="ac-ht" id="s_bottom">20</li>
+                                    <li  class="ac-ht" id="s_set">36</li>
+                                    <li  class="ac-ht" id="s_top">59</li>
+                                    <li  class="ac-ht" id="s_bottom">20</li>
                                 </td>
                             </tr>
                         </table>
                     </td>
-                    <td class="ac" style="text-align:center" style="background-color: darkgray;color:white;border-radius: 5px;">
+                    <td class="ac" style="text-align:center" >
                         <img src="res/ac.jpg" />
                     </td>
-                    <td class="ac" style="background-color: gray;color:white;border-radius: 5px;">
+                    <td class="ac" >
                         <p style="text-align:center" style="margin: 0px;">元件状态</p>
                         <table style="text-align:center" style="width:100%;height:90%">
                             <td>
@@ -123,7 +126,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="ac" style="background-color: gray;color:white;border-radius: 5px;">
+                    <td class="ac" >
                         <table align="center" style="width:100%;height:90%">
                             <td>
                                 <li class="lable">1#加热器工作状态</li>
@@ -141,7 +144,7 @@
                             </td>
                         </table>
                     </td>
-                    <td class="ac" style="background-color: gray;color:white;border-radius: 5px;">
+                    <td class="ac">
                         <table align="center" style="width:100%;height:90%">
                             <td>
                                 <li class="lable">1#加热器工作状态</li>
@@ -159,7 +162,7 @@
                             </td>
                         </table>
                     </td>
-                    <td class="ac" style="background-color: gray;color:white;border-radius: 5px;">
+                    <td class="ac" >
                         <table align="center" style="width:100%;height:90%">
                             <td>
                                 <li class="lable">1#加热器工作状态</li>

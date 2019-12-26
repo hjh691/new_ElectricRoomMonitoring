@@ -11,7 +11,6 @@
 	<script type="text/javascript" src="js/config.js"></script>
 	<script type="text/javascript" src="js/layer/layer.js"></script>
 	<script type="text/javascript" src="js/cvi_busy_lib.js"></script>
-	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
 	<script type="text/javascript" src="js/function.js"></script>
 </head>
@@ -20,9 +19,8 @@
 	<!--onload="initIndex()""showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>-->
 	<div class="header" id="header" >
 		<div class="topbar" id="topbar">
-			<div id="app_name"
-				style="position:relative;float:left;left:15px;font-size:30px;font-style:bold;color:white"><i></i></div>
-			<span id="img_yonghu" style="position:relative;float:left;left:40px">
+			<div id="app_name"><i></i></div>
+			<span id="img_yonghu" >
 				<!--No.2登录用户名显示/未登录-->
 				<img src="res/caisetouxiang.png" width="20px" height="20px">
 			</span>
@@ -32,26 +30,26 @@
 				未登录
 			</span>
 			<!--end No.1value="系统设置"-->
-			<span id="yhout" style="position:relative;float:left;left:80px;color:white;font-size:12px;"><a
+			<span id="yhout" ><a
 					href="javascript:void(0)" style="color:white;">[登录]</a></span>
 			<input type="button" class="topbar-bigbutton" value="联系我们"
-				style="background:url(res/home.jpg) no-repeat center top;margin-top:10px;"
+				style="background:url(res/home.jpg) no-repeat center top;"
 				onclick="showcontactus()"></input>
 			<input type="button" class="topbar-bigbutton" value="APP下载"
-				style="background:url(res/chilun.jpg) no-repeat center top;margin-top:10px;" onclick="showdownload()">
+				style="background:url(res/chilun.jpg) no-repeat center top;" onclick="showdownload()">
 			</input>
 			<!--<input type="button"  class="topbar-bigbutton" value="数据浏览" style="background:url(res/sanse.jpg) no-repeat center top;margin-top:10px;"></input>-->
 			<input type="button" class="topbar-bigbutton" value="操作指南"
-				style="background:url(res/bar.jpg) no-repeat center top;margin-top:10px;" onclick="showhelp()"></input>
+				style="background:url(res/bar.jpg) no-repeat center top;" onclick="showhelp()"></input>
 		</div>
 		<hr style="display:none" />
 	</div>
 	<!--header-->
 	<!--  内容  -->
-	<div id="chuangti" style="position: relative;">
+	<div id="chuangti" >
 		<!--左侧站名列表 <h4 id="head_list_name" align="left"  >变电站:</h4>-->
-		<div class="leftmenu" id="leftmenu" style="float:left;width:15%;overflow:auto;min-width:200px;">
-			<div id="tree" style="width:400px;overflow:auto;">
+		<div class="leftmenu" id="leftmenu" >
+			<div class="tree" id="tree" >
 			</div>
 		</div>
 		<div id="content" style="overflow: hidden;">
@@ -64,11 +62,11 @@
 						<li id="li_realdata"><a id="realdata" href="javascript:void(0)" onclick="initrealdata()">实时数据</a></li>
 						<li id="li_preview" style="display: none;"><a id="preview" href="javascript:void(0)" onclick="showpreview()">实时预览</a></li>
 						<li id="li_historydata"><a id="historydata" href="javascript:void(0)" onclick="loadstations_historydata()">历史数据</a></li>
-						<li id="li_replay" style="display: none;"><a id="replay" href="javascript:void(0)" >实时数据</a></li>
+						<li id="li_replay" style="display: none;"><a id="replay" href="javascript:void(0)" >视频回放</a></li>
 						<li id="li_historychart"><a id="historychart" href="javascript:void(0)" onclick="loadstations_chart()">趋势对比</a></li>
 						<li id="li_warnlog" ><a id="warnlog" href="javascript:void(0)" onclick="loadstations_warnlog()">告警信息</a></li>
 						<li><a href="javascript:void(0)" onclick="showdevice()">设备信息</a></li>
-						<li><a href="javascript:void(0)" onclick="showpage(5)" >系统信息</a></li>
+						<li><a href="javascript:void(0)" onclick="showpage(0)" >系统信息</a></li>
 					</ul>
 				</div>
 			</div>
@@ -107,10 +105,10 @@
 			<!--屏幕滚动设置 <div class="affiche_text" id="alert_info">style="display: none;"
 			</div>
 			 <marquee id="affiche" align="middle" behavior="scroll"  direction="left" height="50" width="500" hspace="100" vspace="50" loop="-1" scrollamount="10" scrolldelay="100" onMouseOut="this.start()" onMouseOver="this.stop()" ></marquee>-->
-			<div id="alert_info" style="vertical-align:center;background-color: rgba(255,255,0,0.2);">
+			<div id="alert_info" >
 			</div>
 		</div>
-		<!--KeFuDiv endhttp://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=6&text=<embed height="0" width="0" src="">-->
+		<!--KeFuDiv end <embed height="0" width="0" src="">-->
 		<div id="wrapSpk">
 			<audio id="spkAudio">
 				<source src="" type="audio/wav">
@@ -123,6 +121,7 @@
 	</div>
 	<script>
 		var infotreedata = [], maps = [];
+		var mnodes=[];
 		var infotreeobj = new Object();
 		var allsensors = null;
 		var nodes = null, nodeid = -1;
@@ -142,14 +141,12 @@
 					$content.css({ left: parseInt(init_left) + "px" });
 					var This = this;
 					var time = setInterval(function () { This.move($container, $content, speed); }, 20); //setInterval会改变this指向，即使加了This=this，也要用匿名函数封装，这里调试了n久
-
 					$container.bind("mouseover", function () {
 						clearInterval(time);
 					});
 					$container.bind("mouseout", function () {
 						time = setInterval(function () { This.move($container, $content, speed); }, 20);
 					});
-
 					return this;
 				},
 				move: function ($container, $content, speed) {
@@ -171,7 +168,6 @@
 		$(document).ready(
 			function () {
 				$("#KeFuDiv").roll({ speed: 3 });//字幕滚动
-
 				if (typeof (Worker) !== "undefined") {//定时器多任务
 					if (typeof (w) == "undefined") {
 						w = new Worker("delay_worker.js");
@@ -271,19 +267,18 @@
 				inittreeview();
 			}
 			if (sessionStorage.framepage == "") {
-				sessionStorage.pageindex = 2;
-				document.getElementById("iframe_main").src = "realdata.html"
+				sessionStorage.pageindex = 0;
+				document.getElementById("iframe_main").src = "infototal.html"
 			} else {
 				document.getElementById("iframe_main").src = sessionStorage.framepage;
 			}
-
 		}
 		//初始化目录树
 		function inittreeview(anodes) {
 			//var obj=tree[1];
 			//obj.nodes=(JSON.parse( node));
 			//tree[1]=obj;
-			var mnodes = [];
+			mnodes = [];
 			if (anodes == null) {
 				mnodes = buildnode();
 			} else {
@@ -331,13 +326,11 @@
 					$("#tree").treeview('collapseAll')//,nodeid);//关闭展开
 					sessionStorage.name = data.nodeId;
 					if(data.Catalog=="视频监控"){
-						
 						maps = [];
 						infotreedata = [];
 						infotreeobj = {};
 						infotreeobj.id = data.id;
 						infotreeobj.name = data.text;
-
 						infotreeobj.children = [];
 						infotreeobj.level = data.level;
 						//infotreeobj.isload="false";
@@ -359,13 +352,11 @@
 						//document.getElementById("iframe_main").src="http://192.168.10.164";
 						updatanav(0);
 					}else if ((data.Catalog =="测温" )||(data.Catalog=="局部放电")) {
-						
 						maps = [];
 						infotreedata = [];
 						infotreeobj = {};
 						infotreeobj.id = data.id;
 						infotreeobj.name = data.text;
-
 						infotreeobj.children = [];
 						infotreeobj.level = data.level;
 						//infotreeobj.isload="false";
@@ -400,7 +391,6 @@
 						infotreeobj.id = data.id;
 						infotreeobj.name = data.text;
 						infotreeobj.level = data.level;
-
 						//infotreeobj.value=0;
 						infotreeobj.children = [];
 						//infotreeobj.level=data.level;
@@ -408,15 +398,16 @@
 							infotreeobj.value = data.nodes.length;
 							var arr_node = buildsensor1(data.nodes);
 							infotreeobj.value = arr_node.length;
-							var sumnode = sumseneor(arr_node);
+							/*var sumnode = sumseneor(arr_node);
 							for (var j in sumnode) {
 								var ch1 = new Object();
 								ch1.name = j;
 								ch1.value = sumnode[j];
 								infotreeobj.children.push(ch1);
-							}
+							}*/
+							infotreeobj.children = decode(data.nodes);
 						} else {
-							var temp = new Object();
+							/*var temp = new Object();
 							var leaf_name = data.Catalog;
 							if (leaf_name == "null" || leaf_name == undefined || leaf_name.trim() == "") {
 								leaf_name = "未定义"
@@ -424,7 +415,8 @@
 							temp.name = leaf_name;
 							temp.value = 1;
 							infotreeobj.value = 1;
-							infotreeobj.children.push(temp);
+							infotreeobj.children.push(temp);*/
+							infotreeobj.value = 0;
 						}
 						infotreedata.push(infotreeobj);
 						updatanav(1);
@@ -516,7 +508,6 @@
 			//infotreeobj.isload="false";
 			if ((firstNode.hasOwnProperty("nodes")) && (firstNode.nodes.length > 0) && (firstNode.level < 2)) {
 				infotreeobj.children = decode(firstNode.nodes);
-
 			}
 			infotreedata.push(infotreeobj);
 			maps = [];
@@ -538,9 +529,9 @@
 				document.getElementById("li_warnlog").style.display="none"
 				document.getElementById("li_historychart").style.display="none";
 				document.getElementById("li_preview").style.display="inline";
-				if(sessionStorage.pageindex==2){
+				//if(sessionStorage.pageindex==2){
 				sessionStorage.pageindex=8;
-				}
+				//}
 				break;
 				case 1:
 				document.getElementById("li_realdata").style.display="inline"
@@ -623,21 +614,21 @@
 					//}
 				}
 			}
-
 			return infotree;
 		}
-		//book,math,english,chinese,lab,library,office,classroom,glass,class,white，blue，red，green，black，yellow，gray，brown，upon，eyes，ears，legs，arms，
-		//feet，body，head，nose，mouth，figer，heat，teeth，tongue，face，hand，tall，short，fat，thin，hair，erase，pen，pencil，ruler，ruber I,my,mine,me,you,you
-		//your,yours,he(she),him(her),his(her),his(hers),it,it,its.they,them,their,theirs,we,us,our,ours,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday
-		//one two three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,hundred,thousand,million,billion, computer,picture,jump,sit,stay,
-		//page,data,up,on,in,at,look,out,of,for,from,form,list,short,tall,hight,small,big,bed,bee,bear,wolf,fox,fish,meat,nodle,rice,fine,nine,fly,sky,run,play,bath,
-		//water,what,when,where,how,who,whose,name,age,thin,hair,shop,stor,school,walk,work,doctor,teacher,student,driver,bus,car,job,sun,daughter,policeman,drive,
-		//member,talk,rodio,family,photo,Smith.listen to,upon,early,near,by,front,back,left,right,up,down,box,cup,paper,pen,ruler,ruber,erase
-		//从后台获取节点信息 China,Canada,United State of American,England,Japen,Indian,German,Sweden,Greece,Poland,Franch,Itali,Kore,here,there,game,glass,bottle,
-		//fifteen,sixteen,seventeem;eighteen,nineteen,twenty,January,February,March,April,spring,summer,season,autumn,winter,year,month,day,date,file,user,
-		//May,June,July,August,September,October,November,December;livingroom,bedroom,kitchen,playground,laboratory(lab),house,farm,horse,sheep,
-		//goat,dog,pig,cat,cow,hen,cock,chicken,douck,monkey,tager,lion,elephent,mouse,table,desk,chair,bench,speek,tall,say,sing,paly,tell,go,walk,
-		//stand,ride,fly,let,come,hurt,tide,thirsty,wind,rain,cloud,snow,sky,sun,daughter,mum,dad,mather,father,brother,sister,grad
+		//book,notebook,pen,pencil,ruler,rubber,pencil-box,desk,chair,cup,glass,classroom,blackboard,teacher,student,playground,lab,libray,erase;eighty,fifty,sixty,sevety,hundred,
+		//one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,nineteen,twenty,thirty,forty,ninety,thousand,million
+		//January,February,March,April,May,June,July,August,September,October,November,December,spring,summer,autumn,winter,what is date  today?
+		//Sunday,Monday,Tuseday,Wednesday,Thursday,Friday,Saturday,What day is today?
+		//father,mather,brother,sister,uncle,aunt,grandpa,grandma,cousin,classmate,friend; who is she/he? I,you,he/she,it,me,you,him/her,it,we,you,they,us,you,them,
+		//my,your,his/her,our,your,their,mine,yours,his/hers,ours,yours,theirs,table,plate,bowl,cup,glasses,bottle,
+		//tall,short,fat,thin,long,short,far,near,old,young,boy,girl,man,woman,men,women,sing,dance,talk,jump,run,walk,ride,fly,play,
+		//
+		//
+		//
+		//
+		//
+		//
 		function getNodes() {
 			var url = jfjk_base_config.baseurl + "/GetNodes";
 			url = encodeURI(url);
@@ -687,48 +678,44 @@
 			var tree = [];
 			if (data == null || data == undefined) {
 				for (i = 0; i < 3; i++) {
-					var nodes = new Object();
-					nodes.text = "变电站" + (2 - i);
-					nodes.id = i;
-					nodes.nodes = [];
-					nodes.icon = "url(res/lock.png)";
+					var anodes = new Object();
+					anodes.text = "变电站" + (2 - i);
+					anodes.id = i;
+					anodes.nodes = [];
+					anodes.icon = "url(res/lock.png)";
 					var node = '[{"text":"测温","id":' + ((i + 1) * 10) + ',"icon":"glyphicon glyphicon-user"},{"text":"局部放电","id":' + ((i + 1) * 10 + 1) + '},{"text":"弧光保护","id":' + ((i + 1) * 10 + 2) + '},{"text":"视频监控","id":' + ((i + 1) * 10 + 3) + '},{"text":"机房监控","id":' + ((i + 1) * 10 + 4) + ',"nodes":[{"text":"门禁","id":543},{"text":"水浸","id":345}]}]';
-					nodes.nodes = (JSON.parse(node));
+					anodes.nodes = (JSON.parse(node));
 					//var lnode=new Object();
 					tree.push(nodes);
 				}
 			} else {
 				for (var j = 0; j < data.length; j++) {
-					var nodes = new Object();
-					nodes.text = data[j].Value.Name;
-					nodes.id = data[j].Value.Id;
-					nodes.Catalog = data[j].Value.Catalog;
-					nodes.Config = data[j].Value.Config;
-					nodes.Time = data[j].Value.Time;
-					nodes.level = level;
+					var anodes = new Object();
+					anodes.text = data[j].Value.Name;
+					anodes.id = data[j].Value.Id;
+					anodes.ParentId=data[j].Value.ParentId;
+					anodes.Catalog = data[j].Value.Catalog;
+					anodes.Config = data[j].Value.Config;
+					anodes.Time = data[j].Value.Time;
+					anodes.level = level;
 					if (data[j].Value.hasOwnProperty("NodeId")) {
-						nodes.NodeId = data[j].Value.NodeId;
+						anodes.NodeId = data[j].Value.NodeId;
 					}
 					var icon = 'glyphicon glyphicon-user';
 					switch (data[j].Value.Name) {
-						case "石家庄":
 						case "视频监控":
 							icon = "glyphicon glyphicon-facetime-video";//
 							break;
-						case "保定":
 						case "测温":
 							icon = "glyphicon glyphicon-adjust";//glyphicon glyphicon-tree-conifer glyphicon glyphicon-bullhorn
 							break;
 						case "烟感":
-						case "清苑":
 							icon = "glyphicon glyphicon-refresh";//glyphicon glyphicon-leaf  glyphicon glyphicon-tint  glyphicon glyphicon-flash
 							break;
 						case "局部放电":
-						case "安国":
-							icon = "glyphicon glyphicon-flash";//
+							icon = "glyphicon glyphicon-flash";// 
 							break;
 						case "弧光保护":
-						case "唐县":
 							icon = "glyphicon glyphicon-bullhorn";//
 							break;
 						case "机房监控":
@@ -747,28 +734,25 @@
 							icon = 'glyphicon glyphicon-retweet';
 							break;
 						case "环境":
-						case "行唐":
 							icon = "glyphicon glyphicon-leaf";//
 							break;
 						case "水浸":
-						case "郑州":
 							icon = "glyphicon glyphicon-tint";//
 					}
 					if (level == 0) {
 						icon = "glyphicon glyphicon-home"
 					}
-					nodes.icon = icon;
+					anodes.icon = icon;
 					var chi_len = data[j].Children.length;
 					if (chi_len != 0) {
-						nodes.nodes = [];
-						nodes.nodes = buildnode(data[j].Children, level + 1)
+						anodes.nodes = [];
+						anodes.nodes = buildnode(data[j].Children, level + 1)
 					}
-					tree.push(nodes);
+					tree.push(anodes);
 				}
 			}
 			return tree;
 		}
-
 		function showdownload() {
 			document.getElementById("iframe_main").src = "app_download.html"
 			sessionStorage.pageindex=200;
@@ -818,7 +802,7 @@
 					error: function (jqXHR, textStatus, errorThrown) {
 						//inittreeview();
 						ajaxLoadingHidden();
-						layer.alert('获取系统列表数据失败');
+						//layer.alert('获取系统列表数据失败');
 						errortime++;
 						//isfree="true";
 					},
@@ -861,7 +845,7 @@
 			//}
 		}
 		function GetSensorsByNode(anodeid) {
-			var url = jfjk_base_config.baseurl + "/GetSensorsByNode?nodeId=" + anodeid;
+			var url = jfjk_base_config.baseurl + "GetSensorsByNode?nodeId=" + anodeid;
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
 				$.ajax({
@@ -874,9 +858,11 @@
 					timeout: 10000,
 					error: function (jqXHR, textStatus, errorThrown) {
 						//inittreeview();
-						layer.alert('获取系统列表数据失败');
+						//layer.alert('获取系统列表数据失败');
 						errortime++;
 						isfree = "true";
+						localStorage.setItem("sensors", null);
+						refreshiframe();
 					},
 					success: function (data, status) {
 						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
@@ -913,9 +899,7 @@
 				Alert("用户未登录，您无权完成此次操作", 2000);
 				inittreeview(null, 0);
 			}
-			//if(atype==0){
 			refreshiframe();
-			//}
 		}
 		function refreshiframe() {
 			var frame=document.getElementById("iframe_main");
@@ -980,7 +964,7 @@
 					timeout: 10000,
 					error: function (jqXHR, textStatus, errorThrown) {
 						//inittreeview();
-						layer.alert('获取系统列表数据失败');
+						//layer.alert('获取系统列表数据失败');
 						errortime++;
 						isfree = "true";
 					},
@@ -1002,12 +986,10 @@
 									//var sensors=(JSON.parse(localStorage.getItem("sensors")));
 									//var localsensors=buildsensor(data.Result.Sensors);
 									//updatanodetree();
-
 								} else {
 									allsensors = null;
 									//localStorage.setItem("allsensors",null);
 								}
-
 							} else {
 								localStorage.setItem("allsensors", null);
 								layer.alert(data.Error);
@@ -1060,13 +1042,13 @@
 		function buildsensor1(aSensors) {
 			if ((aSensors != undefined) && (aSensors != null)) {
 				for (var j = 0; j < aSensors.length; j++) {
-					var nodes = new Object();
-					nodes.name = aSensors[j].text;
-					nodes.id = aSensors[j].id;
-					nodes.Catalog = aSensors[j].Catalog;
-					nodes.Config = aSensors[j].Config;
-					nodes.Time = aSensors[j].Time;
-					maps.push(nodes);
+					var anodes = new Object();
+					anodes.name = aSensors[j].text;
+					anodes.id = aSensors[j].id;
+					anodes.Catalog = aSensors[j].Catalog;
+					anodes.Config = aSensors[j].Config;
+					anodes.Time = aSensors[j].Time;
+					maps.push(anodes);
 
 					if ((aSensors[j].hasOwnProperty("nodes") && (aSensors[j].nodes.length > 0))) {
 						buildsensor1(aSensors[j].nodes);
@@ -1138,7 +1120,6 @@
 			}
 		}
 		//window.setInterval("getrealdatabynodeid(-1)",60000);
-
 		function decoderealdata(obj_realdata) {
 			var parentid=-100,parentname="";
 			var sensorname = "",
@@ -1151,11 +1132,10 @@
 				tbody.deleteRow(0);
 			}
 			var sensors = allsensors;
-			
 			var obj_data = new Object();
 			var pt = 0;
 			if (sensors != null) {
-				var str_alert = "告警：";
+				var str_alert = "告警:";
 				var gaojing = document.getElementById("alert_info");
 				if (gaojing == null) {
 					gaojing = parent.window.document.getElementById("alert_info");
@@ -1170,9 +1150,8 @@
 				}
 				if(sessionStorage.contents){
 					var graphic = JSON.parse(sessionStorage.contents);
-
 					var obj = []
-					graphic.forEach(g => {
+					graphic.forEach(function(g) {
 						//67: "{"_type":"Monitor","_shape":{"Binding":"23_009_tmp","StrokeColor":"#FFFFFFFF","StrokeThinkness":3.0,"StartPoint":"628,266","
 						//EndPoint":"673.672,281.24","Text":"--------","FontFamily":"Microsoft YaHei UI","FontStyle":"Normal","FontWeight":"Normal","FontStretch":"Normal","FontSize":12.0,"TextSpace":0.1,"Vertical":false},"_matrix":"1,0,0,1,-285,-54"}"
 						if ($.trim(g).length > 0) {
@@ -1190,8 +1169,8 @@
 											g._shape.isError=false;
 										}
 									}
+								}
 							}
-						}
 							obj.push(JSON.stringify(g));
 						}
 					});
@@ -1200,6 +1179,7 @@
 				var sensors=JSON.parse(localStorage.getItem("allsensors"));
 				for (var i = 0; i < sensors.length; i++) {
 					var sid = sensors[i].id + "";
+					var nid=sensors[i].Value.NodeId;
 					if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
 						parentid=sensors[i].Value.ParentId;
 						for(var j=0;j<sensors.length;j++){
@@ -1215,6 +1195,7 @@
 						if (msg == null || msg == "" || msg == undefined || msg.trim() == "") {
 							continue;
 						}
+						var alert_sys_name=getsysname(mnodes,nid);//站和子系统名称
 						alerttime = obj_data[0].Time.substr(11);
 						alertinfo = msg;
 						alertvalue = parseFloat(obj_data[0].Value).toFixed(Number_of_decimal);
@@ -1250,7 +1231,7 @@
 						//tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
 						tdmessage.innerHTML = msg;
 						//tdmessage.style.cssText="display:none";
-						tr.appendChild(tdid);
+						//tr.appendChild(tdid);
 						tr.appendChild(tdename);
 						tr.appendChild(tdtime);
 						tr.appendChild(tdvalue);
@@ -1271,11 +1252,11 @@
 						pt++;
 						tbody.appendChild(tr);
 						if ((alertvalue !== null) && (alertvalue !== "NaN")) {
-							str_speech = "告警" +  sname + alertinfo + "数值" + alertvalue;
-							str_alert = str_alert + " " + alerttime + "  " + ": " + sname + " " + type_td+" "+ alertinfo + " 数值为:" + alertvalue;
+							str_speech = "告警" +alert_sys_name+" "+sname + alertinfo + " 数值" + alertvalue;
+							str_alert = str_alert + " " + alerttime + "  " + ": " +alert_sys_name+" "+ sname + " " + type_td+" "+ alertinfo + " 数值为:" + alertvalue;
 						} else {
-							str_speech = "告警" + sname + alertinfo;
-							str_alert = str_alert + " " + alerttime + "  " +": " + sname + " "+ type_td+" " + alertinfo + " ";// + alertvalue;
+							str_speech = "告警" +alert_sys_name+ sname + alertinfo;
+							str_alert = str_alert + " " + alerttime + "  " +": " +alert_sys_name+" "+ sname + " "+ type_td+" " + alertinfo + " ";// + alertvalue;
 						}
 					}
 				}
@@ -1294,6 +1275,23 @@
 		}*/
 			//tbody.rows[t_pt].scrollIntoView();
 			//refreshData();
+		}
+		function getsysname(anodes,aid){
+			var sys_name;
+			for(var i in anodes) {
+				if(anodes[i].id==aid){
+					sys_name=anodes[i].text;
+					var pid=anodes[i].ParentId
+					if(pid!=-1){
+						sys_name=getsysname(nodes,pid)+" "+sys_name;
+					}
+					break;
+				}
+				if(anodes[i].hasOwnProperty("nodes")&& anodes[i].nodes.length>0){
+					sys_name=getsysname(anodes[i].nodes,aid);
+				}
+			}
+			return sys_name;
 		}
 		/*function refreshData(){
 	

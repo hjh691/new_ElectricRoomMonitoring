@@ -8,8 +8,8 @@
    <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
    <script src="js/bootstrap.js"></script>
    <script type="text/javascript" src="js/config.js"></script>
-   <script src="https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js"></script>
+   <script src="js/flv.js"></script>
+    <script src="js/hls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pearplayer"></script>
@@ -35,12 +35,12 @@
                 </fieldset>
             </div>
             <div class="left">
-                <div id="dplayer" style="width:600px;height:500px;margin:30px;background-color: gray;">
+                <div id="dplayer" style="width:500px;height:400px;margin:30px;background-color: gray;">
                 </div>
             </div>
             <div class="left">
                 <fieldset class="preview">
-                    <legend>预览</legend>
+                    <legend >预览</legend>
                     <table cellpadding="0" cellspacing="3" border="0">
                         <tr>
                             <td class="tt">码流类型</td>
@@ -126,11 +126,11 @@
                         </tr>-->
                     </table>
                 </fieldset>
-                <!--<fieldset class="operate">
+                <fieldset class="operate">
                     <legend>操作信息</legend>
                     <div id="opinfo" class="opinfo"></div>
                 </fieldset>
-                <fieldset class="callback">
+                <!--<fieldset class="callback">
                     <legend>事件回调信息</legend>
                     <div id="cbinfo" class="cbinfo"></div>
                 </fieldset>-->
@@ -148,6 +148,36 @@
             $(".tab a:last").tab("show");
         })
         initpage();
+        //初始化日期时间
+        var szCurTime = dateFormat(new Date(), "yyyy-MM-dd");
+        //$("#starttime").val(szCurTime + " 00:00:00");
+        //$("#endtime").val(szCurTime + " 23:59:59");
+        // 显示操作信息
+        function showOPInfo(szInfo) {
+            szInfo = "<div>" + dateFormat(new Date(), "yyyy-MM-dd hh:mm:ss") + " " + szInfo + "</div>";
+            $("#opinfo").html(szInfo + $("#opinfo").html());
+        }
+        // 格式化时间
+        function dateFormat(oDate, fmt) {
+            var o = {
+                "M+": oDate.getMonth() + 1, //月份
+                "d+": oDate.getDate(), //日
+                "h+": oDate.getHours(), //小时
+                "m+": oDate.getMinutes(), //分
+                "s+": oDate.getSeconds(), //秒
+                "q+": Math.floor((oDate.getMonth() + 3) / 3), //季度
+                "S": oDate.getMilliseconds()//毫秒
+            };
+            if (/(y+)/.test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (oDate.getFullYear() + "").substr(4 - RegExp.$1.length));
+            }
+            for (var k in o) {
+                if (new RegExp("(" + k + ")").test(fmt)) {
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                }
+            }
+            return fmt;
+        }
         function initpage(){
 			var parentid = -100, parentname = "";
 			var maps = [];
@@ -223,7 +253,6 @@
                 //thumbnails: 'thumbnails.jpg',
                 type: 'auto',
             },
-            
             /*subtitle: {
                 url: 'dplayer.vtt',
                 type: 'webvtt',
@@ -264,33 +293,6 @@
                 },
             ],
         });
-        /*const dp1 = new DPlayer({
-            container: document.getElementById('dplayer1'),
-            autoplay: false,
-            theme: '#FADFA3',
-            loop: true,
-            lang: 'zh-cn',
-            screenshot: true,
-            hotkey: true,
-            preload: 'auto',
-            //logo: 'logo.png',
-            volume: 0.7,
-            mutex: false, 
-            video: {
-                url: '../mp401.flv',
-                type: 'auto',
-            },
-            highlight: [
-                {
-                    time: 20,
-                    text: '这是第 20 秒',
-                },
-                {
-                    time: 120,
-                    text: '这是 2 分钟',
-                },
-            ],
-        });*/
         function clickStartRealPlay(){
             var radio=document.getElementsByName("checks");
             sel_id=0;
@@ -301,10 +303,8 @@
             }
             var streamtype=document.getElementById("streamtype").value;
             if (sel_id != undefined) {
-                //var url=jfjk_base_config.baseurl+"GetHistoriesBySensor?sensorId="+msensorid+"&from="+kssj+"&to="+jssj;
                 var url = jfjk_base_config.baseurl + "GetFlv?sensorId="+sel_id+"&type=0&channel="+streamtype+"&_token="+sessionStorage.token;
                 url = encodeURI(url);
-                //dp.destroy();
                 dp = new DPlayer({
                     container: document.getElementById('dplayer'),
                     autoplay: true,
@@ -318,7 +318,7 @@
                     volume: 0.7,
                     mutex: false, 
                     video: {
-                        url: url,//'../mp401.flv',
+                        url: url,//
                         type: 'auto',
                     },
                     highlight: [
@@ -332,43 +332,23 @@
                         },
                     ],
                 });
-                //dp.play();
-                /*$.ajax({
-                    beforeSend: function(request) {
-                        //request.setRequestHeader("_token", sessionStorage.token);
-                    },
-                    url: url,
-                    type: 'GET',
-                    dataType: 'json',
-                    timeout: 10000,
-                    error: function() {
-                        layer.alert('趋势图数据操作失败');
-                    },
-                    success: function(data, status) {
-                        var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-                        if (status == "success") {
-                            sessionStorage.islogin = true;
-                            if (data.Error == null) {
-                                if (data.Result.Datas.hasOwnProperty("Tmp")) {
-                                    for (var i = 0; i < data.Result.Datas.Tmp.length; i++) {
-                                        if (data.Result.Datas.hasOwnProperty("Tmp")) pa.push(data.Result.Datas.Tmp[i].Value);
-                                    }
-
-                                } else {
-                                    layer.alert("没有符合条件的记录");
-                                }
-                            } else {
-                                layer.alert(data.Error);
-                            }
-                        }
-                    }
-                });*/
+                dp.on('play',function(){
+                    //console.log("预览成功");
+                    showOPInfo("开始预览成功")
+                });
+                dp.on("error" ,function(){
+                    showOPInfo("视频预览错误");//播放
+                });
+                dp.on("pause",function(){
+                    showOPInfo("暂停预览");
+                })
             }else{
-                layer.alert("请选择")
+                layer.alert("请选择要预览的通道");
             }
         }
         function clickStopRealPlay(){
             dp.destroy();
+            showOPInfo("停止预览成功")
         }
         function getvalue(obj){
             sel_id=obj.value;

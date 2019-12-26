@@ -22,8 +22,7 @@
     </div>
     <script>
         //(function(){
-    
-    //var data=parent.infotreedata;//JSON.parse(JSON.stringify(parent.infotreedata));//
+        //var data=parent.infotreedata;//JSON.parse(JSON.stringify(parent.infotreedata));//
     //var data=data1;
     var isfree="true",maps=[];//,num=0
     if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
@@ -84,25 +83,20 @@
                             offset:[0,15],
                             formatter: " {b} \n{c}",
                         },
-                        
-                    
-                        },
-
-                        leaves: {
-                            label: {
-                                normal: {
-                                    position: 'right',
-                                    verticalAlign: 'middle',
-                                    align: 'left'
-                                },
-                                formatter: "{name}:{value}",
-                            }
-                        },
+                    },
+                    leaves: {
+                        label: {
+                            normal: {
+                                position: 'right',
+                                verticalAlign: 'middle',
+                                align: 'left'
+                            },
+                            formatter: "{name}:{value}",
+                        }
+                    },
                     initialTreeDepth:4,
                     expandAndCollapse: true,
-                    
                     data:parent.infotreedata,//data,/
-                    
                 }
             ]
         } ;
@@ -115,7 +109,6 @@
                 GetSensorsByNode(atree[i].id);//获取指定节点的标签数据
                 atree[i].isload="true";
                 isfree="false";
-                
             }
             /*if(i==atree.length-1){
                     iscomplete=true;
@@ -127,7 +120,6 @@
         //document.getElementById("p1").style.display="none";
         //var option = myChar.getOption();
         //option.series[0].data = atree;
-        
         myChar.setOption(option);
     }
     function GetSensorsByNode(anodeid){//,atype
@@ -143,7 +135,7 @@
 				dataType: 'json',
 				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
-					layer.alert('获取系统列表数据失败');
+					//layer.alert('获取系统列表数据失败');
 					errortime++;
 					isfree="true";
 				},

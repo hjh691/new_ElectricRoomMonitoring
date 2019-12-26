@@ -34,6 +34,9 @@
 	span{
 		margin-left:10px;
 	}
+	a:visited{
+		color:red;
+	}
 	</style>
 </head>
 <body >
@@ -42,16 +45,17 @@
 			<p style="text-align:center;font-size:20px" ><b>历史数据</b></p>
 		</div>
 		<div align="center"style="height:80px;overflow:auto;" >
-			<div class="rowlay" style="width:100%;text-align: center;font-size:16px;vertical-align: 0;"><b>
+			<div class="rowlay" ><b>
 				计量点名称：
-				<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">
+				<select id="jcdd" onchange="gradeChange()">
 				
 			</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" 
-			style="margin-left:20px;margin-right: 20px;" onclick="refreshsensorslist()"></a>
-			<span ><a href="javascript:void(0)" onclick="seletime(0)">当天</a> </span><span ><a href="javascript:void(0)" 
-				onclick="seletime(1)">昨天</a> </span><span ><a href="javascript:void(0)" onclick="seletime(2)">当月</a> </span>
-			<span ><a href="javascript:void(0)" onclick="seletime(3)">上月</a> </span><span ><a href="javascript:void(0)" 
-				onclick="seletime(4)">自定义</a></span>
+			onclick="refreshsensorslist()"></a>
+			<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
+			<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
+			<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
+			<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"></input>上月</label></span>
+			<span ><label><input type="radio" value="4" onclick="seletime(this)" name="timeselect"></input>自定义</label></span>
 			<span id="timedefine" style="display: none;">
 			起止时间
 			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_history" 
@@ -61,9 +65,10 @@
 			<input class="button" type="button" id="chaxun" value="查询" onclick="queryhistorydata()" 
 			style="font-size:16px;height: 30px;line-height: 30px;" ></input></b></span>
 			</div>			
-			<div  class="rowlay" style="margin-bottom:10px;width:100%;font-size:16px;text-align: center;" >
+			<div  class="rowlay" >
 				<ul class="count_info" align="center" >
-					<!--<li style="width:50px"><b>站名：</b></li>
+					<!--<li style="width:50px"><b>站名：</b></li><a href="javascript:void(0)" 
+				onclick="seletime(1)">昨天</a> 
 					<li id="station_name"style="width:100px;margin-right:0px"> </li>-->
 					<li style="width:50px;margin-right:0px"><b>标签名称：</b> </li>
 					<li id="normal_count"style="width:100px;margin-right:10px"> </li>
@@ -96,7 +101,6 @@
 			<div class="column"  id="main" align="center" 
 			style="height:500px;width:800px;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;margin: 20px;"></div>
 		</div>
-		
 	</div>
 	<script>
 		var xs=1;
@@ -111,7 +115,6 @@
 			var maps=[];
 			document.getElementById("kssj_history").value = sessionStorage.kssj;
 			document.getElementById("jssj_history").value = sessionStorage.jssj;
-			
 			for (var i = 0; i < sel_sensor.options.length; i++) {
 				sel_sensor.removeChild(sel_sensor.options[0]);
 				sel_sensor.remove(0);
@@ -154,6 +157,7 @@
 				}
 				
 			}
+			$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
 			setSelectOption("jcdd", sessionStorage.SensorId);
 			queryhistorydata();
 		}
@@ -307,7 +311,6 @@
 							tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
 							tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
 						}
-
 						//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 						tdtime.innerHTML = strtime+":00"; //jsonObject[i].color;
 						tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
@@ -351,7 +354,6 @@
 					tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
 					tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
 				}
-
 				//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 				tdtime.innerHTML = strtime+":00"; //jsonObject[i].color;
 				tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
@@ -411,7 +413,6 @@
 							tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
 							tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
 						}
-
 						//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 						tdtime.innerHTML = strtime; //jsonObject[i].color;
 						tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
@@ -486,7 +487,6 @@
 				var option = {
 					color: ['#FFFF00', '#FF0000','#00ff00'],//
 					backgroundColor: '#d0d0d0',
-
 					title : {
 								text : document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+' 变化趋势图  ',
 								x:"center",
@@ -531,7 +531,6 @@
 						show: true,
 						start: 0
 					},
-
 					legend: {
 						data: lengenddata,
 						orient:"horizontal",//"vertical",
@@ -587,7 +586,6 @@
 					}/**/
 					]
 				};
-
 				myChart.hideLoading();
 				myChart.setOption(option);
 			}
