@@ -103,11 +103,11 @@
 		</div>
 	</div>
 	<script>
-		var xs=1;
+		//var xs=1;
 		var sensors;
 		var isfirst=true;
 		var sel_sensor=document.getElementById("jcdd");
-		var type;
+		var type="";
 		var jssj=getCurrentDate(2);
 		initpage();
 		function initpage(){
@@ -157,10 +157,17 @@
 				}
 				
 			}
-			$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
 			setSelectOption("jcdd", sessionStorage.SensorId);
-			queryhistorydata();
+			if((!sessionStorage.timeindex)||(sessionStorage.timeindex=="undefined")){
+				sessionStorage.timeindex=0;
+			}
+			$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
+			seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
+			if(sessionStorage.timeindex==4){
+				queryhistorydata();
+			}
 		}
+
 		function refreshsensorslist(){
 			window.parent.GetSensorsByNode(sessionStorage.nodeId);
 		}
@@ -179,9 +186,11 @@
 		
 		//查询历史记录
 		function queryhistorydata() {
-			for(var i=0;i<sensors.length;i++){
-				if(sensors[i].id==sessionStorage.SensorId){
-					type=sensors[i].Value.Catalog;
+			if(sensors){//
+				for(var i=0;i<sensors.length;i++){
+					if(sensors[i].id==sessionStorage.SensorId){
+						type=sensors[i].Value.Catalog;
+					}
 				}
 			}
 			var sel=document.getElementById("jcdd");
@@ -207,12 +216,12 @@
 			sessionStorage.jssj = jssj;
 			sessionStorage.SensorId = sel.value;
 			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
-			xs=sensors[sel.selectedIndex].Value.Factor;
+			//xs=sensors[sel.selectedIndex].Value.Factor;
 			$("#historydata-tbody tr").empty();
 			
 			gethistorydata(sessionStorage.SensorId,kssj, jssj);
 			isfirst=false;
-			document.getElementById("timedefine").style.display="none";
+			//document.getElementById("timedefine").style.display="none";
 		}
 
 		function decodedatas(obj_data){

@@ -6,7 +6,10 @@
 	*{
        margin:0px;
        padding:0px;
-    }
+	}
+	h1,h2,h3{
+		text-align: center;
+	}
 	body{
 		background-color:#ffFFFF;
 		color:#000;
@@ -457,5 +460,10 @@
 	}
 	span label {
 		color:rgb(8, 104, 182);
+	}
+	#realdata-tbody{
+		width:1020px;
+		height:420px;
+		overflow:auto;
 	}
 	

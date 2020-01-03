@@ -91,11 +91,11 @@
 				<li id="normal_count"style="width:150px;margin-right:0px"> </li>display: none;-->
 				<li style="width:30px;margin-right:0px"><b>异常：</b></li>
 				<li id="err_count"style="width:30px;margin-right:0px"> </li>
-				<li style="width:100px;margin-right:0px"><a href="javascript:void(0)" style="text-align:right;margin-left:20px;" onclick="method5('realtable')">导出Excel</a></li>
+				<li style="text-align:right;width:100px;margin-right:0px;margin-left:20px;"><a href="javascript:void(0)"  onclick="method5('realtable')">导出Excel</a></li>
 			</ul>
 		</div>
 		
-		<div align="center" style="overflow: auto;" >
+		<div style="text-align: center;overflow: auto;" >
 			<div style="text-align: center;font-size: 18px;">
 				<a id="btn0"></a>
 				<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
@@ -109,7 +109,7 @@
 				<a>页&nbsp;</a>
 				<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
 			</div>
-		<table class="tabtop13" id="realtable" width="1000px" >
+		<table class="tabtop13" id="realtable" width="1000px" style=" margin:auto;" >
 			<thead>
 				<tr >
 				<th style="color:#0000ff" onclick="sortt('.sensorname')" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
@@ -122,7 +122,7 @@
 				<th style="width:18px;border:0px solid black;"></th>
 				</tr>
 			</thead>
-			<tbody id='realdata-tbody' style="width:1020px;height:420px; overflow:auto;" >
+			<tbody id='realdata-tbody' >
 			</tbody>
 		</table>
 		

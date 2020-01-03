@@ -344,6 +344,7 @@
 						if (data.nodeId != nodeid && data.level <= 2) {
 							localStorage.setItem("sensors", null);
 							sessionStorage.nodeId = data.id;
+							if(!data.hasOwnProperty("nodes"))
 							GetSensorsByNode(data.id);
 							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
 							sessionStorage.t_p = 0;
@@ -351,7 +352,7 @@
 						}
 						//document.getElementById("iframe_main").src="http://192.168.10.164";
 						updatanav(0);
-					}else if ((data.Catalog =="测温" )||(data.Catalog=="局部放电")) {
+					}else if ((data.Catalog =="测温" )||(data.Catalog=="局部放电")||(data.Catalog=="局放")) {
 						maps = [];
 						infotreedata = [];
 						infotreeobj = {};
@@ -370,6 +371,7 @@
 						if (data.nodeId != nodeid && data.level <= 2) {
 							localStorage.setItem("sensors", null);
 							sessionStorage.nodeId = data.id;
+							if(!data.hasOwnProperty("nodes"))
 							GetSensorsByNode(data.id);
 							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
 							sessionStorage.t_p = 0;
@@ -379,12 +381,17 @@
 						updatanav(1);
 					} else {
 						//updatanav(1);
-						sessionStorage.SensorId = data.id;
-						nodeid = data.nodeId;
+						//sessionStorage.SensorId = data.id;
 						var p_node = getThe_level_nodeid(data, 2);
-						sessionStorage.nodeId = p_node.id;
-						GetSensorsByNode(sessionStorage.nodeId);
-						GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
+						if (data.nodeId != nodeid && data.level <= 2) {
+							localStorage.setItem("sensors", null);
+							sessionStorage.nodeId = data.id;
+							sessionStorage.nodeId = p_node.id;
+							if(!data.hasOwnProperty("nodes"))
+							GetSensorsByNode(sessionStorage.nodeId);
+							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
+							nodeid = data.nodeId;
+						}
 						maps = [];
 						infotreedata = [];
 						infotreeobj = {};
@@ -511,7 +518,9 @@
 			}
 			infotreedata.push(infotreeobj);
 			maps = [];
-			GetSensorsByNode(infotreeobj.id)//获取指定节点下的标签信息
+			localStorage.setItem("sensors", null);
+			if(!firstNode.hasOwnProperty("nodes"))
+			GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
 			GetBinariesByType("NodeGraphic", infotreeobj.id);
 			if(firstNode.Catalog=="视频监控"){
 				updatanav(0);
@@ -520,7 +529,7 @@
 			//	document.getElementById("iframe_main").src="infototal.html";
 			//}},3000);
 		}
-		//更新导航栏信息（主要用于区分视频监控与其他子系统的的操作信息
+		//更新导航栏信息（主要用于区分视频监控与其他子系统的的操作信息忠诚、敬业、自动自发、负责、注重效率、结果导向、善于沟通、合作、积极进取、低调、节约、感恩
 		function updatanav(type){
 			switch(type){
 				case 0:
@@ -529,9 +538,9 @@
 				document.getElementById("li_warnlog").style.display="none"
 				document.getElementById("li_historychart").style.display="none";
 				document.getElementById("li_preview").style.display="inline";
-				//if(sessionStorage.pageindex==2){
-				sessionStorage.pageindex=8;
-				//}
+				if(sessionStorage.pageindex==2||sessionStorage.pageindex==3||sessionStorage.pageindex==4){
+					sessionStorage.pageindex=8;
+				}
 				break;
 				case 1:
 				document.getElementById("li_realdata").style.display="inline"
@@ -545,7 +554,8 @@
 				break;
 			}
 		}
-		//测试显示机房监控模块的页面
+		//测试显示机房监控模块的页面想双休的员工、想朝九晚五的员工、钱多事少离家近的员工、要求工作环境舒适的员工、还没有为企业做事就想拿高薪的员工、受不了委屈和工作耐挫力的员工
+		//不拿结果和方案汇报工作的员工、没有远景规划的员工、没有与时俱进思维的员工、做事慢悠悠低效率的员工、做人没品德的员工、没有担当的员工、抱怨公司不足的员工、只讲苦劳不重结果的员工。
 		function showpage(pid){
 			switch(pid){
 				case 0:
@@ -783,7 +793,7 @@
 		function reloadDataGrid() {
 			isfree = "true";
 		}
-		//获取指定节点的图形列表
+		//获取指定节点的图形列表被动性工作的员工、不能自主学习的员工、格局小的员工、太小气的员工、太自私的员工、不懂合作的员工、不诚信的员工
 		function GetBinariesByType(atype, anodeid) {
 			var url = jfjk_base_config.baseurl + "/GetBinariesByType?type=" + atype + "&typeid=" + anodeid;
 			url = encodeURI(url);
@@ -1151,29 +1161,31 @@
 				if(sessionStorage.contents){
 					var graphic = JSON.parse(sessionStorage.contents);
 					var obj = []
-					graphic.forEach(function(g) {
-						//67: "{"_type":"Monitor","_shape":{"Binding":"23_009_tmp","StrokeColor":"#FFFFFFFF","StrokeThinkness":3.0,"StartPoint":"628,266","
-						//EndPoint":"673.672,281.24","Text":"--------","FontFamily":"Microsoft YaHei UI","FontStyle":"Normal","FontWeight":"Normal","FontStretch":"Normal","FontSize":12.0,"TextSpace":0.1,"Vertical":false},"_matrix":"1,0,0,1,-285,-54"}"
-						if ($.trim(g).length > 0) {
-							g = JSON.parse(g);
-							if (g && g._shape && g._shape.Binding && g._shape.Text) {
-								if(allsensors[g._shape.Binding]){
-									var sid=allsensors[g._shape.Binding].id;
-									if (obj_realdata.hasOwnProperty(sid)) {
+					if(graphic){
+						graphic.forEach(function(g) {
+							//67: "{"_type":"Monitor","_shape":{"Binding":"23_009_tmp","StrokeColor":"#FFFFFFFF","StrokeThinkness":3.0,"StartPoint":"628,266","
+							//EndPoint":"673.672,281.24","Text":"--------","FontFamily":"Microsoft YaHei UI","FontStyle":"Normal","FontWeight":"Normal","FontStretch":"Normal","FontSize":12.0,"TextSpace":0.1,"Vertical":false},"_matrix":"1,0,0,1,-285,-54"}"
+							if ($.trim(g).length > 0) {
+								g = JSON.parse(g);
+								if (g && g._shape && g._shape.Binding && g._shape.Text) {
+									if(allsensors[g._shape.Binding]){
+										var sid=allsensors[g._shape.Binding].id;
+										if (obj_realdata.hasOwnProperty(sid)) {
 
-										obj_data = (obj_realdata)[sid];////
-										g._shape.Text =(obj_data[0].Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
-										if(obj_data[0].Message){
-											g._shape.IsError=true;
-										}else{
-											g._shape.isError=false;
+											obj_data = (obj_realdata)[sid];////
+											g._shape.Text =(obj_data[0].Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
+											if(obj_data[0].Message){
+												g._shape.IsError=true;
+											}else{
+												g._shape.isError=false;
+											}
 										}
 									}
 								}
+								obj.push(JSON.stringify(g));
 							}
-							obj.push(JSON.stringify(g));
-						}
-					});
+						});
+					}
 					sessionStorage.setItem("contents",JSON.stringify(obj))
 				}
 				var sensors=JSON.parse(localStorage.getItem("allsensors"));
@@ -1200,7 +1212,7 @@
 						alertinfo = msg;
 						alertvalue = parseFloat(obj_data[0].Value).toFixed(Number_of_decimal);
 						sname =parentname+ sensors[i].Value.Name;
-						var xs = 1;//sensors[i].Value.Factor;  数据结构修改，value为已经乘过系数的数值，svalue为未乘以系统的原始值
+						var xs = 1;//sensors[i].Value.Factor;  数据结构修改，value为已经乘过系数的数值，svalue为未乘以系统的原始值 
 						var type_td = getname(sensors[i].Value.Catalog);
 						//添加数据列表项
 						var tr = document.createElement('tr');
@@ -1262,13 +1274,13 @@
 				}
 				if (pt > 0) {
 					gaojing.innerHTML = "<pre  style='vertical-align:center;background-color: rgba(255,255,0,0);'>" + str_alert + "</pre>";
-					//speech.innerHTML = str_speech;
+					speech.innerHTML = str_speech;
 					//speech.click();
 					fdck.style.display = "block";
 				} else {
 					gaojing.innerText = "";
-					//speech.innerHTML = "";
-					//fdck.style.display = "none";
+					speech.innerHTML = "";
+					fdck.style.display = "none";
 				}
 			}/*else{
 			layer.alert("没有符合条件的数据");

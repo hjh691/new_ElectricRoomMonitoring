@@ -8,7 +8,6 @@
     <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="js/echarts.js"></script>
     <script  type="text/javascript" src="js/config.js"></script>
-    <script  type="text/javascript" src="js/layer/layer.js"></script>
     <script  type="text/javascript" src="js/function.js"></script>
 </head>
 <body>
@@ -23,7 +22,8 @@
     <script>
         //(function(){
         //var data=parent.infotreedata;//JSON.parse(JSON.stringify(parent.infotreedata));//
-    //var data=data1;
+    //var data=data1;老板想不到的他能想得到，老板想得到，他能想得到。老板不用说，他能自动自觉的去做。老板说了，他才去做。边说边做的员工，只说不做的员工，任务完成即刻复命的员工，
+    //任务完成后没有复命的员工、上级推一步动一步的员工、上级推一步也不动的员工。
     var isfree="true",maps=[];//,num=0
     if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
         if(typeof(w1) == "undefined") {
@@ -34,7 +34,7 @@
             //document.getElementById("result").innerHTML = event.data;
 			ab++
 			//if(num<parent.infotreedata[0].children.length||parent.infotreedata[0].level!=1){
-				if(ab=1){
+				if(ab==1){
                 getNode(parent.infotreedata);
                 ab=0;
                 }
@@ -106,9 +106,11 @@
         for(var i=0;i<atree.length;i++){
             if((atree[i].level<=2)&&(!atree[i].hasOwnProperty("isload")||(atree[i].isload!="true"))&&(isfree=="true")){
                 maps=[];
-                GetSensorsByNode(atree[i].id);//获取指定节点的标签数据
-                atree[i].isload="true";
-                isfree="false";
+                if(!atree[i].hasOwnProperty("children")||atree[i].children.length<=0){
+                    GetSensorsByNode(atree[i].id);//获取指定节点的标签数据
+                    atree[i].isload="true";
+                    isfree="false";
+                }
             }
             /*if(i==atree.length-1){
                     iscomplete=true;

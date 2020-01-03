@@ -75,14 +75,9 @@
 <body onload="initwarnlog()">
 	<div>
 		<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
-			<h3 align="center" >告警信息</h3>
-			<!--ul class="pc-nav" >
-				<li ><a href="#" target="iframe_main"><i>数据列表</i></a></li>
-				<li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
-			</ul-->
-			
+			<h3 >告警信息</h3>			
 		</div>
-		<div align="center"style="height:30px;" >
+		<div style="text-align: center;height:30px;" >
 		<!--<table class="table" style="border:0px;"align="center">
 			<tr >
 			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td>
@@ -138,7 +133,7 @@
 			
 		</div>
 		
-		<div align="center">
+		<div >
 			<div style="text-align: center;margin:6px;font-size: 18px;">
 			<a id="btn0"></a>
 			<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
@@ -153,7 +148,7 @@
 			<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
 			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="method5('warnlogtable')">导出Excel表格</a>
 			</div>
-		<table id="warnlogtable" >
+		<table id="warnlogtable" style="margin: auto;">
 			<thead>
 				<tr >
 				<th>测量点名称</th>
@@ -164,7 +159,6 @@
 				</tr>
 			</thead>
 			<tbody id='warnlogdata-tbody' style="width:820px;height:610px; overflow:auto;">
-     
 			</tbody>
 		</table>
 	</div>
@@ -191,7 +185,7 @@
 			for(var j=$table.rows.length-1;j>=0;j--){
 				$table.removeChild($table.rows[j]);
 			}
-			//if(Math.ceil(senconds/1000/60)<1430){
+			if(obj_data){
 				for (var i = 0; i <obj_data.length; i++) {
 					if(obj_data[i].Message){
 						var tr=document.createElement("tr");
@@ -226,7 +220,7 @@
 					document.getElementById("count_val").innerHTML=count;
 				}
 				//ps=obj_data.length;
-			//}
+			}
 		display();
 	}
 	function gradeChange() {
@@ -237,6 +231,8 @@
 		gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
 	}
 	function showrealworning(){
+		var timedefine=document.getElementById("timedefine");
+		timedefine.style.display="none";
 		var warningtab = window.parent.document.getElementById("realwarningdata-tbody");
 		var trs = warningtab.getElementsByTagName("tr");
 

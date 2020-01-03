@@ -2,6 +2,7 @@ var token = "1234567";//后台http认证码
 errortime = 0;
 sessionStorage.dataId = 0;
 sessionStorage.sensors=[];
+//sessionStorage.timeindex=0;
 var maps=[];
 var str_speech = "告警";//告警信息
 if(jfjk_base_config.baseurl.indexOf("localhost")>-1){
@@ -174,6 +175,9 @@ function quxiao() {
 }
 //退出登录 used by electricroommonitor
 function logout() {
+	sessionStorage.SensorId=-1;
+	sessionStorage.nodeId=-1;
+	sessionStorage.nodeid=-1;
 	var url = jfjk_base_config.baseurl + "Logout";
 	url = encodeURI(url);
 	if (sessionStorage.islogin == "true") {
@@ -1333,10 +1337,16 @@ function initwarnlog() {
 	setSelectOption("jcdd", sessionStorage.SensorId);
 	sessionStorage.SensorId = sel_sensor.value;
 	if(sessionStorage.SensorId=="")
-	sessionStorage.SensorId=-1;
+		sessionStorage.SensorId=-1;
 	//GetSensorsByStation();
+	if((!sessionStorage.timeindex)||(sessionStorage.timeindex=="undefined")){
+		sessionStorage.timeindex=0;
+	}
 	$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
-	querywarnlog(0);
+	seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
+	if(sessionStorage.timeindex==4){
+		querywarnlog();
+	}
 }
 //初始化短信日志查询页面（在进入短信日志页面时触发）。
 function initsmslog() {
@@ -1475,8 +1485,14 @@ function setSelectOption(objid, sensor) {
 		if (options[i].value == sensor) {
 			options[i].defaultSelected = true;
 			options[i].selected = true;
+			break;
 		}
 	}
+	if(options.length<=0){
+		sessionStorage.SensorId=-1;
+	}else if(i>=options.length)
+		sessionStorage.SensorId=options[0].value;
+	
 }
 //可自动关闭提示框
 function Alert(str, delay) {
@@ -1550,6 +1566,7 @@ function Alert(str, delay) {
 }
 //将系统的信息告警提示框直接转换成自定义提示框  
 window.alert = Alert;
+//layer.alert=Alert;
 //关闭指定id的提示框（窗口）。
 function closewin(ranid) {
 	document.body.removeChild(document.getElementById("alertbgDiv" + ranid));
@@ -1616,8 +1633,14 @@ function gethistorydata(sensorid,kssj, jssj,aparent) {
 }
 //告警信息查询按钮  used by electricroommonitor
 function querywarnlog(num) {
-	sessionStorage.SensorId = document.getElementById("jcdd").value;
-	sessionStorage.SensorName = document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text;
+	var sel=document.getElementById("jcdd");
+	if(sel.options.length<=0){
+		layer.alert("请选择要查询的测量点名称");
+		return;
+	}
+	sessionStorage.SensorId = sel.value;//document.getElementById("jcdd")
+	sessionStorage.SensorName = sel.options[document.getElementById("jcdd").selectedIndex].text;
+	
 	var kssj = document.getElementById("kssj_warning").value;
 	if ((kssj == null) || (kssj == "") || (kssj == undefined)) {
 		layer.alert("请指定开始时间");
@@ -1976,8 +1999,8 @@ function decodedatas(obj_chartdatas) {
 	//err_info = "获取";
 	//var isnull = false,
 	var jiange="";
-	var stime=new Date(sessionStorage.kssj).getTime();
-	var etime=new Date(sessionStorage.jssj).getTime();
+	//var stime=new Date(kssj).getTime();
+	//var etime=new Date(jssj).getTime();
 	//var senconds=etime-stime;
 	var pa = [],pb = [],pc = [];
 	var maxvalue=0,minvalue=0,maxval=0,minval=0;//avgvalue=0,ps=0,count=1,
@@ -2169,7 +2192,7 @@ function decodedatas(obj_chartdatas) {
 			title : {
 						text : ' 变化趋势比对  ',
 						x:"center",
-						subtext:jiange+"   "+sessionStorage.kssj+"——"+sessionStorage.jssj,
+						subtext:jiange+"   "+kssj+"——"+jssj,
 						subtextStyle:{
 							color: "#000",
 						}
@@ -2212,10 +2235,10 @@ function decodedatas(obj_chartdatas) {
 
 			legend: {
 				data: lengenddata,
-				orient:"horizontal",//"vertical",
-				x:'left',
-        		y:'45',
-				//color: 'white',
+				orient:"horizontal",//"vertical",忍得住孤独，耐得住寂寞，挺得住痛苦，顶得住压力，挡得住诱惑，经得起折腾，受得起打击，丢得起面子，担得起责任，提得起精神。
+				x:'left',//多琢磨事少琢磨人，多向前看少往后看，多当面说少背后议，多换位思考少本位主义，多补台少拆台，多理解少指责，多揽过少争功。
+        		y:'45',//多看多听多想多学习多行动 主动反馈、主动建议、主动协作、主动分项
+				//color: 'white',//不抱怨父母无能，不抱怨父母啰嗦，不抱怨父母抱怨，不抱怨父母迟缓，不抱怨父母生病。
 			},
 			grid: {
 				y2: 80
@@ -2332,7 +2355,7 @@ function getgraphics() {
 							layer.alert("没有符合条件的记录");
 							return;
 						}
-						for (var i = 0; i < data.Result.Graphics.length; i++) { //data.Result.length
+						for (var i = 0; i < data.Result.Graphics.length; i++) { //data.Result.length2 0 0 8 2 0 0 4 7 8 5 07
 							var tr = document.createElement('tr');
 							tr.setAttribute("onclick", "c1(this)");
 
@@ -2704,7 +2727,8 @@ function spack() {
 	$.ajax({
 		type: "get",
 		url: jfjk_base_config.speechurl + "GetVoice?text=" + encodeURIComponent(strText),
-		//"10:23:17 伏城变电站 1#545-4C 温度过高告警",////。
+		//"10:23:17 伏城变电站 1#545-4C 温度过高告警",////。My name isxxx，I'm 45 years old。I come from Baoding City. I am tall and thin. I like read book. I stady in 
+		//middle school. I an in the class twelve grade 1. I go to school by bike at We have four classes in the morning and four classes in the afternoonf.
 		success: function(result) {
 			var audio = $("#spkAudio")[0];
 			if (audio == null) {
@@ -2946,13 +2970,16 @@ function toUtf8(str) {
 }
 //生成二维码  used by electricroommonitor 
 function madecode(str) {
-	//var str = toUtf8("钓鱼岛是中国的！"); 
-	$('#code').qrcode(str);
+	var strurl = toUtf8(jfjk_base_config.serverurl); 
+	$('#code').qrcode(strurl);
+	$('#code1').qrcode(str);
 }
 //初始化客户端下载页面，根据字符串生成二维码   used by electricroommonitor 
 function initmakecode() {
 	var str = toUtf8(this.location.href.substr(0, this.location.href.lastIndexOf('/')) + jfjk_base_config.app_path_name); // "/res/SubstationTemperature.apk");
-	$("#a_code")[0].href = str;
+	//$("#a_code")[0].href = jfjk_base_config.strurl;
+	$("#a_code")[0].innerHTML = jfjk_base_config.serverurl;
+	$("#a_code1")[0].href = str;
 	madecode(str);
 }
 function initrealwarning() {
@@ -2996,7 +3023,7 @@ function initsysteminfo(){
 	document.getElementById('p2').innerHTML = jfjk_base_config.ver_id
 	document.getElementById('p3').innerHTML = jfjk_base_config.date;
 	document.getElementById("p4").innerHTML = jfjk_base_config.copyright;
-	document.getElementById('add').innerHTML = jfjk_base_config.company;
+	//document.getElementById('add').innerHTML = jfjk_base_config.company;
 }
 //获取实时数据  used by electricroommonitor
 function getrealdatabynodeid(nodeid){
@@ -3075,6 +3102,11 @@ function getname(key){
 	return key;
 }
 function seletime(obj){
+	var sel=document.getElementById("jcdd");
+	if(sel.options.length<=0){
+		layer.alert("请选择要查询的测量点名称",2000);
+		return;
+	}
 	var oneday=1000*60*60*24;
 	var today = new Date();
 	var ckssj,cjssj,ttime;
@@ -3123,8 +3155,6 @@ function seletime(obj){
 			var timedefine=document.getElementById("timedefine");
 			if(timedefine.style.display=="none"){
 			timedefine.style.display="inline";
-			}else{
-				timedefine.style.display="none";
 			}
 			break;
 	}

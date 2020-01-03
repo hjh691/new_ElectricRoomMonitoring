@@ -5,11 +5,12 @@ var jfjk_base_config={};
 
  jfjk_base_config.baseurl="http://192.168.10.250:20000/_api/";//调试时的局域网地址。
  //jfjk_base_config.baseurl="http://localhost:20000/_api";//与服务器同机时实际运行时采用此地址，如果不是部署在同一台电脑中，则为服务器的实际地址
- jfjk_base_config.speechurl="http://localhost/_speeh/";//"http://192.168.10.67:88/_speech/";
-
+ jfjk_base_config.speechurl="http://192.168.10.250:20000/_speeh/";//"http://192.168.10.67:88/_speech/";
+ //服务器地址
+jfjk_base_config.serverurl="http://jka.f3322.net:20000/_api/";
 // 手机app存放目录和名称：要求在web的资源目录中，
- jfjk_base_config.app_path_name="/res/cloud.apk"
-
+ jfjk_base_config.app_path_name="/res/cloud.apk";
+//sessionStorage.videourl='';
 //界面用图片信息：
 //登录页面图片：
  jfjk_base_config.login_src="res/login.png";
@@ -38,7 +39,7 @@ jfjk_base_config.bg_src="res/bj04.jpg"
  jfjk_base_config.email2="邮　　箱2：bdjinkaiao@126.com";
  //联系方式
  jfjk_base_config.part1="办　公　室：0312-6783281";
- jfjk_base_config.part2="技术服务部：0312-6783282 安经理";
+ jfjk_base_config.part2="技术服务部：0312-6783283 安经理";
  jfjk_base_config.part3="生　产　部：0312-6783282 刘经理";
  jfjk_base_config.part4="市　场　部：13313227451 闫经理";
 

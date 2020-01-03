@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta charset="utf-8"> 
-   <title>在线尝试 Bootstrap 实例</title>
+   <title>视频预览</title>
    <link rel="stylesheet" href="css/bootstrap.min.css" /> 
    <link rel="stylesheet" href="css/preview.css" /> 
    <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
@@ -144,6 +144,8 @@
     </div>
     <script>
         var sel_id,dp;
+        if(sessionStorage.videourl==null||sessionStorage.videourl=="undefined")
+            sessionStorage.videourl='';
         $(function(){
             $(".tab a:last").tab("show");
         })
@@ -233,11 +235,12 @@
 					sel_sensor.appendChild(p);
                 }
                 sel_sensor[0].checked=true;
-			}
+            }
+            clickStartRealPlay();//解决窗口变化预览停止的问题。
         }
-        dp = new DPlayer({
+        /*dp = new DPlayer({
             container: document.getElementById('dplayer'),
-            autoplay: false,
+            autoplay: true,
             theme: '#FADFA3',
             loop: true,
             lang: 'zh-cn',
@@ -246,9 +249,9 @@
             preload: 'auto',
             //logo: 'logo.png',
             volume: 0.7,
-            mutex: false, /**/
+            mutex: false, 
             video: {
-                url: "",//'../mp401.flv',
+                url: sessionStorage.videourl,//'../mp401.flv',//"",//
                 //pic: 'dplayer.png',
                 //thumbnails: 'thumbnails.jpg',
                 type: 'auto',
@@ -281,7 +284,7 @@
                         console.log(player);
                     },
                 },
-            ],*/
+            ],
             highlight: [
                 {
                     time: 20,
@@ -292,8 +295,10 @@
                     text: '这是 2 分钟',
                 },
             ],
-        });
+        });*/
         function clickStartRealPlay(){
+            if(dp!=undefined&&dp!="null")//解决多次之间点击开始预览按钮造成多播放线程的问题。
+                dp.destroy();
             var radio=document.getElementsByName("checks");
             sel_id=0;
             for (i=0; i<radio.length; i++) {
@@ -303,16 +308,16 @@
             }
             var streamtype=document.getElementById("streamtype").value;
             if (sel_id != undefined) {
-                var url = jfjk_base_config.baseurl + "GetFlv?sensorId="+sel_id+"&type=0&channel="+streamtype+"&_token="+sessionStorage.token;
-                url = encodeURI(url);
+                sessionStorage.videourl = jfjk_base_config.baseurl + "GetFlv?sensorId="+sel_id+"&type=0&channel="+streamtype+"&_token="+sessionStorage.token;
+                url = encodeURI(sessionStorage.videourl); //url='../mp401.flv';
                 dp = new DPlayer({
                     container: document.getElementById('dplayer'),
                     autoplay: true,
                     theme: '#FADFA3',
                     loop: false,
                     lang: 'zh-cn',
-                    screenshot: true,
-                    hotkey: true,
+                    screenshot: false,
+                    hotkey: false,
                     preload: 'auto',
                     //logo: 'logo.png',
                     volume: 0.7,
@@ -321,7 +326,7 @@
                         url: url,//
                         type: 'auto',
                     },
-                    highlight: [
+                    /*highlight: [
                         {
                             time: 20,
                             text: '这是第 20 秒',
@@ -330,7 +335,7 @@
                             time: 120,
                             text: '这是 2 分钟',
                         },
-                    ],
+                    ],*/
                 });
                 dp.on('play',function(){
                     //console.log("预览成功");
@@ -338,17 +343,22 @@
                 });
                 dp.on("error" ,function(){
                     showOPInfo("视频预览错误");//播放
+                    clickStartRealPlay();//解决视频加载失败或播放过程中出现错误而预览停止的问题
                 });
                 dp.on("pause",function(){
                     showOPInfo("暂停预览");
+                    dp.play();//解决浏览器最小化或被遮挡后视频预览将暂停的问题。
                 })
             }else{
                 layer.alert("请选择要预览的通道");
             }
         }
         function clickStopRealPlay(){
+            sessionStorage.videourl="";
             dp.destroy();
+            dp=undefined;
             showOPInfo("停止预览成功")
+            
         }
         function getvalue(obj){
             sel_id=obj.value;
