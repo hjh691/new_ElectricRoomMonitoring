@@ -281,7 +281,7 @@
 						sessionStorage.t_p=int;
 					}
 			    }
-				if(sessionStorage.t_p!=undefined){
+				if(typeof(sessionStorage.t_p)!="undefined"){
 				sname=$table.rows[sessionStorage.t_p].cells[0].innerHTML;
 				chart_type=$table.rows[sessionStorage.t_p].cells[6].innerHTML;
 				sensor_Id=parseInt($table.rows[sessionStorage.t_p].cells[5].innerHTML);

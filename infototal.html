@@ -25,7 +25,7 @@
     //var data=data1;老板想不到的他能想得到，老板想得到，他能想得到。老板不用说，他能自动自觉的去做。老板说了，他才去做。边说边做的员工，只说不做的员工，任务完成即刻复命的员工，
     //任务完成后没有复命的员工、上级推一步动一步的员工、上级推一步也不动的员工。
     var isfree="true",maps=[];//,num=0
-    if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
+    /*if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。//停止定时刷新
         if(typeof(w1) == "undefined") {
             w1 = new Worker("delay_worker.js");
         }
@@ -43,66 +43,67 @@
     } else {
         //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
         //var t1 = window.setInterval("getrealdatabynodeid(-1);",30000);
-    }
-        var myChar=echarts.init(document.getElementById("main")); 
-        var option = {
-            tooltip: {
-                show:true,
-                trigger: 'item',
-                triggerOn: 'mousemove'
-            },
-            title : {
-                show:false,
-                text: '信息总览'
-            },
-            toolbox: {
-                show : true,
-                feature : {
-                    mark : {show: true},
-                    dataView : {show: true, readOnly: false},
-                    restore : {show: true},
-                    saveAsImage : {show: true}
-                }
-            },
-            series : [
-                {
-                    type: 'tree',
-                    name: 'tree1',
-                    top: '5%',
-                    left: '7%',
-                    bottom: '2%',
-                    right: '10%',
-                    orient: 'horizontal', 
-                    symbolSize: 7,
+    }*/
+    updatainfotree1(parent.infotreedata);//使用总node和总sensors进行汇总。
+    var myChar=echarts.init(document.getElementById("main")); 
+    var option = {
+        tooltip: {
+            show:true,
+            trigger: 'item',
+            triggerOn: 'mousemove'
+        },
+        title : {
+            show:false,
+            text: '信息总览'
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        series : [
+            {
+                type: 'tree',
+                name: 'tree1',
+                top: '5%',
+                left: '7%',
+                bottom: '2%',
+                right: '10%',
+                orient: 'horizontal', 
+                symbolSize: 7,
+                label: {
+                    normal: {
+                        position: 'left',
+                        verticalAlign: 'middle',
+                        align: 'right',
+                        fontSize:20,
+                        offset:[0,15],
+                        formatter: " {b} \n{c}",
+                    },
+                },
+                leaves: {
                     label: {
                         normal: {
-                            position: 'left',
+                            position: 'right',
                             verticalAlign: 'middle',
-                            align: 'right',
-                            fontSize:20,
-                            offset:[0,15],
-                            formatter: " {b} \n{c}",
+                            align: 'left'
                         },
-                    },
-                    leaves: {
-                        label: {
-                            normal: {
-                                position: 'right',
-                                verticalAlign: 'middle',
-                                align: 'left'
-                            },
-                            formatter: "{name}:{value}",
-                        }
-                    },
-                    initialTreeDepth:4,
-                    expandAndCollapse: true,
-                    data:parent.infotreedata,//data,/
-                }
-            ]
-        } ;
-        myChar.setOption(option);     
+                        formatter: "{name}:{value}",
+                    }
+                },
+                initialTreeDepth:4,
+                expandAndCollapse: true,
+                data:parent.infotreedata,//data,/
+            }
+        ]
+    } ;
+    myChar.setOption(option);     
         //})();
-    function getNode(atree){//解读节点属性，当为第二级时，获取其标签数据进行分类统计
+    /**function getNode(atree){//解读节点属性，当为第二级时，获取其标签数据进行分类统计
         for(var i=0;i<atree.length;i++){
             if((atree[i].level<=2)&&(!atree[i].hasOwnProperty("isload")||(atree[i].isload!="true"))&&(isfree=="true")){
                 maps=[];
@@ -115,7 +116,7 @@
             /*if(i==atree.length-1){
                     iscomplete=true;
                 }*/
-            if((atree[i].hasOwnProperty("children"))&&(atree[i].children.length>0)){
+    /*        if((atree[i].hasOwnProperty("children"))&&(atree[i].children.length>0)){
                 getNode(atree[i].children);
             }
         }
@@ -138,13 +139,17 @@
 				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
 					//layer.alert('获取系统列表数据失败');
-					errortime++;
-					isfree="true";
+					sessionStorage.errortime++;
+                    isfree="true";
+                    if(sessionStorage.errortime>3){
+                        sessionStorage.islogin=false;
+                        sessionStorage.errortime=0;
+                    }
 				},
 				success: function(data, status) {
 					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 					if (status == "success") {
-						errortime = 0;
+						sessionStorage.errortime = 0;
 						if (data.Error == null) {
 							var result=data.Result;
 							if(!jQuery.isEmptyObject(result.Sensors)){
@@ -189,9 +194,44 @@
 				updatainfotree(treedata[j].children,tnodeid,tvalue,tsensors);
 			}
 		}
+    }*/
+    function updatainfotree1(treedata){//更新树形列表的数据内容,将标签分类统计结果归入树形列表
+        var asensors=JSON.parse(localStorage.getItem("allsensors"));
+        for(var j=0;j<treedata.length;j++){
+            if((treedata[j].hasOwnProperty("children"))&&(treedata[j].children.length>0)){
+                treedata[j].value=treedata[j].children.length;
+                updatainfotree1(treedata[j].children);
+			}else{
+            var tnodeid=treedata[j].id;
+            var sensors=[];
+                for(var i=0;i<asensors.length;i++){
+                    if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
+                        if(asensors[i].Value.NodeId==tnodeid){
+                            sensors.push(asensors.slice(i,i+1));
+                        }
+                    }
+                }
+                treedata[j].value=sensors.length;
+            if(sensors.length>0){
+                var sumnode=sumseneor1(sensors);
+                for(var i in sumnode){
+                    var ch1=new Object();
+                    ch1.name=i;
+                    ch1.value=sumnode[i];
+                    if(treedata[j].hasOwnProperty("children")){
+                        treedata[j].children.push(ch1);
+                    }else{
+                        treedata[j].children=[];
+                        treedata[j].children.push(ch1);
+                    }
+                }
+				//return;
+			}
+        }
+		}
     }
-    function sumseneor(asensors){//对标签进行分类统计，并存入以对象内。
-		if((asensors!=undefined)&&(asensors!=null)){
+ /*   function sumseneor(asensors){//对标签进行分类统计，并存入以对象内。
+		if((typeof(asensors)!="undefined")&&(asensors!=null)){
 			var map1=new Object();
 			for(var i=0;i<asensors.length;i++){
 				if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
@@ -208,9 +248,28 @@
 			}
 		}
 		return map1;
+    }*/
+    function sumseneor1(asensors){//对标签进行分类统计，并存入以对象内。
+		if((typeof(asensors)!="undefined")&&(asensors!=null)){
+			var map1=new Object();
+			for(var i=0;i<asensors.length;i++){
+				if((asensors[i][0]!=null)&&(!jQuery.isEmptyObject(asensors[i][0].Value))){
+                    var key=asensors[i][0].Value.Catalog;//Group;
+                    //if(key){
+                        key=getname(key);
+                    //}
+					if(map1.hasOwnProperty(key)){
+						map1[key]++
+					}else{
+						map1[key]=1;//value++
+					}
+				}
+			}
+		}
+		return map1;
 	}
-    function buildsensor(aSensors){
-		if((aSensors!=undefined)&&(aSensors!=null)){
+/*    function buildsensor(aSensors){
+		if((typeof(aSensors)!="undefined")&&(aSensors!=null)){
 			for(var i=0;i<aSensors.length;i++){
 				if((aSensors[i]!=null)&&(!jQuery.isEmptyObject(aSensors[i].Value))){
 					var map=new Object();
@@ -235,7 +294,7 @@
 			} 
 			return (maps.sort(compare));
 		}
-	}
+	}*/
     </script>
 </body>
 </html>

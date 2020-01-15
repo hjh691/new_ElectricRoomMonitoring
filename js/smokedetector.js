@@ -80,7 +80,7 @@ function other(obj,eid){
 }
 //关闭浮动信息框。
 function hideself(obj){
-    if((obj==null)||(obj==undefined)){
+    if((obj==null)||(typeof(obj)=="undefined")){
         obj=document.getElementById("fudong");
     }
     obj.style.display="none"

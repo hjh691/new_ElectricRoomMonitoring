@@ -105,7 +105,7 @@
 			<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
 			<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"></input>上月</label></span>
 			<span ><label><input type="radio" value="4" onclick="seletime(this)" name="timeselect"></input>自定义</label></span>
-			<span ><label><input type="radio" onclick="showrealworning()" name="timeselect"></input>实时</label></span>
+			<span ><label><input type="radio" value="5" onclick="seletime(this)" name="timeselect"></input>实时</label></span>
 			<span id="timedefine" style="display: none;">
 			起止时间
 			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"></input>至
@@ -230,24 +230,29 @@
 		sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
 		gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
 	}
+	function stopWorker() 
+		{ 
+			w1.terminate();
+			w1 = undefined;
+		};
 	function showrealworning(){
 		var timedefine=document.getElementById("timedefine");
 		timedefine.style.display="none";
 		var warningtab = window.parent.document.getElementById("realwarningdata-tbody");
 		var trs = warningtab.getElementsByTagName("tr");
 
-		var tbl = document.getElementById("warnlogdata-tbody");
+		$table = document.getElementById("warnlogdata-tbody");
 		var trl = document.createElement('tr');
-		if (tbl == null) {
-			tbl = iframe_main.document.getElementById("warnlogdata-tbody");
+		if ($table == null) {
+			$table = iframe_main.document.getElementById("warnlogdata-tbody");
 		}
-		var rowNum = tbl.rows.length;
+		var rowNum = $table.rows.length;
 		for (var i = 0; i < rowNum; i++) {
-			tr = tbl.rows[0];
-			tbl.removeChild(tr);
+			tr = $table.rows[0];
+			$table.removeChild(tr);
 		}
 		for (var i = 0; i < trs.length; i++) {
-			tbl.appendChild($(trs[i].outerHTML)[0]);
+			$table.appendChild($(trs[i].outerHTML)[0]);
 		}
 		//var counter = document.getElementById("count_varning");
 		//if (counter == null) {
@@ -260,6 +265,9 @@
 	function display(){   
 		
 		//var $table=$("#warnlogdata-tbody");
+		if(!$table){
+			return;
+		}
 		len =$table.rows.length ;//- 1;    // 求这个表的总行数，剔除第一行介绍
 		page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
 		// alert("page==="+page);

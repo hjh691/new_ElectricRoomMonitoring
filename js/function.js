@@ -1,5 +1,5 @@
 var token = "1234567";//后台http认证码
-errortime = 0;
+sessionStorage.errortime=0;
 sessionStorage.dataId = 0;
 sessionStorage.sensors=[];
 //sessionStorage.timeindex=0;
@@ -122,6 +122,8 @@ function LoginOrder(name, ps) {
 				layer.alert("登录失败，请稍后重试");
 				sessionStorage.islogin = false;
 			}
+			sessionStorage.errortime=0;
+
 		},
 		success: function(data, status) {
 			var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
@@ -131,12 +133,12 @@ function LoginOrder(name, ps) {
 					sessionStorage.token = data.Result.Token;
 					sessionStorage.username = name;
 					sessionStorage.islogin = true;
-					if (errortime == 0) {
+					if (sessionStorage.errortime == 0) {
 						window.location.href = "mainpage.html";
 					} else {
-						errortime = 0;
-						sessionStorage.dataId = 0;
-						refreshpages();
+						sessionStorage.errortime = 0;
+						//sessionStorage.dataId = 0;
+						//refreshpages();
 					}
 				} else {
 
@@ -245,12 +247,16 @@ function GetUserProfile() {
 			error: function(jqXHR, textStatus, errorThrown) {
 				layer.alert('获取用户详细信息操作失败');
 				document.getElementById("up-yhmc").value = sessionStorage.username;
-				errortime++;
+				sessionStorage.errortime++;
+				if(sessionStorage.errortime>3){
+					sessionStorage.islogin=false;
+					sessionStorage.errortime=0;
+				}
 			},
 			success: function(data, status) {
 				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
-					errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						document.getElementById("up-yhbh").value = data.Result.Id;
@@ -343,7 +349,7 @@ function sendbeat() {
 	sessionStorage.jssj=getCurrentDate(2);
 	var url = jfjk_base_config.baseurl; //+"GetGraphic?graphicId="+stationID;
 	url = encodeURI(url);
-	if ((sessionStorage.islogin == "true") && (errortime < 2)) {
+	if ((sessionStorage.islogin == "true") && (sessionStorage.errortime <= 3)) {
 		$.ajax({
 			beforeSend: function(request) {
 				request.setRequestHeader("_token", sessionStorage.token);
@@ -353,12 +359,15 @@ function sendbeat() {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(){
-				sessionStorage.islogin=false;
+				//sessionStorage.islogin=false;
 				//Alert('获取指定编号的图形操作失败');
-				errortime++;
+				sessionStorage.errortime++;
+				if(sessionStorage.errortime>3){
+					sessionStorage.islogin=false;
+				}
 			},
 			success: function(data,status){
-				errortime=0;
+				sessionStorage.errortime=0;
 				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if(status=="success"){
 					sessionStorage.islogin=true;
@@ -374,7 +383,7 @@ function sendbeat() {
 	} else {
 		sessionStorage.islogin = false;
 		Alert("与服务器连接失败", 2000);
-		//errortime=0;
+		sessionStorage.errortime=0;
 		LoginOrder(sessionStorage.username, sessionStorage.password);
 	}
 }
@@ -410,7 +419,7 @@ function getrealdatabystation(id) {
 	sessionStorage.pageindex = 2;
 	var count = 0,
 	err_count = 0;
-	if (sessionStorage.stationID != undefined) {
+	if (typeof(sessionStorage.stationID) != "undefined") {
 		var url = jfjk_base_config.baseurl + "GetRealsByStation?stationId=" + sessionStorage.stationID;
 		url = encodeURI(url);
 		if (sessionStorage.islogin == "true") {
@@ -423,7 +432,7 @@ function getrealdatabystation(id) {
 				dataType: 'json',
 				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
-					errortime++;
+					sessionStorage.errortime++;
 					if (errorThrown == "Unauthorized") {
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败');
 					} else {
@@ -433,7 +442,7 @@ function getrealdatabystation(id) {
 				success: function(data, status) {
 					var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 					if (status == "success") {
-						errortime = 0;
+						sessionStorage.errortime = 0;
 						sessionStorage.islogin = true;
 						if (data.Error == null) {
 							if (jQuery.isEmptyObject(data.Result.Datas)) {
@@ -600,12 +609,12 @@ function getrealsbydataid() {
 	alertinfo = "",
 	alertvalue = "",
 	collectorid = -1;
-	if (sessionStorage.dataId == undefined) {
+	if (typeof(sessionStorage.dataId) == "undefined") {
 		sessionStorage.dataId = 0;
 	}
 	var url = jfjk_base_config.baseurl + "GetRealsNew?dataId=" + sessionStorage.dataId;
 	url = encodeURI(url);
-	if ((sessionStorage.islogin == "true") && (errortime < 2)) {
+	if ((sessionStorage.islogin == "true") && (sessionStorage.errortime <= 3)) {
 		$.ajax({
 			beforeSend: function(request) {
 				request.setRequestHeader("_token", sessionStorage.token);
@@ -615,17 +624,20 @@ function getrealsbydataid() {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				errortime++;
+				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
 					layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取实时数据操作失败');
 				} else {
 					layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取实时数据操作失败');
 				}
+				if(sessionStorage.errortime>3){
+					sessionStorage.islogin=false;
+				}
 			},
 			success: function(data, status) {
 				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
-					errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						var sensors = new Object(),
@@ -944,7 +956,7 @@ function getrealsbydataid() {
 								//--实时告警列表---
 								//spack();
 							}
-							if (speech != undefined) {
+							if (typeof(speech) != "undefined") {
 								speech.click();
 								fdck.style.display = "block";
 								fdck.hide;
@@ -1061,7 +1073,7 @@ function GetStations() {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				errortime++;
+				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
 					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站点列表操作失败', 2000);
 				} else {
@@ -1071,7 +1083,7 @@ function GetStations() {
 			success: function(data, status) {
 				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
-					errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						if (data.Result.Stations == null) {
@@ -1211,7 +1223,7 @@ function check() {
 					sessionStorage.stationID = selectedTr.cells[0].childNodes[0].data;
 					sessionStorage.stationName = selectedTr.cells[1].childNodes[0].childNodes[0].data;
 				}
-				if (sessionStorage.stationID == undefined) {
+				if (typeof(sessionStorage.stationID) == "undefined") {
 					sessionStorage.stationID = selectedTr.cells[0].childNodes[0].data;
 					sessionStorage.stationName = selectedTr.cells[1].childNodes[0].childNodes[0].data;
 				}
@@ -1225,7 +1237,7 @@ function check() {
 					sessionStorage.graphicID = selectedTr.cells[0].childNodes[0].data;
 					sessionStorage.graphicName = selectedTr.cells[1].childNodes[0].childNodes[0].data;
 				}
-				if (sessionStorage.graphicID == undefined) {
+				if (typeof(sessionStorage.graphicID) == "undefined") {
 					sessionStorage.graphicID = selectedTr.cells[0].childNodes[0].data;
 					sessionStorage.graphicName = selectedTr.cells[1].childNodes[0].childNodes[0].data;
 				}
@@ -1339,13 +1351,30 @@ function initwarnlog() {
 	if(sessionStorage.SensorId=="")
 		sessionStorage.SensorId=-1;
 	//GetSensorsByStation();
-	if((!sessionStorage.timeindex)||(sessionStorage.timeindex=="undefined")){
+	if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")){
 		sessionStorage.timeindex=0;
 	}
 	$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
 	seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
 	if(sessionStorage.timeindex==4){
 		querywarnlog();
+	}
+	if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
+		if(typeof(w1) == "undefined") {
+			w1 = new Worker("delay_worker.js");
+		}
+		var i=0;
+		w1.onmessage = function(event) {
+			//document.getElementById("result").innerHTML = event.data;
+			i++
+			if(i%60==0){
+				if(sessionStorage.timeindex==5)
+				showrealworning();
+			}
+		};
+	} else {
+		//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
+		var t1 = window.setInterval("getrealdatabynodeid(-1);",60000);
 	}
 }
 //初始化短信日志查询页面（在进入短信日志页面时触发）。
@@ -1397,7 +1426,7 @@ function GetSensorsByStation() {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				errortime++;
+				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
 					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取指定站标签操作失败', 2000);
 				} else {
@@ -1407,7 +1436,7 @@ function GetSensorsByStation() {
 			success: function(data, status) {
 				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
-					errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						if (!jQuery.isEmptyObject(data.Result.Sensors)) {
@@ -1576,8 +1605,8 @@ function closewin(ranid) {
 //获取历史数据    used by electricroommonitor 
 function gethistorydata(sensorid,kssj, jssj,aparent) {
 	if (sessionStorage.islogin == "true") {
-		if (sensorid != undefined) {
-			if((aparent==undefined)||(aparent!=1)){
+		if (typeof(sensorid) != "undefined") {
+			if((typeof(aparent)=="undefined")||(aparent!=1)){
 				ajaxLoadingShow();
 			}
 			var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sensorid + "&from=" + kssj + "&to=" + jssj;
@@ -1591,7 +1620,7 @@ function gethistorydata(sensorid,kssj, jssj,aparent) {
 				dataType: 'json',
 				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
-					errortime++;
+					sessionStorage.errortime++;
 					ajaxLoadingHidden();
 					//myChart.hideLoading();
 					if (errorThrown == "Unauthorized") {
@@ -1599,13 +1628,17 @@ function gethistorydata(sensorid,kssj, jssj,aparent) {
 					} else {
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
 					}
+					if(sessionStorage.errortime>3){
+						sessionStorage.islogin=false;
+						sessionStorage.errortime=0;
+					}
 				},
 				success: function(data, status) {
 					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 					ajaxLoadingHidden();
 					//myChart.hideLoading();
 					if (status == "success") {
-						errortime = 0;
+						sessionStorage.errortime = 0;
 						sessionStorage.islogin = true;
 						if (data.Error == null) {
 							if (!jQuery.isEmptyObject(data.Result.Datas)) {
@@ -1642,13 +1675,13 @@ function querywarnlog(num) {
 	sessionStorage.SensorName = sel.options[document.getElementById("jcdd").selectedIndex].text;
 	
 	var kssj = document.getElementById("kssj_warning").value;
-	if ((kssj == null) || (kssj == "") || (kssj == undefined)) {
+	if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
 		layer.alert("请指定开始时间");
 		return;
 	}
 	sessionStorage.kssj = kssj;
 	var jssj = document.getElementById("jssj_warning").value;
-	if ((jssj == null) || (jssj == "") || (jssj == undefined)) {
+	if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
 		layer.alert("请指定截至时间");
 		return;
 	}
@@ -1676,19 +1709,23 @@ function GetWarnLog(mkssj, mjssj) {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				errortime++;
+				sessionStorage.errortime++;
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
 					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取告警信息操作失败', 2000);
 				} else {
 					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取告警信息操作失败', 2000);
 				}
+				if(sessionStorage.errortime>3){
+					sessionStorage.islogin=false;
+					sessionStorage.errortime=0;
+				}
 			},
 			success: function(data, status) {
 				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
 					ajaxLoadingHidden();
-					errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						if (jQuery.isEmptyObject(data.Result.Datas)) {
@@ -1752,7 +1789,7 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 	if (sessionStorage.islogin == "true") {
 		//ajaxLoadingShow();
 		//$('#indicatorContainer').radialIndicator();
-		if ((sessionStorage.SensorId == undefined) || (sessionStorage.SensorId == null)) {
+		if ((typeof(sessionStorage.SensorId) == "undefined") || (sessionStorage.SensorId == null)) {
 			var url = jfjk_base_config.baseurl + "GetWarnLogsByStation?stationId=" + sessionStorage.stationID + "&from=" + mkssj + "&to=" + mjssj;
 		} else {
 			var url = jfjk_base_config.baseurl + "GetWarnLogsBySensor?sensorId=" + sessionStorage.SensorId + "&from=" + mkssj + "&to=" + mjssj;
@@ -1767,19 +1804,23 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				errortime++;
+				sessionStorage.errortime++;
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
 					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取告警信息操作失败');
 				} else {
 					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取告警信息操作失败');
 				}
+				if(sessionStorage.errortime>3){
+					sessionStorage.islogin=false;
+					sessionStorage.errortime=0;
+				}
 			},
 			success: function(data, status) {
 				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
 					ajaxLoadingHidden();
-					errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						if (data.Result.Datas != null) {
@@ -1835,12 +1876,12 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 
 function querysmslog() {
 	var kssj = document.getElementById("kssj_sms").value;
-	if ((kssj == null) || (kssj == "") || (kssj == undefined)) {
+	if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
 		layer.alert("请指定开始时间");
 		return;
 	}
 	var jssj = document.getElementById("jssj_sms").value;
-	if ((jssj == null) || (jssj == "") || (jssj == undefined)) {
+	if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
 		layer.alert("请指定截至时间");
 		return;
 	}
@@ -1864,7 +1905,7 @@ function GetSmsLog(mkssj, mjssj) {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				errortime++;
+				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
 					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取日志操作失败', 2000);
 				} else {
@@ -1876,7 +1917,7 @@ function GetSmsLog(mkssj, mjssj) {
 				if (status == "success") {
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
-						errortime = 0;
+						sessionStorage.errortime = 0;
 						if (!jQuery.isEmptyObject(data.Result.SmsLogs)) {
 							if ((data.Result.hasOwnProperty("SmsLogs")) && (!jQuery.isEmptyObject(data.Result.SmsLogs))) {
 								for (var i = 0; i < data.Result.SmsLogs.length; i++) { //data.Result.length
@@ -1926,7 +1967,7 @@ function GetSmsLog(mkssj, mjssj) {
 //var datas=[];
 //获取图表数据；
 function getchartvalue(msensorid, kssj, jssj) {
-	if (sessionStorage.SensorId != undefined) {
+	if (typeof(sessionStorage.SensorId) != "undefined") {
 		//var url=jfjk_base_config.baseurl+"GetHistoriesBySensor?sensorId="+msensorid+"&from="+kssj+"&to="+jssj;
 		var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=186&from=2012-09-03&to=2012-09-05";
 		url = encodeURI(url);
@@ -1939,13 +1980,13 @@ function getchartvalue(msensorid, kssj, jssj) {
 			dataType: 'json',
 			timeout: 10000,
 			error: function() {
-				errortime++;
+				sessionStorage.errortime++;
 				layer.alert('趋势图数据操作失败');
 			},
 			success: function(data, status) {
 				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
-					errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						if (data.Result.Datas.hasOwnProperty("Tmp")) {
@@ -1967,12 +2008,12 @@ function getchartvalue(msensorid, kssj, jssj) {
 ////  used by electricroommonitor 
 function querychartvalue() {
 	var kssj = document.getElementById("kssj_chart").value;
-	if ((kssj == null) || (kssj == "") || (kssj == undefined)) {
+	if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
 		layer.alert("请指定开始时间");
 		return;
 	}
 	var jssj = document.getElementById("jssj_chart").value;
-	if ((jssj == null) || (jssj == "") || (jssj == undefined)) {
+	if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
 		layer.alert("请指定截至时间");
 		return;
 	}
@@ -2329,7 +2370,7 @@ function getgraphics() {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				errortime++;
+				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
 					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取图形列表失败', 2000);
 				} else {
@@ -2339,7 +2380,7 @@ function getgraphics() {
 			success: function(data, status) {
 				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
-					errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						var tb = document.getElementById('stationstable');
@@ -2405,7 +2446,7 @@ function getgraphics() {
 //获取指定编号的图形属性信息，从而来绘制图形。
 function GetBinary(binariesid) {
 	sessionStorage.pageindex = 1;
-	if (binariesid != undefined) {
+	if (typeof(binariesid) != "undefined") {
 		var url = jfjk_base_config.baseurl + "GetBinary?id=" + binariesid;
 		url = encodeURI(url);
 		if (sessionStorage.islogin == 'true') {
@@ -2418,7 +2459,7 @@ function GetBinary(binariesid) {
 				dataType: 'json',
 				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
-					errortime++;
+					sessionStorage.errortime++;
 					if (errorThrown == "Unauthorized") {
 						Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取指定编号的图形操作失败');
 					} else {
@@ -2428,7 +2469,7 @@ function GetBinary(binariesid) {
 				success: function(data, status) {
 					var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 					if (status == "success") {
-						errortime = 0;
+						sessionStorage.errortime = 0;
 						sessionStorage.islogin = true;
 						if (data.Error == null) {
 							if(jQuery.isEmptyObject(data.Result)){
@@ -2724,24 +2765,51 @@ function spack() {
 	}
 	var strText = spkText.innerHTML.trim();
 
-	$.ajax({
+	/*$.ajax({
+		crossDomain: true,
 		type: "get",
+		//dataType:Jsonp,
 		url: jfjk_base_config.speechurl + "GetVoice?text=" + encodeURIComponent(strText),
-		//"10:23:17 伏城变电站 1#545-4C 温度过高告警",////。My name isxxx，I'm 45 years old。I come from Baoding City. I am tall and thin. I like read book. I stady in 
-		//middle school. I an in the class twelve grade 1. I go to school by bike at We have four classes in the morning and four classes in the afternoonf.
 		success: function(result) {
 			var audio = $("#spkAudio")[0];
 			if (audio == null) {
 				audio = $("#spkAudio", window.parent.document);
 			}
 			audio.src = "data:audio/wav;base64," + result.Result;
-			audio.play();
+			audio.load()
+			let playPromise = audio.play()
+			if (playPromise !== undefined) {
+				playPromise.then(() => {
+					audio.play()
+				}).catch(()=> {
+				
+				})
+			}
+			//setInterval("toggleSound()",1);
+			//audio.play();
 		},
 
 		failure: function(result) {
 			layer.alert(result);
 		}
-	});
+	});*/
+	var url=jfjk_base_config.speechurl+"GetWav?text="+encodeURIComponent(strText);
+	var audio=$("#spkAudio")[0];
+	if (audio == null) {
+		audio = $("#spkAudio", window.parent.document);
+	}
+	audio.src=url;
+	//audio.load()
+	/*let playPromise = audio.play()
+	if (playPromise !== undefined) {
+		playPromise.then(() => {
+			audio.play()
+		}).catch(()=> {
+		
+		})
+	}
+	audio.autoplay=true;
+	audio.play();*/
 }
 
 //如果是重新连接服务器或重新登录后，刷新当前页面
@@ -2899,8 +2967,7 @@ function moduletable(atableid) {  //used by electricroommonitor
 			}
 			if (atableid == "realwarning-tbody") {
 				trs[i].cells[4].style.backgroundColor = "#16b9c9";
-			}
-		} else {
+			}		} else {
 			//trs[i].style.backgroundColor = "#FFFFFF";
 			//trs[i].cells[1].style.backgroundColor = "#FFFFFF";
 			//trs[i].cells[2].style.backgroundColor = "#FFFFFF";
@@ -3028,9 +3095,10 @@ function initsysteminfo(){
 //获取实时数据  used by electricroommonitor
 function getrealdatabynodeid(nodeid){
 	sessionStorage.jssj=getCurrentDate(2);
-	if (nodeid!=undefined&&nodeid!==null) {
+	if (typeof(nodeid)!="undefined"&&nodeid!==null) {
 		var url = jfjk_base_config.baseurl + "GetRealsNew?dataId=" + nodeid;
 		url = encodeURI(url);
+		{//while(sessionStorage.errortime<1)
 		if (sessionStorage.islogin == "true") {
 			$.ajax({
 				beforeSend: function(request) {
@@ -3041,20 +3109,28 @@ function getrealdatabynodeid(nodeid){
 				dataType: 'json',
 				timeout: 10000,
 				error: function(jqXHR, textStatus, errorThrown) {
-					errortime++;
+					sessionStorage.errortime++;
 					if (errorThrown == "Unauthorized") {
 						value0=0;value1=0;sname="";
 						refreshData();
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败');
-						sessionStorage.islogin = "false"
+						//sessionStorage.islogin = "false"
 					} else {
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败');
+					}
+					if(sessionStorage.errortime<3){
+						//continue;
+						//getrealdatabynodeid(nodeid)
+					}else{
+						sessionStorage.islogin=false;
+						//sessionStorage.errortime=0;
+						//getrealdatabynodeid(nodeid)
 					}
 				},
 				success: function(data, status) {
 					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 					if (status == "success") {
-						errortime = 0;
+						sessionStorage.errortime = 0;
 						sessionStorage.islogin = true;
 						value0=0;value1=0;sname="";
 						if (data.Error == null) {
@@ -3074,14 +3150,28 @@ function getrealdatabynodeid(nodeid){
 							layer.alert(data.Error, 2000);
 						}
 					}
+					//break;
 				}
 			});
 		} else {
 			layer.alert("与服务器连接失败");
+			//sessionStorage.errortime=0;
+			//break;
 			//window.location.href="index.html";
 		}
+		//sleep(10000);
+	 }
 		//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
 	}
+}
+function sleep(numberMillis) {    
+	var now = new Date();    
+	var exitTime = now.getTime() + numberMillis;   
+	while (true) { 
+		now = new Date();       
+		if (now.getTime() > exitTime) 
+		return;
+	} 
 }
 function getname(key){
 	if(key)
@@ -3154,8 +3244,11 @@ function seletime(obj){
 		case  4:
 			var timedefine=document.getElementById("timedefine");
 			if(timedefine.style.display=="none"){
-			timedefine.style.display="inline";
+				timedefine.style.display="inline";
 			}
+			break;
+		case 5:
+			showrealworning();
 			break;
 	}
 }

@@ -335,7 +335,7 @@
                 return serie;
             }
             function drawmeters(chartparentid,datas){
-                if(datas===null||datas===undefined){
+                if(datas===null||typeof(datas)==="undefined"){
                     return;
                 }
                 mcount=datas.length/5;
@@ -356,7 +356,7 @@
                 
                 var moffsety=1/row;
                 var divChart=document.getElementById("chart");//如果已经存在此图表div，则进行刷新，没有则创建添加，下同
-                if(divChart===null || divChart===undefined){
+                if(divChart===null || typeof(divChart)==="undefined"){
                     divChart=document.createElement("div");
                     divChart.setAttribute("style","width:"+widthofdiv+"px;height:"+heightofdiv+"px;");
                     divChart.setAttribute("id","chart");

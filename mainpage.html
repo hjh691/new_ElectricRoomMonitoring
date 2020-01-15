@@ -34,13 +34,13 @@
 					href="javascript:void(0)" style="color:white;">[登录]</a></span>
 			<input type="button" class="topbar-bigbutton" value="联系我们"
 				style="background:url(res/home.jpg) no-repeat center top;"
-				onclick="showcontactus()"></input>
+				onclick="showcontactus()"/>
 			<input type="button" class="topbar-bigbutton" value="APP下载"
-				style="background:url(res/chilun.jpg) no-repeat center top;" onclick="showdownload()">
-			</input>
+				style="background:url(res/chilun.jpg) no-repeat center top;" onclick="showdownload()"/>
+			
 			<!--<input type="button"  class="topbar-bigbutton" value="数据浏览" style="background:url(res/sanse.jpg) no-repeat center top;margin-top:10px;"></input>-->
 			<input type="button" class="topbar-bigbutton" value="操作指南"
-				style="background:url(res/bar.jpg) no-repeat center top;" onclick="showhelp()"></input>
+				style="background:url(res/bar.jpg) no-repeat center top;" onclick="showhelp()"/>
 		</div>
 		<hr style="display:none" />
 	</div>
@@ -67,11 +67,12 @@
 						<li id="li_warnlog" ><a id="warnlog" href="javascript:void(0)" onclick="loadstations_warnlog()">告警信息</a></li>
 						<li><a href="javascript:void(0)" onclick="showdevice()">设备信息</a></li>
 						<li><a href="javascript:void(0)" onclick="showpage(0)" >系统信息</a></li>
+						<li id="clickaudio" style="float:right;font-size:16px;display: none;"><a href="javascript:void(0)" style="color: red;" onclick="showdailog()">开启告警声音</a></li>
 					</ul>
 				</div>
 			</div>
 			<div class="mainarea" id="mainarea">
-				<iframe name="iframe_main" id="iframe_main" style="width:100%;height:99%" frameborder="0">
+				<iframe name="iframe_main" id="iframe_main" allowtransparency="true" allowfullscreen="true" style="width:100%;height:99%;" frameborder="0">
 				</iframe>
 				<table id="warningtable" style="display:none">
 					<thead>
@@ -108,11 +109,11 @@
 			<div id="alert_info" >
 			</div>
 		</div>
-		<!--KeFuDiv end <embed height="0" width="0" src="">-->
+		<!--KeFuDiv end <embed height="0" width="0" src="">type="audio/wav"-->
 		<div id="wrapSpk">
-			<audio id="spkAudio">
-				<source src="" type="audio/wav">
-			</audio>
+			<iframe  id="spkAudio" allow="autoplay" style="display:none" >
+				<source src="" />
+			</iframe >
 			<textarea id="chatData" style="width:300px;height:40px;display:none" onclick="spack()" ;>asd
 			</textarea>
 		</div>
@@ -177,7 +178,7 @@
 						//document.getElementById("result").innerHTML = event.data;
 						i++
 						if (i % 60 == 0) {
-							//sendbeat();//getrealsbydataid();
+							sendbeat();//getrealsbydataid();
 							getrealdatabynodeid(-1);
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}
@@ -192,6 +193,9 @@
 		);
 		function refreshwindow() {//重画窗口，规定 尺寸,尤其是浮动窗口的位置
 			sessionStorage.framepage = document.getElementById("iframe_main").src;
+			if(sessionStorage.framepage.indexOf("video.html")>=0){
+				return;
+			}
 			var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
 			var fdheight = document.getElementById("KeFuDiv").offsetHeight;
 			var fdwidth = document.getElementById("KeFuDiv").offsetWidth;
@@ -272,6 +276,14 @@
 			} else {
 				document.getElementById("iframe_main").src = sessionStorage.framepage;
 			}
+			
+
+		}
+		//开启告警声音
+		function showdailog(){
+			var sound=document.getElementById("clickaudio");
+			sound.style.display="none";
+			Alert("告警声音已开启");
 		}
 		//初始化目录树
 		function inittreeview(anodes) {
@@ -529,7 +541,7 @@
 			//	document.getElementById("iframe_main").src="infototal.html";
 			//}},3000);
 		}
-		//更新导航栏信息（主要用于区分视频监控与其他子系统的的操作信息忠诚、敬业、自动自发、负责、注重效率、结果导向、善于沟通、合作、积极进取、低调、节约、感恩
+		//更新导航栏信息（主要用于区分视频监控与其他子系统的的操作信息
 		function updatanav(type){
 			switch(type){
 				case 0:
@@ -538,7 +550,7 @@
 				document.getElementById("li_warnlog").style.display="none"
 				document.getElementById("li_historychart").style.display="none";
 				document.getElementById("li_preview").style.display="inline";
-				if(sessionStorage.pageindex==2||sessionStorage.pageindex==3||sessionStorage.pageindex==4){
+				if(sessionStorage.pageindex!=0&&sessionStorage.pageindex!=1&&sessionStorage.pageindex!=6&&sessionStorage.pageindex!=7){
 					sessionStorage.pageindex=8;
 				}
 				break;
@@ -654,12 +666,17 @@
 					error: function (jqXHR, textStatus, errorThrown) {
 						inittreeview();
 						layer.alert('获取系统目录列表数据失败');
-						errortime++;
+						sessionStorage.errortime++;
+						if(sessionStorage.errortime<3){
+							//getNodes();
+						}else{
+							sessionStorage.islogin=false;
+						}
 					},
 					success: function (data, status) {
 						var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 						if (status == "success") {
-							errortime = 0;
+							sessionStorage.errortime = 0;
 							sessionStorage.islogin = true;
 							if (data.Error == null) {
 								var obj_nodes = [];
@@ -686,7 +703,7 @@
 		}
 		function buildnode(data, level) {
 			var tree = [];
-			if (data == null || data == undefined) {
+			if (data == null || typeof(data) == "undefined") {
 				for (i = 0; i < 3; i++) {
 					var anodes = new Object();
 					anodes.text = "变电站" + (2 - i);
@@ -813,14 +830,18 @@
 						//inittreeview();
 						ajaxLoadingHidden();
 						//layer.alert('获取系统列表数据失败');
-						errortime++;
+						sessionStorage.errortime++;
 						//isfree="true";
+						if(sessionStorage.errortime>3){
+							sessionStorage.islogin=false;
+							sessionStorage.errortime=0;
+						}
 					},
 					success: function (data, status) {
 						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 						ajaxLoadingHidden();
 						if (status == "success") {
-							errortime = 0;
+							sessionStorage.errortime = 0;
 							//isfree="true";
 							if (data.Error == null) {
 								var obj_Binaries = [];
@@ -869,15 +890,19 @@
 					error: function (jqXHR, textStatus, errorThrown) {
 						//inittreeview();
 						//layer.alert('获取系统列表数据失败');
-						errortime++;
+						sessionStorage.errortime++;
 						isfree = "true";
 						localStorage.setItem("sensors", null);
 						refreshiframe();
+						if(sessionStorage.errortime>3){
+							sessionStorage.islogin=false;
+							sessionStorage.errortime=0;
+						}
 					},
 					success: function (data, status) {
 						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 						if (status == "success") {
-							errortime = 0;
+							sessionStorage.errortime = 0;
 							isfree = "true";
 							if (data.Error == null) {
 								var obj_sensors = [];
@@ -975,13 +1000,17 @@
 					error: function (jqXHR, textStatus, errorThrown) {
 						//inittreeview();
 						//layer.alert('获取系统列表数据失败');
-						errortime++;
+						sessionStorage.errortime++;
 						isfree = "true";
+						if(sessionStorage.errortime>3){
+							sessionStorage.islogin=false;
+							sessionStorage.errortime=0;
+						}
 					},
 					success: function (data, status) {
 						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 						if (status == "success") {
-							errortime = 0;
+							sessionStorage.errortime = 0;
 							isfree = "true";
 							if (data.Error == null) {
 								var obj_sensors = [];
@@ -1031,7 +1060,7 @@
 			}
 		}
 		function sumseneor(asensors) {
-			if ((asensors != undefined) && (asensors != null)) {
+			if ((typeof(asensors) != "undefined") && (asensors != null)) {
 				var map1 = new Object();
 				for (var i = 0; i < asensors.length; i++) {
 					if ((asensors[i] != null)) {
@@ -1050,7 +1079,7 @@
 			return map1;
 		}
 		function buildsensor1(aSensors) {
-			if ((aSensors != undefined) && (aSensors != null)) {
+			if ((typeof(aSensors) != "undefined") && (aSensors != null)) {
 				for (var j = 0; j < aSensors.length; j++) {
 					var anodes = new Object();
 					anodes.name = aSensors[j].text;
@@ -1079,7 +1108,7 @@
 			}
 		}
 		function buildsensor2(obj, aSensors, parentkey) {
-			if ((aSensors != undefined) && (aSensors != null)) {
+			if ((typeof(aSensors) != "undefined") && (aSensors != null)) {
 				for (var i = 0; i < aSensors.length; i++) {
 					var s = aSensors[i];
 					if (s != null && !jQuery.isEmptyObject(s.Value)) {
@@ -1103,7 +1132,7 @@
 			}
 		}
 		function buildsensor(aSensors) {
-			if ((aSensors != undefined) && (aSensors != null)) {
+			if ((typeof(aSensors) != "undefined") && (aSensors != null)) {
 				for (var i = 0; i < aSensors.length; i++) {
 					if ((aSensors[i] != null) && (!jQuery.isEmptyObject(aSensors[i].Value))) {
 						var map = new Object();
@@ -1145,7 +1174,7 @@
 			var obj_data = new Object();
 			var pt = 0;
 			if (sensors != null) {
-				var str_alert = "告警:";
+				var str_speech=str_alert = "告警:";
 				var gaojing = document.getElementById("alert_info");
 				if (gaojing == null) {
 					gaojing = parent.window.document.getElementById("alert_info");
@@ -1204,7 +1233,7 @@
 					if (obj_realdata.hasOwnProperty(sid)) {
 						obj_data = (obj_realdata)[sid];////
 						var msg = obj_data[0].Message;
-						if (msg == null || msg == "" || msg == undefined || msg.trim() == "") {
+						if (msg == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == "") {
 							continue;
 						}
 						var alert_sys_name=getsysname(mnodes,nid);//站和子系统名称
@@ -1264,18 +1293,21 @@
 						pt++;
 						tbody.appendChild(tr);
 						if ((alertvalue !== null) && (alertvalue !== "NaN")) {
-							str_speech = "告警" +alert_sys_name+" "+sname + alertinfo + " 数值" + alertvalue;
+							str_speech = str_speech +alert_sys_name+" "+sname + alertinfo + " 数值" + alertvalue;
 							str_alert = str_alert + " " + alerttime + "  " + ": " +alert_sys_name+" "+ sname + " " + type_td+" "+ alertinfo + " 数值为:" + alertvalue;
 						} else {
-							str_speech = "告警" +alert_sys_name+ sname + alertinfo;
+							str_speech =str_speech +alert_sys_name+ sname + alertinfo;
 							str_alert = str_alert + " " + alerttime + "  " +": " +alert_sys_name+" "+ sname + " "+ type_td+" " + alertinfo + " ";// + alertvalue;
 						}
+						//speech.innerHTML = str_alert;//str_speech;
+						//speech.click();
+						//str_alert="告警:";
 					}
 				}
 				if (pt > 0) {
 					gaojing.innerHTML = "<pre  style='vertical-align:center;background-color: rgba(255,255,0,0);'>" + str_alert + "</pre>";
-					speech.innerHTML = str_speech;
-					//speech.click();
+					speech.innerHTML =str_speech;// str_alert;//str_speech;
+					speech.click();
 					fdck.style.display = "block";
 				} else {
 					gaojing.innerText = "";
@@ -1309,7 +1341,7 @@
 	
 		}*/
 		function updatanodetree() {
-			if (allsensors != undefined && allsensors != null) {
+			if (typeof(allsensors) != "undefined" && allsensors != null) {
 				for (var i = 0; i < allsensors.length; i++) {
 					if (allsensors[i] != null) {
 						var s_nodeid = allsensors[i].NodeId;
@@ -1319,6 +1351,7 @@
 				inittreeview(nodes);
 			}
 		};
+		
 	</script>
 </body>
 </html>

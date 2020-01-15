@@ -21,7 +21,7 @@ function refreshwindow(){
     //var myChart = echarts.init(document.getElementById('chart00'));
     //document.getElementById("main2").style.height="500px";
     //initseries(myChart);
-    initpage1();
+    //initpage1();
     //形成图表数据对象数组
     
     var datas=[];
@@ -570,7 +570,7 @@ function initseries(myChart,data){
 }
 var chartarray=[];
 function drawmeters(datas){
-    if(datas===null||datas===undefined){
+    if(datas===null||typeof(datas)==="undefined"){
         return;
     }
     mcount=datas.length;
@@ -580,7 +580,7 @@ function drawmeters(datas){
         for(var c=0;c<mcol;c++){
             var div=document.getElementById("chart"+r+c);
             //如果已经存在此图表div，则进行刷新，没有则创建添加，下同。
-            if(div===null || div===undefined){
+            if(div===null || typeof(div)==="undefined"){
                 var div= document.createElement("div");
                 div.setAttribute("style","width:300px;height:300px;");
                 div.setAttribute("id","chart"+r+c);
@@ -589,13 +589,11 @@ function drawmeters(datas){
                 chartarray.push(chart);
                 initseries(chart,datas[r*4+c]);
             }
-            
-            
         }
     }
     for(var m=0;m<mod;m++){
         var div=document.getElementById("chart"+r+m);
-        if((div===null) || (div===undefined)){
+        if((div===null) || (typeof(div)==="undefined")){
             var div=document.createElement("div");
             div.setAttribute("style","width:300px;height:300px;");
             div.setAttribute("id","chart"+r+m);

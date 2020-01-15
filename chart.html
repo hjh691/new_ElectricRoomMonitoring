@@ -254,7 +254,7 @@
 					data:JSON.stringify(arr_sensors),
 					timeout: 10000,
 					error: function(jqXHR, textStatus, errorThrown) {
-						errortime++;
+						sessionStorage.errortime++;
 						ajaxLoadingHidden();
 						//myChart.hideLoading();
 						if (errorThrown == "Unauthorized") {
@@ -262,12 +262,16 @@
 						} else {
 							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
 						}
+						if(sessionStorage.errortime>3){
+							sessionStorage.islogin=false;
+							sessionStorage.errortime=0;
+						}
 					},
 					success: function(data, status) {
 						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 						ajaxLoadingHidden();
 						if (status == "success") {
-							errortime = 0;
+							sessionStorage.errortime = 0;
 							sessionStorage.islogin = true;
 							if (data.Error == null) {
 								if (!jQuery.isEmptyObject(data.Result.Datas)) {

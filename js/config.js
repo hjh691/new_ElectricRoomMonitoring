@@ -5,7 +5,7 @@ var jfjk_base_config={};
 
  jfjk_base_config.baseurl="http://192.168.10.250:20000/_api/";//调试时的局域网地址。
  //jfjk_base_config.baseurl="http://localhost:20000/_api";//与服务器同机时实际运行时采用此地址，如果不是部署在同一台电脑中，则为服务器的实际地址
- jfjk_base_config.speechurl="http://192.168.10.250:20000/_speeh/";//"http://192.168.10.67:88/_speech/";
+ jfjk_base_config.speechurl="http://192.168.10.250:20000/_speech/";//"http://192.168.10.67:88/_speech/";
  //服务器地址
 jfjk_base_config.serverurl="http://jka.f3322.net:20000/_api/";
 // 手机app存放目录和名称：要求在web的资源目录中，
