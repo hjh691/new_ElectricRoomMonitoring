@@ -16,7 +16,7 @@
 </head>
 
 <body >
-	<!--onload="initIndex()""showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>-->
+	<!--onload="initIndex()""showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>onresize="resizeFresh()"-->
 	<div class="header" id="header" >
 		<div class="topbar" id="topbar">
 			<div id="app_name"><i></i></div>
@@ -109,11 +109,16 @@
 			<div id="alert_info" >
 			</div>
 		</div>
-		<!--KeFuDiv end <embed height="0" width="0" src="">type="audio/wav"-->
-		<div id="wrapSpk">
-			<iframe  id="spkAudio" allow="autoplay" style="display:none" >
-				<source src="" />
-			</iframe >
+		<!--KeFuDiv end <embed height="0" width="0" src="">-->
+		<div id="wrapSpk"><!--使用audio 谷歌核心浏览器不支持自动播放，采用iframe。如果iframe也不行，
+			就只得使用人为干预，这时应使用audio标签，同时在function.js中的spack（）函数，修改成1#方案-->
+			<!--<audio  id="spkAudio"  >   
+				<source src="" type="audio/wav"/>
+			</audio >-->
+			<!--2# 使用iframe标签代替audio标签。-->
+			<iframe id="spkAudio" allow="autoplay" style="display:none">
+				<source src="" type="audio/wav"/>
+			</iframe>
 			<textarea id="chatData" style="width:300px;height:40px;display:none" onclick="spack()" ;>asd
 			</textarea>
 		</div>
@@ -161,6 +166,7 @@
 					}
 					else {
 						$content.css({ left: parseInt(container_width) + "px" });
+						document.getElementById("alert_info").innerHTML="";
 						fdck.style.display = "none";
 					}
 				}
@@ -185,10 +191,11 @@
 					};
 				} else {
 					//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
-					var t1 = window.setInterval(sendbeat, 3000);//getrealsbydataid
+					var t1 = window.setInterval(sendbeat, 60000);//getrealsbydataid
 				}
-				//initIndex();
+				window.setInterval("resetContent()", 200);
 				refreshwindow();
+				initIndex();
 			}
 		);
 		function refreshwindow() {//重画窗口，规定 尺寸,尤其是浮动窗口的位置
@@ -196,9 +203,9 @@
 			if(sessionStorage.framepage.indexOf("video.html")>=0){
 				return;
 			}
-			var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
-			var fdheight = document.getElementById("KeFuDiv").offsetHeight;
-			var fdwidth = document.getElementById("KeFuDiv").offsetWidth;
+			//var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
+			//var fdheight =50;// document.getElementById("KeFuDiv").offsetHeight;
+			//var fdwidth =500;// document.getElementById("KeFuDiv").offsetWidth;
 			var main = document.getElementById("chuangti");
 			//var header = document.getElementById("header");
 			var menu = document.getElementById("leftmenu");
@@ -216,20 +223,20 @@
 			else if ((document.body) && (document.body.clientHeight))
 				winHeight = document.body.clientHeight;
 			//初始位置
-			var top = bodyfrm.scrollTop + bodyfrm.clientHeight - fdheight - 10;
-			document.getElementById("KeFuDiv").style.top = top + 'px';////document.getElementById("KeFuDiv").offsetHeight)-30;
-			var left = bodyfrm.scrollLeft + bodyfrm.clientWidth - fdwidth;//document.getElementById("KeFuDiv").offsetWidth)-17;;
+			//var top = bodyfrm.scrollTop + bodyfrm.clientHeight - fdheight - 10;
+			//document.getElementById("KeFuDiv").style.top = top + 'px';////document.getElementById("KeFuDiv").offsetHeight)-30;
+			//var left = bodyfrm.scrollLeft + bodyfrm.clientWidth - fdwidth;//document.getElementById("KeFuDiv").offsetWidth)-17;;
 			// (winHeight - document.getElementById("KeFuDiv").offsetHeight)-30 +"px";
-			document.getElementById("KeFuDiv").style.left = left + 'px';//(winWidth - 
-			document.getElementById("KeFuDiv").style.display="none";
+			//document.getElementById("KeFuDiv").style.left = left + 'px';//(winWidth - 
+			//document.getElementById("KeFuDiv").style.display="none";
 			var m = (/MSIE [67]/.test(navigator.userAgent) && (event.type == "load")) ? 1 : 2;
-			if (/MSIE [567]/.test(navigator.userAgent)) {
+			/*if (/MSIE [567]/.test(navigator.userAgent)) {
 				var fwidth = main.offsetWidth;
-				/*if(footer.style.borderWidth){
+				if(footer.style.borderWidth){
 					fwidth -= m * footer.style.borderWidth.replace("px","");
 				}
-				footer.style.width = fwidth + "px";*/
-			}
+				footer.style.width = fwidth + "px";
+			}*/
 			var height = winHeight - main.offsetTop;//footer.offsetTop 
 			if (main.style.borderWidth) {
 				height -= m * main.style.borderWidth.replace("px", "");
@@ -251,10 +258,23 @@
 					content.style.height = mheight + "px";
 				}
 			}
-			initIndex();
+			//initIndex();
 		}
 		window.onresize = window.onscroll = refreshwindow;//  
-		//index页面初始化window.onload=
+		function resetContent() {
+			var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
+			var allw = bodyfrm.clientWidth;// - 10;
+			var allh = bodyfrm.clientHeight ;//- 60;
+			var adst = document.getElementById("KeFuDiv").style;
+			if (document.getElementById("alert_info").innerHTML.replace(/^\s+$/g,"").length > 0) {
+			adst.display = 'block';
+				adst.top = (bodyfrm.scrollTop + bodyfrm.clientHeight - 50) + "px";
+				adst.left = (bodyfrm.scrollLeft + bodyfrm.clientWidth - 500) + "px";
+			}
+			else {
+				adst.display = 'none';
+			}
+		}
 		function initIndex() {
 			showusername();
 			document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
@@ -283,7 +303,7 @@
 		function showdailog(){
 			var sound=document.getElementById("clickaudio");
 			sound.style.display="none";
-			Alert("告警声音已开启");
+			Alert("告警声音已开启",500);
 		}
 		//初始化目录树
 		function inittreeview(anodes) {
@@ -1167,9 +1187,9 @@
 				alertvalue = "";
 			var tbody = document.getElementById('realwarningdata-tbody');
 			var tableLength = tbody.rows.length;
-			for (var int = 0; int < tableLength; int++) {
-				tbody.deleteRow(0);
-			}
+			//for (var int = 0; int < tableLength; int++) {
+			//	tbody.deleteRow(0);
+			//}
 			var sensors = allsensors;
 			var obj_data = new Object();
 			var pt = 0;
@@ -1232,93 +1252,119 @@
 					}
 					if (obj_realdata.hasOwnProperty(sid)) {
 						obj_data = (obj_realdata)[sid];////
+						var rows=tbody.rows;
+						var trs = tbody.getElementsByTagName("tr");
+						for(var k=0;k<rows.length;k++){
+							if(rows[k].cells[0].outerText==(sid+"")){
+								var msg = obj_data[0].Message;
+								if (msg == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == ""){
+									tbody.deleteRow(k);
+									break;
+								}else{
+									if(rows[k].cells[3].outerText==(obj_data[0].Value *1).toFixed(Number_of_decimal)){
+										rows[k].cells[2].innerHTML=obj_data[0].Time;
+										rows[k].cells[3].innerHTML=(obj_data[0].Value *1).toFixed(Number_of_decimal);
+										break;
+									}else{
+										tbody.deleteRow(k);
+										showgaojing();
+										break;
+									}
+								} 
+							}
+						}
 						var msg = obj_data[0].Message;
 						if (msg == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == "") {
 							continue;
 						}
-						var alert_sys_name=getsysname(mnodes,nid);//站和子系统名称
-						alerttime = obj_data[0].Time.substr(11);
-						alertinfo = msg;
-						alertvalue = parseFloat(obj_data[0].Value).toFixed(Number_of_decimal);
-						sname =parentname+ sensors[i].Value.Name;
-						var xs = 1;//sensors[i].Value.Factor;  数据结构修改，value为已经乘过系数的数值，svalue为未乘以系统的原始值 
-						var type_td = getname(sensors[i].Value.Catalog);
-						//添加数据列表项
-						var tr = document.createElement('tr');
-						//tr.setAttribute("ondblclick","tableclick(this)");
-						var tdename = document.createElement('td');
-						var tdid = document.createElement('td');
-						var tdtype = document.createElement('td');
-						var tdtime = document.createElement('td');
-						var tdvalue = document.createElement('td');
-						//var tdvalue2 = document.createElement('td');
-						//var tdhistory = document.createElement('td');
-						//var tdwarnlog = document.createElement('td');
-						var tdmessage = document.createElement('td');
-						tdename.innerHTML = sname;
-						tdid.innerHTML = sid;
-						//tdid.style.cssText="display:none";
-						tdtype.innerHTML = type_td;
-						tdtype.style.cssText = "display:none";
-						tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
-						tdvalue.innerHTML = (obj_data[0].Value * xs).toFixed(Number_of_decimal);
-						//tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);
-						//tdhistory.setAttribute('backgroundColor', '#ffffff');
-						//tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
-						//tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
-						//tdwarnlog.setAttribute('onclick', 'towarnlog(' +sid + ')');
-						//tdwarnlog.setAttribute('backgroundColor', '#ffffff');
-						//tdwarnlog.style.cssText="display:none";
-						//tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
-						tdmessage.innerHTML = msg;
-						//tdmessage.style.cssText="display:none";
-						//tr.appendChild(tdid);
-						tr.appendChild(tdename);
-						tr.appendChild(tdtime);
-						tr.appendChild(tdvalue);
-						//tr.appendChild(tdvalue2);
-						//tr.appendChild(tdhistory);
-						//tr.appendChild(tdwarnlog);//z不显示不显示
-						tr.appendChild(tdtype);//不显示//不显示
-						tr.appendChild(tdmessage);// 告警信息
-						var cl = "#FFFFFF";
-						//隔行显示不同的颜色
-						if (pt % 2 == 0) {
-							cl = "#16b9c9";
+						if(k>=rows.length){
+							showgaojing();
 						}
-						tr.style.backgroundColor = cl;
-						//tr.cells[1].style.backgroundColor = cl;
-						//tr.cells[2].style.backgroundColor = cl; stationname +
-						//tr.cells[3].style.backgroundColor = cl;
-						pt++;
-						tbody.appendChild(tr);
-						if ((alertvalue !== null) && (alertvalue !== "NaN")) {
-							str_speech = str_speech +alert_sys_name+" "+sname + alertinfo + " 数值" + alertvalue;
-							str_alert = str_alert + " " + alerttime + "  " + ": " +alert_sys_name+" "+ sname + " " + type_td+" "+ alertinfo + " 数值为:" + alertvalue;
-						} else {
-							str_speech =str_speech +alert_sys_name+ sname + alertinfo;
-							str_alert = str_alert + " " + alerttime + "  " +": " +alert_sys_name+" "+ sname + " "+ type_td+" " + alertinfo + " ";// + alertvalue;
-						}
-						//speech.innerHTML = str_alert;//str_speech;
-						//speech.click();
-						//str_alert="告警:";
 					}
 				}
 				if (pt > 0) {
 					gaojing.innerHTML = "<pre  style='vertical-align:center;background-color: rgba(255,255,0,0);'>" + str_alert + "</pre>";
 					speech.innerHTML =str_speech;// str_alert;//str_speech;
 					speech.click();
-					fdck.style.display = "block";
+					//fdck.style.display = "block";
 				} else {
 					gaojing.innerText = "";
 					speech.innerHTML = "";
-					fdck.style.display = "none";
+					//fdck.style.display = "none";
 				}
 			}/*else{
-			layer.alert("没有符合条件的数据");
+			layer.alert("没有符合条件的数据");憧憬披荆斩棘
 		}*/
 			//tbody.rows[t_pt].scrollIntoView();
 			//refreshData();
+			function showgaojing(){
+				var alert_sys_name=getsysname(mnodes,nid);//站和子系统名称
+				alerttime = obj_data[0].Time.substr(11);
+				alertinfo = msg;
+				alertvalue = parseFloat(obj_data[0].Value).toFixed(Number_of_decimal);
+				sname =parentname+ sensors[i].Value.Name;
+				var xs = 1;//sensors[i].Value.Factor;  数据结构修改，value为已经乘过系数的数值，svalue为未乘以系统的原始值 
+				var type_td = getname(sensors[i].Value.Catalog);
+				//添加数据列表项
+				var tr = document.createElement('tr');
+				//tr.setAttribute("ondblclick","tableclick(this)");
+				var tdename = document.createElement('td');
+				var tdid = document.createElement('td');
+				var tdtype = document.createElement('td');
+				var tdtime = document.createElement('td');
+				var tdvalue = document.createElement('td');
+				//var tdvalue2 = document.createElement('td');
+				//var tdhistory = document.createElement('td');
+				//var tdwarnlog = document.createElement('td');
+				var tdmessage = document.createElement('td');
+				tdename.innerHTML = sname;
+				tdid.innerHTML = sid;
+				tdid.style.cssText="display:none";
+				tdtype.innerHTML = type_td;
+				tdtype.style.cssText = "display:none";
+				tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
+				tdvalue.innerHTML = (obj_data[0].Value * xs).toFixed(Number_of_decimal);
+				//tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);
+				//tdhistory.setAttribute('backgroundColor', '#ffffff');
+				//tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
+				//tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
+				//tdwarnlog.setAttribute('onclick', 'towarnlog(' +sid + ')');
+				//tdwarnlog.setAttribute('backgroundColor', '#ffffff');
+				//tdwarnlog.style.cssText="display:none";
+				//tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
+				tdmessage.innerHTML = msg;
+				//tdmessage.style.cssText="display:none";
+				tr.appendChild(tdid);
+				tr.appendChild(tdename);
+				tr.appendChild(tdtime);
+				tr.appendChild(tdvalue);
+				//tr.appendChild(tdvalue2);
+				//tr.appendChild(tdhistory);
+				//tr.appendChild(tdwarnlog);//z不显示不显示
+				tr.appendChild(tdtype);//不显示//不显示
+				tr.appendChild(tdmessage);// 告警信息
+				var cl = "#FFFFFF";
+				//隔行显示不同的颜色
+				if (pt % 2 == 0) {
+					cl = "#16b9c9";
+				}
+				tr.style.backgroundColor = cl;
+				//tr.cells[1].style.backgroundColor = cl;
+				//tr.cells[2].style.backgroundColor = cl; stationname +
+				//tr.cells[3].style.backgroundColor = cl;
+				pt++;
+				tbody.appendChild(tr);
+				if ((alertvalue !== null) && (alertvalue !== "NaN")) {
+					str_speech = str_speech +alert_sys_name+" "+sname + alertinfo + " 数值" + alertvalue;
+					str_alert = str_alert + " " + alerttime + "  " + ": " +alert_sys_name+" "+ sname + " " + type_td+" "+ alertinfo + " 数值为:" + alertvalue;
+				} else {
+					str_speech =str_speech +alert_sys_name+ sname + alertinfo;
+					str_alert = str_alert + " " + alerttime + "  " +": " +alert_sys_name+" "+ sname + " "+ type_td+" " + alertinfo + " ";// + alertvalue;
+				}
+				//speech.innerHTML = str_alert;//str_speech;
+				//speech.click();
+				//str_alert="告警:";
+			}
 		}
 		function getsysname(anodes,aid){
 			var sys_name;

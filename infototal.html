@@ -44,7 +44,9 @@
         //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
         //var t1 = window.setInterval("getrealdatabynodeid(-1);",30000);
     }*/
-    updatainfotree1(parent.infotreedata);//使用总node和总sensors进行汇总。
+    var asensors=JSON.parse(localStorage.getItem("allsensors"));
+    var a=JSON.parse(JSON.stringify(parent.infotreedata))
+    updatainfotree1(a);//使用总node和总sensors进行汇总。
     var myChar=echarts.init(document.getElementById("main")); 
     var option = {
         tooltip: {
@@ -97,7 +99,7 @@
                 },
                 initialTreeDepth:4,
                 expandAndCollapse: true,
-                data:parent.infotreedata,//data,/
+                data:a,//data,/
             }
         ]
     } ;
@@ -196,7 +198,7 @@
 		}
     }*/
     function updatainfotree1(treedata){//更新树形列表的数据内容,将标签分类统计结果归入树形列表
-        var asensors=JSON.parse(localStorage.getItem("allsensors"));
+        
         for(var j=0;j<treedata.length;j++){
             if((treedata[j].hasOwnProperty("children"))&&(treedata[j].children.length>0)){
                 treedata[j].value=treedata[j].children.length;

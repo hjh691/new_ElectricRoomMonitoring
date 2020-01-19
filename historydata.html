@@ -158,7 +158,7 @@
 				
 			}
 			setSelectOption("jcdd", sessionStorage.SensorId);
-			if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")){
+			if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")||(sessionStorage.timeindex>4)){
 				sessionStorage.timeindex=0;
 			}
 			$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");

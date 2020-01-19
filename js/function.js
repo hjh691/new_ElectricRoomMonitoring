@@ -589,16 +589,16 @@ function towarnlog(sorid) {
 //显示或关闭浮动窗口 userd by ele
 function showfudongdiv() {
 	//document.getElementById("alert_info").innerHTML="告警：温度过高，数值：12345.876";
-	if (document.getElementById("KeFuDiv").style.display == "none") {
-		document.getElementById("KeFuDiv").style.display = "block";
-	}
+	//if (document.getElementById("KeFuDiv").style.display == "none") {
+	//	document.getElementById("KeFuDiv").style.display = "block";
+	//}
 	document.getElementById("KeFuDiv").show;
 }
 function hidefudongdiv() {
-	if (document.getElementById("KeFuDiv").style.display == "block") {
-		document.getElementById("KeFuDiv").style.display = "none";
-	}
-	document.getElementById("KeFuDiv").show;
+	//if (document.getElementById("KeFuDiv").style.display == "block") {
+	//	document.getElementById("KeFuDiv").style.display = "none";
+	//}
+	document.getElementById("KeFuDiv").hidden;
 	//parent.window.document.getElementById('iframe_main').src='realwarning.html';
 }
 //获取全部的实时数据// used by electricroommonitoring
@@ -2764,7 +2764,7 @@ function spack() {
 		spkText = parent.window.document.getElementById('chatData');
 	}
 	var strText = spkText.innerHTML.trim();
-
+	//1#方案，使用audio标签，监测到不支持音频自动播放，就弹出人为干预提示字符点击可以播放。
 	/*$.ajax({
 		crossDomain: true,
 		type: "get",
@@ -2782,7 +2782,7 @@ function spack() {
 				playPromise.then(() => {
 					audio.play()
 				}).catch(()=> {
-				
+					document.getElementById("clickaudio").style.display="inline";
 				})
 			}
 			//setInterval("toggleSound()",1);
@@ -2793,14 +2793,15 @@ function spack() {
 			layer.alert(result);
 		}
 	});*/
+	//2#方案，使用iframe标签代替audio标签，直接播放，目前能用.
 	var url=jfjk_base_config.speechurl+"GetWav?text="+encodeURIComponent(strText);
 	var audio=$("#spkAudio")[0];
 	if (audio == null) {
 		audio = $("#spkAudio", window.parent.document);
 	}
 	audio.src=url;
-	//audio.load()
-	/*let playPromise = audio.play()
+	/*//audio.load()
+	let playPromise = audio.play()
 	if (playPromise !== undefined) {
 		playPromise.then(() => {
 			audio.play()
