@@ -176,6 +176,7 @@
 	var end;
 	var count;
 	var $table;
+	updatapcnav(8);
 	function decodedatas(obj_data){
 		objS = document.getElementById("jcdd");
 		var name=objS.options[objS.selectedIndex].innerText;
@@ -189,9 +190,9 @@
 				for (var i = 0; i <obj_data.length; i++) {
 					if(obj_data[i].Message){
 						var tr=document.createElement("tr");
-						if (count % 2 == 0) {
-							tr.setAttribute('style', "background-color:#16b9c9");
-						}
+						//if (count % 2 == 0) {
+						//	tr.setAttribute('style', "background-color:#16b9c9");
+						//}
 						//var td_did=document.createElement("td");
 						//td_did.innerHTML=objS.options[objS.selectedIndex].value;;
 						var td_dname=document.createElement("td");
@@ -236,6 +237,7 @@
 			w1 = undefined;
 		};
 	function showrealworning(){
+		//document.getElementById("jcdd").disabled=true;
 		var timedefine=document.getElementById("timedefine");
 		timedefine.style.display="none";
 		var warningtab = window.parent.document.getElementById("realwarningdata-tbody");
@@ -259,7 +261,7 @@
 		//	counter = iframe_main.document.getElementById("count_varning");
 		//}
 		//counter.innerHTML = tbl.rows.length;
-		moduletable('warnlogdata-tbody');
+		//moduletable('warnlogdata-tbody');
 		display();
 	}
 	function display(){   

@@ -151,7 +151,7 @@
 		var $table;
 			
 		function initpage(){
-		
+				updatapcnav(3);
 				if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
 				if(typeof(w1) == "undefined") {
 					w1 = new Worker("delay_worker.js");
@@ -205,6 +205,8 @@
 		var sensors=JSON.parse(localStorage.getItem("sensors"));
 		var obj_data=new Object();
 		var pt=0;
+		var kssj=getCurrentDate(1) + " 00:00:00";
+		var jssj=getCurrentDate(2);
 		if(sensors!=null){
 			for(var i=0;i<sensors.length;i++){
 				var sid=sensors[i].id+"";
@@ -233,6 +235,8 @@
 					tdtype.innerHTML=type_td;
 					tdtype.style.cssText="display:none";
 					tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
+					kssj=(obj_data[0].Time).substring(0,10)+" 00:00:00";//20200217  取当日的时间而不是当前时间
+					jssj=obj_data[0].Time;
 					tdvalue.innerHTML=(obj_data[0].Value*xs).toFixed(Number_of_decimal);
 					//tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);//此处应为第二个数值，目前没有意义
 					tdhistory.setAttribute('backgroundColor', '#ffffff');
@@ -296,32 +300,33 @@
 				$table.rows[ppt].style.backgroundColor="#85e494";
 				if(isfirst!="true"){
 					var temp_option=myChart2.getOption();
-					if(temp_option.series[0].data[temp_option.series[0].data.length-1][0]<strtodatetime(lasttime)){
-						temp_option.series[0].data.push([strtodatetime(lasttime),value0,temp_option.series[0].data.length]);
-						//temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
+					if(temp_option.series[0]){
+						if(temp_option.series[0].data[temp_option.series[0].data.length-1][0]<strtodatetime(lasttime)){
+							temp_option.series[0].data.push([strtodatetime(lasttime),value0,temp_option.series[0].data.length]);
+							//temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
+							if(maxvalue<value0){
+								maxvalue=value0;
+								maxval=(maxvalue+(maxvalue-minvalue)*0.2).toFixed(Number_of_decimal);
+								temp_option.yAxis[0].max=maxval;
+							}
+							if(minvalue>value0){
+								minvalue=value0;
+								minval=(minvalue-(maxvalue-minvalue)*0.2).toFixed(Number_of_decimal);
+								temp_option.yAxis[0].min=minval;
+							}
+							myChart2.setOption(temp_option);
+						}
 						if(maxvalue<value0){
 							maxvalue=value0;
-							maxval=(maxvalue+(maxvalue-minvalue)*0.2).toFixed(Number_of_decimal);
-							temp_option.yAxis[0].max=maxval;
+							option.series[0].data[0].value=maxvalue;
+							option.series[1].data[0].value=value0;
+							//myChart.setOption(option);
 						}
-						if(minvalue>value0){
-							minvalue=value0;
-							minval=(minvalue-(maxvalue-minvalue)*0.2).toFixed(Number_of_decimal);
-							temp_option.yAxis[0].min=minval;
-						}
-						myChart2.setOption(temp_option);
+						refreshData();
 					}
-					if(maxvalue<value0){
-						maxvalue=value0;
-						option.series[0].data[0].value=maxvalue;
-						option.series[1].data[0].value=value0;
-						//myChart.setOption(option);
-					}
-					refreshData();
 				}else{
 					isfirst="false";
-					var kssj=getCurrentDate(1) + " 00:00:00";
-					var jssj=getCurrentDate(2);
+					
 					//myChart2.showLoading();
 					gethistorydata(sensor_Id,kssj,jssj,1);
 				}
@@ -375,6 +380,8 @@
 			sessionStorage.SensorId=parseInt(tr.cells[5].innerHTML);
 			var kssj=getCurrentDate(1) + " 00:00:00";
 			var jssj=getCurrentDate(2);
+			kssj=(tr.cells[1].innerHTML).substring(0,10)+" 00:00:00";//20200217  取当日的时间而不是当前时间
+			jssj=(tr.cells[1].innerHTML);
 			myChart2.showLoading();
 			gethistorydata(sessionStorage.SensorId,kssj,jssj,1);
 		}
@@ -585,6 +592,11 @@
 		//labels = [],
 		//t;
 		myChart2.clear();
+		if(obj_chartdata==null){
+			myChart2.hideLoading();
+			return;
+			//drawchart();
+		}
 		minval=maxval=obj_chartdata[0].Value;
 		for (var i = 0; i <obj_chartdata.length; i++) {
 			pa.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])

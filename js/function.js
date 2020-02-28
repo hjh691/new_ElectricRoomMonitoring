@@ -287,11 +287,13 @@ function initpage1() {
 }
 //初始化信息汇总页面
 function inittotalpage(){  // used by electricroommonitor
+	
 	sessionStorage.pageindex=0;
 	document.getElementById("iframe_main").src="infototal.html";
 }
 // 初始化实时数据页面，根据不同站点、不同子系统来调用不同的页面 used by electricroommonitor 
 function initrealdata(){
+	
 	var pages=document.getElementById("iframe_main");
 	//var data=$("#tree").treeview("getSelected");
 	if(pages.src.indexOf("/realdata.html")<=0){
@@ -567,6 +569,7 @@ function tohistory(sorid) {
 				break;
 			}
 		}*/
+	
 	sessionStorage.SensorId = sorid;
 	parent.window.document.getElementById('iframe_main').src = 'historydata.html';
 }
@@ -581,6 +584,7 @@ function towarnlog(sorid) {
 				break;
 			}
 		}*/
+	
 	flag_warning = 0;
 	sessionStorage.SensorId = sorid;
 	parent.window.document.getElementById('iframe_main').src = 'warnlog.html';
@@ -930,9 +934,9 @@ function getrealsbydataid() {
 								//fdck.style.display="block";
 								//---实时告警列表---
 								tr = document.createElement('tr');
-								if (i % 2 == 0) {
-									tr.setAttribute('style', "background-color:#16b9c9");
-								}
+								//if (i % 2 == 0) {
+								//	tr.setAttribute('style', "background-color:#16b9c9");
+								//}
 								var tdid = document.createElement('td');
 								var tdname = document.createElement('td');
 								var tdvalue = document.createElement('td');
@@ -1003,6 +1007,7 @@ function loadstations_realdata() {
 }
 //load//////reuse  used by electricroommonitor 
 function loadstations_historydata() {
+	//updatapcnav(5);
 	sessionStorage.pageindex = 3;
 	//var slistname = $("#head_list_name").text();
 	//if (slistname != "请选择站点:") {
@@ -1011,6 +1016,7 @@ function loadstations_historydata() {
 	document.getElementById("iframe_main").src = 'historydata.html';
 }
 function loadstations_chart() {////reuse  used by electricroommonitor 
+	
 	sessionStorage.pageindex = 4;
 	//var slistname = $("#head_list_name").text();
 	//if (slistname != "请选择站点:") {
@@ -1019,6 +1025,7 @@ function loadstations_chart() {////reuse  used by electricroommonitor
 	document.getElementById("iframe_main").src = 'chart.html';
 }
 function loadstations_warnlog() {
+	//updatapcnav(8);
 	sessionStorage.pageindex = 5;
 	//var slistname = $("#head_list_name").text();
 	//if (slistname != "请选择站点:") {
@@ -1736,9 +1743,9 @@ function GetWarnLog(mkssj, mjssj) {
 							if (data.Result.Datas.hasOwnProperty("Err")) {
 								for (var i = 0; i < data.Result.Datas.Err.length; i++) { //data.Result.length
 									var tr = document.createElement('tr');
-									if (i % 2 == 0) {
-										tr.setAttribute('style', "background-color:#16b9c9");
-									}
+									//if (i % 2 == 0) {
+									//	tr.setAttribute('style', "background-color:#16b9c9");
+									//}
 									var tdid = document.createElement('td');
 									var tdname = document.createElement('td');
 									var tdvalue = document.createElement('td');
@@ -1828,9 +1835,9 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 								//if(data.Result.Datas.hasOwnProperty("Err")){
 								for (var i = 0; i < data.Result.Datas.Err.length; i++) { //data.Result.length
 									var tr = document.createElement('tr');
-									if (i % 2 == 0) {
-										tr.setAttribute('style', "background-color:#16b9c9");
-									}
+									//if (i % 2 == 0) {
+									//	tr.setAttribute('style', "background-color:#16b9c9");
+									//}
 									var tdid = document.createElement('td');
 									var tdname = document.createElement('td');
 									var tdvalue = document.createElement('td');
@@ -1922,9 +1929,9 @@ function GetSmsLog(mkssj, mjssj) {
 							if ((data.Result.hasOwnProperty("SmsLogs")) && (!jQuery.isEmptyObject(data.Result.SmsLogs))) {
 								for (var i = 0; i < data.Result.SmsLogs.length; i++) { //data.Result.length
 									var tr = document.createElement('tr');
-									if (i % 2 == 0) {
-										tr.setAttribute('style', "background-color:#16b9c9");
-									}
+									//if (i % 2 == 0) {
+									//	tr.setAttribute('style', "background-color:#16b9c9");
+									//}
 									var tdid = document.createElement('td');
 									var tdname = document.createElement('td');
 									var tdphonenumber = document.createElement('td');
@@ -2346,6 +2353,7 @@ function strtodatetime(str) {
 }
 //初始化绘图页面
 function initdrawing() {
+	
 	sessionStorage.pageindex = 1;
 	//var slistname = $("#head_list_name").text();
 	//if (slistname != "请选择图形:") {
@@ -3044,6 +3052,7 @@ function madecode(str) {
 }
 //初始化客户端下载页面，根据字符串生成二维码   used by electricroommonitor 
 function initmakecode() {
+	updatapcnav(12);
 	var str = toUtf8(this.location.href.substr(0, this.location.href.lastIndexOf('/')) + jfjk_base_config.app_path_name); // "/res/SubstationTemperature.apk");
 	//$("#a_code")[0].href = jfjk_base_config.strurl;
 	$("#a_code")[0].innerHTML = jfjk_base_config.serverurl;
@@ -3077,6 +3086,7 @@ function initrealwarning() {
 	moduletable('realwarning-tbody');
 }
 function initcontactus() {  //used by electricroommonitor 
+	updatapcnav(11);
 	document.getElementById('p1').innerHTML = jfjk_base_config.part1;
 	document.getElementById('p2').innerHTML = jfjk_base_config.part2;
 	document.getElementById('p3').innerHTML = jfjk_base_config.part3;
@@ -3087,6 +3097,7 @@ function initcontactus() {  //used by electricroommonitor
 	document.getElementById('email2').innerHTML = jfjk_base_config.email2;
 }
 function initsysteminfo(){
+	sessionStorage.pageindex=7;//20200214
 	document.getElementById('p1').innerHTML = jfjk_base_config.app_name;
 	document.getElementById('p2').innerHTML = jfjk_base_config.ver_id
 	document.getElementById('p3').innerHTML = jfjk_base_config.date;
@@ -3198,6 +3209,7 @@ function seletime(obj){
 		layer.alert("请选择要查询的测量点名称",2000);
 		return;
 	}
+	sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
 	var oneday=1000*60*60*24;
 	var today = new Date();
 	var ckssj,cjssj,ttime;
@@ -3206,6 +3218,7 @@ function seletime(obj){
 	sessionStorage.timeindex=$('input[name="timeselect"]:checked').val();//obj.value*1;
 	switch(obj.value*1){
 		case 0:
+			sel.style.display="";
 			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
 			sessionStorage.jssj = getCurrentDate(2) ;
 			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
@@ -3213,6 +3226,7 @@ function seletime(obj){
 			//layer.alert("没有符合条件的记录",3000);
 			break;
 		case 1:
+			sel.style.display="";
 			timedefine.style.display="none";
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			var yesterdaystar=ckssj-oneday;
@@ -3225,6 +3239,7 @@ function seletime(obj){
 			//layer.alert("没有符合条件的记录",3000);
 			break;
 		case 2:
+			sel.style.display="";
 			timedefine.style.display="none";
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			sessionStorage.kssj=dateToString(new Date(ckssj.setDate(1)),2);
@@ -3232,6 +3247,7 @@ function seletime(obj){
 			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
 			break;
 		case 3:
+			sel.style.display="";
 			timedefine.style.display="none";	
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			var lastMonthFirst = new Date(ckssj - oneday * ckssj.getDate());
@@ -3243,13 +3259,30 @@ function seletime(obj){
 			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
 		break;
 		case  4:
+			sel.style.display="";
 			var timedefine=document.getElementById("timedefine");
 			if(timedefine.style.display=="none"){
 				timedefine.style.display="inline";
 			}
 			break;
 		case 5:
+			sel.style.display="none";
 			showrealworning();
 			break;
+	}
+}
+//导航按钮选中指示标志//20200212
+function updatapcnav(obj){
+	for(var i=1;i<14;i++){
+		var nav=document.getElementById("nav"+i);
+		if(nav==null){//如果为null。就获取父窗口下的元素。
+			nav=window.parent.document.getElementById("nav"+i);
+		}
+		nav.style.color=""
+		nav.style.backgroundColor="";
+		if(i==obj){
+			nav.style.backgroundColor="#c0c0c0";
+			nav.style.color="#0000f0"
+		}
 	}
 }

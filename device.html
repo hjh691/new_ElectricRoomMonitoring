@@ -138,15 +138,16 @@
 			$('table').tablesort().data('tablesort');
 		});
         function initdevice(){
+			updatapcnav(9);
 			var parentid=-100,parentname="";
 			tbody=document.getElementById("device-tbody");
             sensors=JSON.parse(localStorage.getItem("sensors"));
 			if(sensors!=null){
 				for(var i=0;i<sensors.length;i++){
                     var tr=document.createElement("tr");
-                    if (i % 2 == 0) {
-						tr.setAttribute('style', "background-color:#16b9c9");
-					}
+                    //if (i % 2 == 0) {
+					//	tr.setAttribute('style', "background-color:#16b9c9");
+					//}
                     var td_did=document.createElement("td");
 					td_did.innerHTML=sensors[i].id;
 					if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){

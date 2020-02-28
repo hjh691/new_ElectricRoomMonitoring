@@ -111,6 +111,7 @@
 		var jssj=getCurrentDate(2);
 		initpage();
 		function initpage(){
+			updatapcnav(5);
 			var parentid=-100,parentname="";
 			var maps=[];
 			document.getElementById("kssj_history").value = sessionStorage.kssj;
@@ -194,6 +195,7 @@
 				}
 			}
 			var sel=document.getElementById("jcdd");
+			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
 			if(sel.options.length<=0){
 				layer.alert("请选择要查询的测量点名称");
 				return;
@@ -215,7 +217,7 @@
 			sessionStorage.kssj = kssj;
 			sessionStorage.jssj = jssj;
 			sessionStorage.SensorId = sel.value;
-			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
+			
 			//xs=sensors[sel.selectedIndex].Value.Factor;
 			$("#historydata-tbody tr").empty();
 			
@@ -270,7 +272,7 @@
 					tr.appendChild(tdvalue1);
 					tr.appendChild(tdvalue2);
 					tr.appendChild(tdvalue3);
-					var tbody = document.getElementById('historydata-tbody');
+					var tbody = document.getElementById('historydata-tbody'); Terra cotta warriors.
 					tbody.appendChild(tr);
 				}
 				ps=obj_data.length;
@@ -299,9 +301,9 @@
 					}else{
 						avgvalue=(avgvalue/ct);
 						var tr = document.createElement('tr');
-						if (ps% 2 == 0) {
-							tr.setAttribute('style', "background-color:#16b9c9");
-						}
+						//if (ps% 2 == 0) {
+						//	tr.setAttribute('style', "background-color:#16b9c9");
+						//}
 						var tdname = document.createElement('td');
 						tdname.setAttribute('class', 'seneorname');
 						var tdtime = document.createElement('td');
@@ -342,9 +344,9 @@
 				}
 				avgvalue=(avgvalue/ct);
 				var tr = document.createElement('tr');
-				if (ps% 2 == 0) {
-					tr.setAttribute('style', "background-color:#16b9c9");
-				}
+				//if (ps% 2 == 0) {
+				//	tr.setAttribute('style', "background-color:#16b9c9");
+				//}
 				var tdname = document.createElement('td');
 				tdname.setAttribute('class', 'seneorname');
 				var tdtime = document.createElement('td');
@@ -401,9 +403,9 @@
 					}else{
 						avgvalue=(avgvalue/ct);
 						var tr = document.createElement('tr');
-						if (ps% 2 == 0) {
-							tr.setAttribute('style', "background-color:#16b9c9");
-						}
+						//if (ps% 2 == 0) {
+						//	tr.setAttribute('style', "background-color:#16b9c9");
+						//}
 						var tdname = document.createElement('td');
 						tdname.setAttribute('class', 'seneorname');
 						var tdtime = document.createElement('td');
@@ -444,9 +446,9 @@
 				}
 				avgvalue=(avgvalue/ct);
 				var tr = document.createElement('tr');
-				if (ps% 2 == 0) {
-					tr.setAttribute('style', "background-color:#16b9c9");
-				}
+				//if (ps% 2 == 0) {
+				//	tr.setAttribute('style', "background-color:#16b9c9");
+				//}
 				var tdname = document.createElement('td');
 				tdname.setAttribute('class', 'seneorname');
 				var tdtime = document.createElement('td');

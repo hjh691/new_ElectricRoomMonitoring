@@ -32,14 +32,14 @@
 			<!--end No.1value="系统设置"-->
 			<span id="yhout" ><a
 					href="javascript:void(0)" style="color:white;">[登录]</a></span>
-			<input type="button" class="topbar-bigbutton" value="联系我们"
+			<input id="nav11" type="button" class="topbar-bigbutton" value="联系我们"
 				style="background:url(res/home.jpg) no-repeat center top;"
 				onclick="showcontactus()"/>
-			<input type="button" class="topbar-bigbutton" value="APP下载"
+			<input id="nav12" type="button" class="topbar-bigbutton" value="APP下载"
 				style="background:url(res/chilun.jpg) no-repeat center top;" onclick="showdownload()"/>
 			
 			<!--<input type="button"  class="topbar-bigbutton" value="数据浏览" style="background:url(res/sanse.jpg) no-repeat center top;margin-top:10px;"></input>-->
-			<input type="button" class="topbar-bigbutton" value="操作指南"
+			<input id="nav13" type="button" class="topbar-bigbutton" value="操作指南"
 				style="background:url(res/bar.jpg) no-repeat center top;" onclick="showhelp()"/>
 		</div>
 		<hr style="display:none" />
@@ -57,16 +57,16 @@
 			<div class="navigation" >
 				<div class="row-navigation">
 					<ul class="pc-nav">
-						<li><a href="javascript:void(0)" onclick="inittotalpage()">信息总览</a></li>
-						<li><a href="javascript:void(0)" onclick="initdrawing()" id="realstate">状态图</a></li>
-						<li id="li_realdata"><a id="realdata" href="javascript:void(0)" onclick="initrealdata()">实时数据</a></li>
-						<li id="li_preview" style="display: none;"><a id="preview" href="javascript:void(0)" onclick="showpreview()">实时预览</a></li>
-						<li id="li_historydata"><a id="historydata" href="javascript:void(0)" onclick="loadstations_historydata()">历史数据</a></li>
-						<li id="li_replay" style="display: none;"><a id="replay" href="javascript:void(0)" >视频回放</a></li>
-						<li id="li_historychart"><a id="historychart" href="javascript:void(0)" onclick="loadstations_chart()">趋势对比</a></li>
-						<li id="li_warnlog" ><a id="warnlog" href="javascript:void(0)" onclick="loadstations_warnlog()">告警信息</a></li>
-						<li><a href="javascript:void(0)" onclick="showdevice()">设备信息</a></li>
-						<li><a href="javascript:void(0)" onclick="showpage(0)" >系统信息</a></li>
+						<li><a id="nav1" href="javascript:void(0)" onclick="inittotalpage()">信息总览</a></li>
+						<li><a id="nav2" href="javascript:void(0)" onclick="initdrawing()" id="realstate">状态图</a></li>
+						<li id="li_realdata"><a id="nav3" href="javascript:void(0)" onclick="initrealdata()">实时数据</a></li>
+						<li id="li_preview" style="display: none;"><a id="nav4" href="javascript:void(0)" onclick="showpreview()">实时预览</a></li>
+						<li id="li_historydata"><a id="nav5" href="javascript:void(0)" onclick="loadstations_historydata()">历史数据</a></li>
+						<li id="li_replay" style="display: none;"><a id="nav6" href="javascript:void(0)" >视频回放</a></li>
+						<li id="li_historychart"><a id="nav7" href="javascript:void(0)" onclick="loadstations_chart()">趋势对比</a></li>
+						<li id="li_warnlog" ><a id="nav8" href="javascript:void(0)" onclick="loadstations_warnlog()">告警信息</a></li>
+						<li><a id="nav9" href="javascript:void(0)" onclick="showdevice()">设备信息</a></li>
+						<li><a id="nav10" href="javascript:void(0)" onclick="showpage(0)" >系统信息</a></li>
 						<li id="clickaudio" style="float:right;font-size:16px;display: none;"><a href="javascript:void(0)" style="color: red;" onclick="showdailog()">开启告警声音</a></li>
 					</ul>
 				</div>
@@ -276,6 +276,7 @@
 			}
 		}
 		function initIndex() {
+			
 			showusername();
 			document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
 			//document.getElementById('company_log').src = jfjk_base_config.log_src;
@@ -586,9 +587,9 @@
 				break;
 			}
 		}
-		//测试显示机房监控模块的页面想双休的员工、想朝九晚五的员工、钱多事少离家近的员工、要求工作环境舒适的员工、还没有为企业做事就想拿高薪的员工、受不了委屈和工作耐挫力的员工
-		//不拿结果和方案汇报工作的员工、没有远景规划的员工、没有与时俱进思维的员工、做事慢悠悠低效率的员工、做人没品德的员工、没有担当的员工、抱怨公司不足的员工、只讲苦劳不重结果的员工。
+		
 		function showpage(pid){
+			updatapcnav(10);
 			switch(pid){
 				case 0:
 					document.getElementById("iframe_main").src="systeminfo.html";
@@ -658,15 +659,8 @@
 			}
 			return infotree;
 		}
-		//book,notebook,pen,pencil,ruler,rubber,pencil-box,desk,chair,cup,glass,classroom,blackboard,teacher,student,playground,lab,libray,erase;eighty,fifty,sixty,sevety,hundred,
-		//one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,nineteen,twenty,thirty,forty,ninety,thousand,million
-		//January,February,March,April,May,June,July,August,September,October,November,December,spring,summer,autumn,winter,what is date  today?
-		//Sunday,Monday,Tuseday,Wednesday,Thursday,Friday,Saturday,What day is today?
-		//father,mather,brother,sister,uncle,aunt,grandpa,grandma,cousin,classmate,friend; who is she/he? I,you,he/she,it,me,you,him/her,it,we,you,they,us,you,them,
-		//my,your,his/her,our,your,their,mine,yours,his/hers,ours,yours,theirs,table,plate,bowl,cup,glasses,bottle,
-		//tall,short,fat,thin,long,short,far,near,old,young,boy,girl,man,woman,men,women,sing,dance,talk,jump,run,walk,ride,fly,play,
-		//
-		//
+		//silkroad Terra cotta warrior big wild goose pagoda palace Greenwood riverside highschool held ring note village arrive leave life live nother other
+		//Olympic thousand hundred trip travel tour journey visit interest amazing prefect line online drum bell another ever never 
 		//
 		//
 		//
@@ -801,22 +795,27 @@
 			return tree;
 		}
 		function showdownload() {
+			
 			document.getElementById("iframe_main").src = "app_download.html"
 			sessionStorage.pageindex=200;
 		}
 		function showhelp() {
+			updatapcnav(13);
 			document.getElementById("iframe_main").src = "help.html"
 			sessionStorage.pageindex=100;
 		}
 		function showcontactus() {
+			
 			document.getElementById("iframe_main").src = "ContactUs.html"
 			sessionStorage.pageindex=300;
 		}
 		function showdevice(){
+			
 			document.getElementById("iframe_main").src="device.html";
 			sessionStorage.pageindex=6;
 		}
 		function showpreview(){
+			
 			sessionStorage.pageindex=8;
 			document.getElementById("iframe_main").src="video.html";
 		}
@@ -830,7 +829,7 @@
 		function reloadDataGrid() {
 			isfree = "true";
 		}
-		//获取指定节点的图形列表被动性工作的员工、不能自主学习的员工、格局小的员工、太小气的员工、太自私的员工、不懂合作的员工、不诚信的员工
+		//获取指定节点的图形列表
 		function GetBinariesByType(atype, anodeid) {
 			var url = jfjk_base_config.baseurl + "/GetBinariesByType?type=" + atype + "&typeid=" + anodeid;
 			url = encodeURI(url);
@@ -1343,12 +1342,12 @@
 				//tr.appendChild(tdwarnlog);//z不显示不显示
 				tr.appendChild(tdtype);//不显示//不显示
 				tr.appendChild(tdmessage);// 告警信息
-				var cl = "#FFFFFF";
+				//var cl = "#FFFFFF";
 				//隔行显示不同的颜色
-				if (pt % 2 == 0) {
-					cl = "#16b9c9";
-				}
-				tr.style.backgroundColor = cl;
+				//if (pt % 2 == 0) {
+				//	cl = "#16b9c9";
+				//}
+				//tr.style.backgroundColor = cl;
 				//tr.cells[1].style.backgroundColor = cl;
 				//tr.cells[2].style.backgroundColor = cl; stationname +
 				//tr.cells[3].style.backgroundColor = cl;

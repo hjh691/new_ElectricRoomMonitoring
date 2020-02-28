@@ -131,6 +131,7 @@
 		//初始化历史数据图形显示页面（在进入趋势图页面时触发）。
 		var check_val = [],check_name=[];
 		var kssj,jssj;
+		updatapcnav(7);
 		inithistorychart();
 		function inithistorychart() {
 
@@ -256,6 +257,7 @@
 					error: function(jqXHR, textStatus, errorThrown) {
 						sessionStorage.errortime++;
 						ajaxLoadingHidden();
+						decodedatas([]);//20200214,传一个空数组
 						//myChart.hideLoading();
 						if (errorThrown == "Unauthorized") {
 							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
@@ -278,8 +280,10 @@
 									decodedatas( data.Result.Datas);
 								} else {
 									layer.alert("没有符合条件的记录",2000);
+									decodedatas([]);//20200214,传一个空数组
 								}
 							} else {
+								decodedatas([]);//20200214,传一个空数组
 								layer.alert(data.Error);
 							}
 						}
