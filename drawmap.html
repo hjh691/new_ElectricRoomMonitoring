@@ -44,7 +44,7 @@
 </div>
 	<script type="text/javascript">
 		var j=0;
-		var BinariesId=-1;
+		var BinariesId=sessionStorage.txid;
 		$(document).ready(function(){
 			$.base64.utf8encode = true;
 			if(sessionStorage.map_module==1){
@@ -66,14 +66,14 @@
 			w1.onmessage = function(event) {
 					//document.getElementById("result").innerHTML = event.data;
 					i++
-					if(i%2==0){
+					if(i%10==0){
 						//getrealdatabynodeid(-1);
 						refresh();
 					}
 				};
 			} else {
 				//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
-				var t1 = window.setInterval("refresh();",1000);
+				var t1 = window.setInterval("refresh();",10000);
 			}
 			});
 		function initpage(){
@@ -95,7 +95,7 @@
 			}else{
 				BinariesId=-1;
 			}
-			setSelectOption("txlb", BinariesId);
+			setSelectOption_txlb("txlb", BinariesId);
 			if(binaries!=null&&BinariesId==-1){
 				var opts=sel_sensor.getElementsByTagName("option");
 				//opts[0].selected=true;
@@ -114,6 +114,24 @@
 			//queryhistorydata();
 			GetBinary(BinariesId);
 		}
+	function setSelectOption_txlb(objid, sensor) {
+		var sel = document.getElementById(objid);
+		var options = sel.options;
+		for (var i = 0; i < options.length; i++) {
+			if (options[i].value == sensor) {
+				options[i].defaultSelected = true;
+				options[i].selected = true;
+				break;
+			}
+		}
+		if(options.length<=0){
+			BinariesId=-1;
+		}else if(i>=options.length){
+			BinariesId=options[0].value;
+			sessionStorage.txid=BinariesId;
+		}
+		
+	}
 		function refresh(){
 			var graphic = JSON.parse(sessionStorage.contents);
 			drawmap(graphic);
@@ -139,6 +157,7 @@
 		function getbinary(){
 			var txlb= document.getElementById("txlb");
 			BinariesId=txlb.value;
+			sessionStorage.txid=BinariesId;//保存图形id
 			GetBinary(BinariesId);
 		}
 		</script>

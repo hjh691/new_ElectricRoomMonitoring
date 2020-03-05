@@ -131,6 +131,7 @@
 		var infotreeobj = new Object();
 		var allsensors = null;
 		var nodes = null, nodeid = -1;
+		sessionStorage.txid=-1;//20200228 初始化一次图形id
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
@@ -258,7 +259,7 @@
 					content.style.height = mheight + "px";
 				}
 			}
-			//initIndex();
+			//initIndex();//窗口尺寸变化时是否重画所有内容。
 		}
 		window.onresize = window.onscroll = refreshwindow;//  
 		function resetContent() {
@@ -281,7 +282,7 @@
 			document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
 			//document.getElementById('company_log').src = jfjk_base_config.log_src;
 			//document.getElementById('company_info').href = jfjk_base_config.company_url;
-			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
+			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
 			sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
 			//sessionStorage.pageindex = 1;
 			//getgraphics();
@@ -412,6 +413,8 @@
 						}
 						//iframe_main.window.num=0;
 						updatanav(1);
+					} else if(data.Catalog=="机房监控"){//20200304
+						updatanav(2);
 					} else {
 						//updatanav(1);
 						//sessionStorage.SensorId = data.id;
@@ -557,6 +560,8 @@
 			GetBinariesByType("NodeGraphic", infotreeobj.id);
 			if(firstNode.Catalog=="视频监控"){
 				updatanav(0);
+			}else if(firstNode.Catalog=="机房监控"){
+				updatanav(2);
 			}else{updatanav(1);}
 			//setTimeout(function(){if(sessionStorage.pageindex==0){
 			//	document.getElementById("iframe_main").src="infototal.html";
@@ -576,15 +581,28 @@
 				}
 				break;
 				case 1:
-				document.getElementById("li_realdata").style.display="inline"
-				document.getElementById("li_historydata").style.display="inline";
-				document.getElementById("li_warnlog").style.display="inline"
-				document.getElementById("li_historychart").style.display="inline";
-				document.getElementById("li_preview").style.display="none";
-				if(sessionStorage.pageindex==8){
-					sessionStorage.pageindex=2;
-				}
+					document.getElementById("li_realdata").style.display="inline";
+					document.getElementById("li_realdata").innerHTML ='<a id="nav3" href="javascript:void(0)" onclick="initrealdata()">实时数据</a>';
+					document.getElementById("li_historydata").style.display="inline";
+					document.getElementById("li_warnlog").style.display="inline"
+					document.getElementById("li_historychart").style.display="inline";
+					document.getElementById("li_preview").style.display="none";
+					if(sessionStorage.pageindex==8){
+						sessionStorage.pageindex=2;
+					}
 				break;
+				case 2://20200304 add 机房监控下的导航栏的显示内容
+					var li=document.getElementById("li_realdata");
+					li.style.display="inline";
+					li.innerHTML ='<a id="nav3" href="javascript:void(0)" onclick="initrealdata()">实时状态</a>';
+					document.getElementById("li_historydata").style.display="inline";
+					document.getElementById("li_warnlog").style.display="inline"
+					document.getElementById("li_historychart").style.display="inline";
+					document.getElementById("li_preview").style.display="none";
+					if(sessionStorage.pageindex==8){
+						sessionStorage.pageindex=2;
+					}
+					break;
 			}
 		}
 		

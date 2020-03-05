@@ -4,7 +4,6 @@
    <meta charset="utf-8"> 
    <title>视频预览</title>
    <link rel="stylesheet" href="css/bootstrap.min.css" />
-   
    <link rel="stylesheet" href="css/preview.css" /> 
    <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
    <script src="js/bootstrap.js"></script>
@@ -20,7 +19,6 @@
 </head>
 <style>
 </style>
-
 <body >
     <!--h1-- class="btn btn-success btn-large"><i class="glyphicon glyphicon-user"></i>Hello, world!<li><a href="#tab3" data-toggle="tab">Html</a></li>
         <li><a href="#tab4" data-toggle="tab">javascript</a></li></!--h1 -->
@@ -30,7 +28,6 @@
     </ul>-->
     <div class="tab-content"  allowfullscreen="true" >
         <div class="parent" >
-            
             <div class="column" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;flex:1.1;">
                 <div id="dplayer" style="width:800px;height:600px;background-color: gray;">
                 </div>
@@ -77,7 +74,6 @@
                                 <button ><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz"> 抓图</a></button>
                             </td>
                         </tr>
-                        
                         <tr>
                             <td colspan="3"><button style="display: none;"><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz1"> 抓图</a></button>
                                 <input type="button" class="btn" value="抓图" onclick="clickCapturePic();" />onclick="clickCapturePic();"
@@ -100,7 +96,6 @@
                     <legend>设备列表</legend>
                     <form class="opinfo" id="sz_list"></form>
                 </fieldset>
-               
                 <!--<fieldset class="playback" >
                     <legend>回放</legend>
                     <table width="100%" cellpadding="0" cellspacing="3" style="border:0">
@@ -143,7 +138,6 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                               
                                 <input type="button" class="btn2" value="开始剪辑" onclick="clickStartRecord();" />
                                 <input type="button" class="btn2" value="停止剪辑" onclick="clickStopRecord();" />
                                 <input type="button" class="btn2" value="OSD时间" onclick="clickGetOSDTime();" />&nbsp;<input id="osdtime" type="text" class="txt" readonly />
@@ -259,7 +253,6 @@
 					lab.appendChild(input);
 					lab.appendChild(spn);
                     p.appendChild(lab);
-                    
 					sel_sensor.appendChild(p);
                 }
                 for(j=0;j<sel_sensor.length;j++){
@@ -375,7 +368,6 @@
                         player = null;
                     }
                 }
-                
                 player = flvjs.createPlayer({
                     type: 'flv',
                     url: url,//'../mp401.flv',
@@ -399,7 +391,6 @@
                         url: url,//
                         type: 'flv',
                     },
-                    
                 });
                 dp.on('play',function(){
                     //console.log("预览成功");
@@ -453,7 +444,6 @@
                 canvas.width = dp.video.videoWidth;
                 canvas.height = dp.video.videoHeight;
                 canvas.getContext('2d').drawImage(dp.video, 0, 0, canvas.width, canvas.height);
-
                 zhuavideo.href = canvas.toDataURL();
                 zhuavideo.download = "DPlayer.png";
             });
@@ -471,6 +461,5 @@
             })
         }*/
     </script>
-    
 </body>
 </html>

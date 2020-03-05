@@ -84,22 +84,19 @@
 			<td style="width:100px;border:0px;width:120px;">	
 				<select id="jcdd" style="font-size:16px;width:153px;">
 				</select>
-			</td>
+			</td><head>morning</head>affternoon
 			<td class="condition"style="width:100px;"> 起止时间:</td>
 			<td class="condition"><input  type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:190px;"></input></td>
 			<td class="condition" style="width:30px;">至</td>
 			<td class="condition"><input  type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_warning" style="width:190px;"></input></td>
 			<td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="querywarnlog(0)" >
 			</input><input class="button"type="button" id="chaxun"style="width:100px" value="查询全站" onclick="querywarnlog(1)" ></input></td>
-			
 			</tr>
 		</table>-->
 			<div class="rowlay" ><b>
 				计量点名称：
-				<select id="jcdd" onchange="gradeChange()" >
-				
+			<select id="jcdd" onchange="gradeChange()" >
 			</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
-			
 			<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
 			<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
 			<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
@@ -114,15 +111,12 @@
 			<input class="button"type="button" id="chaxun"style="width:100px;font-size:16px;height: 30px;line-height: 30px;display:none" value="查询全站" onclick="querywarnlog(1)" ></input></b>
 			</span>
 			</div>
-		
-		<div  class="rowlay" style="margin-bottom:10px; width:100%;display: none;" align="center">
-			<ul class="count_info" align="center" >
+		<div  class="rowlay" style="margin-bottom:10px; width:100%;display: none;" text-align="center">
+			<ul class="count_info" text-align="center" >
 				<!--<li style="width:50px"><b>站名：</b></li><span> <a id="realwarnlog" href="javascript:void(0)" onclick="disrealwarnlog()">当前</a></span>-->
 				<li id="station_name"style="width:50px;margin-right:10px;display:none"> </li>
-				
 				<li style="width:50px;margin-right:10px">记录数：</li>
 				<li id="count_val"style="width:50px;margin-right:10px"> </li>
-
 				<!--<li style="width:50px;margin-right:10px"><b>标签名称：</b> </li>
 				<li id="normal_count"style="width:150px;margin-right:10px"> </li>
 				<li style="width:50px;margin-right:10px"><b>异常数：</b></li>
@@ -130,9 +124,7 @@
 				 -->
 				 <li style="width:50px;margin-right:10px"></li>
 			</ul>
-			
 		</div>
-		
 		<div >
 			<div style="text-align: center;margin:6px;font-size: 18px;">
 			<a id="btn0"></a>
@@ -147,24 +139,29 @@
 			<a>页&nbsp;</a>
 			<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
 			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="method5('warnlogtable')">导出Excel表格</a>
+			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;display: none;" onclick="tongji('tongjitable')">统计报表</a>
 			</div>
 		<table id="warnlogtable" style="margin: auto;">
-			<thead>
-				<tr >
+			<caption id="war_caption" style="text-align: center;font-size:18px;display: none;">告警信息统计报表</caption>
+			<tr>
+				<th>开始时间</th>
+				<th id="tj_kssj"></th>
+				<th>终止时间</th>
+				<th id="tj_zzsj"></th>
+			</tr>
+			<tr >
 				<th>测量点名称</th>
 				<th>告警时间</th>
 				<th>数值</th>	
 				<th>告警内容</th>
 				<!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>-->
-				</tr>
-			</thead>
+			</tr>
 			<tbody id='warnlogdata-tbody' style="width:820px;height:610px; overflow:auto;">
 			</tbody>
 		</table>
 	</div>
 	<div id="indicatorContainer"></div>
 	</div>
-	
 	<script>
 	var pageSize = 50;    //每页显示的记录条数
 	var curPage=0;        //当前页
@@ -186,6 +183,8 @@
 			for(var j=$table.rows.length-1;j>=0;j--){
 				$table.removeChild($table.rows[j]);
 			}
+			document.getElementById("tj_kssj").innerHTML=sessionStorage.kssj;
+			document.getElementById("tj_zzsj").innerHTML=sessionStorage.jssj;
 			if(obj_data){
 				for (var i = 0; i <obj_data.length; i++) {
 					if(obj_data[i].Message){
@@ -204,7 +203,7 @@
 						var value=obj_data[i].Value;//(Math.random() * 10) - 0;
 						td_dadr.innerHTML=(value*1).toFixed(Number_of_decimal);
 						var td_dtype=document.createElement("td");
-						td_dtype.innerHTML=obj_data[i].Message;//"数值越限";/**/
+						td_dtype.innerHTML=obj_data[i].Message;//"数值越限";/**/放松警惕保持警戒盯住了
 						//tr.appendChild(td_did);
 						tr.appendChild(td_dname);
 						tr.appendChild(td_dtime);
@@ -225,7 +224,12 @@
 		display();
 	}
 	function gradeChange() {
-		$("#warnlogdata-tbody tr").empty();
+		//$("#warnlogdata-tbody tr").empty();
+		var tbl = document.getElementById('warnlogdata-tbody');
+		var tableLength = tbl.rows.length;
+		for (var int = 0; int < tableLength; int++) {
+			tbl.deleteRow(0);
+		}
 		document.getElementById("count_val").innerHTML="";
 		var objS = document.getElementById("jcdd");
 		sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
@@ -242,7 +246,8 @@
 		timedefine.style.display="none";
 		var warningtab = window.parent.document.getElementById("realwarningdata-tbody");
 		var trs = warningtab.getElementsByTagName("tr");
-
+		document.getElementById("tj_kssj").innerHTML="";
+		document.getElementById("tj_zzsj").innerHTML="";
 		$table = document.getElementById("warnlogdata-tbody");
 		var trl = document.createElement('tr');
 		if ($table == null) {
@@ -253,7 +258,7 @@
 			tr = $table.rows[0];
 			$table.removeChild(tr);
 		}
-		for (var i = 0; i < trs.length; i++) {
+		for (var i = 0; i < trs.length; i++) {//
 			$table.appendChild($(trs[i].outerHTML)[0]);
 		}
 		//var counter = document.getElementById("count_varning");
@@ -265,7 +270,6 @@
 		display();
 	}
 	function display(){   
-		
 		//var $table=$("#warnlogdata-tbody");
 		if(!$table){
 			return;
@@ -275,13 +279,10 @@
 		// alert("page==="+page);
 		curPage=1;    // 设置当前为第一页
 		displayPage(1);//显示第一页
-		
 		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
 		document.getElementById("sjzl").innerHTML="数据总量 " + len + "";        // 显示数据量
 		document.getElementById("pageSize").value = pageSize;
 	}
-		
-		
 		function firstPage(){    // 首页
 			curPage=1;
 			direct = 0;
@@ -313,8 +314,6 @@
 			direct = 0;
 			displayPage();
 		}
-		
-		
 		function setPageSize(){    // 设置每页显示多少条记录
 			pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
 			if (!/^[1-9]\d*$/.test(pageSize)) {
@@ -328,8 +327,6 @@
 				firstPage();
 				displayPage();
 		}
-	
-
 	function displayPage(){
 		if(curPage <=1 && direct==-1){
 			direct=0;
@@ -340,23 +337,16 @@
 			layer.alert("已经是最后一页了");
 			return ;
 		}
-		
 		lastPage = curPage;
-		
 		// 修复当len=1时，curPage计算得0的bug
 		if (len > pageSize) {
 			curPage = ((curPage + direct + len) % len);
 		} else {
 			curPage = 1;
 		}
-	
-		
 		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";        // 显示当前多少页
-		
 		begin=(curPage-1)*pageSize ;// 起始记录号
 		end = begin + 1*pageSize ;    // 末尾记录号
-		
-		
 		if(end > len ) end=len;
 		//var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
 		for ( var i = 0; i<len; i++ ) {
@@ -372,7 +362,6 @@
 		});*/
 
 		}
-
 	</script>
 </body>
 </html>

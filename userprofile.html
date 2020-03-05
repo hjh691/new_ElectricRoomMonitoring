@@ -8,7 +8,6 @@
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
-	
 </head>
 <body onload="GetUserProfile()">
 	<div style="width:100%;height:100%;">
@@ -54,7 +53,6 @@
 			<td><input id="up-yhqx" type="text" style="width:150px" value=""></input>
 			</td>
 			</tr>
-				
 			</span>
 			<span>
 				<tr>
@@ -62,7 +60,6 @@
 				<td><input id="up-tel" type="text" style="width:150px" value=""></input>
 				</td>
 				</tr>
-					
 			</span>
 			<span>
 				<tr>
@@ -70,7 +67,6 @@
 				<td><input id="up-email" type="text" style="width:150px" value=""></input>
 				</td>
 				</tr>
-					
 				</span>
 			<tr>
 			<td class="table-lable"> 详细说明:</td>
@@ -82,7 +78,6 @@
 			<tr style="height:30px">
 			</tr>
 			<tr>
-			
 			<td class="table-lable">
 				<input type="button" id="info_ok" onclick="infook()" style="margin-left:10px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);" value="确定"/></td>
 			<td class="table-lable">	<input type="button" name="reset" id="reset" style="margin-left:10px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);" onclick="javascript:history.go(-1)" value="取消"/>
@@ -90,7 +85,6 @@
 			</td>
 			</tr>
 			</table>
-			
 		</form>
 	</div>
 	<script>
@@ -124,14 +118,13 @@
 				data:JSON.stringify(arruserinfo),
 				timeout: 10000,
 				error: function(XMLHttpRequest, textStatus, errorThrown) {
-					layer.alert('密码修改操作失败');
+					layer.alert('用户信息修改操作失败,请稍后重试！');
 				},
 				success: function(data, status) {
 					if (status == "success") {
 						if (data.Error == null) {
-							layer.alert("密码修改成功，请用新密码登录");
+							layer.alert("用户信息修改成功，请用新密码登录");
 							window.location.href = "javascript:void(0)";
-							top.location = "index.html";
 							return;
 						} else {
 							layer.alert(data.Error);

@@ -98,7 +98,7 @@ function rnd(n, m) {
 }
 //初始化登录页面： used by electricroommonitor 
 function initlogin() {
-	document.getElementById("login_pic").src = jfjk_base_config.login_src;
+	//document.getElementById("login_pic").src = jfjk_base_config.login_src;
 	document.getElementById("company_name").innerHTML = jfjk_base_config.app_name;
 	document.getElementById("main").style.backgroundImage="url("+jfjk_base_config.bg_src+" no-repeat center top ;background-size:100%";
 }

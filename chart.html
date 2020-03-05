@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -48,12 +47,10 @@
 			text-align:center;
 			line-height:center;
 		}
-	
 		* {
 			margin: 0;
 			padding: 0;
 		}
-		
 		table {
 			/*设置相邻单元格的边框间的距离*/
 			border-spacing: 0;
@@ -75,13 +72,11 @@
 		table thead {
 			width: calc( tbody.width )
 		}
-		
 		table thead th {
 			background: #ccc;
 		}*/
 	</style>
 </head>
-
 <body>
 	<div>
 		<div class="pagecard" id="pagecard1">
@@ -113,20 +108,18 @@
 		</div>
 		<div align="center" >
 			<table id="compratetable" style="display: none;">
-				<thead id="comprate-head">
-					<tr >
-						<th>测量点名称</th>
-						<th>测量时间</th>
-						<th>数值</th>	
-						<th>备注</th>
-					</tr>
-				</thead>
+				<caption style="text-align: center;font-size:18px;">多点数据比对</caption>
+				<tr >
+					<th>测量点名称</th>
+					<th>测量时间</th>
+					<th>数值</th>	
+					<th>备注</th>
+				</tr>
 				<tbody id='comprate-tbody' style="width:1020px;height:600px; overflow:auto;">
 				</tbody>
 			</table>
 		</div>
 	</div>
-
 	<script>
 		//初始化历史数据图形显示页面（在进入趋势图页面时触发）。
 		var check_val = [],check_name=[];
@@ -134,7 +127,6 @@
 		updatapcnav(7);
 		inithistorychart();
 		function inithistorychart() {
-
 			//return;
 			sessionStorage.pageindex = 4;
 			var parentid = -100, parentname = "";
@@ -295,5 +287,4 @@
 		}
 	</script>
 </body>
-
 </html>
