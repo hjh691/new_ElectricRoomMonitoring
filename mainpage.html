@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<link rel="shortcut icon" href="#" />
 	<link rel="stylesheet" href="css/bootstrap.min.css" />
 	<link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
 	<link rel="stylesheet" href="css/electricroommonitoring.css" />
@@ -185,7 +186,7 @@
 						//document.getElementById("result").innerHTML = event.data;
 						i++
 						if (i % 60 == 0) {
-							sendbeat();//getrealsbydataid();
+							//sendbeat();//getrealsbydataid();
 							getrealdatabynodeid(-1);
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}
@@ -284,6 +285,7 @@
 			//document.getElementById('company_info').href = jfjk_base_config.company_url;
 			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
 			sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
+			sessionStorage.cxsj = getCurrentDate(2);
 			//sessionStorage.pageindex = 1;
 			//getgraphics();
 			//document.getElementById("iframe_main").src = 'page1.html';
@@ -414,7 +416,52 @@
 						//iframe_main.window.num=0;
 						updatanav(1);
 					} else if(data.Catalog=="机房监控"){//20200304
+						var p_node = getThe_level_nodeid(data, 2);
+						if (data.nodeId != nodeid && data.level <= 2) {
+							localStorage.setItem("sensors", null);
+							sessionStorage.nodeId = data.id;
+							sessionStorage.nodeId = p_node.id;
+							if(!data.hasOwnProperty("nodes"))
+							GetSensorsByNode(sessionStorage.nodeId);
+							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
+							nodeid = data.nodeId;
+						}
+						maps = [];
+						infotreedata = [];
+						infotreeobj = {};
+						infotreeobj.id = data.id;
+						infotreeobj.name = data.text;
+						infotreeobj.level = data.level;
+						//infotreeobj.value=0;
+						infotreeobj.children = [];
+						//infotreeobj.level=data.level;
+						if ((data.hasOwnProperty("nodes")) && (data.nodes.length > 0)) {
+							infotreeobj.value = data.nodes.length;
+							var arr_node = buildsensor1(data.nodes);
+							infotreeobj.value = arr_node.length;
+							/*var sumnode = sumseneor(arr_node);
+							for (var j in sumnode) {
+								var ch1 = new Object();
+								ch1.name = j;
+								ch1.value = sumnode[j];
+								infotreeobj.children.push(ch1);
+							}*/
+							infotreeobj.children = decode(data.nodes);
+						} else {
+							/*var temp = new Object();
+							var leaf_name = data.Catalog;
+							if (leaf_name == "null" || leaf_name == undefined || leaf_name.trim() == "") {
+								leaf_name = "未定义"
+							}
+							temp.name = leaf_name;
+							temp.value = 1;
+							infotreeobj.value = 1;
+							infotreeobj.children.push(temp);*/
+							infotreeobj.value = 0;
+						}
+						infotreedata.push(infotreeobj);
 						updatanav(2);
+
 					} else {
 						//updatanav(1);
 						//sessionStorage.SensorId = data.id;

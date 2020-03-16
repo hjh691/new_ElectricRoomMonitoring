@@ -47,6 +47,9 @@ jfjk_base_config.bg_src="res/bj04.jpg"
  mcol=4;
  //保留小数位数
  Number_of_decimal=2;
+ //告警统计标识
+ warning_sign_low="越下限";
+ warning_sign_hight="越上限";
  /**
   * 
   * 

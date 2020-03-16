@@ -48,17 +48,15 @@
             }
             /*关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
             table tbody {
-                display: block;
-                
-                
+                display:block ;
             }
             
-            table thead,
-            tbody tr {
+
+            /*tbody tr {
                 display: table;
                 table-layout: fixed;
             }
-            /*关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
+            关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
             
             table thead {
                 width: calc( tbody.width )
@@ -74,11 +72,11 @@
 </head>
 <body onload="initwarnlog()">
 	<div>
-		<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
+		<div class="pagecard" id="pagecard1" style="margin-bottom:10px;display: none;">
 			<h3 >告警信息</h3>			
 		</div>
-		<div style="text-align: center;height:30px;" >
-		<!--<table class="table" style="border:0px;"align="center">
+		<!--<div style="text-align: center;height:30px;" >
+		<table class="table" style="border:0px;"align="center">
 			<tr >
 			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td>
 			<td style="width:100px;border:0px;width:120px;">	
@@ -97,6 +95,22 @@
 				计量点名称：
 			<select id="jcdd" onchange="gradeChange()" >
 			</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
+			<span>告警类型：</span>
+			<span class="dropup" style="position: relative;">
+			<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
+				<span class="select_text" data-is-select="false">Dro pup</span>
+				<span class="caret"></span>
+			</button>-->
+			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
+				<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black"></input>
+			</label>
+			<ul class="dropdown-menu dropdown_item" style="bottom: auto;">
+				<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
+				<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li>
+			</ul><!-- 为了方便演示，type设置text了，实际中可以设置成hidden -->
+			</span>
+			</div>
+			<div class="rowlay" >
 			<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
 			<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
 			<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
@@ -120,12 +134,11 @@
 				<!--<li style="width:50px;margin-right:10px"><b>标签名称：</b> </li>
 				<li id="normal_count"style="width:150px;margin-right:10px"> </li>
 				<li style="width:50px;margin-right:10px"><b>异常数：</b></li>
-				<li id="err_count"style="width:50px;margin-right:10px"> </li>
-				 -->
+				<li id="err_count"style="width:50px;margin-right:10px"> </li>-->
 				 <li style="width:50px;margin-right:10px"></li>
 			</ul>
 		</div>
-		<div >
+		<div text-align="center">
 			<div style="text-align: center;margin:6px;font-size: 18px;">
 			<a id="btn0"></a>
 			<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
@@ -139,28 +152,59 @@
 			<a>页&nbsp;</a>
 			<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
 			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="method5('warnlogtable')">导出Excel表格</a>
-			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;display: none;" onclick="tongji('tongjitable')">统计报表</a>
+			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;display:none;" id="tongji" onclick="tongji('tongjitable')">告警统计</a>
 			</div>
-		<table id="warnlogtable" style="margin: auto;">
-			<caption id="war_caption" style="text-align: center;font-size:18px;display: none;">告警信息统计报表</caption>
-			<tr>
-				<th>开始时间</th>
-				<th id="tj_kssj"></th>
-				<th>终止时间</th>
-				<th id="tj_zzsj"></th>
-			</tr>
-			<tr >
-				<th>测量点名称</th>
-				<th>告警时间</th>
-				<th>数值</th>	
-				<th>告警内容</th>
-				<!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>-->
-			</tr>
-			<tbody id='warnlogdata-tbody' style="width:820px;height:610px; overflow:auto;">
-			</tbody>
-		</table>
-	</div>
-	<div id="indicatorContainer"></div>
+			<table id="warnlogtable" style="margin: auto;">
+				<caption id="war_caption" style="text-align: center;font-size:22px;color:black;">告警信息统计表</caption>
+				<tr>
+					<th>开始时间</th>
+					<th id="tj_kssj"></th>
+					<th>终止时间</th>
+					<th id="tj_zzsj"></th>
+				</tr>
+				<tr>
+					<th>越上限</th>
+					<th id="count_first"></th>
+					<th id="count_second">越下限</th>
+					<th id="count_third"></th>
+				</tr>
+				<tr >
+					<th>测量点名称</th>
+					<th>告警时间</th>
+					<th>数值</th>	
+					<th>告警内容</th>
+					<!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>-->
+				</tr>
+				<tbody id='warnlogdata-tbody' style="width:820px;height:540px; overflow:auto;">
+				</tbody>
+			</table>
+			<!--<table id="tongjitable" style="margin:auto;display: none;">
+				<tr>
+					<th >测量点名称</th>
+					<th id="cldmc"></th>
+					<th>统计时间</th>
+					<th id="tjsj"></th>
+				</tr>
+				<tr>
+					<th></th>
+					<th >一级告警</th>
+					<th>二级告警</th>
+					<th>三级告警</th>
+				</tr><th>告警次数</th>-->
+				
+				<!--<tr >
+					<th colspan="4">一级告警</th>
+				</tr>
+				<tr >
+					<th>测量点名称</th>
+					<th>告警时间</th>
+					<th>数值</th>	
+					<th>告警内容</th>
+				</tr>
+				<tbody id="tb_first"></tbody>
+			</table>-->
+		</div>
+		<div id="indicatorContainer"></div>
 	</div>
 	<script>
 	var pageSize = 50;    //每页显示的记录条数
@@ -171,13 +215,15 @@
 	var page;            //总页数
 	var begin;
 	var end;
-	var count;
+	var count,count_l=0,count_h=0;
 	var $table;
 	updatapcnav(8);
 	function decodedatas(obj_data){
 		objS = document.getElementById("jcdd");
 		var name=objS.options[objS.selectedIndex].innerText;
-		count = 0;
+		var type_str=[];
+		var count = 0;
+		var count_l=[];
 			$("#warnlogdata-tbody tr").empty();
 			$table=document.getElementById("warnlogdata-tbody");
 			for(var j=$table.rows.length-1;j>=0;j--){
@@ -185,7 +231,64 @@
 			}
 			document.getElementById("tj_kssj").innerHTML=sessionStorage.kssj;
 			document.getElementById("tj_zzsj").innerHTML=sessionStorage.jssj;
-			if(obj_data){
+			if(obj_data&&obj_data.length>0){
+				var warning_type=document.getElementById("select_text").value;
+				if(warning_type.length>0){
+					type_str=warning_type.split(",");
+				}else{
+					warning_type="越上限,越下限";
+					type_str=warning_type.split(",");
+				}
+				var tr_arr=[],td_arr=[];
+				for(var j=0;j<=type_str.length;j++){
+					count_l[j]=0;
+					window.eval("var tr"+j+"=document.createElement('tr');");
+					window.eval("tr"+j+'.setAttribute("id","tr'+j+'")');
+					window.eval("var td"+j+"=document.createElement('td');");
+					window.eval("td"+j+".setAttribute('id','td"+j+"')");
+					window.eval("td"+j+".setAttribute('colspan','4')");
+					if(j==type_str.length){
+						window.eval("td"+j+".setAttribute('style','display:none')");
+						window.eval("tr"+j+".setAttribute('style','display:none')");
+					}
+					window.eval("td"+j+".innerHTML='"+type_str[j]+"'");
+					window.eval("tr"+j+".appendChild(td"+j+")");
+					window.eval("tr"+j+".setAttribute('style','background-color:#f70')");
+					
+					$table.appendChild(window.eval("tr"+j));
+					//console.log(window.eval("tr"+j));
+
+				}
+
+				/*var tr1=document.createElement("tr");
+				tr1.setAttribute("id","tr1");
+				var td_first=document.createElement("td");
+				td_first.setAttribute("colspan","4");
+				td_first.innerHTML=warning_sign_hight;
+				td_first.setAttribute("id","td1")
+				//td_first.setAttribute('style','display:none');
+				//tr1.setAttribute('style','display:none');
+				tr1.appendChild(td_first);
+				tr1.setAttribute("style","background-color:#f70");
+				$table.appendChild(tr1);
+				var tr2=document.createElement("tr");
+				tr2.setAttribute("id","tr2");
+				//tr2.setAttribute("style","display:none");
+				tr2.setAttribute("style","background-color:#07f");
+				var td_second=document.createElement("td");
+				td_second.setAttribute("id","td2")
+				td_second.innerHTML=warning_sign_low;
+				//td_second.setAttribute('style','display:none');
+				td_second.setAttribute("colspan","4");
+				tr2.appendChild(td_second);
+				$table.appendChild(tr2);
+				var tr3=document.createElement("tr");
+				tr3.setAttribute("style","display:none");
+				var td_third=document.createElement("td");
+				td_third.setAttribute('style','display:none');
+				td_third.setAttribute("colspan","4");
+				tr3.appendChild(td_third);
+				$table.appendChild(tr3);*/
 				for (var i = 0; i <obj_data.length; i++) {
 					if(obj_data[i].Message){
 						var tr=document.createElement("tr");
@@ -209,19 +312,54 @@
 						tr.appendChild(td_dtime);
 						tr.appendChild(td_dadr);
 						tr.appendChild(td_dtype);
-						$table.appendChild(tr);
-						count++
+						for(var j=0;j<type_str.length;j++){
+							if(obj_data[i].Message==type_str[j]){
+								$table.insertBefore(tr,window.eval("tr"+(j+1)));
+								count_l[j]=count_l[j]+1;
+							}/*else if(obj_data[i].Message==warning_sign_hight){
+								$table.insertBefore(tr,tr1);
+								count_h++;
+							}else{
+								$table.appendChild(tr);
+							}*/
+							count++
+						}
 					}
 				}
 				if(!count){
 					layer.alert("沒有符合条件的数据");
 					document.getElementById("count_val").innerHTML="";
+					document.getElementById("count_first").innerHTML="";
+					document.getElementById("count_third").innerHTML="";
+					document.getElementById("tr0").style.display="none";
+					document.getElementById("td0").style.display="none";
+					document.getElementById("tr1").style.display="none";
+					document.getElementById("td1").style.display="none";
 				}else{
+					for(var i=0;i<type_str.length;i++){
+						if(count_l[i]==0){
+							document.getElementById(window.eval("'td"+i+"'")).style.display="none";
+							document.getElementById(window.eval("'tr"+i+"'")).style.display="none";
+						}
+					}
+					/*if(count_h==0){
+						document.getElementById("tr0").style.display="none";
+						document.getElementById("td0").style.display="none";
+					}
+					if(count_l==0){
+						document.getElementById("tr1").style.display="none";
+						document.getElementById("td1").style.display="none";
+					}*/
 					document.getElementById("count_val").innerHTML=count;
+					document.getElementById("count_first").innerHTML=count_l[0];
+					document.getElementById("count_third").innerHTML=count_l[1];
 				}
 				//ps=obj_data.length;
 			}
 		display();
+	}
+	function add_sign(){
+		
 	}
 	function gradeChange() {
 		//$("#warnlogdata-tbody tr").empty();
@@ -242,6 +380,7 @@
 		};
 	function showrealworning(){
 		//document.getElementById("jcdd").disabled=true;
+		count_l=[0];//count_h=0;
 		var timedefine=document.getElementById("timedefine");
 		timedefine.style.display="none";
 		var warningtab = window.parent.document.getElementById("realwarningdata-tbody");
@@ -258,23 +397,92 @@
 			tr = $table.rows[0];
 			$table.removeChild(tr);
 		}
-		for (var i = 0; i < trs.length; i++) {//
-			$table.appendChild($(trs[i].outerHTML)[0]);
+		if(trs.length>0){
+			/**
+			 * 在表格中定义一些关键节点（行），采用insertbifore命令时的参考节点。
+			 * 用于对表格中的数据进行分类插入，并作为分类显示的标题。tr1,tr2...
+			 * **/
+			 var warning_type=document.getElementById("select_text").value;
+			if(warning_type.length>0){
+				type_str=warning_type.split(",");
+			}else{
+				warning_type="越上限,越下限";
+				type_str=warning_type.split(",");
+			}
+			var tr_arr=[],td_arr=[];
+			for(var j=0;j<=type_str.length;j++){
+				count_l[j]=0;
+				window.eval("var tr"+j+"=document.createElement('tr');");
+				window.eval("tr"+j+'.setAttribute("id","tr'+j+'")');
+				window.eval("var td"+j+"=document.createElement('td');");
+				window.eval("td"+j+".setAttribute('id','td"+j+"')");
+				window.eval("td"+j+".setAttribute('colspan','4')");
+				if(j==type_str.length){
+					window.eval("td"+j+".setAttribute('style','display:none')");
+					window.eval("tr"+j+".setAttribute('style','display:none')");
+				}
+				window.eval("td"+j+".innerHTML='"+type_str[j]+"'");
+				window.eval("tr"+j+".appendChild(td"+j+")");
+				window.eval("tr"+j+".setAttribute('style','background-color:#f70')");
+				
+				$table.appendChild(window.eval("tr"+j));
+				//console.log(window.eval("tr"+j));
+
+			}
+			for (var i = 0; i < trs.length; i++) {//
+				//warning_sign_low、warning_sign_hight为判断标准，在config.js里定义内容，
+				/*if(trs[i].cells[5].innerText==warning_sign_low){
+					$table.insertBefore($(trs[i].outerHTML)[0],tr3);
+					count_l++;
+				}else if(trs[i].cells[5].innerText==warning_sign_hight){
+					$table.insertBefore($(trs[i].outerHTML)[0],tr2);
+					count_h++;
+				}*/
+				for(var j=0;j<type_str.length;j++){
+					if(trs[i].cells[5].innerText==type_str[j]){
+						$table.insertBefore($(trs[i].outerHTML)[0],window.eval("tr"+(j+1)));
+						count_l[j]=count_l[j]+1;
+					}
+					count++
+				}
+				//$table.appendChild($(trs[i].outerHTML)[0]);
+
+			}
+			
+			for(var i=0;i<type_str.length;i++){
+				if(count_l[i]==0){
+					document.getElementById(window.eval("'td"+i+"'")).style.display="none";
+					document.getElementById(window.eval("'tr"+i+"'")).style.display="none";
+				}
+			}
+		}else{
+			alert("当前没有告警!")
 		}
-		//var counter = document.getElementById("count_varning");
-		//if (counter == null) {
-		//	counter = iframe_main.document.getElementById("count_varning");
-		//}
-		//counter.innerHTML = tbl.rows.length;
-		//moduletable('warnlogdata-tbody');
+		
+		document.getElementById("count_first").innerHTML=count_l[0];
+		document.getElementById("count_third").innerHTML=count_l[1];
 		display();
 	}
+	/*function tongji(){
+		var txt_tj=document.getElementById("tongji");
+		if(txt_tj.innerText=="告警统计"){
+			txt_tj.innerText="告警查询"
+			document.getElementById("warnlogtable").style.display="none";
+			document.getElementById("tongjitable").style.display="";
+		}else{
+			txt_tj.innerText="告警统计"
+			document.getElementById("warnlogtable").style.display="";
+			document.getElementById("tongjitable").style.display="none";
+		}
+	}*/
+
+
 	function display(){   
 		//var $table=$("#warnlogdata-tbody");
 		if(!$table){
 			return;
 		}
-		len =$table.rows.length ;//- 1;    // 求这个表的总行数，剔除第一行介绍
+		len =$table.rows.length - 1;    //;// 求这个表的总行数，剔除第一行介绍
 		page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
 		// alert("page==="+page);
 		curPage=1;    // 设置当前为第一页
@@ -362,6 +570,54 @@
 		});*/
 
 		}
+
+		$(document).on("click",".check_box",function(event){
+		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
+		//勾选的项
+		var $selectTextDom=$(this).parent().parent().parent("ul").siblings("label").children(".select_text");
+		//勾选项的值
+		//var $selectValDom=$(this).parent().parent().parent("ul").siblings(".select_val");
+		//是否有选择项了
+		var isSelected=$selectTextDom[0].getAttribute("data-is-select");
+		var selectText="";//文本值，用于显示
+		//var selectVal=$selectValDom.val();//实际值，会提交到后台的
+		var selected_text=$(this).siblings("span").text();//当次勾选的文本值
+		var selected_val=$(this).val();//当次勾选的实际值
+		//判断是否选择过
+		if(isSelected=="true"){
+			selectText=$selectTextDom.val();
+		}
+		if(selectText!=""){
+			if(selectText.indexOf(selected_text)>=0){//判断是否已经勾选过
+				selectText=selectText.replace(selected_text,"").replace(",,",",");//替换掉
+				//selectVal=selectVal.replace(selected_val,"").replace(",,",",");//替换掉
+				//判断最后一个字符是否是逗号
+				if(selectText.charAt(selectText.length - 1)==","){
+					//去除末尾逗号
+					selectText=selectText.substring(0,selectText.length - 1);
+					//selectVal=selectVal.substring(0,selectVal.length - 1);
+				}
+				//判断第一个字符是否是逗号，是的话去掉。
+				if(selectText.charAt(0)==","){
+					selectText=selectText.substring(1);
+				}
+			}else{
+				selectText+=","+selected_text;
+				//selectVal+=","+selected_val;
+			}
+		}else{
+			selectText=selected_text;
+			//selectVal=selected_val;
+		}
+		$selectTextDom.val(selectText);
+		//$selectValDom.val(selectVal);
+		if(selectText==""){
+			$selectTextDom.text("请选择");
+			$selectTextDom[0].setAttribute("data-is-select","false");
+		}else{
+			$selectTextDom[0].setAttribute("data-is-select","true");
+		}
+	})
 	</script>
 </body>
 </html>

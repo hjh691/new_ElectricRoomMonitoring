@@ -3106,7 +3106,7 @@ function initsysteminfo(){
 }
 //获取实时数据  used by electricroommonitor
 function getrealdatabynodeid(nodeid){
-	sessionStorage.jssj=getCurrentDate(2);
+	//sessionStorage.jssj=getCurrentDate(2);
 	if (typeof(nodeid)!="undefined"&&nodeid!==null) {
 		var url = jfjk_base_config.baseurl + "GetRealsNew?dataId=" + nodeid;
 		url = encodeURI(url);
@@ -3205,6 +3205,12 @@ function getname(key){
 }
 function seletime(obj){
 	var sel=document.getElementById("jcdd");
+	sessionStorage.timeindex=$('input[name="timeselect"]:checked').val();//obj.value*1;
+	if(obj.value*1==5){
+		sel.style.display="none";
+		showrealworning();
+		return;
+	}
 	if(sel.options.length<=0){
 		layer.alert("请选择要查询的测量点名称",2000);
 		return;
@@ -3215,7 +3221,6 @@ function seletime(obj){
 	var ckssj,cjssj,ttime;
 	var timedefine=document.getElementById("timedefine");
 	document.getElementById("count_val").innerHTML="";
-	sessionStorage.timeindex=$('input[name="timeselect"]:checked').val();//obj.value*1;
 	switch(obj.value*1){
 		case 0:
 			sel.style.display="";
@@ -3265,10 +3270,7 @@ function seletime(obj){
 				timedefine.style.display="inline";
 			}
 			break;
-		case 5:
-			sel.style.display="none";
-			showrealworning();
-			break;
+		
 	}
 }
 //导航按钮选中指示标志//20200212

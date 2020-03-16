@@ -121,7 +121,7 @@
 		</div>
 	</div>
 	<script>
-		//初始化历史数据图形显示页面（在进入趋势图页面时触发）。
+		//初始化历史数据图形显示页面（在进入趋势图页面时触发）。人之初性本善性相近习相远
 		var check_val = [],check_name=[];
 		var kssj,jssj;
 		updatapcnav(7);
@@ -131,7 +131,7 @@
 			sessionStorage.pageindex = 4;
 			var parentid = -100, parentname = "";
 			var maps = [];
-			document.getElementById("cxsj").value = (sessionStorage.jssj).substr(0,11);
+			document.getElementById("cxsj").value = (sessionStorage.cxsj).substr(0,11);
 			var sel_sensor = document.getElementById("jcdd");
 			for (var i = sel_sensor.length-1; i >= 0; i--) {
 				sel_sensor.removeChild(sel_sensor.children[i]);
@@ -206,6 +206,7 @@
 		function oneChoice(){
 			kssj=document.getElementById("cxsj").value+" 00:00:00"
 			jssj=document.getElementById("cxsj").value+" 23:59:59"
+			sessionStorage.cxsj=jssj;
 			var obj = $('[name="checks"]');
 			check_name=[];check_val=[];
 			for(k in obj){
