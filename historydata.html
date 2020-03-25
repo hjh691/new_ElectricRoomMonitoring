@@ -174,7 +174,10 @@
 				queryhistorydata();
 			}
 		}
-
+		function tableclick(tr){
+			$(tr).siblings().css("background","");
+			$(tr).css("background","#85e494");//区分选中行
+		}
 		function refreshsensorslist(){
 			window.parent.GetSensorsByNode(sessionStorage.nodeId);
 		}
@@ -201,29 +204,28 @@
 				}
 			}
 			var sel=document.getElementById("jcdd");
-			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
 			if(sel.options.length<=0){
-				layer.alert("请选择要查询的测量点名称");
+				layer.alert("请选择要查询的测量点名称",info_showtime);
 				return;
 			}
 			var kssj = document.getElementById("kssj_history").value;
 			if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
-				layer.alert("请指定开始时间");
+				layer.alert("请指定开始时间",info_showtime);
 				return;
 			}
 			var jssj = document.getElementById("jssj_history").value;
 			if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
-				layer.alert("请指定截至时间");
+				layer.alert("请指定截至时间",info_showtime);
 				return;
 			}
 			if((sessionStorage.SensorId==sel.value)&&(sessionStorage.kssj==kssj)&&(sessionStorage.jssj==jssj)&&(!isfirst)){
-				layer.alert("查询条件与上一次相同，请重新选择!")
+				layer.alert("查询条件与上一次相同，请重新选择!",info_showtime)
 				return;
 			}
 			sessionStorage.kssj = kssj;
 			sessionStorage.jssj = jssj;
 			sessionStorage.SensorId = sel.value;
-			
+			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
 			//xs=sensors[sel.selectedIndex].Value.Factor;
 			//$("#historydata-tbody tr").empty();
 			var tbl = document.getElementById('historydata-tbody');
@@ -316,6 +318,7 @@
 					}else{
 						avgvalue=(avgvalue/ct);
 						var tr = document.createElement('tr');
+						tr.setAttribute("onclick","tableclick(this)");
 						//if (ps% 2 == 0) {
 						//	tr.setAttribute('style', "background-color:#16b9c9");
 						//}
@@ -359,6 +362,7 @@
 				}
 				avgvalue=(avgvalue/ct);
 				var tr = document.createElement('tr');
+				tr.setAttribute("onclick","tableclick(this)");
 				//if (ps% 2 == 0) {
 				//	tr.setAttribute('style', "background-color:#16b9c9");
 				//}
@@ -418,6 +422,7 @@
 					}else{
 						avgvalue=(avgvalue/ct);
 						var tr = document.createElement('tr');
+						tr.setAttribute("onclick","tableclick(this)");
 						//if (ps% 2 == 0) {
 						//	tr.setAttribute('style', "background-color:#16b9c9");
 						//}
@@ -461,6 +466,7 @@
 				}
 				avgvalue=(avgvalue/ct);
 				var tr = document.createElement('tr');
+				tr.setAttribute("onclick","tableclick(this)");
 				//if (ps% 2 == 0) {
 				//	tr.setAttribute('style', "background-color:#16b9c9");
 				//}

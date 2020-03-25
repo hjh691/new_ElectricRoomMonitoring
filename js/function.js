@@ -117,9 +117,9 @@ function LoginOrder(name, ps) {
 		timeout: 10000,
 		error: function(data, status) {
 			if (status == "timeout") {
-				layer.alert("登录超时")
+				layer.alert("登录超时",info_showtime)
 			} else {
-				layer.alert("登录失败，请稍后重试");
+				layer.alert("登录失败，请稍后重试",info_showtime);
 				sessionStorage.islogin = false;
 			}
 			sessionStorage.errortime=0;
@@ -144,7 +144,7 @@ function LoginOrder(name, ps) {
 
 					sessionStorage.islogin = false;
 					window.location.href = "index.html";
-					layer.alert("登录失败，" + data.Error + ",请确认输入信息正确，注意字母的大小写。");
+					layer.alert("登录失败，" + data.Error + ",请确认输入信息正确，注意字母的大小写。",info_showtime);
 				}
 			}
 		}
@@ -155,11 +155,11 @@ function login() {
 	var islogin = false;
 	var sname = document.getElementById('username').value;
 	if ((sname == '') || (sname == null)) {
-		layer.alert('请输入用户名称!');
+		layer.alert('请输入用户名称!',info_showtime);
 	} else {
 		var sps = document.getElementById('password').value;
 		if ((sps == '') || (sps == null)) {
-			layer.alert('密码为空，请输入密码');
+			layer.alert('密码为空，请输入密码',info_showtime);
 		} else {
 			if ((sname != '') && (sps != '')) {
 				//layer.alert(sname);
@@ -245,7 +245,7 @@ function GetUserProfile() {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				layer.alert('获取用户详细信息操作失败');
+				layer.alert('获取用户详细信息操作失败',info_showtime);
 				document.getElementById("up-yhmc").value = sessionStorage.username;
 				sessionStorage.errortime++;
 				if(sessionStorage.errortime>3){
@@ -268,14 +268,14 @@ function GetUserProfile() {
 						document.getElementById("up-yhsm").value = data.Result.Display;//Description;
 
 					} else {
-						layer.alert(data.Error);
+						layer.alert(data.Error,info_showtime);
 						sessionStorage.islogin = ture;
 					}
 				}
 			}
 		});
 	} else {
-		Alert("用户未登录，您无权完成此次操作", 2000);
+		Alert("用户未登录，您无权完成此次操作", info_showtime);
 	}
 }
 
@@ -376,7 +376,7 @@ function sendbeat() {
 					if(data.Error==null){
 						islogin=true;
 					}else{
-						layer.alert(data.Error);
+						layer.alert(data.Error,info_showtime);
 					}
 				}
 			}
@@ -384,7 +384,7 @@ function sendbeat() {
 		//getrealsbydataid();
 	} else {
 		sessionStorage.islogin = false;
-		Alert("与服务器连接失败", 2000);
+		Alert("与服务器连接失败", info_showtime);
 		sessionStorage.errortime=0;
 		LoginOrder(sessionStorage.username, sessionStorage.password);
 	}
@@ -436,9 +436,9 @@ function getrealdatabystation(id) {
 				error: function(jqXHR, textStatus, errorThrown) {
 					sessionStorage.errortime++;
 					if (errorThrown == "Unauthorized") {
-						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败');
+						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败',info_showtime);
 					} else {
-						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败');
+						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败',info_showtime);
 					}
 				},
 				success: function(data, status) {
@@ -449,8 +449,8 @@ function getrealdatabystation(id) {
 						if (data.Error == null) {
 							if (jQuery.isEmptyObject(data.Result.Datas)) {
 								if (id == 0) {
-									//layer.alert("没有符合条件的记录",2000);
-									layer.alert("没有符合条件的记录");
+									//layer.alert("没有符合条件的记录",info_showtime);
+									layer.alert("没有符合条件的记录",info_showtime);
 								}
 								return;
 							}
@@ -547,13 +547,13 @@ function getrealdatabystation(id) {
 							//document.getElementById('normal_count').innerHTML=count-err_count+"条";
 							document.getElementById('err_count').innerHTML = err_count + "条";
 						} else {
-							layer.alert(data.Error, 2000);
+							layer.alert(data.Error, info_showtime);
 						}
 					}
 				}
 			});
 		} else {
-			layer.alert("与服务器连接失败");
+			layer.alert("与服务器连接失败",info_showtime);
 			//window.location.href="index.html";
 		}
 		document.getElementById('station_name').innerHTML = sessionStorage.stationName;
@@ -630,9 +630,9 @@ function getrealsbydataid() {
 			error: function(jqXHR, textStatus, errorThrown) {
 				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
-					layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取实时数据操作失败');
+					layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取实时数据操作失败',info_showtime);
 				} else {
-					layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取实时数据操作失败');
+					layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取实时数据操作失败',info_showtime);
 				}
 				if(sessionStorage.errortime>3){
 					sessionStorage.islogin=false;
@@ -979,13 +979,13 @@ function getrealsbydataid() {
 							initrealwarning();
 						}
 					} else {
-						layer.alert(data.Error);
+						layer.alert(data.Error,info_showtime);
 					}
 				}
 			}
 		});
 	} else {
-		//layer.alert("与后台服务器连接失败");
+		//layer.alert("与后台服务器连接失败",info_showtime);
 		sessionStorage.islogin = false;
 		//LoginOrder(sessionStorage.username,sessionStorage.password);
 	}
@@ -1082,9 +1082,9 @@ function GetStations() {
 			error: function(jqXHR, textStatus, errorThrown) {
 				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
-					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站点列表操作失败', 2000);
+					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站点列表操作失败', info_showtime);
 				} else {
-					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站点列表操作失败', 2000);
+					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站点列表操作失败', info_showtime);
 				}
 			},
 			success: function(data, status) {
@@ -1094,7 +1094,7 @@ function GetStations() {
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						if (data.Result.Stations == null) {
-							layer.alert("没有符合条件的记录");
+							layer.alert("没有符合条件的记录",info_showtime);
 							return;
 						}
 						if (data.Result.hasOwnProperty("Stations")) {
@@ -1145,13 +1145,13 @@ function GetStations() {
 							trs[pt].onclick();
 						}
 					} else {
-						layer.alert(data.Error);
+						layer.alert(data.Error,info_showtime);
 					}
 				}
 			}
 		});
 	} else {
-		layer.alert('与服务器连接失败');
+		layer.alert('与服务器连接失败',info_showtime);
 	}
 }
 //显示新密码输入选项	
@@ -1168,11 +1168,11 @@ function postpassword() {
 	var xmm = document.getElementById("up-yhmmqr").value;
 	//var yhsm=document.getElementById("up-yhsm").value;
 	if (yhmm == '') {
-		layer.alert("请输入原始密码");
+		layer.alert("请输入原始密码",info_showtime);
 		return;
 	}
 	if (xmm == '') {
-		layer.alert("请输入新密码");
+		layer.alert("请输入新密码",info_showtime);
 		return;
 	}
 	var url = jfjk_base_config.baseurl + "ChangePass?pass=" + yhmm + "&newpass=" + xmm;
@@ -1186,17 +1186,17 @@ function postpassword() {
 		dataType: 'json',
 		timeout: 10000,
 		error: function(XMLHttpRequest, textStatus, errorThrown) {
-			layer.alert('密码修改操作失败');
+			layer.alert('密码修改操作失败',info_showtime);
 		},
 		success: function(data, status) {
 			if (status == "success") {
 				if (data.Error == null) {
-					layer.alert("密码修改成功，请用新密码登录");
+					layer.alert("密码修改成功，请用新密码登录",info_showtime);
 					window.location.href = "javascript:void(0)";
 					top.location = "index.html";
 					return;
 				} else {
-					layer.alert(data.Error);
+					layer.alert(data.Error,info_showtime);
 				}
 			}
 		}
@@ -1270,7 +1270,7 @@ function check() {
 		}
 		first++;
 	} else {
-		layer.alert("请选择一行");
+		layer.alert("请选择一行",info_showtime);
 	}
 }
 /*//初始化历史数据页面（在进入历史数据页面时触发）。
@@ -1435,9 +1435,9 @@ function GetSensorsByStation() {
 			error: function(jqXHR, textStatus, errorThrown) {
 				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
-					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取指定站标签操作失败', 2000);
+					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取指定站标签操作失败', info_showtime);
 				} else {
-					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取指定站标签操作失败', 2000);
+					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取指定站标签操作失败', info_showtime);
 				}
 			},
 			success: function(data, status) {
@@ -1501,16 +1501,16 @@ function GetSensorsByStation() {
 								querywarnlog(flag_warning);
 							}
 						} else {
-							Alert("没有符合条件的记录", 2000);
+							Alert("没有符合条件的记录", info_showtime);
 						}
 					} else {
-						layer.alert(data.Error);
+						layer.alert(data.Error,info_showtime);
 					}
 				}
 			}
 		});
 	} else {
-		layer.alert('与服务器连接断开');
+		layer.alert('与服务器连接断开',info_showtime);
 	}
 }
 //根据标签名称确定下，拉列表框的选中项///////已用  used by electricroommonitor 
@@ -1602,12 +1602,14 @@ function Alert(str, delay) {
 }
 //将系统的信息告警提示框直接转换成自定义提示框  
 window.alert = Alert;
-//layer.alert=Alert;
+layer.alert=Alert;
 //关闭指定id的提示框（窗口）。
 function closewin(ranid) {
-	document.body.removeChild(document.getElementById("alertbgDiv" + ranid));
-	document.getElementById("alertmsgDiv" + ranid).removeChild(document.getElementById("alertmsgTitle"));
-	document.body.removeChild(document.getElementById("alertmsgDiv" + ranid));
+	if(document.getElementById("alertbgDiv"+ranid)){//2020324
+		document.body.removeChild(document.getElementById("alertbgDiv" + ranid));
+		document.getElementById("alertmsgDiv" + ranid).removeChild(document.getElementById("alertmsgTitle"));
+		document.body.removeChild(document.getElementById("alertmsgDiv" + ranid));
+	}
 }
 //获取历史数据    used by electricroommonitor 
 function gethistorydata(sensorid,kssj, jssj,aparent) {
@@ -1631,9 +1633,9 @@ function gethistorydata(sensorid,kssj, jssj,aparent) {
 					ajaxLoadingHidden();
 					//myChart.hideLoading();
 					if (errorThrown == "Unauthorized") {
-						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
+						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败',info_showtime);
 					} else {
-						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
+						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败',info_showtime);
 					}
 					if(sessionStorage.errortime>3){
 						sessionStorage.islogin=false;
@@ -1653,29 +1655,29 @@ function gethistorydata(sensorid,kssj, jssj,aparent) {
 									//if(data.Result.Datas.hasOwnProperty("Tmp")){
 										decodedatas( data.Result.Datas[sensorid]);
 								} else {
-									layer.alert("没有符合条件的记录",3000);
+									layer.alert("没有符合条件的记录",info_showtime);
 									decodedatas(null);
 								}
 							} else {
-								layer.alert("没有符合条件的记录",2000);
+								layer.alert("没有符合条件的记录",info_showtime);
 								decodedatas(null);
 							}
 						} else {
-							layer.alert(data.Error);
+							layer.alert(data.Error,info_showtime);
 						}
 					}
 				}
 			});
 		}
 	} else {
-		layer.alert('与服务器连接失败');
+		layer.alert('与服务器连接失败',info_showtime);
 	}
 }
 //告警信息查询按钮  used by electricroommonitor
 function querywarnlog(num) {
 	var sel=document.getElementById("jcdd");
 	if(sel.options.length<=0){
-		layer.alert("请选择要查询的测量点名称");
+		layer.alert("请选择要查询的测量点名称",info_showtime);
 		return;
 	}
 	sessionStorage.SensorId = sel.value;//document.getElementById("jcdd")
@@ -1683,13 +1685,13 @@ function querywarnlog(num) {
 	
 	var kssj = document.getElementById("kssj_warning").value;
 	if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
-		layer.alert("请指定开始时间");
+		layer.alert("请指定开始时间",info_showtime);
 		return;
 	}
 	sessionStorage.kssj = kssj;
 	var jssj = document.getElementById("jssj_warning").value;
 	if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
-		layer.alert("请指定截至时间");
+		layer.alert("请指定截至时间",info_showtime);
 		return;
 	}
 	sessionStorage.jssj = jssj;
@@ -1719,9 +1721,9 @@ function GetWarnLog(mkssj, mjssj) {
 				sessionStorage.errortime++;
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
-					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取告警信息操作失败', 2000);
+					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取告警信息操作失败', info_showtime);
 				} else {
-					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取告警信息操作失败', 2000);
+					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取告警信息操作失败', info_showtime);
 				}
 				if(sessionStorage.errortime>3){
 					sessionStorage.islogin=false;
@@ -1736,7 +1738,7 @@ function GetWarnLog(mkssj, mjssj) {
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						if (jQuery.isEmptyObject(data.Result.Datas)) {
-							layer.alert("没有符合条件的记录");
+							layer.alert("没有符合条件的记录",info_showtime);
 							return;
 						}
 						if (!jQuery.isEmptyObject(data.Result.Datas.Err)) {
@@ -1772,19 +1774,19 @@ function GetWarnLog(mkssj, mjssj) {
 								count = data.Result.Datas.Err.length;
 								document.getElementById('count_val').innerHTML = count + "条";
 							} else {
-								layer.alert("没有符合条件的记录");
+								layer.alert("没有符合条件的记录",info_showtime);
 							}
 						} else {
-							layer.alert("没有符合条件的记录");
+							layer.alert("没有符合条件的记录",info_showtime);
 						}
 					} else {
-						layer.alert(data.Error);
+						layer.alert(data.Error,info_showtime);
 					}
 				}
 			}
 		});
 	} else {
-		layer.alert('与服务器连接失败');
+		layer.alert('与服务器连接失败',info_showtime);
 	}
 	document.getElementById('station_name').innerHTML = sessionStorage.stationName;
 
@@ -1864,19 +1866,19 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 								count = data.Result.Datas.Err.length;
 								document.getElementById('count_val').innerHTML = count + "条";
 							} else {
-								window.layer.alert("没有符合条件的记录");
+								window.layer.alert("没有符合条件的记录",info_showtime);
 							}
 						} else {
-							window.layer.alert("没有符合条件的记录");
+							window.layer.alert("没有符合条件的记录",info_showtime);
 						}
 					} else {
-						layer.alert(data.Error);
+						layer.alert(data.Error,info_showtime);
 					}
 				}
 			}
 		});
 	} else {
-		layer.alert('与服务器连接失败');
+		layer.alert('与服务器连接失败',info_showtime);
 	}
 	document.getElementById('station_name').innerHTML = sessionStorage.stationName;
 }
@@ -1884,12 +1886,12 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 function querysmslog() {
 	var kssj = document.getElementById("kssj_sms").value;
 	if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
-		layer.alert("请指定开始时间");
+		layer.alert("请指定开始时间",info_showtime);
 		return;
 	}
 	var jssj = document.getElementById("jssj_sms").value;
 	if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
-		layer.alert("请指定截至时间");
+		layer.alert("请指定截至时间",info_showtime);
 		return;
 	}
 	sessionStorage.kssj = kssj;
@@ -1914,9 +1916,9 @@ function GetSmsLog(mkssj, mjssj) {
 			error: function(jqXHR, textStatus, errorThrown) {
 				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
-					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取日志操作失败', 2000);
+					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取日志操作失败', info_showtime);
 				} else {
-					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取日志操作失败', 2000);
+					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取日志操作失败', info_showtime);
 				}
 			},
 			success: function(data, status) {
@@ -1957,17 +1959,17 @@ function GetSmsLog(mkssj, mjssj) {
 								document.getElementById('count_val').innerHTML = count + "条";
 							}
 						} else {
-							layer.alert("没有符合条件的记录");
+							layer.alert("没有符合条件的记录",info_showtime);
 						}
 
 					} else {
-						layer.alert(data.Error);
+						layer.alert(data.Error,info_showtime);
 					}
 				}
 			}
 		});
 	} else {
-		layer.alert('与服务器连接失败');
+		layer.alert('与服务器连接失败',info_showtime);
 	}
 	document.getElementById('station_name').innerHTML = sessionStorage.stationName;
 }
@@ -1988,7 +1990,7 @@ function getchartvalue(msensorid, kssj, jssj) {
 			timeout: 10000,
 			error: function() {
 				sessionStorage.errortime++;
-				layer.alert('趋势图数据操作失败');
+				layer.alert('趋势图数据操作失败',info_showtime);
 			},
 			success: function(data, status) {
 				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
@@ -2002,10 +2004,10 @@ function getchartvalue(msensorid, kssj, jssj) {
 							}
 
 						} else {
-							layer.alert("没有符合条件的记录");
+							layer.alert("没有符合条件的记录",info_showtime);
 						}
 					} else {
-						layer.alert(data.Error);
+						layer.alert(data.Error,info_showtime);
 					}
 				}
 			}
@@ -2016,19 +2018,19 @@ function getchartvalue(msensorid, kssj, jssj) {
 function querychartvalue() {
 	var kssj = document.getElementById("kssj_chart").value;
 	if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
-		layer.alert("请指定开始时间");
+		layer.alert("请指定开始时间",info_showtime);
 		return;
 	}
 	var jssj = document.getElementById("jssj_chart").value;
 	if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
-		layer.alert("请指定截至时间");
+		layer.alert("请指定截至时间",info_showtime);
 		return;
 	}
 	sessionStorage.kssj = kssj;
 	sessionStorage.jssj = jssj;
 	var first = document.getElementById("jcdd");
 	if(first.options.length<=0){
-		layer.alert("请选择要查询的测量点名称");
+		layer.alert("请选择要查询的测量点名称",info_showtime);
 		return;
 	}
 	sessionStorage.SensorId=first.value;
@@ -2380,9 +2382,9 @@ function getgraphics() {
 			error: function(jqXHR, textStatus, errorThrown) {
 				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
-					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取图形列表失败', 2000);
+					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取图形列表失败', info_showtime);
 				} else {
-					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取图形列表失败', 2000);
+					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取图形列表失败', info_showtime);
 				}
 			},
 			success: function(data, status) {
@@ -2401,7 +2403,7 @@ function getgraphics() {
 						var tbody = document.getElementById('graphicslist');
 						//var tree=document.getElementById('treeitem');
 						if (data.Result.Graphics == null) {
-							layer.alert("没有符合条件的记录");
+							layer.alert("没有符合条件的记录",info_showtime);
 							return;
 						}
 						for (var i = 0; i < data.Result.Graphics.length; i++) { //data.Result.length2 0 0 8 2 0 0 4 7 8 5 07
@@ -2442,13 +2444,13 @@ function getgraphics() {
 
 						document.getElementById("iframe_main").src = 'drawmap.html'
 					} else {
-						layer.alert(data.Error);
+						layer.alert(data.Error,info_showtime);
 					}
 				}
 			}
 		});
 	} else {
-		layer.alert('与服务器连接失败');
+		layer.alert('与服务器连接失败',info_showtime);
 	}
 }
 //获取指定编号的图形属性信息，从而来绘制图形。
@@ -2482,7 +2484,7 @@ function GetBinary(binariesid) {
 						if (data.Error == null) {
 							if(jQuery.isEmptyObject(data.Result)){
 							//if (data.Result.Value == null) {
-								layer.alert("没有符合条件的记录");
+								layer.alert("没有符合条件的记录",info_showtime);
 								sessionStorage.contents = null;
 								try {
 									drawmap(JSON.parse(sessionStorage.contents));
@@ -2529,13 +2531,13 @@ function GetBinary(binariesid) {
 							sessionStorage.dataId = 0;
 							getrealdatabynodeid(0);
 						} else {
-							layer.alert(data.Error);
+							layer.alert(data.Error,info_showtime);
 						}
 					}
 				}
 			});
 		} else {
-			layer.alert('与服务器连接失败');
+			layer.alert('与服务器连接失败',info_showtime);
 		}
 		//document.getElementById('head_map').innerHTML = "<pre><h2>" + sessionStorage.graphicName + " 状态图</h2></pre>";
 	}
@@ -2941,7 +2943,7 @@ function sortt(className) {
 		$(className).text('▼');
 		ij++;
 	}
-	setTimeout("moduletable('realdata-tbody')", 200)
+	//setTimeout("moduletable('realdata-tbody')", 200)
 }
 function sortarray(arrs){
 	var arr=[];
@@ -2959,7 +2961,8 @@ function sortarray(arrs){
 	} 
 	arr.sort(compare);
 }
-function moduletable(atableid) {  //used by electricroommonitor 
+/*
+function moduletable(atableid) {  //no used 
 	var tbody = document.getElementById(atableid);
 	if (tbody == null) {
 		tbody = iframe_main.document.getElementById(atableid);
@@ -2971,7 +2974,7 @@ function moduletable(atableid) {  //used by electricroommonitor
 			//trs[i].cells[1].style.backgroundColor = "#16b9c9";
 			//trs[i].cells[2].style.backgroundColor = "#16b9c9";
 			var cl1=trs[i].style.backgroundColor;
-			if (cl1 != "rgb(255, 255, 0)") {
+			if ((cl1 != "rgb(255, 255, 0)")&&(cl1!="#16b9c9")) {
 				trs[i].style.backgroundColor = "#16b9c9";
 			}
 			if (atableid == "realwarning-tbody") {
@@ -2981,7 +2984,7 @@ function moduletable(atableid) {  //used by electricroommonitor
 			//trs[i].cells[1].style.backgroundColor = "#FFFFFF";
 			//trs[i].cells[2].style.backgroundColor = "#FFFFFF";
 			var cl=trs[i].style.backgroundColor;
-			if (cl!= "rgb(255, 255, 0)") {
+			if ((cl1 != "rgb(255, 255, 0)")&&(cl1!="#16b9c9")){
 				trs[i].style.backgroundColor = "#FFFFFF";
 			}
 			if (atableid == "realwarning-tbody") {
@@ -2989,7 +2992,7 @@ function moduletable(atableid) {  //used by electricroommonitor
 			}
 		}
 	}
-}
+}*/
 //进度条
 /*
  * 显示圆圈加载进度条  used by electricroommonitor
@@ -3096,7 +3099,7 @@ function initcontactus() {  //used by electricroommonitor
 	document.getElementById('email1').innerHTML = jfjk_base_config.email1;
 	document.getElementById('email2').innerHTML = jfjk_base_config.email2;
 }
-function initsysteminfo(){
+function initsysteminfo(){//used by electricroommonitor
 	sessionStorage.pageindex=7;//20200214
 	document.getElementById('p1').innerHTML = jfjk_base_config.app_name;
 	document.getElementById('p2').innerHTML = jfjk_base_config.ver_id
@@ -3125,10 +3128,10 @@ function getrealdatabynodeid(nodeid){
 					if (errorThrown == "Unauthorized") {
 						value0=0;value1=0;sname="";
 						refreshData();
-						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败');
+						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败',info_showtime);
 						//sessionStorage.islogin = "false"
 					} else {
-						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败');
+						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败',info_showtime);
 					}
 					if(sessionStorage.errortime<3){
 						//continue;
@@ -3148,8 +3151,8 @@ function getrealdatabynodeid(nodeid){
 						if (data.Error == null) {
 							if (jQuery.isEmptyObject(data.Result.Datas)) {
 								//if (id == 0) {
-									//layer.alert("没有符合条件的记录",2000);
-									layer.alert("没有符合条件的记录");
+									//layer.alert("没有符合条件的记录",info_showtime);
+									layer.alert("没有符合条件的记录",info_showtime);
 								//}
 								localStorage.setItem("realdata",null);
 								refreshData();
@@ -3159,14 +3162,14 @@ function getrealdatabynodeid(nodeid){
 							localStorage.setItem("realdata",JSON.stringify(obj_realdata));
 							decoderealdata(obj_realdata);
 						} else {
-							layer.alert(data.Error, 2000);
+							layer.alert(data.Error, info_showtime);
 						}
 					}
 					//break;
 				}
 			});
 		} else {
-			layer.alert("与服务器连接失败");
+			layer.alert("与服务器连接失败",info_showtime);
 			//sessionStorage.errortime=0;
 			//break;
 			//window.location.href="index.html";
@@ -3185,6 +3188,7 @@ function sleep(numberMillis) {
 		return;
 	} 
 }
+//将类型文字化
 function getname(key){
 	if(key)
 		key=key.toLowerCase();
@@ -3203,6 +3207,7 @@ function getname(key){
 	}
 	return key;
 }
+//不同时间段的选择响应（obj对应的选项序号)
 function seletime(obj){
 	var sel=document.getElementById("jcdd");
 	sessionStorage.timeindex=$('input[name="timeselect"]:checked').val();//obj.value*1;
@@ -3212,7 +3217,7 @@ function seletime(obj){
 		return;
 	}
 	if(sel.options.length<=0){
-		layer.alert("请选择要查询的测量点名称",2000);
+		layer.alert("请选择要查询的测量点名称",info_showtime);
 		return;
 	}
 	sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
@@ -3228,7 +3233,7 @@ function seletime(obj){
 			sessionStorage.jssj = getCurrentDate(2) ;
 			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
 			timedefine.style.display="none";
-			//layer.alert("没有符合条件的记录",3000);
+			//layer.alert("没有符合条件的记录",info_showtime);
 			break;
 		case 1:
 			sel.style.display="";
@@ -3241,7 +3246,7 @@ function seletime(obj){
 			sessionStorage.jssj=dateToString(new Date(yesterdayend),2);
 			//$("#warnlogdata-tbody tr").empty();
 			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
-			//layer.alert("没有符合条件的记录",3000);
+			//layer.alert("没有符合条件的记录",info_showtime);
 			break;
 		case 2:
 			sel.style.display="";
@@ -3260,7 +3265,7 @@ function seletime(obj){
 			cjssj=new Date((getCurrentDate(1)+" 23:59:59").replace(/-/g,"/"));
 			sessionStorage.jssj = dateToString(new Date(cjssj - oneday * cjssj.getDate()),2);
 			//$("#warnlogdata-tbody tr").empty();
-			//layer.alert("没有符合条件的记录",3000);
+			//layer.alert("没有符合条件的记录",info_showtime);
 			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
 		break;
 		case  4:
@@ -3288,3 +3293,49 @@ function updatapcnav(obj){
 		}
 	}
 }
+var sorter=false;
+//数据表排序插件
+(function($){
+    //插件
+    $.extend($,{
+        //命名空间
+		sortTable:{
+            sort:function(tableId,Idx){
+                var table = document.getElementById(tableId);
+                var tbody = table.tBodies[1];
+				var tr = tbody.rows;
+				if (tbody.sortCol == Idx){
+					sorter=(!sorter);
+				}
+                var trValue = new Array();
+                for (var i=0; i<tr.length; i++ ) {
+					trValue[i] = tr[i];  //
+                }
+				if(sorter)
+                 {
+					//trValue.reverse(); //如果该列已经进行排序过了，则直接对其反序排列 
+					trValue.sort(function(tr1, tr2){
+                        var value1 = tr1.cells[Idx].innerHTML;
+                        var value2 = tr2.cells[Idx].innerHTML;
+                        return value2.localeCompare(value1);
+                    });
+                } else {
+                    //trValue.sort(compareTrs(Idx));  //进行排序
+                    trValue.sort(function(tr1, tr2){
+                        var value1 = tr1.cells[Idx].innerHTML;
+                        var value2 = tr2.cells[Idx].innerHTML;
+                        return value1.localeCompare(value2);
+                    });
+                }
+         
+                var fragment = document.createDocumentFragment();  //新建一个代码片段，用于保存排序后的结果
+                for (var i=0; i<trValue.length; i++ ) {
+                    fragment.appendChild(trValue[i]);
+                }
+				
+                tbody.appendChild(fragment); //将排序的结果替换掉之前的值
+                tbody.sortCol = Idx;
+            }
+        }
+    });      
+})(jQuery);

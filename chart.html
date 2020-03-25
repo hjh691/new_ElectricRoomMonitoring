@@ -173,6 +173,7 @@
 					input.setAttribute("name","checks");
 					input.setAttribute("id",maps[k].name);
 					input.setAttribute("value",maps[k].value);
+					input.setAttribute('onclick','itemclick(this)');
 					var spn=document.createElement("span");
 					spn.innerHTML=maps[k].name;
 					lab.appendChild(input);
@@ -183,6 +184,21 @@
 			}
 			//setSelectOption("jcdd", sessionStorage.SensorId);
 			//querychartvalue();
+		}
+		function itemclick(obj){
+			var allobj = $('[name="checks"]');
+			var c=0;
+			for(k in allobj){
+				if(allobj[k].checked){
+					c++;
+				}
+			}
+			if(c>6){
+				obj.checked=false;
+				alert("对比测量点不能大于6个!",info_showtime);
+			}else{
+				obj.checked=true;
+			}
 		}
 		function refreshsensorslist() {
 			window.parent.GetSensorsByNode(sessionStorage.nodeId);
@@ -215,23 +231,7 @@
 					check_name.push(obj[k].id);
 				}
 			}
-			if(check_val.length<10){
-				/*$("#comprate-head tr").empty();
-				var thead=document.getElementById("comprate-head");
-				var tr=document.createElement("tr");
-				var td1=document.createElement("td");
-				td1.innerHTML="测量时间";
-				tr.appendChild(td1);
-				for(j=0;j<check_name.length;j++){
-					var td=document.createElement("td");
-					td.innerHTML=check_name[j];
-					tr.appendChild(td);
-				}
-				thead.appendChild(tr);*/
-				gethistorybysensors(check_val);
-			}else{
-				alert("选择的标签数量过多，请选择少于10个标签进行对比！")
-			}
+			gethistorybysensors(check_val);
 		}
 		function gethistorybysensors(arr_sensors){
 			var url = jfjk_base_config.baseurl + "/GetHistoriesBySensors?from="+kssj+"&to="+jssj;
@@ -253,9 +253,9 @@
 						decodedatas([]);//20200214,传一个空数组
 						//myChart.hideLoading();
 						if (errorThrown == "Unauthorized") {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败',info_showtime);
 						} else {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败',info_showtime);
 						}
 						if(sessionStorage.errortime>3){
 							sessionStorage.islogin=false;
@@ -272,18 +272,18 @@
 								if (!jQuery.isEmptyObject(data.Result.Datas)) {
 									decodedatas( data.Result.Datas);
 								} else {
-									layer.alert("没有符合条件的记录",2000);
+									layer.alert("没有符合条件的记录",info_showtime);
 									decodedatas([]);//20200214,传一个空数组
 								}
 							} else {
 								decodedatas([]);//20200214,传一个空数组
-								layer.alert(data.Error);
+								layer.alert(data.Error,info_showtime);
 							}
 						}
 					}
 				});
 			} else {
-				Alert("用户未登录，您无权完成此次操作", 2000);
+				Alert("用户未登录，您无权完成此次操作", info_showtime);
 			}
 		}
 	</script>

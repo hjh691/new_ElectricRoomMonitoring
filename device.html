@@ -6,11 +6,12 @@
 	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
 	<title>告警信息</title>
 	<script  type="text/javascript" src="js/config.js"></script>
-	<script  type="text/javascript" src="js/function.js"></script>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script  type="text/javascript" src="js/jquery.tablesort.min.js"></script>
+	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<!--<script  type="text/javascript" src="js/radialIndicator.js"></script>-->
 	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+	<script  type="text/javascript" src="js/function.js"></script>
 	<!--<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>-->
 	<style>
 	*{
@@ -142,7 +143,8 @@
             sensors=JSON.parse(localStorage.getItem("sensors"));
 			if(sensors!=null){
 				for(var i=0;i<sensors.length;i++){
-                    var tr=document.createElement("tr");
+					var tr=document.createElement("tr");
+					tr.setAttribute("onclick","tableclick(this)");
                     //if (i % 2 == 0) {
 					//	tr.setAttribute('style', "background-color:#16b9c9");
 					//}
@@ -171,12 +173,16 @@
                     tr.appendChild(td_dadr);
                     tr.appendChild(td_dtype);
                     tbody.appendChild(tr);
-                }
+				}
+				document.getElementById("count_val").innerHTML=sensors.length;
             }
-            document.getElementById("count_val").innerHTML=sensors.length;
-            //display();//分页显示功能。
+            
+            //display();//分页显示功能。 
         }
-
+		function tableclick(tr){
+			$(tr).siblings().css("background","");
+			$(tr).css("background","#85e494");//区分选中行
+		}
         function display(){   
 		
 		//var tbody=$("#device-tbody");

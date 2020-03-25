@@ -27,47 +27,34 @@
         line-height:center;
         width:200px;
         height:30px;
-    }
-    td{
-        border:1px solid black;
-        text-align:center;
-        line-height:center;
-    }
+    }	
+	table {
+		/*设置相邻单元格的边框间的距离*/
+		border-spacing: 0;
+		/*表格设置合并边框模型*/
+		border-collapse: collapse;
+		text-align: center;
+	}
+	/*关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
+	table tbody {
+		display:block ;
+	}
+	/*tbody tr {
+		display: table;
+		table-layout: fixed;
+	}
+	关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
 	
-            * {
-                margin: 0;
-                padding: 0;
-            }
-            
-            table {
-                /*设置相邻单元格的边框间的距离*/
-                border-spacing: 0;
-                /*表格设置合并边框模型*/
-                border-collapse: collapse;
-                text-align: center;
-            }
-            /*关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
-            table tbody {
-                display:block ;
-            }
-            
-
-            /*tbody tr {
-                display: table;
-                table-layout: fixed;
-            }
-            关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
-            
-            table thead {
-                width: calc( tbody.width )
-            }
-            
-            table thead th {
-                background: #ccc;
-            }*/
-		span{
-			margin-left:10px;
-		}
+	table thead {
+		width: calc( tbody.width )
+	}
+	
+	table thead th {
+		background: #ccc;
+	}*/
+	span{
+		margin-left:10px;
+	}
 	</style>
 </head>
 <body onload="initwarnlog()">
@@ -111,12 +98,12 @@
 			</span>
 			</div>
 			<div class="rowlay" >
+			<span ><label><input type="radio" value="5" onclick="seletime(this)" name="timeselect"></input>实时</label></span>
 			<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
 			<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
 			<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
 			<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"></input>上月</label></span>
 			<span ><label><input type="radio" value="4" onclick="seletime(this)" name="timeselect"></input>自定义</label></span>
-			<span ><label><input type="radio" value="5" onclick="seletime(this)" name="timeselect"></input>实时</label></span>
 			<span id="timedefine" style="display: none;">
 			起止时间
 			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"></input>至
@@ -253,7 +240,7 @@
 					}
 					window.eval("td"+j+".innerHTML='"+type_str[j]+"'");
 					window.eval("tr"+j+".appendChild(td"+j+")");
-					window.eval("tr"+j+".setAttribute('style','background-color:#f70')");
+					window.eval("tr"+j+".setAttribute('style','color:#f20')");
 					
 					$table.appendChild(window.eval("tr"+j));
 					//console.log(window.eval("tr"+j));
@@ -292,6 +279,7 @@
 				for (var i = 0; i <obj_data.length; i++) {
 					if(obj_data[i].Message){
 						var tr=document.createElement("tr");
+						tr.setAttribute("onclick","tableclick(this)");
 						//if (count % 2 == 0) {
 						//	tr.setAttribute('style', "background-color:#16b9c9");
 						//}
@@ -327,7 +315,7 @@
 					}
 				}
 				if(!count){
-					layer.alert("沒有符合条件的数据");
+					layer.alert("沒有符合条件的数据",info_showtime);
 					document.getElementById("count_val").innerHTML="";
 					document.getElementById("count_first").innerHTML="";
 					document.getElementById("count_third").innerHTML="";
@@ -335,6 +323,8 @@
 					document.getElementById("td0").style.display="none";
 					document.getElementById("tr1").style.display="none";
 					document.getElementById("td1").style.display="none";
+					document.getElementById("count_first").innerHTML=0;
+					document.getElementById("count_third").innerHTML=0;
 				}else{
 					for(var i=0;i<type_str.length;i++){
 						if(count_l[i]==0){
@@ -355,8 +345,15 @@
 					document.getElementById("count_third").innerHTML=count_l[1];
 				}
 				//ps=obj_data.length;
+			}else{
+				document.getElementById("count_first").innerHTML=0;
+				document.getElementById("count_third").innerHTML=0;
 			}
 		display();
+	}
+	function tableclick(tr){
+		$(tr).siblings().css("background","");
+		$(tr).css("background","#85e494");//区分选中行
 	}
 	function add_sign(){
 		
@@ -380,7 +377,7 @@
 		};
 	function showrealworning(){
 		//document.getElementById("jcdd").disabled=true;
-		count_l=[0];//count_h=0;
+		count_l=[0,0];//count_h=0;
 		var timedefine=document.getElementById("timedefine");
 		timedefine.style.display="none";
 		var warningtab = window.parent.document.getElementById("realwarningdata-tbody");
@@ -423,7 +420,7 @@
 				}
 				window.eval("td"+j+".innerHTML='"+type_str[j]+"'");
 				window.eval("tr"+j+".appendChild(td"+j+")");
-				window.eval("tr"+j+".setAttribute('style','background-color:#f70')");
+				window.eval("tr"+j+".setAttribute('style','color:#f20')");
 				
 				$table.appendChild(window.eval("tr"+j));
 				//console.log(window.eval("tr"+j));
@@ -440,7 +437,10 @@
 				}*/
 				for(var j=0;j<type_str.length;j++){
 					if(trs[i].cells[5].innerText==type_str[j]){
-						$table.insertBefore($(trs[i].outerHTML)[0],window.eval("tr"+(j+1)));
+						var tr=document.createElement("tr");
+						tr=$(trs[i].outerHTML)[0];
+						tr.setAttribute("onclick","tableclick(this)");
+						$table.insertBefore(tr,window.eval("tr"+(j+1)));
 						count_l[j]=count_l[j]+1;
 					}
 					count++
@@ -456,7 +456,7 @@
 				}
 			}
 		}else{
-			alert("当前没有告警!")
+			layer.alert("当前没有告警!",info_showtime)
 		}
 		
 		document.getElementById("count_first").innerHTML=count_l[0];
@@ -512,11 +512,11 @@
 		function changePage(){    // 转页
 			curPage=document.getElementById("changePage").value * 1;
 			if (!/^[1-9]\d*$/.test(curPage)) {
-				layer.alert("请输入正整数");
+				layer.alert("请输入正整数",info_showtime);
 				return ;
 			}
 			if (curPage > page) {
-				layer.alert("超出数据页面");
+				layer.alert("超出数据页面",info_showtime);
 				return ;
 			}
 			direct = 0;
@@ -525,7 +525,7 @@
 		function setPageSize(){    // 设置每页显示多少条记录
 			pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
 			if (!/^[1-9]\d*$/.test(pageSize)) {
-				layer.alert("请输入正整数");
+				layer.alert("请输入正整数",info_showtime);
 				return ;
 			}
 			len =$table.rows.length - 1;
@@ -538,11 +538,11 @@
 	function displayPage(){
 		if(curPage <=1 && direct==-1){
 			direct=0;
-			layer.alert("已经是第一页了");
+			layer.alert("已经是第一页了",info_showtime);
 			return;
 		} else if (curPage >= page && direct==1) {
 			direct=0;
-			layer.alert("已经是最后一页了");
+			layer.alert("已经是最后一页了",info_showtime);
 			return ;
 		}
 		lastPage = curPage;

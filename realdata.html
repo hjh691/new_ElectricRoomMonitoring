@@ -9,11 +9,10 @@
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js" ></script>
 	<script  type="text/javascript" src="js/config.js"></script>
+	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
-	<script  type="text/javascript" src="js/jquery.tablesort.min.js"></script>
 	<script type="text/javascript" src="js/echarts.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
-	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	
 	<style type="text/css">
     *{
@@ -27,11 +26,6 @@
         line-height:center;
         width:200px;
         height:30px;
-    }
-    td{
-        border:1px solid black;
-        text-align:center;
-        line-height:center;
     }
 	* {
 		margin: 0;
@@ -109,12 +103,12 @@
 				<a>页&nbsp;</a>
 				<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
 			</div>
-		<table class="tabtop13" id="realtable" width="1000px" style=" margin:auto;" >
+		<table class="tablesorter" id="realtable" width="1000px" style=" margin:auto;" >
 			<tr >
-				<th style="color:#0000ff" onclick="sortt('.sensorname')" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
+				<th style="color:#0000ff" onclick="$.sortTable.sort('realtable',0)" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
 				<!--th>数据编号</thonclick="sortt('.tmpvalue')"-->
-				<th style="color:#0000ff" onclick="sortt('.time')"><a href="javascript:">测量时间 <span class="time"></span></a></th>
-				<th style="color:#0000ff" onclick="sortt('.value1')"><a href="javascript:">实时值<span class="value1"></span></a></th>
+				<th style="color:#0000ff" onclick="$.sortTable.sort('realtable',1)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
+				<th style="color:#0000ff" onclick="$.sortTable.sort('realtable',2)"><a href="javascript:">实时值<span class="value1"></span></a></th>
 				<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>-->
 				<th style="color:#0000ff">查看历史数据</th>
 				<th style="color:#0000ff">查看告警信息</th><!---->
@@ -161,6 +155,7 @@
 					if(i%60==0){
 						//getrealdatabynodeid(-1);
 						decoderealdata();
+						//getrealdatabynodeid(0);
 					}
 				};
 			} else {
@@ -170,11 +165,13 @@
 			getrealdatabynodeid(-1);
 		}
 		//var t_pt=0;
-		
+		//wake up go to bed get up have breakfast go to school have class have a rest have lanch go back home (go home) do homework watch tv take a picture
+		//on away give sth to sb turn on turn off fall off onto talk about 
 		//表格排序使用插件
 		$(function() {
-			$('table').tablesort().data('tablesort');
+			//$("#realtable").tablesort();		
 		});
+	
 		function stopWorker() 
 		{ 
 			w1.terminate();
@@ -196,10 +193,11 @@
 		//$("#realdata-tbody tr").empty();
 		obj_realdata=JSON.parse(localStorage.getItem("realdata"));
 		$table = document.getElementById('realdata-tbody');
-		var tableLength = $table.rows.length;
-		for(var int = 0;int < tableLength;int++) {
-			$table.deleteRow(0);
-	    }
+		//var tableLength = $table.rows.length;
+		for(var j=$table.rows.length-1;j>=0;j--){
+			$table.removeChild($table.rows[j]);
+		}
+
 		var sensors=JSON.parse(localStorage.getItem("sensors"));
 		var obj_data=new Object();
 		var pt=0;
@@ -256,15 +254,15 @@
 					tr.appendChild(tdid);//不显示
 					tr.appendChild(tdtype);//不显示
 					tr.appendChild(tdmessage);//不显示 告警信息
-					var cl="#FFFFFF";
+					var cl="#000";
 					//隔行显示不同的颜色
-					if (pt % 2 == 0) {
-						cl="#16b9c9";
-					}
+					//if (pt % 2 == 1) {
+					//	cl="#16b9c9";
+					//}
 					if(mes){
-						cl="#ff0";
+						cl="#f20";
 					}
-					tr.style.backgroundColor = cl;
+					tr.style.color = cl;
 					pt++;
 					$table.appendChild(tr);
 					$(".time").text('');
@@ -332,10 +330,10 @@
 				//$table.rows[0].ondblclick();
 			}
 			}else{
-				layer.alert("没有符合条件的数据");
+				layer.alert("没有符合条件的数据",info_showtime);
 			}
 		}else{
-			layer.alert("没有符合条件的数据");
+			layer.alert("没有符合条件的数据",info_showtime);
 		}
 		//$table.rows[t_pt].scrollIntoView();
 		//refreshData();
@@ -345,8 +343,8 @@
 		switch(atype.toLowerCase()){
 			case "temp":
 			case "tmp":
-				chart_min=-40;
-				chart_max=210;
+				chart_min=-30;
+				chart_max=170;
 				chart_unit="℃"
 				chart_sigle="";
 				colors=[[0.15, '#1e90ff'],[0.5, 'lime'],[0.6,'#ffa500'],[0.8,'#ff4500'],[1, '#ff0000']];
@@ -367,7 +365,7 @@
 		}
 	}
 	function tableclick(tr){
-		//$(tr).siblings().css("background","");
+		$(tr).siblings("tr[backgroundColor!='#ff0']").css("background","");
 		sessionStorage.t_p=tr.rowIndex-1;
 		sname=tr.cells[0].innerHTML;
 		chart_type=tr.cells[6].innerHTML;
@@ -385,7 +383,7 @@
 		}
 		//maxval=0;
 		refreshData();
-		moduletable("realdata-tbody");
+		//moduletable("realdata-tbody");
 		$(tr).css("background","#85e494");//区分选中行
 		//var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 	}
@@ -858,11 +856,11 @@
 		function changePage(){    // 转页
 			curPage=document.getElementById("changePage").value * 1;
 			if (!/^[1-9]\d*$/.test(curPage)) {
-				layer.alert("请输入正整数");
+				layer.alert("请输入正整数",info_showtime);
 				return ;
 			}
 			if (curPage > page) {
-				layer.alert("超出数据页面");
+				layer.alert("超出数据页面",info_showtime);
 				return ;
 			}
 			direct = 0;
@@ -871,7 +869,7 @@
 		function setPageSize(){    // 设置每页显示多少条记录
 			pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
 			if (!/^[1-9]\d*$/.test(pageSize)) {
-				layer.alert("请输入正整数");
+				layer.alert("请输入正整数",info_showtime);
 				return ;
 			}
 			len =$table.rows.length - 1;
@@ -884,11 +882,11 @@
 	function displayPage(){
 		if(curPage <=1 && direct==-1){
 			direct=0;
-			layer.alert("已经是第一页了");
+			layer.alert("已经是第一页了",info_showtime);
 			return;
 		} else if (curPage >= page && direct==1) {
 			direct=0;
-			layer.alert("已经是最后一页了");
+			layer.alert("已经是最后一页了",info_showtime);
 			return ;
 		}
 		lastPage = curPage;

@@ -73,7 +73,7 @@
 				</div>
 			</div>
 			<div class="mainarea" id="mainarea">
-				<iframe name="iframe_main" id="iframe_main" allowtransparency="true" allowfullscreen="true" style="width:100%;height:99%;" frameborder="0">
+				<iframe name="iframe_main" id="iframe_main" allowtransparency="true" allowfullscreen="true" style="width:100%;height:95%;" frameborder="0">
 				</iframe>
 				<table id="warningtable" style="display:none">
 					<thead>
@@ -776,7 +776,7 @@
 					}
 				});
 			} else {
-				Alert("用户未登录，您无权完成此次操作", 2000);
+				Alert("用户未登录，您无权完成此次操作", info_showtime);
 				inittreeview(null, 0);
 			}
 		}
@@ -952,7 +952,7 @@
 					}
 				});
 			} else {
-				Alert("用户未登录，您无权完成此次操作", 2000);
+				Alert("用户未登录，您无权完成此次操作", info_showtime);
 				//inittreeview(null,0);
 			}
 			//if(atype==0){
@@ -1015,7 +1015,7 @@
 					}
 				});
 			} else {
-				Alert("用户未登录，您无权完成此次操作", 2000);
+				Alert("用户未登录，您无权完成此次操作", info_showtime);
 				inittreeview(null, 0);
 			}
 			refreshiframe();
@@ -1122,7 +1122,7 @@
 					}
 				});
 			} else {
-				Alert("用户未登录，您无权完成此次操作", 2000);
+				Alert("用户未登录，您无权完成此次操作", info_showtime);
 				inittreeview(null, 0);
 			}
 		}
@@ -1371,7 +1371,7 @@
 				var type_td = getname(sensors[i].Value.Catalog);
 				//添加数据列表项
 				var tr = document.createElement('tr');
-				//tr.setAttribute("ondblclick","tableclick(this)");
+				tr.setAttribute("onlclick","tableclick(this)");
 				var tdename = document.createElement('td');
 				var tdid = document.createElement('td');
 				var tdtype = document.createElement('td');
