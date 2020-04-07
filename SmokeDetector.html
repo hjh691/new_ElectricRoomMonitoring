@@ -2,13 +2,17 @@
 <html>
     <head>
         <meta charset="utf-8"/>
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/flooding_smoking.css"/><!---->
         <title>烟感模块状态参数</title>
         
     </head>
     <body>
-        <div class="main" align="center" id="main" style= >
-            <h3 style="text-align: center">烟雾感应监测状态</h3>
+        <div class="main" align="center" id="tab_smoken" >
+            <!--<h3 style="text-align: center">烟雾感应监测状态</h3>-->
+            <div>
+                <img src="res/yg001.jpg" style="width:200px;height:150px;">
+            </div>
             <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
                 <p class="lable">设备编号</p>
                 <p class="lable" >设备名称</p>
@@ -21,25 +25,25 @@
                 <p class="lable">smokeing-01</p>
                 <p class="lable" id="name_smoking-01">1#感应区</p>
                 <p class="normal" id="sf_smoking-01">正常</p>
-                <p class="set"><img id="smoking_01" src="res/on.png" style="height:30px;vertical-align: middle;" onclick="changestated(this,'smoking-01')"/></p>
-                <p class="set"><button id="btn_rese_1t" onclick="reset('smoking-01')">设置/复位</button></p>
-                <p class="set"><button id="btn_other_1" onclick="other(this,'smoking-01')">更多▼</button></p>
+                <p class="set"><img id="smoking_01" src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking-01')"/></p>
+                <p class="set"><button id="btn_rese_1t" onclick="smoking_reset('smoking-01')">设置/复位</button></p>
+                <p class="set"><button id="btn_other_1" onclick="smoking_other(this,'smoking-01')">更多∨</button></p>
             </div>
             <div class="bg">
                 <p class="lable">smoking0102</p>
                 <p class="lable" id="name_smoking0102">2#感应区</p>
                 <p class="unnormal" id="sf_smoking0102">告警</p>
-                <p class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="changestated(this,'smoking0102')"/></p>
-                <p class="set"><button id="btn_reset_2"  onclick="reset('smoking0102')">设置/复位</button></p>
-                <p class="set"><button id="btn_other_2" onclick="other(this,'smoking0102')">更多∨</button></p>
+                <p class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking0102')"/></p>
+                <p class="set"><button id="btn_reset_2"  onclick="smoking_reset('smoking0102')">设置/复位</button></p>
+                <p class="set"><button id="btn_other_2" onclick="smoking_other(this,'smoking0102')">更多∨</button></p>
             </div>
         </div>
-        <div class="fudongdiv" id="fudong" onmousedown="hideself(this) ">
+        <div class="fudongdiv" id="smoking_fudong" onmousedown="smoking_hideself(this) ">
             <div align="center">
-                <p id="bind_name">主控室</p>
-                <li id="bind_addr">安装地址：主控室</li>
-                <li id="bind_view">绑定信息1：2#视频</li>
-                <li id="bind_view">绑定信息：视频</li>
+                <p id="smoking_bind_name">主控室</p>
+                <li id="smoking_bind_addr">安装地址：主控室</li>
+                <li id="smoking_bind_view">绑定信息1：2#视频</li>
+                <li id="smoking_bind_view">绑定信息：视频</li>
             </div>
         </div>
         <script type="text/javascript" src="js/jquery-3.3.1.js"></script>

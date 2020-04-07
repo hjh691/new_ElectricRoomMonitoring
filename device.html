@@ -7,9 +7,10 @@
 	<title>告警信息</title>
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
-	<script  type="text/javascript" src="js/jquery.tablesort.min.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
-	<!--<script  type="text/javascript" src="js/radialIndicator.js"></script>-->
+	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
+	<!--<script  type="text/javascript" src="js/radialIndicator.js"></script>
+	<script  type="text/javascript" src="js/jquery.tablesort.min.js"></script>-->
 	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	<!--<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>-->
@@ -26,71 +27,52 @@
         width:200px;
         height:30px;
     }
-    td{
-        border:1px solid black;
-        text-align:center;
-        line-height:center;
-    }
-	
-            * {
-                margin: 0;
-                padding: 0;
-            }
-            
-            table {
-                /*设置相邻单元格的边框间的距离*/
-                border-spacing: 0;
-                /*表格设置合并边框模型*/
-                border-collapse: collapse;
-                text-align: center;
-            }
-            /*关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
-            table tbody {
-                display: block;
-                
-                
-            }
-            
-            table thead,
-            tbody tr {
-                display: table;
-                table-layout: fixed;
-            }
-            /*关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
-            
-            table thead {
-                width: calc( tbody.width )
-            }
-            
-            table thead th {
-                background: #ccc;
-            }*/
-		span{
-			margin-left:10px;
-		}
+	table {
+		/*设置相邻单元格的边框间的距离*/
+		border-spacing: 0;
+		/*表格设置合并边框模型*/
+		border-collapse: collapse;
+		text-align: center;
+	}
+	/*关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
+	table tbody {
+		display: block;
+	}
+	table thead,
+	tbody tr {
+		display: table;
+		table-layout: fixed;
+	}
+	/*关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
+	table thead {
+		width: calc( tbody.width )
+	}
+	table thead th {
+		background: #ccc;
+	}*/
+	span{
+		margin-left:10px;
+	}
 	</style>
 </head>
 <body >
 	<div>
 		<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
 			<h3 >设备信息</h3>
-			<!--ul class="pc-nav" >
-				<li ><a href="#" target="iframe_main"><i>数据列表</i></a></li>
-				<li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
-			</ul-->
         </div>
-        <div  class="rowlay" >
+        <div  class="rowlay" style="display: none;" >
             <ul class="count_info" text-align="center" >
                 <!--<li style="width:50px"><b>站名：</b></li>
                 <li id="station_name"style="width:100px;margin-right:0px"> </li>-->
                 <li style="width:50px;margin-right:0px"><b>记录数：</b></li>
                 <li id="count_val"style="width:50px;margin-right:0px"> </li>
-                <li style="width:100px;margin-right:0px"><a href="javascript:void(0)" style="margin-left:20px;" onclick="method5('devicetable')">导出Excel</a></li>
+				<li style="width:100px;margin-right:0px"><a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('devicetable')">
+					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
+				</li>
             </ul>
         </div>
-				
 		<div style="text-align: center;">
-            <div  style="text-align: center;font-size: 18px;display: none;">
+            <div  style="text-align: center;font-size: 18px;">
                 <a id="btn0"></a>
                 <input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
                 <a id="sjzl"></a>&nbsp;
@@ -102,20 +84,20 @@
                 <input id="changePage" type="text" size="1" maxlength="4"/>
                 <a>页&nbsp;</a>
                 <a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
-                <a href="javascript:void(0)" style="margin-left:20px;" onclick="method5('devicetable')">导出Excel</a>
+				<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('devicetable')"><!--display: none;method5('devicetable')-->
+					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel"></a>
             </div>
 		<table id="devicetable" style="margin: auto;">
-			<caption style="text-align: center;font-size:20px;">设备列表</caption>
+			<caption style="text-align: center;font-size:20px;">设备信息汇总表</caption>
 			<tr >
-				<th>设备编号</th>
-				<th>设备名称</th>
-				<th>安装时间</th>
-				<th>地址</th>	
-				<th>类型</th>
+				<th onclick="$.sortTable.sort('devicetable',0)">设备编号</th>
+				<th onclick="$.sortTable.sort('devicetable',1)">设备名称</th>
+				<th onclick="$.sortTable.sort('devicetable',2)">安装时间</th>
+				<th onclick="$.sortTable.sort('devicetable',3)">地址</th>	
+				<th onclick="$.sortTable.sort('devicetable',4)">类型</th>
 			<!--<th style="width:18px;border:0px solid black;"></th>-->
 			</tr>
 			<tbody id='device-tbody' style="width:1020px;height:600px; overflow:auto;">
-     
 			</tbody>
 		</table>
 	</div>
@@ -133,9 +115,9 @@
         var count;
         var tbody;
 		initdevice();
-		$(function() {
+		/*$(function() {
 			$('table').tablesort().data('tablesort');
-		});
+		});*/
         function initdevice(){
 			updatapcnav(9);
 			var parentid=-100,parentname="";
@@ -176,28 +158,23 @@
 				}
 				document.getElementById("count_val").innerHTML=sensors.length;
             }
-            
-            //display();//分页显示功能。 
+            display();//分页显示功能。 
         }
 		function tableclick(tr){
 			$(tr).siblings().css("background","");
 			$(tr).css("background","#85e494");//区分选中行
 		}
         function display(){   
-		
-		//var tbody=$("#device-tbody");
-		len =tbody.rows.length ;//- 1;    // 求这个表的总行数，剔除第一行介绍
-		page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
-		// alert("page==="+page);
-		curPage=1;    // 设置当前为第一页
-		displayPage(1);//显示第一页
-		
-		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
-		document.getElementById("sjzl").innerHTML="数据总量 " + len + "";        // 显示数据量
-		document.getElementById("pageSize").value = pageSize;
-	}
-		
-		
+			//var tbody=$("#device-tbody");
+			len =tbody.rows.length ;//- 1;    // 求这个表的总行数，剔除第一行介绍
+			page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
+			// alert("page==="+page);
+			curPage=1;    // 设置当前为第一页
+			displayPage(1);//显示第一页
+			document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
+			document.getElementById("sjzl").innerHTML="数据总量 <span class='badge' style='font-size:18px'>" + len + "";        // 显示数据量
+			document.getElementById("pageSize").value = pageSize;
+		}
 		function firstPage(){    // 首页
 			curPage=1;
 			direct = 0;
@@ -229,22 +206,18 @@
 			direct = 0;
 			displayPage();
 		}
-		
-		
-		$("#pageSizeSet").click(function setPageSize(){    // 设置每页显示多少条记录
+		function setPageSize(){    // 设置每页显示多少条记录
 			pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
 			if (!/^[1-9]\d*$/.test(pageSize)) {
 				layer.alert("请输入正整数");
 				return ;
 			}
-			len =tbody.find("tr").length - 1;
+			len =tbody.rows.length - 1;
 			page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
 			curPage=1;        //当前页
 				direct=0;        //方向
 				firstPage();
-		});
-	
-
+		}
 	function displayPage(){
 		if(curPage <=1 && direct==-1){
 			direct=0;
@@ -255,23 +228,16 @@
 			layer.alert("已经是最后一页了");
 			return ;
 		}
-		
 		lastPage = curPage;
-		
 		// 修复当len=1时，curPage计算得0的bug
 		if (len > pageSize) {
 			curPage = ((curPage + direct + len) % len);
 		} else {
 			curPage = 1;
 		}
-	
-		
 		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";        // 显示当前多少页
-		
 		begin=(curPage-1)*pageSize ;// 起始记录号
 		end = begin + 1*pageSize ;    // 末尾记录号
-		
-		
 		if(end > len ) end=len;
 		//var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
 		for ( var i = 0; i<len; i++ ) {
@@ -285,7 +251,6 @@
 			if((i>=begin && i<=end) )//显示begin<=x<=end的记录
 				$(this).show();
 		});*/
-
-		}
+	}
     </script>
 </body>

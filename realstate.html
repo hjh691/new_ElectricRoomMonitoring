@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <link rel="shortcut icon" href="#" />
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+       <!-- <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
+        <link rel="stylesheet" href="css/electricroommonitoring.css" />-->
+        <link rel="stylesheet" href="css/flooding_smoking.css"/><!---->
+        <title>变电站智能辅助系统云平台</title>
+        <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+        <script src="js/bootstrap.js"></script>
+        <script type="text/javascript" src="js/config.js"></script>
+        <script type="text/javascript" src="js/layer/layer.js"></script>
+        <script type="text/javascript" src="js/echarts.js"></script>
+        <!--<script type="text/javascript" src="js/cvi_busy_lib.js"></script>
+        <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>-->
+        <script type="text/javascript" src="js/function.js"></script>
+        <style>
+            .container{
+                width: 100%;
+                margin-left: 5px;
+                margin-right: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <!--导航栏
+        <div style="text-align:center" class="navbar navbar-default" >
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#" date-toggle="tooltip" title="this tooltip">iOS</a></li>
+                    <li><a href="#">SVN</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Java
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">jmeter</a></li>
+                            <li><a href="#">EJB</a></li>
+                            <li><a href="#">Jasper Report</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">分离的链接</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">另一个分离的链接</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        <div class="container" id="container">-->
+            <!--
+            <button type="button" class="btn btn-default" title="Popover title" data-container="body" data-toggle="popover" data-placement="right" 
+            data-content="左侧的 Popover 中的一些内容">
+                左侧的 Popover
+             </button>
+             <button type="button" class="btn btn-warning" title="Popover title"  data-container="body" data-toggle="popover" 
+             data-placement="top" data-content="右侧的 Popover 中的一些内容">
+                右侧的 Popover
+             </button><h3 style="text-align: center">门禁状态</h3>
+        </div>-->
+        <div class="container" style="margin: 0;padding:0 ;">
+            <ul class="nav nav-tabs" disabled='disabled' id="nav" style="font-size: 16px;font-style: italic;margin-top: 0px;">
+                <li class="active"><a href="#tab_guard" data-toggle="tab"><i class="glyphicon glyphicon-log-in"></i> 门禁</a></li>
+                <li ><a href="#tab_light" data-toggle="tab"><i class="glyphicon glyphicon-cog" ></i> 灯光</a></li>
+                <li><a href="#tab_smoken" data-toggle="tab"><i class="glyphicon glyphicon-cloud-upload"></i> 烟感</a></li>
+                <li><a href="#tab_flooding" data-toggle="tab"><i class="glyphicon glyphicon-tint"></i> 水浸</a></li>
+                <li><a href="#tab_ups" data-toggle="tab"><i class="glyphicon glyphicon-retweet"></i> UPS</a></li>
+                <li><a href="#tab_hum" data-toggle="tab"><i class="glyphicon glyphicon-flash"></i> 动力</a></li>
+                <li><a href="#tab_room" data-toggle="tab"><i class="glyphicon glyphicon-leaf"></i> 环境</a></li>
+                <li><a href="#tab_air" data-toggle="tab"><i class="glyphicon glyphicon-random"></i> 空调</a></li>
+            </ul>
+            <div class="tab-content" id='tab-content'>
+                <div class="tab-pane in active fade" id="tab_guard" align="center">
+                    <img src="res/menjin.png" style="width:300px;height:150px;">
+                    <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
+                        <p class="lable" >设备编号</p>
+                        <p class="lable" >安装位置</p>
+                        <p class="lable" style="width:100px;">当前状态</p>
+                        <p class="lable" style="width:200px;">详细信息</p>
+                        <p class="lable" style="width:100px;">开关控制</p>
+                        <p class="lable" style="width:100px;">关联信息</p>
+                    </div><!---->
+                    <div class="bg" >
+                        <p class="lable" id="door1">door1</p>
+                        <p class="lable" id="name_door1">1#大门</p>
+                        <p class="normal" id="sf_door1">正常关闭</p>
+                        <p class="lable" id="info_door1">正常关闭</p>
+                        <p class="set"><img src="res/close.png" style="height:30px;vertical-align: middle;" onclick="guard_changestated(this,'door1')"/></p>
+                        <p class="set"><button onclick="guard_other('door1')">更多<b class="caret"></b></button></p>
+                    </div>
+                    <div class="bg">
+                        <p class="lable" id="door2">door2</p>
+                        <p class="lable" id="name_door2">2#门</p>
+                        <p class="unnormal" id="sf_door2">告警</p>
+                        <p class="lable" id="info_door2">长时间处</p>
+                        <p class="set" ><img src="res/open.png" style="height:30px;vertical-align: middle;" onclick="guard_changestated(this,'door2')"/></p>
+                        <p class="set"><button onclick="guard_other('door2')">更多<b class="caret"></b></button></p>
+                    </div>
+                    <div class="fudongdiv" id="guard_fudong" onmousedown="guard_hideself(this) ">
+                        <div align="center">
+                            <h3 id="guard_bind_name">1#大门</h3>
+                            <li id="guard_bind_addr">安装地址：1#房间</li>
+                            <li id="guard_bind_view">绑定信息：3#视频</li>
+                        </div>
+                    </div>
+                    <script type="text/javascript" src="js/guard.js"></script><!--instrument piece pice-->
+                </div>
+                <div class="tab-pane fade" id="tab_light" align="center">
+                    <!--h3-- style="text-align: center">灯光状态</!--h3-->
+                    <img src="res/light001.jpg" style="width:300px;height:150px">
+                    <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
+                        <p class="lable" >设备编号</p>
+                        <p class="lable" >安装位置</p>
+                        <p class="lable" style="width:100px;">当前状态</p>
+                        <p class="lable" style="width:200px;">详细信息</p>
+                        <p class="lable" style="width:100px;">开关控制</p>
+                        <p class="lable" style="width:100px;">关联信息</p>
+                    </div><!---->
+                    <div class="bg" >
+                        <p class="lable" id="light1">l001</p>
+                        <p class="lable" id="name_light1">主控室</p>
+                        <p class="normal" id="sf_light1">点亮</p>
+                        <p class="lable" id="info_light1">正常照明</p>
+                        <p class="set"><img src="res/d9.png" style="height:30px;vertical-align: middle;" onclick="light_changestated(this,'light1')"/></p>
+                        <p class="set"><button onclick="light_other(this,'light1')">更多<b class="caret"></b></button></p>
+                    </div>
+                    <div class="bg">
+                        <p class="lable" id="light2">l002</p>
+                        <p class="lable" id="name_light2">设备机房</p>
+                        <p class="unenabled" id="sf_light2">关闭</p>
+                        <p class="lable" id="info_light2">正常关闭</p>
+                        <p class="set" ><img src="res/d3.png" style="height:30px;vertical-align: middle;" onclick="light_changestated(this,'light2')"/></p>
+                        <p class="set"><button onclick="light_other(this,'light2')">更多<b class="caret"></b></button></p>
+                    </div><!--  -->
+                    <div class="fudongdiv" id="light_fudong" onmousedown="light_hideself(this) ">
+                        <div align="center">
+                            <p id="light_bind_name">主控室</p>
+                            <li id="light_bind_addr">安装地址：主控室</li>
+                            <li id="light_bind_view">绑定信息：2#视频</li>
+                        </div>
+                    </div>
+                    <!--<div style="z-index:999;display: block; position: fixed; left: 500px; top: 200px;">
+                        <div id="zxd_x">
+                        <a title="点击关闭"><b></b></a></div>
+                        <div class="content"><a href=""><img src="res/ac.jpg"></a></div>
+                        </div>-->
+                    <script type="text/javascript" src="js/light.js"></script>
+                </div>
+                <div class="tab-pane  fade" id="tab_smoken" align="center">
+                    <div>
+                        <img src="res/yg001.jpg" style="width:200px;height:150px;">
+                    </div>
+                    <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
+                        <p class="lable">设备编号</p>
+                        <p class="lable" >设备名称</p>
+                        <p class="lable" style="width:100px;">当前状态</p>
+                        <p class="lable" style="width:100px;">运行状态</p>
+                        <p class="lable" style="width:100px;">设置复位</p>
+                        <p class="lable" style="width:100px;">关联信息</p>
+                    </div><!---->
+                    <div class="bg" >
+                        <p class="lable">smokeing-01</p>
+                        <p class="lable" id="name_smoking-01">1#感应区</p>
+                        <p class="normal" id="sf_smoking-01">正常</p>
+                        <p class="set"><img id="smoking_01" src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking-01')"/></p>
+                        <p class="set"><button id="btn_rese_1t" onclick="smoking_reset('smoking-01')">设置/复位</button></p>
+                        <p class="set"><button id="btn_other_1" onclick="smoking_other(this,'smoking-01')">更多<b class="caret"></b></button></p>
+                    </div>
+                    <div class="bg">
+                        <p class="lable">smoking0102</p>
+                        <p class="lable" id="name_smoking0102">2#感应区</p>
+                        <p class="unnormal" id="sf_smoking0102">告警</p>
+                        <p class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking0102')"/></p>
+                        <p class="set"><button id="btn_reset_2"  onclick="smoking_reset('smoking0102')">设置/复位</button></p>
+                        <p class="set"><button id="btn_other_2" onclick="smoking_other(this,'smoking0102')">更多<b class="caret"></b></button></p>
+                    </div>
+                    <div class="fudongdiv" id="smoking_fudong" onmousedown="smoking_hideself(this) ">
+                        <div align="center">
+                            <p id="smoking_bind_name">主控室</p>
+                            <li id="smoking_bind_addr">安装地址：主控室</li>
+                            <li id="smoking_bind_view">绑定信息1：2#视频</li>
+                            <li id="smoking_bind_view">绑定信息：视频</li>
+                        </div>
+                    </div>
+                    <script type="text/javascript" src="js/smokedetector.js"></script>
+                </div>
+                <div class="tab-pane  fade" id="tab_flooding" align="center">
+                    <!--<h3 style="text-align: center">水浸监测状态</h3>-->
+                    <img src="res/shuijin2.jpg" style="width:300px;height:200px">
+                    <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
+                        <p class="lable">设备编号</p>
+                        <p class="lable">安装位置</p>
+                        <p class="lable" style="width:100px;">当前状态</p>
+                        <p class="lable" style="width:100px;">运行状态</p>
+                        <p class="lable" style="width:100px;">设置复位</p>
+                        <p class="lable" style="width:100px;">关联信息</p>
+                    </div><!---->
+                    <div class="bg" >
+                        <p class="lable" id="bh_1">flooding-01</p>
+                        <p class="lable" id="name_1">1#配电柜</p>
+                        <p class="normal" id="sf_flooding-01">正常</p>
+                        <p class="set"><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="flooding_changestated(this,'flooding-01')"/></p>
+                        <p class="set"><button onclick="flooding_reset('flooding-01')">设置/复位</button></p>
+                        <p class="set"><button onclick="flooding_other(this,'flooding-01')">更多<b class="caret"></b></button></p>
+                    </div>
+                    <div class="bg">
+                        <p class="lable" id="bh_2">flooding-01-02</p>
+                        <p class="lable" id="name_2">2#配电柜</p>
+                        <p class="unnormal" id="sf_flooding-01-02">告警</p>
+                        <p class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="flooding_changestated(this,'flooding-01-02')"/></p>
+                        <p class="set"><button onclick="flooding_reset('flooding-01-02')">设置/复位</button></p>
+                        <p class="set"><button onclick="flooding_other(this,'flooding-01-02')">更多<b class="caret"></b></button></p>
+                    </div>
+                    <div class="fudongdiv" id="flooding_fudong" onmousedown="flooding_hideself(this) ">
+                        <div align="center">
+                            <p id="flooding_bind_name">主控室</p>
+                            <li id="flooding_bind_addr">安装地址：主控室</li>
+                            <li id="flooding_bind_view">绑定信息：2#视频</li>
+                        </div>
+                    </div>
+                    <script type="text/javascript" src="js/flooding.js"></script>
+                </div>
+                <div class="tab-pane fade" id="tab_ups">
+                    <div id="div1" style="position:absolute ; width:100%;height:100%;background-repeat:no-repeat;background-size:cover;min-width: 800px;min-height: 600px;z-index:-1 ">
+                        <img src="res/ups.jpg" style="width:100%; height:100%;min-width: 800px;min-height: 600px;z-index:-1"/>
+                        <!--<p><a href="#" onclick="updata()">点一下我</a></p>
+                        <p><a href="#" onclick="creadiv(30,10,'哈哈哈')">再点一下</a></p>-->
+                        <div class="textbox" id="txb-shidian" style="left:6%;top:15%;">
+                            <li >Ａ相电压<input class="ups-edit" id="sd_a" value=220.34></input></li>
+                            <li >Ｂ相电压<input class="ups-edit" id="sd_b" value=220.34></input></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="sd_c" value=220.34></input></li>
+                            <li >输入频率<input class="ups-edit" id="sd_pl" value=50.01></input></li>
+                        </div>
+                        <div class="textbox" id="txb-batter" style="left:6%;top:60%;">
+                            <li>电池状态 <input class="ups-stated" id="bat_state" value="正常"></input></li>
+                            <li >电池容量<input class="ups-edit" id="bat_con" value=220.34></input></li>
+                            <li >电池电压<input class="ups-edit" id="bat_val" value=220.34></input></li>
+                            <li >电池频率<input class="ups-edit" id="bat_pl" value=50></input></li>
+                        </div>
+                        <div class="textbox" id="txb-switch" style="left:35%;top:4%;">
+                            <li >Ａ相电压<input class="ups-edit" id="pl_a" value=220.34></input></li>
+                            <li></li>
+                            <li style="display: inline">Ｂ相电压<input class="ups-edit" id="pl_b" value=220.34></input></li>
+                            <li style="display: inline">旁路频率<input class="ups-edit" id="pl_pl" value=49.99></input></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="pl_c" value=220.34></input></li>
+                        </div>
+                        <div class="textbox" id="txb-device" style="left:73%;top:48%;">
+                            <li >Ａ相电压<input class="ups-edit" id="dev_a" value=220.34></input></li>
+                            <li >Ｂ相电压<input class="ups-edit" id="dev_b" value=220.34></input></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="dev_c" value=220.34></input></li>
+                            <li >输出频率<input class="ups-edit" id="dev_pl" value=50.01></input></li>
+                        </div>
+                        <div class="textbox" id="txb-ups" style="left:40%;top:70%;">
+                            <li >Ａ相电压<input class="ups-edit" id="ups_a" value=220.34></input></li>
+                            <li >Ｂ相电压<input class="ups-edit" id="ups_b" value=220.34></input></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="ups_c" value=220.34></input></li>
+                            <li >输入频率<input class="ups-edit" id="ups_pl" value=50.1></input></li>
+                        </div>
+                    </div>
+                    <script type="text/javascript" src="js/ups.js"></script>
+                </div>
+                <div class="tab-pane fade" id="tab_hum">
+                    <div align="center">
+                        <h2 style="text-align:center">动力监测</h2>
+                        <div style="width:805px;background:#adf7b8;">
+                            <h4 style="text-align:center; padding-top: 10px;color:#000;">输入端</h4>
+                            <div class="input">
+                                <table class="format">
+                                    <tr>
+                                        <td > 
+                                            <div class="donghuan"></div>
+                                        </td>
+                                        <td >
+                                            <div class="donghuan" style="display: flex;text-align: center;align-items: center;">
+                                                <ul style="color:#fff;list-style-type:none;font-size: 16px;width:100%;margin-bottom: 0px">
+                                                    <li>PT变比:10:1</li>
+                                                    <li>CT变比:20:5</li>
+                                                    <li>PT变比:10:1</li>
+                                                    <li>CT变比:20:5</li>
+                                                    <li>PT变比:10:1</li>
+                                                    <li>CT变比:20:5</li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td >
+                                            <div class="donghuan" id="chart-vA"></div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-vB"></div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-vC"></div>
+                                        </td>
+                                    </tr>
+                                    <tr >
+                                        <td colspan="2"> 
+                                            <div style="width: 320px;height: 170px;" id="chart-P" ></div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-iA"></div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-iB"></div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-iC"></div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <h4 >输出端</h4>
+                            <div class="output" >
+                                <table class="format">
+                                    <tr>
+                                        <td class="donghuan">
+                                            <div class="donghuan"> 
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" style="display: flex;text-align: center;align-items: center;">
+                                                <ul style="color:#fff;list-style-type:none;font-size: 16px;width:100%; ">
+                                                    <li>PT变比:10:1</li>
+                                                    <li>CT变比:20:5</li>
+                                                    <li>PT变比:10:1</li>
+                                                    <li>CT变比:20:5</li>
+                                                    <li>PT变比:10:1</li>
+                                                    <li>CT变比:20:5</li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-va"></div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-vb"></div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-vc"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan=2>
+                                            <div style="width:320px;height: 170px" id="chart-p"></div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-ia"></div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-ib"></div>
+                                        </td>
+                                        <td>
+                                            <div class="donghuan" id="chart-ic"></div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <script type="text/javascript" src="js/roommonitor.js"></script>
+                </div>
+                <div class="tab-pane fade" id="tab_room">
+                    <div align="center"> 
+                        <table id="humiture">
+                            <tr>
+                                <td class="ht-pointname" >
+                                    <p class="ht-pointname">现场温湿度</p>
+                                </td>
+                                <td > 
+                                    <div class="ht-gauge" id="ht-gauge"></div>
+                                </td>
+                                <td >
+                                    <div class="ht-chart" id="ht-chart"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <script type="text/javascript" src="js/humiture.js"></script>
+                </div>
+                <div class="tab-pane fade" id="tab_air" align="center" >
+                    <h2 >精密空调实时参数状态</h2>
+                    <div class="container" style="background-color: gray;color:white;border-radius: 5px;width:1050px;">
+                        <div class="row" >
+                            <div class="col-xs-4 ac" style="text-align: center;">
+                                <p style="text-align:center;font-size: 20px;margin:10px 10px;" onclick="air_reset()">现场温湿度</p>
+                                <table align="center">
+                                    <tr style="width:300px;margin-top:30px;">
+                                        <td style="text-align: center;width:100px">
+                                            <li style="list-style-image: url(res/t1.jpg);margin:5px 0px"></li>
+                                            <li id="tmp-value" style="vertical-align:center;height: 25px;margin:5px 0px"> 40 ℃</li>
+                                        </td>
+                                        <td style="text-align: center;width:100px">
+                                            <li></li>
+                                            <li  class="lable_set">设定值：</li>
+                                            <li  class="lable_set">上限值：</li>
+                                            <li  class="lable_set">下限值：</li>
+                                        </td>
+                                        <td style="text-align:center;width:100px" >
+                                            <li></li>
+                                            <li  class="ac-ht lable_set" id="t_set" >36</li>
+                                            <li  class="ac-ht lable_set" id="t_top">59</li>
+                                            <li  class="ac-ht lable_set" id="t_bottom">20</li>
+                                        </td>
+                                    </tr>
+                                    <tr style="width:300px;margin-top:10px;">
+                                        <td>
+                                            <li style="list-style-image: url(res/s1.jpg);margin:5px 0px"></li>
+                                            <li id="swt-value" style="vertical-align:center;height: 25px;margin:5px 0px"> 30 %</li>
+                                        </td>
+                                        <td style="text-align: right;margin:5px 0px">
+                                            <li></li>
+                                            <li class="lable_set">设定值：</li>
+                                            <li class="lable_set">上限值：</li>
+                                            <li class="lable_set">下限值：</li>
+                                        </td>
+                                        <td style="text-align:left">
+                                            <li></li>
+                                            <li  class="ac-ht lable_set" id="s_set">36</li>
+                                            <li  class="ac-ht lable_set" id="s_top">59</li>
+                                            <li  class="ac-ht lable_set" id="s_bottom">20</li>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-xs-4 ac" style="text-align:center" align="center" >
+                                <img src="res/ac.jpg" />
+                            </div>
+                            <div class="col-xs-4 ac" align="center">
+                                <p style="text-align:center;margin-top: 10px;font-size: 20px;">元件状态</p>
+                                <table style="text-align:center;">
+                                    <td >
+                                        <li class="lable_arow">1#加热器工作状态</li>
+                                        <li class="lable_arow">2#加热器工作状态</li>
+                                        <li class="lable_arow">加湿器工作状态：</li>
+                                        <li class="lable_arow">抽湿器工作状态：</li>
+                                        <li class="lable_arow">风机工作状态：</li>
+                                    </td>
+                                    <td >
+                                        <li class="normal_air" id="jrq1">正常</li>
+                                        <li class="unnormal_air" id="jrq2">停止</li>
+                                        <li class="normal_air" id="jsq">异常</li>
+                                        <li class="normal_air" id="csq">停止</li>
+                                        <li class="normal_air" id="fj">正常</li>
+                                    </td>
+                                    <td >
+                                        <li class="lable_set" id="setjrq1"><a href="Javascript:void(0)">设置</a></li>
+                                        <li class="lable_set" id="setjrq2"><a href="Javascript:void(0)">设置</a></li>
+                                        <li class="lable_set" id="setjsq"><a href="Javascript:void(0)">设置</a></li>
+                                        <li class="lable_set" id="setcsq"><a href="Javascript:void(0)">设置</a></li>
+                                        <li class="lable_set" id="setfj"><a href="Javascript:void(0)">设置</a></li>
+                                    </td>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 ac" >
+                                <table align="center" style="width:100%;height:90%">
+                                    <td>
+                                        <li class="lable_arow">1#加热器工作状态</li>
+                                        <li class="lable_arow">2#加热器工作状态</li>
+                                        <li class="lable_arow">加湿器工作状态：</li>
+                                        <li class="lable_arow">抽湿器工作状态：</li>
+                                        <li class="lable_arow">风机工作状态：</li>
+                                    </td>
+                                    <td>
+                                        <li class="normal_air" id="state1">正常</li>
+                                        <li class="normal_air" id="state2">正常</li>
+                                        <li class="normal_air" id="state3">正常</li>
+                                        <li class="unnormal_air" id="state4">异常</li>
+                                        <li class="normal_air" id="state5">正常</li>
+                                    </td>
+                                </table>
+                            </div>
+                            <div class="col-xs-4 ac">
+                                <table align="center" style="width:100%;height:90%">
+                                    <td>
+                                        <li class="lable_arow">1#加热器工作状态</li>
+                                        <li class="lable_arow">2#加热器工作状态</li>
+                                        <li class="lable_arow">加湿器工作状态：</li>
+                                        <li class="lable_arow">抽湿器工作状态：</li>
+                                        <li class="lable_arow">风机工作状态：</li>
+                                    </td>
+                                    <td>
+                                        <li class="normal_air" id="state6">正常</li>
+                                        <li class="normal_air" id="state7">正常</li>
+                                        <li class="unnormal_air" id="state8">异常</li>
+                                        <li class="normal_air" id="state9">正常</li>
+                                        <li class="normal_air" id="state10">正常</li>
+                                    </td>
+                                </table>
+                            </div>
+                            <div class="col-xs-4 ac" >
+                                <table align="center" style="width:100%;height:90%">
+                                    <td>
+                                        <li class="lable_arow">1#加热器工作状态</li>
+                                        <li class="lable_arow">2#加热器工作状态</li>
+                                        <li class="lable_arow">加湿器工作状态：</li>
+                                        <li class="lable_arow">抽湿器工作状态：</li>
+                                        <li class="lable_arow">风机工作状态：</li>
+                                    </td>
+                                    <td>
+                                        <li class="normal_air" id="state11">正常</li>
+                                        <li class="normal_air" id="state12">正常</li>
+                                        <li class="normal_air" id="state13">正常</li>
+                                        <li class="normal_air" id="state14">正常</li>
+                                        <li class="normal_air" id="state15">正常</li>
+                                    </td>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <script  type="text/javascript" src="js/airconditioning.js"></script>
+                </div>
+            </div>
+        </div>
+        <script>
+            function updatanavbar(num){
+                for(var i=1;i<=3;i++){
+                    var nav=document.getElementById("nav"+i);
+                    if(nav==null){//如果为null。就获取父窗口下的元素。
+                        nav=window.parent.document.getElementById("nav"+i);
+                    }
+                    nav.className=""
+                    //nav.style.backgroundColor="";//come up with come from to
+                    if(i==num){
+                        //nav.style.backgroundColor="#c0c0c0";
+                        nav.className="active"
+                    }
+                }
+            }
+            $(function (){$("[data-toggle='popover']").popover();});
+            $(function(){
+                $(".tab a:last").tab("show");
+                updatapcnav(14);
+            });
+            /**vocabulary unit part glass discover invent paper coal hit pit 
+             * 
+             * 
+             * 
+            */
+        </script>
+    </body>
+</html>

@@ -4,7 +4,7 @@ var jfjk_base_config={};
 // 1. 后台服务器地址：用引号括起来默认："http://localhost";"http://192.168.1.10";"http://www.bdjka.com"等。
 
  jfjk_base_config.baseurl="http://192.168.10.250:20000/_api/";//调试时的局域网地址。
- //jfjk_base_config.baseurl="http://localhost:20000/_api";//与服务器同机时实际运行时采用此地址，如果不是部署在同一台电脑中，则为服务器的实际地址
+ //jfjk_base_config.baseurl="http://localhost:20000/_api";//与服务器同机时实际运行时采用此地址，如果不是部署在同一台电脑中，则为服务器的实际地址,下同
  jfjk_base_config.speechurl="http://192.168.10.250:20000/_speech/";//"http://192.168.10.67:88/_speech/";
  //服务器地址
 jfjk_base_config.serverurl="http://jka.f3322.net:20000/_api/";
@@ -21,7 +21,7 @@ jfjk_base_config.bg_src="res/bj04.jpg"
 //版本号
  jfjk_base_config.ver_id="Ver 1.0";
  //发布日期
- jfjk_base_config.date="2019-12-28"
+ jfjk_base_config.date="2020-03-28"
 //公司名称
  jfjk_base_config.company="保定金凯澳自动化设备有限公司";
  //版权时间
@@ -51,6 +51,8 @@ jfjk_base_config.bg_src="res/bj04.jpg"
  warning_sign_low="越下限";
  warning_sign_hight="越上限";
  info_showtime=2000;
+ color_table_cur="#85e494";
+ color_table_even="#87CEFA";
  /**
   * 
   * 

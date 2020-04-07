@@ -11,6 +11,7 @@
 	<script type="text/javascript" src="js/config.js"></script>
 	<script type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	<script type="text/javascript" src="js/echarts.js"></script>
+	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
 	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
 	<link rel="stylesheet" href="css/electricroommonitoring.css" />
 	<script type="text/javascript" src="js/layer/layer.js"></script>
@@ -98,7 +99,8 @@
 						style="font-size:16px;height: 30px;line-height: 30px;"></input>
 					<input class="button" type="button" id="allcheck" value="取消选择" onclick="allChoice()"
 						style="font-size:16px;width:100px;height: 30px;line-height: 30px;"></input>
-						<a href="javascript:void(0)" style="margin-left:20px;" onclick="method5('compratetable')">导出Excel</a>
+						<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('compratetable')">
+							<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
 				</p>
 				<form  id="jcdd" style="background-color: #dcdcdc;height: 550px;overflow: auto;font-size:16px;">
 					<p><input type="checkbox" value="0" οnclick="allChoice()" id="allCheck" name="checks"/>全选 </p>
@@ -156,13 +158,14 @@
 				var compare = function (obj1, obj2) {
 					var val1 = obj1.name;
 					var val2 = obj2.name;
-					if (val1 < val2) {
+					return val1.localeCompare(val2);
+					/*if (val1 < val2) {
 						return -1;
 					} else if (val1 > val2) {
 						return 1;
 					} else {
 						return 0;
-					}
+					}*/
 				}
 				maps.sort(compare);
 				for (var k = 0; k < maps.length; k++) {
@@ -196,8 +199,6 @@
 			if(c>6){
 				obj.checked=false;
 				alert("对比测量点不能大于6个!",info_showtime);
-			}else{
-				obj.checked=true;
 			}
 		}
 		function refreshsensorslist() {

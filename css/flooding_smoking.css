@@ -5,8 +5,9 @@
     background-color: rgb(87, 86, 86);
     border-radius: 5px;
     width:800px;
-    height:35px;
-    line-height: 35px;
+    height:40px;
+    line-height: 40px;
+    vertical-align: middle;
     border-collapse:collapse;
     color: white;
     overflow: hidden;
@@ -18,7 +19,7 @@
     border : solid rgb(204, 7, 7) 0px;
     display:table-cell;
     border-radius: 5px;
-    text-align:center;
+    text-align:center;/**/
 }/**/
 .normal{
     width:100px;
@@ -61,12 +62,12 @@
 }
 button{
     background-color: rgb(238, 145, 5);
-    width:75px;
-    height:30px;
+    width:80px;
+    height:35px;
     vertical-align: middle;
     border-radius: 10px;
 }
-.fudongdiv{
+.fudongdiv{/*浮动窗体样式，显示详细信息*/
     position:absolute;
     height:200px;
     width:150px;
@@ -81,8 +82,134 @@ button{
     left: 35%;
     top:35%;
     display: none;
-    
 }
 li{
     list-style-type: none;
 }
+li a{
+    color:blue;
+}
+.ac{
+    width:350px;
+    height:300px;
+    background-color: gray;
+    color:white;
+    border-radius: 5px;
+}
+.ac-ht{
+    border:solid white 1px;
+    width:75px;
+    /*height:25px;*/
+    text-align:center;
+    background-color:rgba(11, 11, 15, 0.733);
+    color:white;
+    border-radius: 5px;
+}
+.normal_air{
+    background-color:rgba(4, 105, 4, 0.993);
+    border:solid white 0px;
+    border-radius: 15px;
+    text-align:  center;
+    vertical-align: middle;
+    width:100px;
+    height:35px;
+    line-height: 35px;
+    margin:5px 0px;
+}
+.unnormal_air{/**/
+    background-color:rgba(204, 6, 6, 0.993);
+    border:solid white 0px;
+    border-radius: 15px;
+    text-align:  center;
+    vertical-align: middle;
+    width:100px;
+    height:35px;
+    line-height: 35px;
+    margin:5px 0px;
+}
+.lable_set{/**/
+    font-size: 18px;
+    font-style: oblique b;
+    text-align:  center;
+    vertical-align: middle;
+    height:35px;
+    line-height: 35px;
+    margin:5px 0px;
+}
+.lable_arow{/*带有右向三角形的标签*/
+    font-size: 16px;
+    text-align: left;
+    margin-left: 10px;
+    list-style-image: url(../res/threearow1.png);
+    height:35px;
+    line-height: 35px;
+    margin:5px 0px;
+}
+.textbox{
+    position: absolute;
+    border:solid rgb(80, 82, 82) 1px;
+    border-radius: 5px;
+    color:white;
+    padding:3px;
+}
+.ups-edit{
+    background-color: rgb(69, 85, 69);
+    color:white;
+    margin-left: 30px;
+    width:50px;
+    height:25px;
+    line-height: 25px;
+    border-radius: 5px;
+    text-align: center;
+}
+.ups-stated{
+    background-color: rgb(40, 128, 40);
+    color:white;
+    margin-left: 30px;
+    width:50px;
+    height:25px;
+    line-height: 25px;
+    border-radius: 5px;
+    text-align: center;
+}
+.ht-pointname{
+    width: 30px;
+    height:320px;
+    display: inline-block;
+    writing-mode: vertical-lr;
+    -webkit-writing-mode: vertical-lr;
+    -ms-writing-mode: vertical-lr;
+    font-size: 20px;
+}
+.ht-gauge{/*温湿度仪表和变化曲线的显示区域*/
+    width: 400px;
+    height:500px;
+    margin-left: 50px;
+    margin-bottom: 10px;
+    margin-top:10px;
+    margin-right: 10px;
+}
+.ht-chart{
+    width:400px;
+    height:300px;
+    margin-left: 50px;
+    margin-bottom: 10px;
+    margin-top:10px;
+    margin-right: 10px;
+}
+.donghuan{/*用于图表显示的div*/
+    width:160px;
+    height:170px;
+    border: solid #222 0px;
+}
+.input ,.output{
+    width:805px;
+    height:342px;
+    background-color: #555;
+    margin-bottom: 10px;
+
+}
+/***/
+/*div>p.lable{
+    color:rgb(75%,50%,50%);
+}*/

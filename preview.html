@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8"> 
+   <title>视频监控</title>
+   <link rel="stylesheet" href="css/preview.css" /> 
+   <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+   <script type="text/javascript" src="js/layer/layer.js"></script>
+   
+</head>
+<style>
+</style>
+
+<body class="text-center">
+    <div class="left" >
+        <fieldset class="clist" >
+            <legend>设备列表</legend>
+            <form class="opinfo" id="sz_list"></form>
+        </fieldset>
+    </div>
+    <div class="left" align="center">
+        <div id="divplugin" class="plugin"></div>
+        <fieldset class="login">
+                <legend>登录</legend>
+                <table cellpadding="0" cellspacing="3" border="0">
+                    <tr>
+                        <td class="tt">IP地址</td>
+                        <td><input id="loginip" type="text" class="txt" value="192.168.10.164" /></td>
+                        <td class="tt">端口号</td>
+                        <td><input id="port" type="text" class="txt" value="80" /></td>
+                    </tr>
+                    <tr>
+                        <td class="tt">用户名</td>
+                        <td><input id="username" type="text" class="txt" value="admin" /></td>
+                        <td class="tt">密码</td>
+                        <td><input id="password" type="password" class="txt" value="jka6783281" /></td>
+                    </tr>
+                    <tr>
+                        <td class="tt">设备端口</td>
+                        <td colspan="2"><input id="deviceport" type="text" class="txt" value="8000" />（可选参数）</td>
+                        <td>
+                            窗口分割数&nbsp;
+                            <select class="sel2" onchange="changeWndNum(this.value);">
+                                <option value="1">1x1</option>
+                                <option value="2" selected>2x2</option>
+                                <option value="3">3x3</option>
+                                <option value="4">4x4</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <input type="button" class="btn" value="登录" onclick="clickLogin();" />
+                            <input type="button" class="btn" value="退出" onclick="clickLogout();" />
+                            <input type="button" class="btn2" value="获取基本信息" onclick="clickGetDeviceInfo();" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tt">已登录设备</td>
+                        <td>
+                            <select id="ip" class="sel" onchange="getChannelInfo();"></select>
+                        </td>
+                        <td class="tt">通道列表</td>
+                        <td>
+                            <select id="channels" class="sel"></select>
+                        </td>
+                    </tr>
+                </table>
+            
+        </fieldset>
+        
+    </div>
+    <div class="left">
+        <fieldset class="preview">
+            <legend>预览</legend>
+            <table cellpadding="0" cellspacing="3" border="0">
+                <tr>
+                    <td class="tt">码流类型</td>
+                    <td>
+                        <select id="streamtype" class="sel">
+                            <option value="1">主码流</option>
+                            <option value="2">子码流</option>
+                            <option value="3">第三码流</option>
+                            <option value="4">转码码流</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="button" class="btn" value="开始预览" onclick="clickStartRealPlay();" />
+                        <input type="button" class="btn" value="停止预览" onclick="clickStopRealPlay();" />
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td colspan="3">
+                        <input type="button" class="btn" value="抓图" onclick="clickCapturePic();" />
+                        <input type="button" class="btn" value="开始录像" onclick="clickStartRecord();" />
+                        <input type="button" class="btn" value="停止录像" onclick="clickStopRecord();" />
+                    </td>
+                </tr>
+                <!--tr>
+                    <td colspan="3">
+                        <input type="button" class="btn2" value="启用电子放大" onclick="clickEnableEZoom();" />
+                        <input type="button" class="btn2" value="禁用电子放大" onclick="clickDisableEZoom();" />
+                        <input type="button" class="btn2" value="启用3D放大" onclick="clickEnable3DZoom();" />
+                        <input type="button" class="btn2" value="禁用3D放大" onclick="clickDisable3DZoom();" />
+                        <input type="button" class="btn" value="全屏" onclick="clickFullScreen();" />
+                    </td>
+                </tr-->
+            </table>
+        </fieldset>
+        <fieldset class="playback">
+            <legend>回放</legend>
+            <table width="100%" cellpadding="0" cellspacing="3" style="border:0">
+                <tr>
+                    <td class="tt">开始时间</td>
+                    <td>
+                        <input id="starttime" type="text" class="txt" value="2013-12-10 00:00:00" />（时间格式：2013-11-11 12:34:56）
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tt">结束时间</td>
+                    <td>
+                        <input id="endtime" type="text" class="txt" value="2013-12-11 23:59:59" />
+                        <input type="button" class="btn" value="搜索" onclick="clickRecordSearch(0);" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="searchdiv">
+                            <table id="searchlist" class="searchlist" cellpadding="0" cellspacing="0" style="border:0"></table>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="button" class="btn2" value="开始回放" onclick="clickStartPlayback();" />
+                        <input type="button" class="btn2" value="停止回放" onclick="clickStopPlayback();" />
+                        <!--input type="button" class="btn" value="倒放" onclick="clickReversePlayback();" /-->
+                        <input type="button" class="btn" value="单帧" onclick="clickFrame();" />
+                        <input id="transstream" type="checkbox" class="vtop" />&nbsp;启用转码码流
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="button" class="btn" value="暂停" onclick="clickPause();" />
+                        <input type="button" class="btn" value="恢复" onclick="clickResume();" />
+                        <input type="button" class="btn" value="慢放" onclick="clickPlaySlow();" />
+                        <input type="button" class="btn" value="快放" onclick="clickPlayFast();" />
+                    </td>
+                </tr>
+                <!--<tr>
+                    <td colspan="2">
+                        <input type="button" class="btn" value="抓图" onclick="clickCapturePic();" />
+                        <input type="button" class="btn2" value="开始剪辑" onclick="clickStartRecord();" />
+                        <input type="button" class="btn2" value="停止剪辑" onclick="clickStopRecord();" />
+                        <input type="button" class="btn2" value="OSD时间" onclick="clickGetOSDTime();" />&nbsp;<input id="osdtime" type="text" class="txt" readonly />
+                    </td>
+                </tr>-->
+            </table>
+        </fieldset>
+        <fieldset class="operate">
+            <legend>操作信息</legend>
+            <div id="opinfo" class="opinfo"></div>
+        </fieldset>
+        <fieldset class="callback">
+            <legend>事件回调信息</legend>
+            <div id="cbinfo" class="cbinfo"></div>
+        </fieldset>
+    </div>
+    <script src="./codebase/webVideoCtrl.js"></script>
+    <script src="js/preview.js"></script>
+    <script>
+       //location.href =('http://192.168.10.164');
+    </script>
+</body>
+</html>

@@ -1,128 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <link rel="stylesheet" href="css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="css/flooding_smoking.css"/>
-    <title>动力监测</title>
-    <style>
-        ul li {
-            color:#fff;
-        }
-        th,td{
-            border:0px solid black;
-            text-align:center;
-            line-height:center;
-            /*width:100px;
-            height:30px;*/
-            font-size:20px;
-        }
-    </style>
-</head>
-<body>
-    <div align="center">
-        <h2 align="center">动力监测</h2>
-        <div align="center" style="width:805px;background:#adf7b8;">
-            <h4 align=center style="padding-top: 10px;color:#000;">输入端</h4>
-            <div class="input">
-                
-                <table class="format">
-                    <tr>
-                        <td > 
-                            <div class="donghuan"></div>
-                        </td>
-                        <td >
-                            <div class="donghuan" style="display: flex;flex-align: center;align-items: center;">
-                                <ul style="list-style-type:none;font-size: 16px;width:100%;margin-bottom: 0px">
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
-                                </ul>
-                            </div>
-                        </td>
-                        <td >
-                            <div class="donghuan" id="chart-vA"></div>
-                        </td>
-                        <td>
-                            <div class="donghuan" id="chart-vB"></div>
-                        </td>
-                        <td>
-                            <div class="donghuan" id="chart-vC"></div>
-                        </td>
-                    </tr>
-                    <tr >
-                        <td colspan="2"> 
-                            <div style="width: 320px;height: 170px;" id="chart-P" ></div>
-                        </td>
-                        <td>
-                            <div class="donghuan" id="chart-iA"></div>
-                        </td>
-                        <td>
-                            <div class="donghuan" id="chart-iB"></div>
-                        </td>
-                        <td>
-                            <div class="donghuan" id="chart-iC"></div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <h4 >输出端</h4>
-            <div class="output" >
-                <table class="format">
-                    <tr>
-                        <td class="donghuan">
-                            <div class="donghuan">
-                            </div>
-                        </td>
-                        <td>
-                            <div class="donghuan" style="display: flex;text-align: center;align-items: center;">
-                                <ul style="color:#fff;list-style-type:none;font-size: 16px;width:100%; ">
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
-                                </ul>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="donghuan" id="chart-va"></div>
-                        </td>
-                        <td>
-                            <div class="donghuan" id="chart-vb"></div>
-                        </td>
-                        <td>
-                            <div class="donghuan" id="chart-vc"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan=2>
-                            <div style="width:320px;height: 170px" id="chart-p"></div>
-                        </td>
-                        
-                        <td>
-                            <div class="donghuan" id="chart-ia"></div>
-                        </td>
-                        <td>
-                            <div class="donghuan" id="chart-ib"></div>
-                        </td>
-                        <td>
-                            <div class="donghuan" id="chart-ic"></div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
-    <script type="text/javascript" src="js/echarts.js"></script>
-    <script type="text/javascript">
-        var chart_P=echarts.init(document.getElementById("chart-P"),'light');
+var chart_P=echarts.init(document.getElementById("chart-P"),'light');
         var chart_vA=echarts.init(document.getElementById("chart-vA"));
         var chart_vB=echarts.init(document.getElementById("chart-vB"));
         var chart_vC=echarts.init(document.getElementById("chart-vC"));
@@ -270,8 +146,8 @@
                 radius: '70%',//半径
                 min: 0,
                 max: vmax,
-                //startAngle: 180,//起始角度
-                //endAngle: 0,//终止角度
+                //startAngle: 90,//起始角度
+                //endAngle: 180,//终止角度
                 splitNumber: spl,//
                 axisLine: { // 坐标轴线
                     lineStyle: { // 属性lineStyle控制线条样式
@@ -371,6 +247,3 @@
             initbarchart(chart_P,barDatas[0]);
             initbarchart(chart_p,barDatas[1]);
         }
-    </script>
-</body>
-</html>

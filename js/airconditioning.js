@@ -1,9 +1,9 @@
 //改变状态，使用时需向服务器发送命令，成功返回后页面更改状态指示
-function changestated(obj,eId){
+function air_changestated(obj,eId){
     document.getElementById(obj).innerHTML=eid;
 }
 //复位，使用时需向服务器发送复位命令，返回状态后修改显示内容。
-function reset(eId){
+function air_reset(eId){
     var obj=new Object();
     obj.t_set=60;
     obj.t_top=100;
@@ -23,7 +23,7 @@ function reset(eId){
     obj.setfj="设置";
     var name="state";
     for(var i=1;i<16;i++){
-        obj[name+i]=i;
+        obj[name+i]="正常";
     }
     updataall(obj);
 }
@@ -41,10 +41,11 @@ function updataall(obj){
     document.getElementById("jsq").innerHTML=obj.jsq;
     document.getElementById("csq").innerHTML=obj.csq;
     document.getElementById("fj").innerHTML=obj.fj;
-    document.getElementById("setjrq1").innerHTML=obj.setjrq1;
-    document.getElementById("setjrq2").innerHTML=obj.setjrq2;
-    document.getElementById("setjsq").innerHTML=obj.setjsq;
-    document.getElementById("setfj").innerHTML=obj.setfj;
+    document.getElementById("setjrq1").text=obj.setjrq1;
+    document.getElementById("setjrq2").text=obj.setjrq2;
+    document.getElementById("setjsq").text=obj.setjsq;
+    document.getElementById("setcsq").text=obj.setcsq;
+    document.getElementById("setfj").text=obj.setfj;
     document.getElementById("state1").innerHTML=obj.state1;
     document.getElementById("state2").innerHTML=obj.state2;
     document.getElementById("state3").innerHTML=obj.state3;

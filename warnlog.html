@@ -9,6 +9,7 @@
 	<script type="text/javascript" src="js/bootstrap.js" ></script>
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
+	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
 	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	
@@ -80,8 +81,8 @@
 		</table>-->
 			<div class="rowlay" ><b>
 				计量点名称：
-			<select id="jcdd" onchange="gradeChange()" >
-			</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
+			<select id="jcdd" onchange="gradeChange()" size="1" >
+			</select ><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()" style="display:none"></a>
 			<span>告警类型：</span>
 			<span class="dropup" style="position: relative;">
 			<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
@@ -103,7 +104,7 @@
 			<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
 			<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
 			<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"></input>上月</label></span>
-			<span ><label><input type="radio" value="4" onclick="seletime(this)" name="timeselect"></input>自定义</label></span>
+			<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(this)" name="timeselect"></input>自定义</label></span>
 			<span id="timedefine" style="display: none;">
 			起止时间
 			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"></input>至
@@ -121,7 +122,7 @@
 				<!--<li style="width:50px;margin-right:10px"><b>标签名称：</b> </li>
 				<li id="normal_count"style="width:150px;margin-right:10px"> </li>
 				<li style="width:50px;margin-right:10px"><b>异常数：</b></li>
-				<li id="err_count"style="width:50px;margin-right:10px"> </li>-->
+				<li id="err_count"style="width:50px;margin-right:10px"> </li>method5('warnlogtable')-->
 				 <li style="width:50px;margin-right:10px"></li>
 			</ul>
 		</div>
@@ -138,7 +139,8 @@
 			<input id="changePage" type="text" size="1" maxlength="4"/>
 			<a>页&nbsp;</a>
 			<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
-			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="method5('warnlogtable')">导出Excel表格</a>
+			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="exporttoexcel('warnlogtable')">
+				<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
 			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;display:none;" id="tongji" onclick="tongji('tongjitable')">告警统计</a>
 			</div>
 			<table id="warnlogtable" style="margin: auto;">
@@ -156,6 +158,7 @@
 					<th id="count_third"></th>
 				</tr>
 				<tr >
+					<th style="display: none;">测量点编号</th>
 					<th>测量点名称</th>
 					<th>告警时间</th>
 					<th>数值</th>	
@@ -207,7 +210,11 @@
 	updatapcnav(8);
 	function decodedatas(obj_data){
 		objS = document.getElementById("jcdd");
-		var name=objS.options[objS.selectedIndex].innerText;
+		var name;
+		var sift=false;
+		if(objS.options.length>0){
+			name=objS.options[objS.selectedIndex].innerText;
+		}
 		var type_str=[];
 		var count = 0;
 		var count_l=[];
@@ -222,9 +229,11 @@
 				var warning_type=document.getElementById("select_text").value;
 				if(warning_type.length>0){
 					type_str=warning_type.split(",");
+					sift=true;
 				}else{
 					warning_type="越上限,越下限";
 					type_str=warning_type.split(",");
+					sift=false;
 				}
 				var tr_arr=[],td_arr=[];
 				for(var j=0;j<=type_str.length;j++){
@@ -244,9 +253,10 @@
 					
 					$table.appendChild(window.eval("tr"+j));
 					//console.log(window.eval("tr"+j));
-
 				}
-
+				/**
+				 * think about can't wait to do heard a lot  about him on silk roat learning language true 
+				**/
 				/*var tr1=document.createElement("tr");
 				tr1.setAttribute("id","tr1");
 				var td_first=document.createElement("td");
@@ -280,11 +290,9 @@
 					if(obj_data[i].Message){
 						var tr=document.createElement("tr");
 						tr.setAttribute("onclick","tableclick(this)");
-						//if (count % 2 == 0) {
-						//	tr.setAttribute('style', "background-color:#16b9c9");
-						//}
-						//var td_did=document.createElement("td");
-						//td_did.innerHTML=objS.options[objS.selectedIndex].value;;
+						var td_did=document.createElement("td");
+						td_did.innerHTML=objS.options[objS.selectedIndex].value;
+						td_did.setAttribute("style","display:none");
 						var td_dname=document.createElement("td");
 						td_dname.innerHTML=name;
 						var td_dtime=document.createElement("td");
@@ -295,7 +303,7 @@
 						td_dadr.innerHTML=(value*1).toFixed(Number_of_decimal);
 						var td_dtype=document.createElement("td");
 						td_dtype.innerHTML=obj_data[i].Message;//"数值越限";/**/放松警惕保持警戒盯住了
-						//tr.appendChild(td_did);
+						tr.appendChild(td_did);
 						tr.appendChild(td_dname);
 						tr.appendChild(td_dtime);
 						tr.appendChild(td_dadr);
@@ -304,13 +312,18 @@
 							if(obj_data[i].Message==type_str[j]){
 								$table.insertBefore(tr,window.eval("tr"+(j+1)));
 								count_l[j]=count_l[j]+1;
+								count++;
+								break;
 							}/*else if(obj_data[i].Message==warning_sign_hight){
 								$table.insertBefore(tr,tr1);
 								count_h++;
 							}else{
 								$table.appendChild(tr);
 							}*/
-							count++
+						}
+						if ((j>=type_str.length)&&(!sift)){//20200403
+							$table.appendChild(tr);
+							count++;
 						}
 					}
 				}
@@ -328,8 +341,9 @@
 				}else{
 					for(var i=0;i<type_str.length;i++){
 						if(count_l[i]==0){
-							document.getElementById(window.eval("'td"+i+"'")).style.display="none";
-							document.getElementById(window.eval("'tr"+i+"'")).style.display="none";
+							//document.getElementById(window.eval("'td"+i+"'")).style.display="none";
+							var dtr=document.getElementById(window.eval("'tr"+i+"'"));//;//.style.display="none";
+							$table.removeChild(dtr);//去掉统计为零的标题行
 						}
 					}
 					/*if(count_h==0){
@@ -343,6 +357,8 @@
 					document.getElementById("count_val").innerHTML=count;
 					document.getElementById("count_first").innerHTML=count_l[0];
 					document.getElementById("count_third").innerHTML=count_l[1];
+					var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));
+					$table.removeChild(dtr);//去掉最后一行（插入参考行
 				}
 				//ps=obj_data.length;
 			}else{
@@ -353,10 +369,9 @@
 	}
 	function tableclick(tr){
 		$(tr).siblings().css("background","");
-		$(tr).css("background","#85e494");//区分选中行
+		$(tr).css("background",color_table_cur);//区分选中行
 	}
 	function add_sign(){
-		
 	}
 	function gradeChange() {
 		//$("#warnlogdata-tbody tr").empty();
@@ -377,6 +392,7 @@
 		};
 	function showrealworning(){
 		//document.getElementById("jcdd").disabled=true;
+		var sift=false;
 		count_l=[0,0];//count_h=0;
 		var timedefine=document.getElementById("timedefine");
 		timedefine.style.display="none";
@@ -402,9 +418,11 @@
 			 var warning_type=document.getElementById("select_text").value;
 			if(warning_type.length>0){
 				type_str=warning_type.split(",");
+				sift=true;
 			}else{
 				warning_type="越上限,越下限";
 				type_str=warning_type.split(",");
+				sift=false;
 			}
 			var tr_arr=[],td_arr=[];
 			for(var j=0;j<=type_str.length;j++){
@@ -421,10 +439,8 @@
 				window.eval("td"+j+".innerHTML='"+type_str[j]+"'");
 				window.eval("tr"+j+".appendChild(td"+j+")");
 				window.eval("tr"+j+".setAttribute('style','color:#f20')");
-				
 				$table.appendChild(window.eval("tr"+j));
 				//console.log(window.eval("tr"+j));
-
 			}
 			for (var i = 0; i < trs.length; i++) {//
 				//warning_sign_low、warning_sign_hight为判断标准，在config.js里定义内容，
@@ -436,32 +452,40 @@
 					count_h++;
 				}*/
 				for(var j=0;j<type_str.length;j++){
-					if(trs[i].cells[5].innerText==type_str[j]){
+					if(trs[i].cells[4].innerText==type_str[j]){
 						var tr=document.createElement("tr");
 						tr=$(trs[i].outerHTML)[0];
 						tr.setAttribute("onclick","tableclick(this)");
 						$table.insertBefore(tr,window.eval("tr"+(j+1)));
 						count_l[j]=count_l[j]+1;
+						count++;
+						break;
 					}
 					count++
 				}
-				//$table.appendChild($(trs[i].outerHTML)[0]);
-
-			}
-			
-			for(var i=0;i<type_str.length;i++){
-				if(count_l[i]==0){
-					document.getElementById(window.eval("'td"+i+"'")).style.display="none";
-					document.getElementById(window.eval("'tr"+i+"'")).style.display="none";
+				if((j>=type_str.length)&&(!sift)){
+					$table.appendChild($(trs[i].outerHTML)[0]);
+					count++;
 				}
 			}
+			for(var i=0;i<type_str.length;i++){
+				if(count_l[i]==0){
+					//document.getElementById(window.eval("'td"+i+"'")).style.display="none";
+					var dtr=document.getElementById(window.eval("'tr"+i+"'"));//;//.style.display="none";
+					$table.removeChild(dtr);//去掉统计为零的标题行 
+				}
+			}
+			var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));//20200403
+			$table.removeChild(dtr);//去掉最后一行（插入参考行）
 		}else{
 			layer.alert("当前没有告警!",info_showtime)
 		}
-		
 		document.getElementById("count_first").innerHTML=count_l[0];
 		document.getElementById("count_third").innerHTML=count_l[1];
 		display();
+	}
+	function refreshsensorslist(){
+		window.parent.GetSensorsByNode(sessionStorage.nodeId);
 	}
 	/*function tongji(){
 		var txt_tj=document.getElementById("tongji");
@@ -482,13 +506,13 @@
 		if(!$table){
 			return;
 		}
-		len =$table.rows.length - 1;    //;// 求这个表的总行数，剔除第一行介绍
+		len =$table.rows.length ;    //- 1;// 求这个表的总行数，剔除第一行介绍
 		page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
 		// alert("page==="+page);
 		curPage=1;    // 设置当前为第一页
 		displayPage(1);//显示第一页
 		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
-		document.getElementById("sjzl").innerHTML="数据总量 " + len + "";        // 显示数据量
+		document.getElementById("sjzl").innerHTML="数据总量 <span class='badge' style='font-size:18px'>" + len + "";        // 显示数据量
 		document.getElementById("pageSize").value = pageSize;
 	}
 		function firstPage(){    // 首页
@@ -616,6 +640,15 @@
 			$selectTextDom[0].setAttribute("data-is-select","false");
 		}else{
 			$selectTextDom[0].setAttribute("data-is-select","true");
+		}
+		var i_sel=$('input[name="timeselect"]:checked').val();//20200403添加筛选条件改变后自动刷新列表
+		switch(i_sel*1){
+			case 0:	case 1:	case 2:	case 3:	case 4:
+				gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+				break;
+			case 5:
+				showrealworning();
+				break;
 		}
 	})
 	</script>

@@ -149,12 +149,7 @@
 		left:90px;
 		color:white;
 		font-size:12px;
-	}
-		/* border-radius */
-		/**United States D.C. United Kingdom China,Japan,America,Africa,Europe,Asia,Australia,north,south,east,west,toward,direction,dictionary,everyone,
-		invite,point,palace,museum,music,PE(physical education),math,door,window,beg,table,hands,hard,feet,a pair of,a lot of, a little of,Russian,Japan,
-		France,Germany,Italy,Poland,Norway,Holland,house,horse,mouse,mouth,
-		**/
+	}/* border-radius */
 	.navigation{
 		vertical-align:center;
 		overflow:auto
@@ -167,7 +162,7 @@
 		height:30px;
 		line-height: 30px;
 		min-width:500px;
-		text-align:center
+		/*text-align:center;*/
 	}
 	.rowlay{
 		width:100%;
@@ -205,9 +200,7 @@
 		vertical-align:center;
 		height:30px;
 		line-height:30px;
-		left:20px;/* left-side
-		lion,dog,pig,hen,sheep,goat,cow,duck,fish,rabbite,monkey,tiger,wolf,fox,
-		*/
+		left:20px;/* left-side*/
 	}
 	#chuangti{
 		position: relative;
@@ -222,13 +215,13 @@
 		text-decoration: none;
 		vertical-align:center;
 	} 
-	
 	li a,table a {
-		/*display: inline;		hzalign:center;*/
+		/*/*display: inline;		hzalign:center;*/
 		color: #000;
 		padding: 2px 3px;
-		margin: 10px 10px;
+		margin: 0px 10px;
 		text-decoration: none;
+		border-radius:5px;
 	}
 	li{
 		/*display: inline;hzalign:center;*/
@@ -279,12 +272,11 @@
 	.leftmenu{
 		position:relative;
 		float:left;
-		width:100%;
+		width:15%;
 		height:100%;/*height:700px;*/
 		border-style:solid;
 		border-width:0px 0px 0px 0px;
 		border-color:#eeb0b0;
-		width:15%;
 		overflow:auto;
 		min-width:200px;
 	}
@@ -340,15 +332,14 @@
 		text-align: center;
 		line-height: 40px;
 	}
-	.tab-head{
+	.charttab-head{
 		display: inline;
+	}.selected {
+		background-color: cornflowerblue;
 	}
-	.tab-content {
+	/*.tab-content {
 		border: solid cornflowerblue 1px;
 		width: 100%;
-	}
-	.selected {
-		background-color: cornflowerblue;
 	}
 	.tab-div {
 		display:none;
@@ -358,7 +349,7 @@
 		}
 	.tab-content .show{
 		display: flex;
-	}
+	}*/
 	.parent{
 		display: flex;
 		overflow: auto;
@@ -382,56 +373,11 @@
 		height:342px;
 		background-color: #555;
 		margin-bottom: 10px;
-
 	}
 	.donghuan{
 		width:160px;
 		height:170px;
 		border: solid #222 0px;
-	}
-	.ht-pointname{
-		width: 30px;
-		height:320px;
-		display: inline-block;
-		writing-mode: vertical-lr;
-		-webkit-writing-mode: vertical-lr;
-		-ms-writing-mode: vertical-lr;
-		font-size: 20px;
-	}
-	.ht-gauge,.ht-chart{
-		width:400px;
-		height:300px;
-		margin-left: 50px;
-		margin-bottom: 10px;
-		margin-top:10px;
-		margin-right: 10px;
-	}
-	.textbox{
-		position: absolute;
-		border:solid rgb(80, 82, 82) 1px;
-		border-radius: 5px;
-		color:white;
-		padding:3px;
-	}
-	.ups-edit{
-		background-color: rgb(69, 85, 69);
-		color:white;
-		margin-left: 30px;
-		width:50px;
-		height:25px;
-		line-height: 25px;
-		border-radius: 5px;
-		text-align: center;
-	}
-	.ups-stated{
-		background-color: rgb(40, 128, 40);
-		color:white;
-		margin-left: 30px;
-		width:50px;
-		height:25px;
-		line-height: 25px;
-		border-radius: 5px;
-		text-align: center;
 	}
 	#alert_info{
 		position:absolute;

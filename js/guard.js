@@ -1,17 +1,19 @@
-function changestated(obj,eId){
+function guard_changestated(obj,eId){
     var em=document.getElementById("sf_"+eId);
     if(obj.src.indexOf("res/close.png")>=0){
         obj.src="res/open.png";
         if(em!=null){
             em.setAttribute("class","normal")
-            em.innerHTML="正常打开";
+            em.innerHTML="关闭";
         }
+        document.getElementById("info_"+eId).innerHTML="正常关闭";
     }else{
         obj.src="res/close.png";
         if(em!=null){
             em.setAttribute("class","normal");
-            em.innerHTML="正常关闭";
+            em.innerHTML="打开";
         }
+        document.getElementById("info_"+eId).innerHTML="正常打开";
     }
 }
 /*function reset(eId){
@@ -59,19 +61,19 @@ function createline(id,name,state,info){
     ediv.appendChild(epinfo);
     var eprun=document.createElement("p");
     eprun.setAttribute("class","set");
-    eprun.innerHTML="<img src="+filename+" style='height:30px;vertical-align: middle;' onclick=\"changestated(this,'"+id+"')\"/>";
+    eprun.innerHTML="<img src="+filename+" style='height:30px;vertical-align: middle;' onclick=\"guard_changestated(this,'"+id+"')\"/>";
     ediv.appendChild(eprun);
     var epother=document.createElement("p");
     epother.setAttribute("class","set");
-    epother.innerHTML="<button onclick=\"other('"+id+"')\">更多∨</button>";
+    epother.innerHTML="<button onclick=\"guard_other('"+id+"')\">更多<b class='caret'></b></button>";
     ediv.appendChild(epother);
     return ediv;
 }
-document.getElementById("main").appendChild(createline("door3","name3","正常关闭","正常关闭"));
-function other(eid){
-    document.getElementById("fudong").style.display="block";
-    document.getElementById("bind_name").innerHTML= document.getElementById("name_"+eid).innerHTML;
+document.getElementById("tab_guard").appendChild(createline("door3","name3","正常关闭","正常关闭"));
+function guard_other(eid){
+    document.getElementById("guard_fudong").style.display="block";
+    document.getElementById("guard_bind_name").innerHTML= document.getElementById("name_"+eid).innerHTML;
 }
-function hideself(obj){
+function guard_hideself(obj){
     obj.style.display="none"
 }

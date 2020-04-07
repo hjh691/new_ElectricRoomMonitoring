@@ -1,17 +1,19 @@
-function changestated(obj,eId){
+function light_changestated(obj,eId){
     var em=document.getElementById("sf_"+eId);
     if(obj.src.indexOf("res/d3.png")>=0){
         obj.src="res/d9.png";
         if(em!=null){
-            em.setAttribute("class","normal")
+            em.setAttribute("class","normal");
             em.innerHTML="点亮";
         }
+        document.getElementById("info_"+eId).innerHTML="正常照明";
     }else{
         obj.src="res/d3.png";
         if(em!=null){
             em.setAttribute("class","unenabled");
             em.innerHTML="熄灭";
         }
+        document.getElementById("info_"+eId).innerHTML="正常关闭";
     }
 }
 /*function reset(eId){
@@ -59,23 +61,23 @@ function createline(id,name,state,info){
     ediv.appendChild(epinfo);
     var eprun=document.createElement("p");
     eprun.setAttribute("class","set");
-    eprun.innerHTML="<img src="+filename+" style='height:30px;vertical-align: middle;' onclick=\"changestated(this,'"+id+"')\"/>";
+    eprun.innerHTML="<img src="+filename+" style='height:30px;vertical-align: middle;' onclick=\"light_changestated(this,'"+id+"')\"/>";
     ediv.appendChild(eprun);
     var epother=document.createElement("p");
     epother.setAttribute("class","set");
-    epother.innerHTML="<button onclick=\"other(this,'"+id+"')\">更多∨</button>";
+    epother.innerHTML="<button onclick=\"light_other(this,'"+id+"')\">更多<b class='caret'></b></button>";
     ediv.appendChild(epother);
     return ediv;
 }
 for(var i=3;i<10;i++){
-    document.getElementById("main").appendChild(createline("light"+i,"name"+i,"故障","无法点亮"));
+    document.getElementById("tab_light").appendChild(createline("l00"+i,"name"+i,"故障","无法点亮"));
 }
-function other(obj,eid){
-    document.getElementById("fudong").style.left=(obj.offsetLeft+obj.offsetWidth)+"px";
-    document.getElementById("fudong").style.top=obj.offsetTop+"px";
-    document.getElementById("fudong").style.display="block";
-    document.getElementById("bind_name").innerHTML= document.getElementById("name_"+eid).innerHTML;
+function light_other(obj,eid){
+    document.getElementById("light_fudong").style.left=(obj.offsetLeft+obj.offsetWidth)+"px";
+    document.getElementById("light_fudong").style.top=obj.offsetTop+"px";
+    document.getElementById("light_fudong").style.display="block";
+    document.getElementById("light_bind_name").innerHTML= document.getElementById("name_"+eid).innerHTML;
 }
-function hideself(obj){
+function light_hideself(obj){
     obj.style.display="none"
 }
