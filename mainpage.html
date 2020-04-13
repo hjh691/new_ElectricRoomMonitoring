@@ -182,7 +182,7 @@
 		$(document).ready(
 			function () {
 				$("#KeFuDiv").roll({ speed: 3 });//字幕滚动
-				/*if (typeof (Worker) !== "undefined") {//定时器多任务
+				if (typeof (Worker) !== "undefined") {//定时器多任务
 					if (typeof (w) == "undefined") {
 						w = new Worker("delay_worker.js");
 					}
@@ -196,7 +196,7 @@
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}
 					};
-				} else */{
+				} else {
 					//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
 					var t1 = window.setInterval(sendbeat, 60000);//getrealsbydataid
 				}
@@ -1266,6 +1266,7 @@
 			//for (var int = 0; int < tableLength; int++) {
 			//	tbody.deleteRow(0);
 			//}
+			//obj_realdata=JSON.parse(localStorage.getItem("realdata"));//考虑使用此方法去掉调用的参数，20200408修改。暂时不用。
 			var sensors = allsensors;
 			var obj_data = new Object();
 			var pt = 0;

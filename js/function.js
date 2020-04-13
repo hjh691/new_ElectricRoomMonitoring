@@ -2476,29 +2476,30 @@ function GetBinary(binariesid) {
 							//if(jQuery.hasOwnProperty(localStorage.realdata))
 							var obj_rd=JSON.parse(localStorage.getItem("realdata"));
 							var obj=[];
-							if(obj_rd){
 								contents.forEach(function(g){
 									if ($.trim(g).length > 0) {
 										g = JSON.parse(g);
-										if (g && g._shape && g._shape.Binding && g._shape.Text) {
-											if(window.parent.allsensors[g._shape.Binding]){
-												var sid=window.parent.allsensors[g._shape.Binding].id;
-												if (obj_rd.hasOwnProperty(sid)) {
-			
-													obj_data = (obj_rd)[sid];////
-													g._shape.Text =(obj_data[0].Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
-													if(obj_data[0].Message){
-														g._shape.IsError=true;
-													}else{
-														g._shape.isError=false;
+										if(obj_rd){
+											if (g && g._shape && g._shape.Binding && g._shape.Text) {
+												if(window.parent.allsensors[g._shape.Binding]){
+													var sid=window.parent.allsensors[g._shape.Binding].id;
+													if (obj_rd.hasOwnProperty(sid)) {
+				
+														obj_data = (obj_rd)[sid];////
+														g._shape.Text =(obj_data[0].Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
+														if(obj_data[0].Message){
+															g._shape.IsError=true;
+														}else{
+															g._shape.isError=false;
+														}
 													}
-												}
+											}
 										}
 									}
 										obj.push(JSON.stringify(g));
 									}
 								});
-							}
+							
 							sessionStorage.contents = JSON.stringify(obj);
 							try {
 								drawmap(JSON.parse(sessionStorage.contents));
@@ -3117,10 +3118,17 @@ function getrealdatabynodeid(nodeid){
 						if (data.Error == null) {
 							if (jQuery.isEmptyObject(data.Result.Datas)) {
 								//if (id == 0) {
-									layer.alert("没有符合条件的记录",info_showtime);
+								//	layer.alert("没有符合条件的记录",info_showtime);
 								//}
 								localStorage.setItem("realdata",null);
-								refreshData();
+								decoderealdata();
+								if(typeof refreshData === "function"){
+									refreshData();
+								}else{
+									if(sessionStorage.pageindex==2){
+										document.getElementById('iframe_main').contentWindow.refreshData()
+									}
+								};
 								return;
 							}
 							var obj_realdata=data.Result.Datas;

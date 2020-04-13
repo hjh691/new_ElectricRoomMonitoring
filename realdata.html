@@ -9,9 +9,9 @@
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js" ></script>
 	<script  type="text/javascript" src="js/config.js"></script>
-	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	<script type="text/javascript" src="js/echarts.js"></script>
+	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	
@@ -58,7 +58,7 @@
 	}*/
   </style>
 </head>
-<body onload="getrealdatabynodeid(-1)" onunload="stopWorker()" >
+<body  onunload="stopWorker()" > <!--onload="getrealdatabynodeid(-1)" 20200408修改，重复调用此函数,提示框不能认为关闭。-->
 	<div>
 		<!--<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
 			<h3 id="head_real" style="text-align:center" >实时数据</h3>
@@ -74,7 +74,6 @@
 			<div class="column" id="realdata_chart" >
 			</div>
 		</div>
-	
 		<div  class="row" style="margin-bottom:10px;width:100%;overflow:auto;display: none;" text-align="center">
 			<ul class="count_info" text-align="center" widht="1000px" >
 				<li style="width:50px"><b>站名：</b></li>
@@ -92,7 +91,6 @@
 					</a></li>
 			</ul>
 		</div>
-		
 		<div style="text-align: center;overflow: auto;" >
 			<div style="text-align: center;font-size: 18px;">
 				<a id="btn0"></a>
@@ -121,13 +119,12 @@
 			<tbody id='realdata-tbody' >
 			</tbody>
 		</table>
-		
 	</div>
 	</div>
 	<script type="text/javascript">
 		//var t1 = window.setInterval("getrealdatabystation(1);",30000);
 		//getrealdatabynodeid(-1);
-		var chart_type,chart_unit="",chart_max=100,chart_min=0,chart_sigle="",is_have=false;
+		var chart_type="",chart_unit="",chart_max=100,chart_min=0,chart_sigle="",is_have=false;
 		var start_angle=0,end_angle=180;
 		var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 		var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
@@ -174,7 +171,6 @@
 		/*$(function() {
 			//$("#realtable").tablesort();		
 		});*/
-	
 		function stopWorker() 
 		{ 
 			w1.terminate();
@@ -188,6 +184,7 @@
 			var value=0;//(Math.random() * 100).toFixed(2) - 0;
 			datas.push(JSON.parse('{"name":"","value":'+value+'}'));
 		}
+		updatachart(chart_type);
 		initseries(datas);
 		initchart2();
 		initpage();
@@ -209,7 +206,7 @@
 		if(sensors!=null){
 			for(var i=0;i<sensors.length;i++){
 				var sid=sensors[i].id+"";
-				if(obj_realdata.hasOwnProperty(sid)){
+				if((obj_realdata)&&(obj_realdata.hasOwnProperty(sid))){
 					sname=sensors[i].Value.Name;
 					var xs=1;//sensors[i].Value.Factor;  //数据结构修改，后台的value数据已经乘上系数，svalue为未乘以系数的原始数据
 					var type_td=sensors[i].Value.Catalog;
@@ -285,53 +282,51 @@
 					}
 			    }
 				if(typeof(sessionStorage.t_p)!="undefined"){
-				sname=$table.rows[sessionStorage.t_p].cells[0].innerHTML;
-				chart_type=$table.rows[sessionStorage.t_p].cells[6].innerHTML;
-				sensor_Id=parseInt($table.rows[sessionStorage.t_p].cells[5].innerHTML);
-				var lasttime=$table.rows[sessionStorage.t_p].cells[1].innerHTML;
-				//var myChart2 = echarts.init(document.getElementById('realdata_chart'));
-				updatachart(chart_type);
-				value0=parseFloat($table.rows[sessionStorage.t_p].cells[2].innerHTML);
-				//value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
-				var heightpx=$("#realdata-tbody tr").height()+1;//加1是网格线的宽度
-				var ppt=+sessionStorage.t_p;
-				$("#realdata-tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行
-				$table.rows[ppt].style.backgroundColor=color_table_cur;
-				if(isfirst!="true"){
-					var temp_option=myChart2.getOption();
-					if(temp_option.series[0]){
-						if(temp_option.series[0].data[temp_option.series[0].data.length-1][0]<strtodatetime(lasttime)){
-							temp_option.series[0].data.push([strtodatetime(lasttime),value0,temp_option.series[0].data.length]);
-							//temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
+					sname=$table.rows[sessionStorage.t_p].cells[0].innerHTML;
+					chart_type=$table.rows[sessionStorage.t_p].cells[6].innerHTML;
+					sensor_Id=parseInt($table.rows[sessionStorage.t_p].cells[5].innerHTML);
+					var lasttime=$table.rows[sessionStorage.t_p].cells[1].innerHTML;
+					//var myChart2 = echarts.init(document.getElementById('realdata_chart'));
+					updatachart(chart_type);
+					value0=parseFloat($table.rows[sessionStorage.t_p].cells[2].innerHTML);
+					//value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
+					var heightpx=$("#realdata-tbody tr").height()+1;//加1是网格线的宽度
+					var ppt=+sessionStorage.t_p;
+					$("#realdata-tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行
+					$table.rows[ppt].style.backgroundColor=color_table_cur;
+					if(isfirst!="true"){
+						var temp_option=myChart2.getOption();
+						if(temp_option.series[0]){
+							if(temp_option.series[0].data[temp_option.series[0].data.length-1][0]<strtodatetime(lasttime)){
+								temp_option.series[0].data.push([strtodatetime(lasttime),value0,temp_option.series[0].data.length]);
+								//temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
+								if(maxvalue<value0){
+									maxvalue=value0;
+									maxval=(maxvalue+(maxvalue-minvalue)*0.2).toFixed(Number_of_decimal);
+									temp_option.yAxis[0].max=maxval;
+								}
+								if(minvalue>value0){
+									minvalue=value0;
+									minval=(minvalue-(maxvalue-minvalue)*0.2).toFixed(Number_of_decimal);
+									temp_option.yAxis[0].min=minval;
+								}
+								myChart2.setOption(temp_option);
+							}
 							if(maxvalue<value0){
 								maxvalue=value0;
-								maxval=(maxvalue+(maxvalue-minvalue)*0.2).toFixed(Number_of_decimal);
-								temp_option.yAxis[0].max=maxval;
+								option.series[0].data[0].value=maxvalue;
+								option.series[1].data[0].value=value0;
+								//myChart.setOption(option);
 							}
-							if(minvalue>value0){
-								minvalue=value0;
-								minval=(minvalue-(maxvalue-minvalue)*0.2).toFixed(Number_of_decimal);
-								temp_option.yAxis[0].min=minval;
-							}
-							myChart2.setOption(temp_option);
+							refreshData();
 						}
-						if(maxvalue<value0){
-							maxvalue=value0;
-							option.series[0].data[0].value=maxvalue;
-							option.series[1].data[0].value=value0;
-							//myChart.setOption(option);
-						}
-						refreshData();
+					}else{
+						isfirst="false";
+						
+						//myChart2.showLoading();
+						gethistorydata(sensor_Id,kssj,jssj,1);
 					}
-				}else{
-					isfirst="false";
-					
-					//myChart2.showLoading();
-					gethistorydata(sensor_Id,kssj,jssj,1);
-				}
-			}else{
-				//$table.rows[0].ondblclick();
-			}
+				}//else{	//$table.rows[0].ondblclick();	//}
 			}else{
 				layer.alert("没有符合条件的数据",info_showtime);
 			}
