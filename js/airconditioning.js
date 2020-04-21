@@ -1,3 +1,8 @@
+init_airconditioning();
+function init_airconditioning(){
+    air_reset();
+}
+
 //改变状态，使用时需向服务器发送命令，成功返回后页面更改状态指示
 function air_changestated(obj,eId){
     document.getElementById(obj).innerHTML=eid;
@@ -29,38 +34,68 @@ function air_reset(eId){
 }
 //创建信息的遥控状态行（变化、名称、指示状态、运行状态、复位按钮、更多按钮。
 function updataall(obj){
-    
-    document.getElementById("t_set").innerHTML=obj.t_set;
-    document.getElementById("t_top").innerHTML=obj.t_top;
-    document.getElementById("t_bottom").innerHTML=obj.t_bottom;
-    document.getElementById("s_set").innerHTML=obj.s_set;
-    document.getElementById("s_top").innerHTML=obj.s_top;
-    document.getElementById("s_bottom").innerHTML=obj.s_bottom;
-    document.getElementById("jrq1").innerHTML=obj.jrq1;
-    document.getElementById("jrq2").innerHTML=obj.jrq2;
-    document.getElementById("jsq").innerHTML=obj.jsq;
-    document.getElementById("csq").innerHTML=obj.csq;
-    document.getElementById("fj").innerHTML=obj.fj;
-    document.getElementById("setjrq1").text=obj.setjrq1;
-    document.getElementById("setjrq2").text=obj.setjrq2;
-    document.getElementById("setjsq").text=obj.setjsq;
-    document.getElementById("setcsq").text=obj.setcsq;
-    document.getElementById("setfj").text=obj.setfj;
-    document.getElementById("state1").innerHTML=obj.state1;
-    document.getElementById("state2").innerHTML=obj.state2;
-    document.getElementById("state3").innerHTML=obj.state3;
-    document.getElementById("state4").innerHTML=obj.state4;
-    document.getElementById("state5").innerHTML=obj.state5;
-    document.getElementById("state6").innerHTML=obj.state6;
-    document.getElementById("state7").innerHTML=obj.state7;
-    document.getElementById("state8").innerHTML=obj.state8;
-    document.getElementById("state9").innerHTML=obj.state9;
-    document.getElementById("state10").innerHTML=obj.state10;
-    document.getElementById("state11").innerHTML=obj.state11;
-    document.getElementById("state12").innerHTML=obj.state12;
-    document.getElementById("state13").innerHTML=obj.state13;
-    document.getElementById("state14").innerHTML=obj.state14;
-    document.getElementById("state15").innerHTML=obj.state15;
+    var t_set=document.getElementById("t_set");
+    t_set.innerHTML=obj.t_set;
+    var t_top=document.getElementById("t_top");
+    t_top.innerHTML=obj.t_top;
+    var t_bottom=document.getElementById("t_bottom");
+    t_bottom.innerHTML=obj.t_bottom;
+    var s_set=document.getElementById("s_set");
+    s_set.innerHTML=obj.s_set;
+    var s_top=document.getElementById("s_top");
+    s_top.innerHTML=obj.s_top;
+    var s_bottom=document.getElementById("s_bottom");
+    s_bottom.innerHTML=obj.s_bottom;
+    var jrq1=document.getElementById("jrq1");
+    jrq1.innerHTML=obj.jrq1;
+    var jrq2=document.getElementById("jrq2");
+    jrq2.innerHTML=obj.jrq2;
+    var jsq=document.getElementById("jsq");
+    jsq.innerHTML=obj.jsq;
+    var csq=document.getElementById("csq");
+    csq.innerHTML=obj.csq;
+    var fj=document.getElementById("fj");
+    fj.innerHTML=obj.fj;
+    var set_jrq1=document.getElementById("setjrq1");
+    set_jrq1.text=obj.setjrq1;
+    var set_jrq2=document.getElementById("setjrq2");
+    set_jrq2.text=obj.setjrq2;
+    var set_jsq=document.getElementById("setjsq");
+    set_jsq.text=obj.setjsq;
+    var set_csq=document.getElementById("setcsq")
+    set_csq.text=obj.setcsq;
+    var set_fj=document.getElementById("setfj");
+    set_fj.text=obj.setfj;
+    var state1=document.getElementById("state1");
+    state1.innerHTML=obj.state1;
+    var state2=document.getElementById("state2");
+    state2.innerHTML=obj.state2;
+    var state3=document.getElementById("state3");
+    state3.innerHTML=obj.state3;
+    var state4=document.getElementById("state4");
+    state4.innerHTML=obj.state4;
+    var state5=document.getElementById("state5");
+    state5.innerHTML=obj.state5;
+    var state6=document.getElementById("state6")
+    state6.innerHTML=obj.state6;
+    var state7=document.getElementById("state7");
+    state7.innerHTML=obj.state7;
+    var state8=document.getElementById("state8");
+    state8.innerHTML=obj.state8;
+    var state9=document.getElementById("state9");
+    state9.innerHTML=obj.state9;
+    var state10=document.getElementById("state10");
+    state10.innerHTML=obj.state10;
+    var state11=document.getElementById("state11");
+    state11.innerHTML=obj.state11;
+    var state12=document.getElementById("state12");
+    state12.innerHTML=obj.state12;
+    var state13=document.getElementById("state13");
+    state13.innerHTML=obj.state13;
+    var state14=document.getElementById("state14");
+    state14.innerHTML=obj.state14;
+    var state15=document.getElementById("state15");
+    state15.innerHTML=obj.state15;
 }
 
 

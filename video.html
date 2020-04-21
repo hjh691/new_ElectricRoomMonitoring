@@ -7,6 +7,7 @@
    <link rel="stylesheet" href="css/preview.css" /> 
    <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
    <script src="js/bootstrap.js"></script>
+   <script type="text/javascript" src="js/layer/layer.js"></script>
    <script type="text/javascript" src="js/config.js"></script>
    <script type="text/javascript" src="js/function.js"></script>
    <script src="js/flv.js"></script>
@@ -14,7 +15,6 @@
     <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pearplayer"></script>
-    <script type="text/javascript" src="js/layer/layer.js"></script>
    <script src="js/DPlayer.min.js"></script>
 </head>
 <style>
@@ -38,7 +38,6 @@
                 <div id="dplayer" style="width:400px;height:400px;background-color: gray;float:left">
                 </div></span>
                 <video id="videoElement" name="videoElement" class="centeredVideo" controls autoplay width="90%" height="300">
-
                 </video>-->
             </div>
             <div class="column" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;flex:1;">
@@ -165,7 +164,6 @@
         var sel_id,dp,isstop;
         //var player;
         //var element = document.getElementsByName('videoElement')[0];
-        
         //$(function(){
         //    $(".tab a:last").tab("show");
         //})
@@ -432,7 +430,6 @@
                 player.destroy();
                 player=null;
             }*/
-            
         }
         function getvalue(obj){
             sel_id=obj.value;

@@ -47,7 +47,7 @@
         //var t1 = window.setInterval("getrealdatabynodeid(-1);",30000);
     }*/
     var asensors=JSON.parse(localStorage.getItem("allsensors"));
-    var a=JSON.parse(JSON.stringify(parent.infotreedata))
+    var a=JSON.parse(JSON.stringify(parent.allsessors))
     updatainfotree1(a);//使用总node和总sensors进行汇总。
     var myChar=echarts.init(document.getElementById("main")); 
     var option = {

@@ -6812,7 +6812,7 @@
 
     // set the class
     if (cls !== el._prevClass) {
-      el.setAttribute('class', cls);
+      el.className= cls;
       el._prevClass = cls;
     }
   }
@@ -7886,7 +7886,7 @@
     } else {
       var cur = " " + (el.getAttribute('class') || '') + " ";
       if (cur.indexOf(' ' + cls + ' ') < 0) {
-        el.setAttribute('class', (cur + cls).trim());
+        el.className= (cur + cls).trim();
       }
     }
   }
@@ -7919,7 +7919,7 @@
       }
       cur = cur.trim();
       if (cur) {
-        el.setAttribute('class', cur);
+        el.className= cur;
       } else {
         el.removeAttribute('class');
       }

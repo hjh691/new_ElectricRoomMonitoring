@@ -4,13 +4,13 @@ function smoking_changestated(obj,eId){
     if(obj.src.indexOf("res/on.png")>=0){
         obj.src="res/off.png";
         if(em!=null){
-            em.setAttribute("class","unenabled")
+            em.className="unenabled";
             em.innerHTML="关闭";
         }
     }else{
         obj.src="res/on.png";
         if(em!=null){
-            em.setAttribute("class","normal");
+            em.className="normal";
             em.innerHTML="正常";
         }
     }
@@ -20,10 +20,10 @@ function smoking_reset(eId){
     var reset=document.getElementById("sf_"+eId);
     if(reset.innerHTML=="正常"){
         reset.innerHTML="告警";
-        reset.setAttribute("class","unnormal")
+        reset.className="unnormal";
     }else if(reset.innerHTML=="告警"){
         reset.innerHTML="正常";
-        reset.setAttribute("class","normal");
+        reset.className="normal";
     }
 }/**
 */
@@ -33,40 +33,40 @@ function smoking_reset(eId){
 function createline(id,name,state){
     var filename="'res/on.png'";
     var ediv=document.createElement("div");
-    ediv.setAttribute("class","bg");
+    ediv.className="bg";
     var epid=document.createElement("p");
-    epid.setAttribute("class","lable");
+    epid.className="lable";
     epid.innerHTML=id;
     ediv.appendChild(epid);
     var epname=document.createElement("p");
-    epname.setAttribute("class","lable");
+    epname.className="lable";
     epname.setAttribute("id","name_"+id);
-    epname.innerHTML=name;trav
+    epname.innerHTML=name;//trav
     ediv.appendChild(epname);
     var epstate=document.createElement("p");
     if(state=="正常"){
-        epstate.setAttribute("class","normal");
+        epstate.className="normal";
         filename="'res/on.png'"
     }else if(state=="告警"){
-        epstate.setAttribute("class","unnormal");
+        epstate.className="unnormal";
         filename="'res/on.png'"
     }else if(state=="关闭"){
-        epstate.setAttribute("class","unenabled");
+        epstate.className="unenabled";
         filename="'res/off.png'"
     }
     epstate.setAttribute("id","sf_"+id);
     epstate.innerHTML=state;
     ediv.appendChild(epstate);
     var eprun=document.createElement("p");
-    eprun.setAttribute("class","set");
+    eprun.className="set";
     eprun.innerHTML="<img src="+filename+" style='height:30px;vertical-align: middle;' onclick=\"smoking_changestated(this,'"+id+"')\"/>";
     ediv.appendChild(eprun);
     var epset=document.createElement("p");
-    epset.setAttribute("class","set");
+    epset.className="set";
     epset.innerHTML="<button onclick=\"smoking_reset('"+id+"')\">设置/复位</button>"
     ediv.appendChild(epset);
     var epother=document.createElement("p");
-    epother.setAttribute("class","set");
+    epother.className="set";
     epother.innerHTML="<button onclick=\"smoking_other(this,'"+id+"')\">更多<b class='caret'></b></button>";
     ediv.appendChild(epother);
     return ediv;

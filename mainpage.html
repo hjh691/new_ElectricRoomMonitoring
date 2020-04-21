@@ -65,9 +65,11 @@
 						<li id="li_realstate" style="display: none;"><a id="nav14" href="javascript:void(0)" onclick="initrealstate()" title="动环实时状态">实时状态</a></li>
 						<li id="li_preview" style="display: none;"><a id="nav4" href="javascript:void(0)" onclick="showpreview()" title="视频实时预览">实时预览</a></li>
 						<li id="li_historydata"><a id="nav5" href="javascript:void(0)" onclick="loadstations_historydata()" title="历史数据变化趋势">历史数据</a></li>
+						<li id="li_historystate" style="display: none;"><a id="nav15" href="javascript:void(0)" onclick="inithistorystate()" title="历史数据变化趋势">历史数据</a></li>
 						<li id="li_replay" style="display: none;"><a id="nav6" href="javascript:void(0)" >视频回放</a></li>
 						<li id="li_historychart"><a id="nav7" href="javascript:void(0)" onclick="loadstations_chart()" title="多点变化趋势比较">趋势对比</a></li>
 						<li id="li_warnlog" ><a id="nav8" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警信息查询">告警信息</a></li>
+						<li id="li_warnlog" style="display: none;"><a id="nav16" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警查询">告警信息</a></li>
 						<li><a id="nav9" href="javascript:void(0)" onclick="showdevice()" title="所有设备信息列表">设备信息</a></li>
 						<li><a id="nav10" href="javascript:void(0)" onclick="showpage(0)" >系统信息</a></li>
 						<li id="clickaudio" style="float:right;font-size:16px;display: none;"><a href="javascript:void(0)" style="color: red;" onclick="showdailog()">开启告警声音</a></li>
@@ -134,6 +136,7 @@
 		var mnodes=[];
 		var infotreeobj = new Object();
 		var allsensors = null;
+		var sensorsnode=null;
 		var nodes = null, nodeid = -1;
 		sessionStorage.txid=-1;//20200228 初始化一次图形id
 		/*$(function(){
@@ -284,7 +287,6 @@
 			}
 		}
 		function initIndex() {
-			
 			showusername();
 			document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
 			//document.getElementById('company_log').src = jfjk_base_config.log_src;
@@ -306,8 +308,6 @@
 			} else {
 				document.getElementById("iframe_main").src = sessionStorage.framepage;
 			}
-			
-
 		}
 		//开启告警声音
 		function showdailog(){
@@ -467,7 +467,6 @@
 						}
 						infotreedata.push(infotreeobj);
 						updatanav(2);
-
 					} else {
 						//updatanav(1);
 						//sessionStorage.SensorId = data.id;
@@ -629,6 +628,7 @@
 				document.getElementById("li_warnlog").style.display="none"
 				document.getElementById("li_historychart").style.display="none";
 				document.getElementById("li_realstate").style.display="none";
+				document.getElementById("li_historystate").style.display="none";
 				document.getElementById("li_preview").style.display="inline";
 				if(sessionStorage.pageindex!=0&&sessionStorage.pageindex!=1&&sessionStorage.pageindex!=6&&sessionStorage.pageindex!=7){
 					sessionStorage.pageindex=8;
@@ -638,6 +638,7 @@
 					document.getElementById("li_realdata").style.display="inline";
 					document.getElementById("li_realdata").style.disabled="inline";
 					document.getElementById("li_realstate").style.display="none";
+					document.getElementById("li_historystate").style.display="none";
 					document.getElementById("li_historydata").style.display="inline";
 					document.getElementById("li_warnlog").style.display="inline"
 					document.getElementById("li_historychart").style.display="inline";
@@ -645,22 +646,28 @@
 					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)){
 						sessionStorage.pageindex=2;
 					}
+					if(sessionStorage.pageindex==11){
+						sessionStorage.pageindex=3;
+					}
 				break;
 				case 2://20200304 add 机房监控下的导航栏的显示内容
 					var li=document.getElementById("li_realdata");
 					li.style.display="none";
 					document.getElementById("li_realstate").style.display="inline";
-					document.getElementById("li_historydata").style.display="inline";
+					document.getElementById("li_historystate").style.display="inline";
+					document.getElementById("li_historydata").style.display="none";
 					document.getElementById("li_warnlog").style.display="inline"
 					document.getElementById("li_historychart").style.display="inline";
 					document.getElementById("li_preview").style.display="none";
 					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==2)){
 						sessionStorage.pageindex=10;
 					}
-					break;
+					if(sessionStorage.pageindex==3){
+						sessionStorage.pageindex=11;
+					}
+				break;
 			}
 		}
-		
 		function showpage(pid){
 			updatapcnav(10);
 			switch(pid){
@@ -707,7 +714,6 @@
 					tempobj.value = 0;
 				}
 				infotree.push(tempobj);
-
 			}
 			return infotree;
 		}
@@ -732,12 +738,6 @@
 			}
 			return infotree;
 		}
-		//silkroad Terra cotta warrior big wild goose pagoda palace Greenwood riverside highschool held ring note village arrive leave life live nother other
-		//Olympic thousand hundred trip travel tour journey visit interest amazing prefect line online drum bell another ever never 
-		//
-		//
-		//
-		//
 		function getNodes() {
 			var url = jfjk_base_config.baseurl + "/GetNodes";
 			url = encodeURI(url);
@@ -869,7 +869,6 @@
 			return tree;
 		}
 		function showdownload() {
-			
 			document.getElementById("iframe_main").src = "app_download.html"
 			sessionStorage.pageindex=200;
 		}
@@ -879,17 +878,14 @@
 			sessionStorage.pageindex=100;
 		}
 		function showcontactus() {
-			
 			document.getElementById("iframe_main").src = "ContactUs.html"
 			sessionStorage.pageindex=300;
 		}
 		function showdevice(){
-			
 			document.getElementById("iframe_main").src="device.html";
 			sessionStorage.pageindex=6;
 		}
 		function showpreview(){
-			
 			sessionStorage.pageindex=8;
 			document.getElementById("iframe_main").src="video.html";
 		}
@@ -1070,6 +1066,9 @@
 				case "10":
 					frame.src="realstate.html";
 					break;
+				case "11":
+					frame.src="historystate.html";
+					break;
 				case "100":
 					frame.src="Help.html";
 					break;
@@ -1113,7 +1112,7 @@
 								var result = data.Result;
 								if (!jQuery.isEmptyObject(result.Sensors)) {
 									//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
-									//allsensors=buildnode(data.Result.Sensors,3);//(JSON.parse(localStorage.getItem("sensors")));
+									sensorsnode=buildnode(data.Result.Sensors,0);//(JSON.parse(localStorage.getItem("sensors")));
 									maps=[];
 									allsensors = [];
 									buildsensor2(allsensors, data.Result.Sensors, "");
@@ -1184,7 +1183,6 @@
 					anodes.Config = aSensors[j].Config;
 					anodes.Time = aSensors[j].Time;
 					maps.push(anodes);
-
 					if ((aSensors[j].hasOwnProperty("nodes") && (aSensors[j].nodes.length > 0))) {
 						buildsensor1(aSensors[j].nodes);
 					}
@@ -1254,7 +1252,6 @@
 				return (maps.sort(compare));
 			}
 		}
-		//window.setInterval("getrealdatabynodeid(-1)",60000);
 		function decoderealdata(obj_realdata) {
 			var parentid=-100,parentname="";
 			var sensorname = "",
@@ -1296,8 +1293,7 @@
 								if (g && g._shape && g._shape.Binding && g._shape.Text) {
 									if(allsensors[g._shape.Binding]){
 										var sid=allsensors[g._shape.Binding].id;
-										if (obj_realdata.hasOwnProperty(sid)) {
-
+										if ((obj_realdata)&&(obj_realdata.hasOwnProperty(sid))) {
 											obj_data = (obj_realdata)[sid];////
 											g._shape.Text =(obj_data[0].Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
 											if(obj_data[0].Message){
@@ -1327,7 +1323,7 @@
 							}
 						}
 					}
-					if (obj_realdata.hasOwnProperty(sid)) {
+					if ((obj_realdata)&&(obj_realdata.hasOwnProperty(sid))) {
 						obj_data = (obj_realdata)[sid];////
 						var rows=tbody.rows;
 						var trs = tbody.getElementsByTagName("tr");
@@ -1370,7 +1366,7 @@
 					//fdck.style.display = "none";
 				}
 			}/*else{
-			layer.alert("没有符合条件的数据");憧憬披荆斩棘
+			layer.alert("没有符合条件的数据");
 		}*/
 			//tbody.rows[t_pt].scrollIntoView();
 			//refreshData();
@@ -1421,14 +1417,7 @@
 				//tr.appendChild(tdtype);//不显示//不显示
 				tr.appendChild(tdmessage);// 告警信息
 				//var cl = "#FFFFFF";
-				//隔行显示不同的颜色
-				//if (pt % 2 == 0) {
-				//	cl = "#16b9c9";
-				//}
 				//tr.style.backgroundColor = cl;
-				//tr.cells[1].style.backgroundColor = cl;
-				//tr.cells[2].style.backgroundColor = cl; stationname +
-				//tr.cells[3].style.backgroundColor = cl;
 				pt++;
 				tbody.appendChild(tr);
 				if ((alertvalue !== null) && (alertvalue !== "NaN")) {
@@ -1438,9 +1427,6 @@
 					str_speech =str_speech +alert_sys_name+ sname + alertinfo;
 					str_alert = str_alert + " " + alerttime + "  " +": " +alert_sys_name+" "+ sname + " "+ type_td+" " + alertinfo + " ";// + alertvalue;
 				}
-				//speech.innerHTML = str_alert;//str_speech;
-				//speech.click();
-				//str_alert="告警:";
 			}
 		}
 		function getsysname(anodes,aid){
@@ -1461,7 +1447,6 @@
 			return sys_name;
 		}
 		/*function refreshData(){
-	
 		}*/
 		function updatanodetree() {
 			if (typeof(allsensors) != "undefined" && allsensors != null) {
@@ -1474,7 +1459,6 @@
 				inittreeview(nodes);
 			}
 		};
-		
 	</script>
 </body>
 </html>

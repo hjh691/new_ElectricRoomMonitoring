@@ -62,7 +62,7 @@
 			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_history" 
 			style="width:160px;font-size:16px;height: 30px;" ></input>
 			<input class="button" type="button" id="chaxun" value="查询" onclick="queryhistorydata()" 
-			style="font-size:16px;height: 30px;line-height: 30px;" ></input></b></span>
+			style="font-size:16px;height: 30px;line-height: 30px;" ></input></span>
 			</div>			
 			<div  class="rowlay" >
 				<ul class="count_info" text-align="center" >
@@ -257,8 +257,6 @@
 			//数据以表格行的形式添加进table中，其实现隔行颜色区分。
 			if((obj_data==null)||(obj_data.length<=0)){
 				document.getElementById('count_val').innerHTML = count + "条";
-				//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
-				
 				document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
 				return;
 			}
@@ -299,7 +297,8 @@
 				maxval=minval=maxvalue;
 				var strtime=obj_data[0].Time.substr(0,13);
 				var temp=parseInt(strtime.substr(11));
-				for (var i = 1; i <obj_data.length; i++) {
+				jisuan(11,13);
+				/*for (var i = 1; i <obj_data.length; i++) {
 					if(parseInt(obj_data[i].Time.substr(11,13))==temp){
 						if(parseFloat(obj_data[i].Value)>maxvalue){
 							maxvalue=parseFloat(obj_data[i].Value);
@@ -359,7 +358,7 @@
 						ps++;
 						ct=1;
 					}
-				}
+				}*/
 				avgvalue=(avgvalue/ct);
 				var tr = document.createElement('tr');
 				tr.setAttribute("onclick","tableclick(this)");
@@ -369,13 +368,13 @@
 				//var tdname = document.createElement('td');
 				//tdname.setAttribute('class', 'seneorname');
 				var tdtime = document.createElement('td');
-				tdtime.setAttribute('class', 'time');
+				tdtime.className='time';
 				var tdvalue1 = document.createElement('td');
-				tdvalue1.setAttribute('class', 'value1'); //给单元格添加类名属性
+				tdvalue1.className='value1'; //给单元格添加类名属性
 				var tdvalue2 = document.createElement('td');
-				tdvalue2.setAttribute('class', 'value2');
+				tdvalue2.className='value2';
 				var tdvalue3=document.createElement("td");
-				tdvalue3.setAttribute("class",'value3');
+				tdvalue3.className='value3';
 				//tdname.innerHTML=sessionStorage.SensorName;
 				if(type=="pd"){
 					tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
@@ -403,7 +402,8 @@
 				maxval=minval=maxvalue;
 				var strtime=obj_data[0].Time.substr(0,10);
 				var temp=parseInt(strtime.substr(8));
-				for (var i = 1; i <obj_data.length; i++) {
+				jisuan(8,10);//参数是区日期时间格式串的起始和结束位置的由零算起的索引值。2020-04-16 14:50:10，
+				/*for (var i = 1; i <obj_data.length; i++) {
 					if(parseInt(obj_data[i].Time.substr(8,10))==temp){
 						if(parseFloat(obj_data[i].Value)>maxvalue){
 							maxvalue=parseFloat(obj_data[i].Value);
@@ -463,7 +463,7 @@
 						ps++;
 						ct=1;
 					}
-				}
+				}*/
 				avgvalue=(avgvalue/ct);
 				var tr = document.createElement('tr');
 				tr.setAttribute("onclick","tableclick(this)");
@@ -473,13 +473,13 @@
 				//var tdname = document.createElement('td');
 				//tdname.setAttribute('class', 'seneorname');
 				var tdtime = document.createElement('td');
-				tdtime.setAttribute('class', 'time');
+				tdtime.className='time';
 				var tdvalue1 = document.createElement('td');
-				tdvalue1.setAttribute('class', 'value1'); //给单元格添加类名属性
+				tdvalue1.className='value1'; //给单元格添加类名属性
 				var tdvalue2 = document.createElement('td');
-				tdvalue2.setAttribute('class', 'value2');
+				tdvalue2.className='value2';
 				var tdvalue3=document.createElement("td");
-				tdvalue3.setAttribute("class",'value3');
+				tdvalue3.className='value3';
 				//tdname.innerHTML=sessionStorage.SensorName;
 				if(type=="pd"){
 					tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
@@ -623,6 +623,69 @@
 				};
 				myChart.hideLoading();
 				myChart.setOption(option);
+			}
+			function jisuan(a1,a2,){
+				for (var i = 1; i <obj_data.length; i++) {
+					if(parseInt(obj_data[i].Time.substr(a1,a2))==temp){
+						if(parseFloat(obj_data[i].Value)>maxvalue){
+							maxvalue=parseFloat(obj_data[i].Value);
+						}
+						if(parseFloat(obj_data[i].Value)<minvalue){
+							minvalue=parseFloat(obj_data[i].Value);
+						}
+						if(parseFloat(obj_data[i].Value)>maxval){
+							maxval=parseFloat(obj_data[i].Value);
+						}
+						if(parseFloat(obj_data[i].Value)<minval){
+							minval=parseFloat(obj_data[i].Value);
+						}
+						avgvalue=(parseFloat(avgvalue)+parseFloat(obj_data[i].Value));
+						ct++;
+					}else{
+						avgvalue=(avgvalue/ct);
+						var tr = document.createElement('tr');
+						tr.setAttribute("onclick","tableclick(this)");
+						//if (ps% 2 == 0) {
+						//	tr.setAttribute('style', "background-color:#16b9c9");
+						//}
+						//var tdname = document.createElement('td');
+						//tdname.setAttribute('class', 'seneorname');
+						var tdtime = document.createElement('td');
+						tdtime.className='time';
+						var tdvalue1 = document.createElement('td');
+						tdvalue1.className='value1'; //给单元格添加类名属性
+						var tdvalue2 = document.createElement('td');
+						tdvalue2.className='value2';
+						var tdvalue3=document.createElement("td");
+						tdvalue3.className='value3';
+						//tdname.innerHTML=sessionStorage.SensorName;
+						if(type=="pd"){
+							tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+							tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+						}else{
+							tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+							tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+						}
+						//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
+						tdtime.innerHTML = strtime;//+":00" //jsonObject[i].color;
+						tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
+						//tr.appendChild(tdname);
+						tr.appendChild(tdtime);
+						tr.appendChild(tdvalue1);
+						tr.appendChild(tdvalue2);
+						tr.appendChild(tdvalue3);
+						var tbody = document.getElementById('historydata-tbody');
+						tbody.appendChild(tr);
+						pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
+						pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
+						pc.push([strtodatetime(strtime+":00"),minvalue , ps])
+						maxvalue=minvalue=avgvalue=parseFloat(obj_data[i].Value);
+						strtime=obj_data[i].Time.substr(0,a2);
+						temp=parseInt(strtime.substr(a1));
+						ps++;
+						ct=1;
+					}
+				}
 			}
 		}
 		function gradeChange() {

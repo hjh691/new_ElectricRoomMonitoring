@@ -3,14 +3,14 @@ function light_changestated(obj,eId){
     if(obj.src.indexOf("res/d3.png")>=0){
         obj.src="res/d9.png";
         if(em!=null){
-            em.setAttribute("class","normal");
+            em.className="normal";
             em.innerHTML="点亮";
         }
         document.getElementById("info_"+eId).innerHTML="正常照明";
     }else{
         obj.src="res/d3.png";
         if(em!=null){
-            em.setAttribute("class","unenabled");
+            em.className="unenabled";
             em.innerHTML="熄灭";
         }
         document.getElementById("info_"+eId).innerHTML="正常关闭";
@@ -29,47 +29,47 @@ function light_changestated(obj,eId){
 function createline(id,name,state,info){
     var filename="'res/d2.png'";
     var ediv=document.createElement("div");
-    ediv.setAttribute("class","bg");
+    ediv.className="bg";
     var epid=document.createElement("p");
-    epid.setAttribute("class","lable");
+    epid.className="lable";
     epid.setAttribute("id",id);
     epid.innerHTML=id;
     ediv.appendChild(epid);
     var epname=document.createElement("p");
-    epname.setAttribute("class","lable");
+    epname.className="lable";
     epname.setAttribute("id","name_"+id);
     epname.innerHTML=name;
     ediv.appendChild(epname);
     var epstate=document.createElement("p");
     if(state=="点亮"){
-        epstate.setAttribute("class","normal");
+        epstate.className="normal";
         filename="'res/d9.png'";
     }else if(state=="熄灭"){
-        epstate.setAttribute("class","unenabled");
+        epstate.className="unenabled";
         filename="'res/d3.png'";
     }else if(state=="故障"){
-        epstate.setAttribute("class","unnormal");
+        epstate.className="unnormal";
         filename="'res/d2.png'";
     }
     epstate.setAttribute("id","sf_"+id);
     epstate.innerHTML=state;
     ediv.appendChild(epstate);
     var epinfo=document.createElement("p");
-    epinfo.setAttribute("class","lable");
+    epinfo.className="lable";
     epinfo.setAttribute("id","info_"+id);
     epinfo.innerHTML=info
     ediv.appendChild(epinfo);
     var eprun=document.createElement("p");
-    eprun.setAttribute("class","set");
+    eprun.className="set";
     eprun.innerHTML="<img src="+filename+" style='height:30px;vertical-align: middle;' onclick=\"light_changestated(this,'"+id+"')\"/>";
     ediv.appendChild(eprun);
     var epother=document.createElement("p");
-    epother.setAttribute("class","set");
+    epother.className="set";
     epother.innerHTML="<button onclick=\"light_other(this,'"+id+"')\">更多<b class='caret'></b></button>";
     ediv.appendChild(epother);
     return ediv;
 }
-for(var i=3;i<10;i++){
+for(var i=3;i<5;i++){
     document.getElementById("tab_light").appendChild(createline("l00"+i,"name"+i,"故障","无法点亮"));
 }
 function light_other(obj,eid){

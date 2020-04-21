@@ -342,10 +342,18 @@ function initrealdata(){
 function initrealstate(){
 	var pages=document.getElementById("iframe_main");
 	//var data=$("#tree").treeview("getSelected");
-	if(pages.src.indexOf("/realdstate.html")<=0){
+	if(pages.src.indexOf("/realstate.html")<=0){
 		document.getElementById("iframe_main").src="realstate.html";
 	}
 	sessionStorage.pageindex=10;
+}
+function inithistorystate(){
+	var pages=document.getElementById("iframe_main");
+	//var data=$("#tree").treeview("getSelected");
+	if(pages.src.indexOf("/historystate.html")<=0){
+		document.getElementById("iframe_main").src="historystate.html";
+	}
+	sessionStorage.pageindex=11;
 }
 //网络连接心跳包 re_use used by electricroommonitor 
 function sendbeat() {
@@ -735,7 +743,6 @@ function getrealsbydataid() {
 										}
 									}
 								} catch(err) {
-
 								}*/
 								//刷新实时数据列表内容
 								for (var j = 0; j < trs.length; j++) {
@@ -1055,96 +1062,6 @@ function initlist() {
 		getgraphics();
 	}
 }
-//获取站点列表
-function GetStations() {
-	var pt = 0;
-	$("#graphicslist tr").empty();
-	var url = jfjk_base_config.baseurl + "GetStations";
-	url = encodeURI(url);
-	if (sessionStorage.islogin == "true") {
-		$.ajax({
-			beforeSend: function(request) {
-				request.setRequestHeader("_token", sessionStorage.token);
-			},
-			url: url,
-			type: 'GET',
-			dataType: 'json',
-			timeout: 10000,
-			error: function(jqXHR, textStatus, errorThrown) {
-				sessionStorage.errortime++;
-				if (errorThrown == "Unauthorized") {
-					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站点列表操作失败', info_showtime);
-				} else {
-					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站点列表操作失败', info_showtime);
-				}
-			},
-			success: function(data, status) {
-				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-				if (status == "success") {
-					sessionStorage.errortime = 0;
-					sessionStorage.islogin = true;
-					if (data.Error == null) {
-						if (data.Result.Stations == null) {
-							layer.alert("没有符合条件的记录",info_showtime);
-							return;
-						}
-						if (data.Result.hasOwnProperty("Stations")) {
-							var tb = document.getElementById('stationstable');
-							var rowNum = tb.rows.length;
-							for (i = 0; i < rowNum; i++) {
-								tb.deleteRow(i);
-								rowNum = rowNum - 1;
-								i = i - 1;
-							}
-							var tbody = document.getElementById('stationslist');
-							//var tree=document.getElementById('treeitem');
-							for (var i = 0; i < data.Result.Stations.length; i++) { //data.Result.length
-								let tr = document.createElement('tr');
-								//tr.setAttribute("onclick", "c1(this)");
-								tr.setAttribute("style", "margin-left:30px");
-								var tdid = document.createElement('td');
-								tdid.setAttribute("style", "width:50xp");
-								tdid.setAttribute("style", "display:none");
-								var tdename = document.createElement('td');
-								tdename.setAttribute("style", "width:150px");
-								var a = document.createElement('a');
-								a.setAttribute('href', 'javascript:void(0)');
-								a.setAttribute('style', 'color:#000');
-								a.setAttribute('style', 'text-decoration: none');
-								a.innerHTML = data.Result.Stations[i].Name;
-								tdid.innerHTML = data.Result.Stations[i].Id;
-								tdename.appendChild(a); //.innerHTML=data.Result.Stations[i].Name;//jsonObject[i].name;
-								tr.appendChild(tdid);
-								tr.appendChild(tdename);
-								tbody.appendChild(tr);
-								if (data.Result.Stations[i].Id == sessionStorage.stationID) {
-									pt = i;
-									first = -1;
-								}
-								let item = data.Result.Stations[i];
-								$(tr).click(function(){
-									c1(tr,item);
-								})
-								/*var li=document.createElement('li');
-							var a=document.createElement('a');
-							a.setAttribute('onclick','domenu('+data.Result.Stations[i].Id+')');
-							a.innerHTML=data.Result.Stations[i].Name;
-							li.appendChild(a);
-							tree.appendChild(li);*/
-							}
-							var trs = tbody.getElementsByTagName("tr");
-							trs[pt].onclick();
-						}
-					} else {
-						layer.alert(data.Error,info_showtime);
-					}
-				}
-			}
-		});
-	} else {
-		layer.alert('与服务器连接失败',info_showtime);
-	}
-}
 //显示新密码输入选项	
 function showeditpassword() {
 	document.getElementById("up-editpassword").style.display = "inline";
@@ -1276,8 +1193,7 @@ function inithistorychart() {
 	sessionStorage.pageindex = 4;
 	GetSensorsByStation();
 	document.getElementById("kssj_chart").value = sessionStorage.kssj;
-	document.getElementById("jssj_chart").value = sessionStorage.jssj;
-	
+	document.getElementById("jssj_chart").value = sessionStorage.jssj;	
 	var sel_sensor=document.getElementById("jcdd");
 	for (var i = 0; i < sel_sensor.length; i++) {
 		sel_sensor.removeChild(sel_sensor.options[0]);
@@ -1369,7 +1285,6 @@ function initwarnlog() {
 			}
 		};
 	} else {
-		//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
 		var t1 = window.setInterval("getrealdatabynodeid(-1);",60000);
 	}
 }
@@ -1517,7 +1432,7 @@ function setSelectOption(objid, sensor) {
 	}else if(i>=options.length)
 		sessionStorage.SensorId=options[0].value;
 }
-//可自动关闭提示框
+//可自动关闭提示框 used by electricroommonitor
 function Alert(str, delay) {
 	var ranid = rnd(1, 100);
 	var msgw, msgh, bordercolor;
@@ -1591,7 +1506,7 @@ function Alert(str, delay) {
 //将系统的信息告警提示框直接转换成自定义提示框  
 window.alert = Alert;
 layer.alert=Alert;
-//关闭指定id的提示框（窗口）。
+//关闭指定id的提示框（窗口）。used by electricroommonitor
 function closewin(ranid) {
 	if(document.getElementById("alertbgDiv"+ranid)){//2020324
 		document.body.removeChild(document.getElementById("alertbgDiv" + ranid));
@@ -1776,7 +1691,6 @@ function GetWarnLog(mkssj, mjssj) {
 		layer.alert('与服务器连接失败',info_showtime);
 	}
 	document.getElementById('station_name').innerHTML = sessionStorage.stationName;
-
 }
 //获取单个标签的告警信息  used by electricroommonitor
 //获取告警信息列表
@@ -2537,7 +2451,6 @@ function drawmap(arr) {
 	//mCanvas.height = document.documentElement.clientHeight;
 	var swidth = cwidth= document.documentElement.clientWidth ;
 	var sheight = cheight=document.documentElement.clientHeight-mheadmap.clientHeight;;
-	
 	mCanvasDiv.style.width= cwidth  + 'px';
 	mCanvasDiv.style.height= cheight + 'px';
 	var background_color="#cccccc";
@@ -2687,7 +2600,6 @@ function method5(tableid) {
 			oXL = null;
 			idTmr = window.setInterval("Cleanup();", 1);
 		}
-
 	} else {
 		tableToExcel(tableid)
 	}
@@ -2896,13 +2808,10 @@ function sortt(className) {
 				lastid[k]=ssid;
 			
 			break;
-			
 		}
 		//if(listName[j].substring(listName[j].length-listNameOld[j].length)!=listNameOld[j]){
 		//b=true;
-		
 		}
-		
 	}
 */
 	if (ij % 2 == 0) {
@@ -3248,12 +3157,12 @@ function seletime(obj){
 			if(timedefine.style.display=="none"){
 				timedefine.style.display="inline";
 			}
-			break;
+		break;
 	}
 }
 //导航按钮选中指示标志//20200212
 function updatapcnav(obj){
-	for(var i=1;i<15;i++){
+	for(var i=1;i<16;i++){
 		var nav=document.getElementById("nav"+i);
 		if(nav==null){//如果为null。就获取父窗口下的元素。
 			nav=window.parent.document.getElementById("nav"+i);
