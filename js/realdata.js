@@ -10,7 +10,7 @@ var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0;
 var colors = [];
 var pageSize = 100;    //每页显示的记录条数
 var curPage = 0;        //当前页
-var lastPage;        //最后页
+//var lastPage;        //最后页
 var direct = 0;        //方向
 var len;            //总行数
 var page;            //总页数
@@ -78,69 +78,73 @@ function decoderealdata() {
     if (sensors != null) {
         for (var i = 0; i < sensors.length; i++) {
             var sid = sensors[i].id + "";
-            if ((obj_realdata) && (obj_realdata.hasOwnProperty(sid))) {
-                sname = sensors[i].Value.Name;
-                var xs = 1;//sensors[i].Value.Factor;  //数据结构修改，后台的value数据已经乘上系数，svalue为未乘以系数的原始数据
-                var type_td = sensors[i].Value.Catalog;
-                //if(type_td=="pd"){xs=xs*-1}
-                obj_data = (obj_realdata)[sid];////
-                //添加数据列表项
-                var tr = document.createElement('tr');
-                tr.setAttribute("onclick", "tableclick(this)");//ondblclick
-                var tdename = document.createElement('td');
-                //var tdsalary=document.createElement('td');
-                var tdid = document.createElement('td');
-                var tdtype = document.createElement('td');
-                var tdtime = document.createElement('td');
-                var tdvalue = document.createElement('td');
-                var tdvalue2 = document.createElement('td');
-                var tdhistory = document.createElement('td');
-                var tdwarnlog = document.createElement('td');
-                var tdmessage = document.createElement('td');
-                tdename.innerHTML = sname;
-                tdid.innerHTML = sid;
-                tdid.style.cssText = "display:none";
-                tdtype.innerHTML = type_td;
-                tdtype.style.cssText = "display:none";
-                tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
-                kssj = (obj_data[0].Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-                jssj = obj_data[0].Time;
-                tdvalue.innerHTML = (obj_data[0].Value * xs).toFixed(Number_of_decimal);
-                //tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);//此处应为第二个数值，目前没有意义
-                tdhistory.setAttribute('backgroundColor', '#ffffff');
-                tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
-                tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
-                tdwarnlog.setAttribute('onclick', 'towarnlog(' + sid + ')');
-                tdwarnlog.setAttribute('backgroundColor', '#ffffff');
-                //tdwarnlog.style.cssText="display:none";
-                tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
-                var mes = obj_data[0].Message;
-                tdmessage.innerHTML = mes;
-                tdmessage.style.cssText = "display:none";
-                tr.appendChild(tdename);
-                tr.appendChild(tdtime);
-                tr.appendChild(tdvalue);
-                //tr.appendChild(tdvalue2);
-                tr.appendChild(tdhistory);
-                tr.appendChild(tdwarnlog);//z不显示
-                tr.appendChild(tdid);//不显示
-                tr.appendChild(tdtype);//不显示
-                tr.appendChild(tdmessage);//不显示 告警信息
-                var cl = "#000";
-                //隔行显示不同的颜色
-                //if (pt % 2 == 1) {
-                //	cl="#16b9c9";
-                //}
-                if (mes) {
-                    cl = "#f20";
+            if ((obj_realdata))
+             for(var j=0;j<obj_realdata.length;j++) {
+                if(obj_realdata[j].SensorId==sid){
+                    sname = sensors[i].Value.Name;
+                    var xs = 1;//sensors[i].Value.Factor;  //数据结构修改，后台的value数据已经乘上系数，svalue为未乘以系数的原始数据
+                    var type_td = sensors[i].Value.Catalog;
+                    //if(type_td=="pd"){xs=xs*-1}
+                    obj_data = (obj_realdata)[j];////sid
+                    //添加数据列表项
+                    var tr = document.createElement('tr');
+                    tr.setAttribute("onclick", "tableclick(this)");//ondblclick
+                    var tdename = document.createElement('td');
+                    //var tdsalary=document.createElement('td');
+                    var tdid = document.createElement('td');
+                    var tdtype = document.createElement('td');
+                    var tdtime = document.createElement('td');
+                    var tdvalue = document.createElement('td');
+                    var tdvalue2 = document.createElement('td');
+                    var tdhistory = document.createElement('td');
+                    var tdwarnlog = document.createElement('td');
+                    var tdmessage = document.createElement('td');
+                    tdename.innerHTML = sname;
+                    tdid.innerHTML = sid;
+                    tdid.style.cssText = "display:none";
+                    tdtype.innerHTML = type_td;
+                    tdtype.style.cssText = "display:none";
+                    tdtime.innerHTML = obj_data.Time; //jsonObject[i].color;
+                    kssj = (obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
+                    jssj = obj_data.Time;
+                    tdvalue.innerHTML = (obj_data.Value * xs).toFixed(Number_of_decimal);
+                    //tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);//此处应为第二个数值，目前没有意义
+                    tdhistory.setAttribute('backgroundColor', '#ffffff');
+                    tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
+                    tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
+                    tdwarnlog.setAttribute('onclick', 'towarnlog(' + sid + ')');
+                    tdwarnlog.setAttribute('backgroundColor', '#ffffff');
+                    //tdwarnlog.style.cssText="display:none";
+                    tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
+                    var mes = obj_data.Message;
+                    tdmessage.innerHTML = mes;
+                    tdmessage.style.cssText = "display:none";
+                    tr.appendChild(tdename);
+                    tr.appendChild(tdtime);
+                    tr.appendChild(tdvalue);
+                    //tr.appendChild(tdvalue2);
+                    tr.appendChild(tdhistory);
+                    tr.appendChild(tdwarnlog);//z不显示
+                    tr.appendChild(tdid);//不显示
+                    tr.appendChild(tdtype);//不显示
+                    tr.appendChild(tdmessage);//不显示 告警信息
+                    var cl = "#000";
+                    //隔行显示不同的颜色
+                    //if (pt % 2 == 1) {
+                    //	cl="#16b9c9";
+                    //}
+                    if (mes) {
+                        cl = "#f20";
+                    }
+                    tr.style.color = cl;
+                    pt++;
+                    $table.appendChild(tr);
+                    $(".time").text('');
+                    $(".sensorname").text('');
+                    $(".value1").text('');
+                    $(".value2").text('');
+                    break;
                 }
-                tr.style.color = cl;
-                pt++;
-                $table.appendChild(tr);
-                $(".time").text('');
-                $(".sensorname").text('');
-                $(".value1").text('');
-                $(".value2").text('');
             }
         }
         //document.getElementById('count_val').innerHTML = pt + "条";
@@ -775,7 +779,7 @@ function displayPage() {
         layer.alert("已经是最后一页了", info_showtime);
         return;
     }
-    lastPage = curPage;
+    //lastPage = curPage;
     // 修复当len=1时，curPage计算得0的bug
     if (len > pageSize) {
         curPage = ((curPage + direct + len) % len);

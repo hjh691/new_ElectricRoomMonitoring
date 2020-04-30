@@ -55,10 +55,10 @@
 		</div>
 		<div id="content" style="overflow: hidden;">
 			<!-- 导航栏 -->
-			<nav role="navigation" class="navbar-static-top"><!--class="navbar navbar-default navbar-fixed-top" role="navigation"-->
+			<nav role="navigation" class="navbar-static-top"><!--class="navbar navbar-default navbar-fixed-top" role="navigation"border: solid rgba(0, 101, 105, 1) 1px;-->
 			<div class="navigation" >
-				<div class="row-navigation">
-					<ul class="pc-nav">
+				<div class="row-navigation ">
+					<ul class="pc-nav navbar-right" style="margin-right: 0;border: solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;height: 40px;">
 						<li><a id="nav1" href="javascript:void(0)" onclick="inittotalpage()" >信息总览</a></li>
 						<li><a id="nav2" href="javascript:void(0)" onclick="initdrawing()" title="显示系统状态图">状态图</a></li>
 						<li id="li_realdata"><a id="nav3" href="javascript:void(0)" onclick="initrealdata()" title="实时数据列表">实时数据</a></li>
@@ -767,9 +767,9 @@
 							sessionStorage.islogin = true;
 							if (data.Error == null) {
 								var obj_nodes = [];
-								var result = data.Result;
-								if (!jQuery.isEmptyObject(result.Nodes)) {
-									obj_nodes = data.Result.Nodes;
+								//var result = data.Result;
+								if (!jQuery.isEmptyObject(data.Result)) {//用data.Result替换result.Nodes
+									obj_nodes = data.Result;
 								} else {
 									obj_nodes = null;
 								}
@@ -858,8 +858,8 @@
 						icon = "glyphicon glyphicon-home"
 					}
 					anodes.icon = icon;
-					var chi_len = data[j].Children.length;
-					if (chi_len != 0) {
+					//var chi_len = data[j].Children.length;
+					if (data[j].Children&&data[j].Children.length != 0) {
 						anodes.nodes = [];
 						anodes.nodes = buildnode(data[j].Children, level + 1)
 					}
@@ -901,7 +901,8 @@
 		}
 		//获取指定节点的图形列表
 		function GetBinariesByType(atype, anodeid) {
-			var url = jfjk_base_config.baseurl + "/GetBinariesByType?type=" + atype + "&typeid=" + anodeid;
+			//var url = jfjk_base_config.baseurl + "/GetBinariesByType?type=" + atype + "&typeid=" + anodeid;//GetSensorsByNode?nodeId
+			var url = jfjk_base_config.baseurl + "/GetNodeGraphicsByNode?nodeId="+ anodeid;
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
 				//if((aparent==undefined)||(aparent!=1)){
@@ -934,10 +935,11 @@
 							//isfree="true";
 							if (data.Error == null) {
 								var obj_Binaries = [];
-								var result = data.Result;
-								if (!jQuery.isEmptyObject(result.Binaries)) {
+								//var result = data.Result;
+								//if (!jQuery.isEmptyObject(result.Binaries)) {//20200427 修改
+								if(!jQuery.isEmptyObject(data.Result)){
 									//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
-									obj_Binaries = data.Result.Binaries;
+									obj_Binaries = data.Result;
 									//var binaries=buildbinaries(data.Result.Binaries);//(JSON.parse(localStorage.getItem("sensors")));
 									localStorage.setItem("binaries", JSON.stringify(obj_Binaries));
 									//localStorage.binaries=obj_Binaries;
@@ -1004,6 +1006,11 @@
 									//var sensors=(JSON.parse(localStorage.getItem("sensors")));
 									//var localsensors=buildsensor(data.Result.Sensors);
 									//updatainfotree(infotreedata, anodeid,sensors.length,sensors);
+									if(!jQuery.isEmptyObject(result.Configs)){//20200428 add
+										var configs=new Object();
+										configs=data.Result.Configs;
+										localStorage.setItem("Configs",JSON.stringify(configs));
+									}
 									refreshiframe();
 								} else {
 									localStorage.setItem("sensors", null);
@@ -1077,7 +1084,7 @@
 					break;
 				case "300":
 					frame.src="ContactUs.html";
-					break;
+					break;//添加注释....... 
 			}
 		}
 		function GetSensors() {
@@ -1112,7 +1119,7 @@
 								var result = data.Result;
 								if (!jQuery.isEmptyObject(result.Sensors)) {
 									//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
-									sensorsnode=buildnode(data.Result.Sensors,0);//(JSON.parse(localStorage.getItem("sensors")));
+									//sensorsnode=buildnode(data.Result.Sensors,0);//(JSON.parse(localStorage.getItem("sensors")));
 									maps=[];
 									allsensors = [];
 									buildsensor2(allsensors, data.Result.Sensors, "");
@@ -1120,6 +1127,11 @@
 									//var sensors=(JSON.parse(localStorage.getItem("sensors")));
 									//var localsensors=buildsensor(data.Result.Sensors);
 									//updatanodetree();
+									if(!jQuery.isEmptyObject(result.Configs)){//20200428 add
+										var configs=new Object();
+										configs=data.Result.Configs;
+										localStorage.setItem("allConfigs",JSON.stringify(configs));
+									}
 								} else {
 									allsensors = null;
 									//localStorage.setItem("allsensors",null);
@@ -1295,8 +1307,8 @@
 										var sid=allsensors[g._shape.Binding].id;
 										if ((obj_realdata)&&(obj_realdata.hasOwnProperty(sid))) {
 											obj_data = (obj_realdata)[sid];////
-											g._shape.Text =(obj_data[0].Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
-											if(obj_data[0].Message){
+											g._shape.Text =(obj_data.Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
+											if(obj_data.Message){
 												g._shape.IsError=true;
 											}else{
 												g._shape.isError=false;
@@ -1329,14 +1341,14 @@
 						var trs = tbody.getElementsByTagName("tr");
 						for(var k=0;k<rows.length;k++){
 							if(rows[k].cells[0].outerText==(sid+"")){
-								var msg = obj_data[0].Message;
+								var msg = obj_data.Message;
 								if (msg == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == ""){
 									tbody.deleteRow(k);
 									break;
 								}else{
-									if(rows[k].cells[3].outerText==(obj_data[0].Value *1).toFixed(Number_of_decimal)){
-										rows[k].cells[2].innerHTML=obj_data[0].Time;
-										rows[k].cells[3].innerHTML=(obj_data[0].Value *1).toFixed(Number_of_decimal);
+									if(rows[k].cells[3].outerText==(obj_data.Value *1).toFixed(Number_of_decimal)){
+										rows[k].cells[2].innerHTML=obj_data.Time;
+										rows[k].cells[3].innerHTML=(obj_data.Value *1).toFixed(Number_of_decimal);
 										break;
 									}else{
 										tbody.deleteRow(k);
@@ -1346,7 +1358,7 @@
 								} 
 							}
 						}
-						var msg = obj_data[0].Message;
+						var msg = obj_data.Message;
 						if (msg == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == "") {
 							continue;
 						}
@@ -1372,9 +1384,9 @@
 			//refreshData();
 			function showgaojing(){
 				var alert_sys_name=getsysname(mnodes,nid);//站和子系统名称
-				alerttime = obj_data[0].Time.substr(11);
+				alerttime = obj_data.Time.substr(11);
 				alertinfo = msg;
-				alertvalue = parseFloat(obj_data[0].Value).toFixed(Number_of_decimal);
+				alertvalue = parseFloat(obj_data.Value).toFixed(Number_of_decimal);
 				sname =parentname+ sensors[i].Value.Name;
 				var xs = 1;//sensors[i].Value.Factor;  数据结构修改，value为已经乘过系数的数值，svalue为未乘以系统的原始值 
 				var type_td = getname(sensors[i].Value.Catalog);
@@ -1395,8 +1407,8 @@
 				tdid.style.cssText="display:none";
 				tdtype.innerHTML = type_td;
 				tdtype.style.cssText = "display:none";
-				tdtime.innerHTML = obj_data[0].Time; //jsonObject[i].color;
-				tdvalue.innerHTML = (obj_data[0].Value * xs).toFixed(Number_of_decimal);
+				tdtime.innerHTML = obj_data.Time; //jsonObject[i].color;
+				tdvalue.innerHTML = (obj_data.Value * xs).toFixed(Number_of_decimal);
 				//tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);
 				//tdhistory.setAttribute('backgroundColor', '#ffffff');
 				//tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');

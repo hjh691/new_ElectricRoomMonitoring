@@ -17,11 +17,11 @@ function light_changestated(obj,eId){
     }
 }
 /*function reset(eId){
-    var reset=document.getElementById(eId);
+    var reset=document.getElementById(eId); //Petter john dinner lunch breakfast basketball football voliball tens tabletens
     if(reset.innerHTML=="正常"){
         reset.innerHTML="异常";
         reset.setAttribute("class","unnormal")
-    }else if(reset.innerHTML=="异常"){
+    }else if(reset.innerHTML=="异常"){//
         reset.innerHTML="正常";
         reset.setAttribute("class","normal");
     }
@@ -58,7 +58,7 @@ function createline(id,name,state,info){
     epinfo.className="lable";
     epinfo.setAttribute("id","info_"+id);
     epinfo.innerHTML=info
-    ediv.appendChild(epinfo);
+    ediv.appendChild(epinfo);//introduce myself yourself herself himself ourselves life lives
     var eprun=document.createElement("p");
     eprun.className="set";
     eprun.innerHTML="<img src="+filename+" style='height:30px;vertical-align: middle;' onclick=\"light_changestated(this,'"+id+"')\"/>";

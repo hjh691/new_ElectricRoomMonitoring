@@ -23,6 +23,7 @@ function initbarchart(chartid,bardata){
                 type: 'shadow'
             }
         },
+        //color: ['#ff0', '#0F0','#F00'],
         grid: {
             //left: '2%',
             //right: '5%',
@@ -86,7 +87,7 @@ function initbarchart(chartid,bardata){
                         offset: [5, -2],
                         textStyle: {
                             color: '#F68300',
-                            fontSize: 13
+                            fontSize: 13,
                         }
                     }
                 },
@@ -96,15 +97,15 @@ function initbarchart(chartid,bardata){
                     },
                     normal: {
                         barBorderRadius: 7,
-                        color: new echarts.graphic.LinearGradient(
+                        color : new echarts.graphic.LinearGradient(
                             0, 0, 1, 0,
                             [
                                 {offset: 0, color: '#3977E6'},
-                                {offset: 1, color: '#37BBF8'}
-
+                                {offset: 1, color: '#37BBF8'},
+                                {offset: 0, color: '#3977E6'},
                             ]
-                        ),/*'#39F736'*/
-                    }
+                        ),/*['#ff0', '#0F0','#F00'],'#39F736'*/
+                    },
                 }
             }
         ]
@@ -121,9 +122,19 @@ function initgaugechart(chartid,data){
         unit="V";vmax=400;spl=4;
     }else{unit="A";vmax=5;spl=5}
     var option_gauge= {
-        backgroundColor: '#1b1b1b',
+        backgroundColor: '#fff',
         tooltip: {
             formatter:  "{a}: <br/>{c} "+unit
+        },
+        grid:{
+            show:true,
+            bolderColor:'rgba(255,0,0,1)',
+            bolderWidth : 3,
+            bolderType:'dotted',
+            top:'10%',
+            left:'20%',
+            bottom:'27%',
+            right:'17%',
         },
         toolbox: {
             show: false,
@@ -142,64 +153,80 @@ function initgaugechart(chartid,data){
         series: [{ 
             name: data[0].name,//'电压',
             type: 'gauge',
-            center: ['50%', "50%"], // 默认全局居中
-            radius: '70%',//半径
+            center: ['80%', "70%"], // 默认全局居中
+            radius: '100%',//半径
             min: 0,
             max: vmax,
-            //startAngle: 90,//起始角度
-            //endAngle: 180,//终止角度
+            startAngle: 180,//起始角度
+            endAngle: 90,//终止角度
             splitNumber: spl,//
             axisLine: { // 坐标轴线
                 lineStyle: { // 属性lineStyle控制线条样式
-                    color: [[0.29, 'lime'],[0.86, '#1e90ff'],[1, '#ff4500']],
-                    width: 1,
-                    shadowColor : '#fff', //默认透明
-                    shadowBlur: 10
+                    color: [[1, '#000']],//[0.29, 'lime'],[0.86, '#1e90ff']
+                    width: 0,
+                    //shadowColor : '#000', //默认透明
+                    //shadowBlur: 10
                 }
             },
             axisTick: { // 坐标轴小标记
                 show: true,
                 splitNumber:5,
+                lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                    width: 1,
+                    color: '#f22',
+                }
             },
             axisLabel: {
+                distance: -30,//控制刻度值的位置
                 textStyle: { // 属性lineStyle控制线条样式
                     //fontWeight: 'bolder',
-                    color: '#fff',
+                    color: '#000',
                     //shadowColor: '#fff', //默认透明
-                    shadowBlur: 10,
-                    fontSize:10,
+                    //shadowBlur: 10,
+                    
+                    fontSize:12,
                 },
             },
             splitLine: { // 分隔线
                 length: 12, // 属性length控制线长
                 lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
-                    width: 1,
-                    color: '#fff',
-                    shadowColor: '#fff', //默认透明
-                    shadowBlur: 10
+                    width: 2,
+                    color: '#000',
+                    shadowColor: '#000', //默认透明
+                    shadowBlur: 10,
                 }
             },
             pointer: {
                 show:true,
-                width: 3,
-                shadowColor: '#fff', //默认透明
+                width: 2,
+                length : '100%',
+                color: '#F00',
+                shadowColor: '#00f', //默认透明
                 shadowBlur: 5,
+                
+            },
+            itemStyle:{
+                color:'#000',
+                bolderColor:"#000",
+                bolderWidth:2,
+                bolderType:'dotted',
             },
             title: {
                 show: true,
-                offsetCenter: [0, '140%'], // x, y，单位px
+                offsetCenter: ['-110%', '-120%'], // x, y，单位px
                 textStyle: {
-                    color: 'white',
-                    fontSize: 16
+                    color: 'black',
+                    fontSize: 16,
+                    fontStyle: 'bolder',
                 }
             },
             detail: {
                 show: true,
-                offsetCenter: ['-10%', '85%'],
+                offsetCenter: ['-40%', '30%'],
                 formatter: '{value}'+unit,
                 textStyle: {
                     fontSize: 14,
-                    color:'#F8F43C'
+                    color:'#18343C'
                 }
             },
             data:[data[0]],//[{value: 20,name: '电压'}],// [data]

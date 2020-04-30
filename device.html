@@ -24,7 +24,7 @@
         border:1px solid black;
         text-align:center;
         line-height:center;
-        width:200px;
+        width:160px;
         height:30px;
     }
 	table {
@@ -72,7 +72,7 @@
             </ul>
         </div>
 		<div style="text-align: center;">
-            <div  style="text-align: center;font-size: 18px;">
+            <div  style="text-align: center;font-size: 18px;display: none;">
                 <a id="btn0"></a>
                 <input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
                 <a id="sjzl"></a>&nbsp;
@@ -84,7 +84,7 @@
                 <input id="changePage" type="text" size="1" maxlength="4"/>
                 <a>页&nbsp;</a>
                 <a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
-				<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('devicetable')"><!--display: none;method5('devicetable')-->
+				<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('devicetable')"><!--method5('devicetable')-->
 					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel"></a>
             </div>
 		<table id="devicetable" style="margin: auto;">
@@ -93,11 +93,14 @@
 				<th onclick="$.sortTable.sort('devicetable',0)">设备编号</th>
 				<th onclick="$.sortTable.sort('devicetable',1)">设备名称</th>
 				<th onclick="$.sortTable.sort('devicetable',2)">安装时间</th>
-				<th onclick="$.sortTable.sort('devicetable',3)">地址</th>	
+				<th onclick="$.sortTable.sort('devicetable',3)">地址</th>
 				<th onclick="$.sortTable.sort('devicetable',4)">类型</th>
+				<th onclick="$.sortTable.sort('devicetable',5)">分组</th>
+				<th onclick="$.sortTable.sort('devicetable',6)">序列号</th>	
+				
 			<!--<th style="width:18px;border:0px solid black;"></th>-->
 			</tr>
-			<tbody id='device-tbody' style="width:1020px;height:600px; overflow:auto;">
+			<tbody id='device-tbody' style="width:1140px;height:600px; overflow:auto;">
 			</tbody>
 		</table>
 	</div>
@@ -106,7 +109,7 @@
     <script>
         var pageSize = 18;    //每页显示的记录条数
         var curPage=0;        //当前页
-        var lastPage;        //最后页
+        //var lastpage;        //最后页
         var direct=0;        //方向
         var len;            //总行数
         var page;            //总页数
@@ -148,17 +151,23 @@
                     var td_dadr=document.createElement("td");
                     td_dadr.innerHTML=sensors[i].Value.Address;
                     var td_dtype=document.createElement("td");
-                    td_dtype.innerHTML=getname(sensors[i].Value.Catalog);
+					td_dtype.innerHTML=getname(sensors[i].Value.Catalog);
+					var td_group=document.createElement("td");
+					td_group.innerHTML=sensors[i].Value.Group;
+					var td_serial= document.createElement("td");
+					td_serial.innerHTML=sensors[i].Serial;
                     tr.appendChild(td_did);
                     tr.appendChild(td_dname);
                     tr.appendChild(td_dtime);
                     tr.appendChild(td_dadr);
-                    tr.appendChild(td_dtype);
+					tr.appendChild(td_dtype);
+					tr.appendChild(td_group);
+					tr.appendChild(td_serial);
                     tbody.appendChild(tr);
 				}
 				document.getElementById("count_val").innerHTML=sensors.length;
             }
-            display();//分页显示功能。 
+            //display();//分页显示功能。 
         }
 		function tableclick(tr){
 			$(tr).siblings().css("background","");
@@ -228,7 +237,7 @@
 			layer.alert("已经是最后一页了");
 			return ;
 		}
-		lastPage = curPage;
+		//lastPage = curPage;
 		// 修复当len=1时，curPage计算得0的bug
 		if (len > pageSize) {
 			curPage = ((curPage + direct + len) % len);

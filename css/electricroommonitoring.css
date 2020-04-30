@@ -96,15 +96,15 @@
 		height:100%;
 		/*/height:700px;
 		margin-left:10px;
-		width:100%;*/
+		width:100%;border-width:1px 1px 1px 1px;border-style:solid;
+		
+		border-color:#eeb0b0;*/
 		background:#ffffff;
-		border-style:solid;
-		border-width:1px 1px 1px 1px;
-		border-color:#eeb0b0;
+		
 	}
 	/**顶部系统条	*/
 	.topbar{
-		background-color:#00706B;/*国电绿*/
+		background-color:rgba(0, 101, 105, 1);/*国电绿*/
 		height:80px;
 		line-height:80px;
 		vertical-align:center;
@@ -159,10 +159,16 @@
 		background:#adf7b8;
 		vertical-align:center;
 		width:100%;
-		height:30px;
-		line-height: 30px;
+		height:40px;
+		line-height: 40px;
 		min-width:500px;
-		/*text-align:center;*/
+		
+		/*text-align:center;border: solid  rgba(8, 177, 106, 0.5) 2px;
+		border-radius: 10px;*/
+	}
+	select{
+		height: 30px;
+		line-height: 30px;
 	}
 	.rowlay{
 		width:100%;
@@ -187,13 +193,14 @@
 		display:inline;
 		vertical-align:center;
 		font-size: 18px;
+		left:-20px;
 	}
 	.count_info li,.pc-nav li {
 		display:inline;
 		top:5px;
 		padding:0px;
 		vertical-align:center;
-		margin:5px;
+		/*margin:5px;*/
 	}
 	.pagecard{
 		background:#eee0e0;
@@ -251,9 +258,9 @@
         border:1px solid black;
         text-align:center;
         line-height:center;
-        width:100px;
-		/*height:30px;*/
-		font-size:18px;
+        /*width:100px;
+		height:30px;*/
+		font-size:14px;
     }
 	.table{
 		border:0px;
@@ -303,18 +310,18 @@
 		font-weight:bold;
 	}
 	#realdata_gaugechart,#realdata_chart{
-		width: 600px;
-		height: 300px;
+		width: 50%;
+		height: 260px;
 		background-color: rgb(189, 187, 187);
 		MARGIN-RIGHT: auto; 
 		MARGIN-LEFT: auto;
 		margin: 10px;
 	}
-	.condition {
+	/*.condition {
 		color:#0000b0;
 		font-size:20px;
 		border:0px;
-	}
+	}*/
 	.button{
 		width:60px;
 		font-size:18px;
@@ -395,6 +402,7 @@
 	span label {
 		color:rgb(8, 104, 182);
 	}
+	
 	#realdata-tbody{
 		width:1020px;
 		height:420px;
@@ -403,5 +411,14 @@
 	/*20200210 实现数据表格的隔行换色效果，css结构伪类实现*/
 	tr:nth-child(even){
 		background-color: #87CEFA;
+	}
+	.condition{
+		/*font-size: 14px;*/
+		margin-top: 5px;
+		height: 30px;
+		line-height: 30px;
+	}
+	.btn{
+		height:30px
 	}
 	

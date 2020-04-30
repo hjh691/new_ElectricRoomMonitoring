@@ -44,12 +44,18 @@
 		<div class="pagecard" id="pagecard1" style="display: none;">
 			<p style="text-align:center;font-size:20px;" ><b>历史数据</b></p>
 		</div>
-		<div align="center"style="height:80px;overflow:auto;" >
-			<div class="rowlay" ><b>
-				计量点名称：
+		
+		<div class="panel panel-default" style="height:80px;overflow:auto;margin-bottom: 0;" >
+			<span id="sensor_select" class="condition ">
+				<label>计量点名称</label>
 				<select id="jcdd" onchange="gradeChange()">
-			</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" 
-			onclick="refreshsensorslist()" style="display: none;"></a>
+				</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" 
+				onclick="refreshsensorslist()" ></a>
+			</span>
+			<span id="display_type"class="btn-group"  data-toggle="buttons">
+				
+			</span>
+			<div class="condition " >
 			<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
 			<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
 			<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
@@ -63,10 +69,10 @@
 			style="width:160px;font-size:16px;height: 30px;" ></input>
 			<input class="button" type="button" id="chaxun" value="查询" onclick="queryhistorydata()" 
 			style="font-size:16px;height: 30px;line-height: 30px;" ></input></span>
-			</div>			
-			<div  class="rowlay" >
+			</div>	</div>		
+			<div  class="rowlay">
 				<ul class="count_info" text-align="center" >
-					<!--<li style="width:50px"><b>站名：</b></li><a href="javascript:void(0)" 
+					<!--<li style="width:50px"><b>站名：</b></li><a href="javascript:void(0)class="rowlay" " 
 				onclick="seletime(1)">昨天</a> 
 					<li id="station_name"style="width:100px;margin-right:0px"> </li>method5('historytable')-->
 					<li style="width:50px;margin-right:0px"><b>标签名称：</b> </li>
@@ -78,8 +84,8 @@
 						<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a></li>
 				</ul>
 			</div>
-		</div>
-		<div class="parent" style="text-align: center;">
+		
+		<div class="parent panel panel-default" style="text-align: center;">
 		<div class="charttab-head" id="tab-head" style="height: 40px">
 		<div id="h2" class="selected" onclick="changetype();" style="width:100px;">数据列表</div>
 		</div>
@@ -114,7 +120,32 @@
 		var sel_sensor=document.getElementById("jcdd");
 		var type="";
 		var jssj=getCurrentDate(2);
+		var catalog="",name="";
+		var configs;
 		initpage();
+		$(function () {
+			$(".btn").click(function(){
+				$(this).button('toggle');
+				name= $(".catalog:checked").val();
+				getcatalog(name);
+			});
+			
+		});
+		function getcatalog(aname){
+			if(configs){
+				for(var p in configs){
+					for(var l in configs[p]){
+						if(configs[p][l].Name==name){
+							catalog=configs[p][l].Catalog;
+							break;
+						}
+					}
+				}
+			}
+		}
+		function btnclick(){
+			var level_select= $("radio:checked").val();
+		}
 		function initpage(){
 			updatapcnav(5);
 			var parentid=-100,parentname="";
@@ -127,6 +158,7 @@
 				sel_sensor.options[0] = null;
 			}
 			sensors=JSON.parse(localStorage.getItem("sensors"));
+			configs=JSON.parse(localStorage.Configs);
 			if(sensors!=null){
 				for(var i=0;i<sensors.length;i++){
 					if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
@@ -164,6 +196,8 @@
 				}
 			}
 			setSelectOption("jcdd", sessionStorage.SensorId);
+			appenddisplaytype()
+			
 			if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")||(sessionStorage.timeindex>4)){
 				sessionStorage.timeindex=0;
 			}
@@ -173,7 +207,32 @@
 				sessionStorage.SensorName="";
 			}
 			if(sessionStorage.timeindex==4){
-				queryhistorydata();
+				queryhistorydata(0);
+			}
+		}
+		function appenddisplaytype(time){
+			if(sessionStorage.SensorId>=0){
+				for(var k=0;k<sensors.length;k++){
+					if(sensors[k].Value.Id==sessionStorage.SensorId){
+						catalog=sensors[k].Value.Catalog;//读取对应的Catalog项
+						break;
+					}
+				}
+				if(configs.hasOwnProperty(catalog)){//检查配置中是否有catalog项
+					var s_des=configs[catalog]//如果有，读取其所有配置项
+					for(var p in s_des){
+						var lab=document.createElement("label");
+						lab.className="btn btn-primary";
+						if(p==0){
+							name=s_des[p].Name;
+							catalog=s_des[p].Catalog;
+							lab.className="btn btn-primary active"
+						}
+						lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
+						document.getElementById("display_type").appendChild(lab);
+						
+					}
+				}
 			}
 		}
 		function tableclick(tr){
@@ -234,7 +293,7 @@
 			for (var int = 0; int < tableLength; int++) {
 				tbl.deleteRow(0);
 			}
-			gethistorydata(sessionStorage.SensorId,kssj, jssj);
+			gethistorydata(sessionStorage.SensorId,"","temp",kssj, jssj);
 			isfirst=false;
 			//document.getElementById("timedefine").style.display="none";
 		}
@@ -627,6 +686,7 @@
 			function jisuan(a1,a2,){
 				for (var i = 1; i <obj_data.length; i++) {
 					if(parseInt(obj_data[i].Time.substr(a1,a2))==temp){
+						
 						if(parseFloat(obj_data[i].Value)>maxvalue){
 							maxvalue=parseFloat(obj_data[i].Value);
 						}
@@ -667,7 +727,10 @@
 							tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
 						}
 						//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
-						tdtime.innerHTML = strtime;//+":00" //jsonObject[i].color;
+						if(a1==11){
+							tdtime.innerHTML = strtime+":00";//
+						}else{tdtime.innerHTML = strtime;}//+":00" //jsonObject[i].color;
+						
 						tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
 						//tr.appendChild(tdname);
 						tr.appendChild(tdtime);
@@ -692,7 +755,7 @@
 			$("#historydata-tbody tr").empty();
 			var objS = document.getElementById("jcdd");
 			sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
-			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,"","temp",sessionStorage.kssj,sessionStorage.jssj);
 		}
 	</script>
 </body>

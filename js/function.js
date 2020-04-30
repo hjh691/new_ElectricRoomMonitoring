@@ -1515,13 +1515,13 @@ function closewin(ranid) {
 	}
 }
 //获取历史数据    used by electricroommonitor 
-function gethistorydata(sensorid,kssj, jssj,aparent) {
+function gethistorydata(sensorid,catalog,name,kssj, jssj,aparent) {
 	if (sessionStorage.islogin == "true") {
 		if (typeof(sensorid) != "undefined") {
 			if((typeof(aparent)=="undefined")||(aparent!=1)){
 				ajaxLoadingShow();
 			}
-			var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sensorid + "&from=" + kssj + "&to=" + jssj;
+			var url = jfjk_base_config.baseurl + "GetHistoriesBySensor?sensorId=" + sensorid + "&catalog="+catalog+"&name="+name+"&from=" + kssj + "&to=" + jssj;
 			url = encodeURI(url);
 			$.ajax({
 				beforeSend: function(request) {
@@ -1554,13 +1554,13 @@ function gethistorydata(sensorid,kssj, jssj,aparent) {
 						sessionStorage.islogin = true;
 						if (data.Error == null) {
 							if (!jQuery.isEmptyObject(data.Result.Datas)) {
-								if (!jQuery.isEmptyObject(data.Result.Datas[sensorid])) {
+								//if (!jQuery.isEmptyObject(data.Result.Datas[sensorid])) {
 									//if(data.Result.Datas.hasOwnProperty("Tmp")){
-										decodedatas( data.Result.Datas[sensorid]);
-								} else {
-									layer.alert("没有符合条件的记录",info_showtime);
-									decodedatas(null);
-								}
+								decodedatas( data.Result.Datas);//[sensorid]
+								//} else {
+								//	layer.alert("没有符合条件的记录",info_showtime);
+								//	decodedatas(null);
+								//}
 							} else {
 								layer.alert("没有符合条件的记录",info_showtime);
 								decodedatas(null);
@@ -1599,12 +1599,12 @@ function querywarnlog(num) {
 	sessionStorage.jssj = jssj;
 	$("#warnlogdata-tbody tr").empty();
 	if (num == 0) {
-		gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+		gethistorydata(sessionStorage.SensorId,"","",sessionStorage.kssj,sessionStorage.jssj);
 	} else {
-		gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+		gethistorydata(sessionStorage.SensorId,"","",sessionStorage.kssj,sessionStorage.jssj);
 	}
 }
-//获取告警信息列表  used by electricroommonitor
+//获取告警信息列表  
 function GetWarnLog(mkssj, mjssj) {
 	var count = 0;
 	if (sessionStorage.islogin == "true") {
@@ -1692,7 +1692,7 @@ function GetWarnLog(mkssj, mjssj) {
 	}
 	document.getElementById('station_name').innerHTML = sessionStorage.stationName;
 }
-//获取单个标签的告警信息  used by electricroommonitor
+//获取单个标签的告警信息  
 //获取告警信息列表
 function GetWarnLogBySensorId(mkssj, mjssj) {
 	var count = 0;
@@ -1936,7 +1936,7 @@ function querychartvalue() {
 	var myChart = echarts.init(document.getElementById('main'));
 	myChart.clear();
 	//myChart.showLoading();
-	gethistorydata(sessionStorage.SensorId,kssj,jssj);
+	gethistorydata(sessionStorage.SensorId,"","",kssj,jssj);
 	//drawchart();
 	document.getElementById("timedefine").style.display="none";
 }
@@ -2349,7 +2349,8 @@ function getgraphics() {
 function GetBinary(binariesid) {
 	sessionStorage.pageindex = 1;
 	if (typeof(binariesid) != "undefined") {
-		var url = jfjk_base_config.baseurl + "GetBinary?id=" + binariesid;
+		//var url = jfjk_base_config.baseurl + "GetBinary?id=" + binariesid;//20200427
+		var url= jfjk_base_config.baseurl+"GetNodeGraphics?id="+binariesid;
 		url = encodeURI(url);
 		if (sessionStorage.islogin == 'true') {
 			$.ajax({
@@ -3114,7 +3115,7 @@ function seletime(obj){
 			sel.style.display="";
 			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
 			sessionStorage.jssj = getCurrentDate(2) ;
-			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,"","temp",sessionStorage.kssj,sessionStorage.jssj);
 			timedefine.style.display="none";
 			//layer.alert("没有符合条件的记录",info_showtime);
 			break;
@@ -3128,7 +3129,7 @@ function seletime(obj){
 			var yesterdayend=cjssj-oneday;
 			sessionStorage.jssj=dateToString(new Date(yesterdayend),2);
 			//$("#warnlogdata-tbody tr").empty();
-			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,"","temp",sessionStorage.kssj,sessionStorage.jssj);
 			//layer.alert("没有符合条件的记录",info_showtime);
 			break;
 		case 2:
@@ -3137,7 +3138,7 @@ function seletime(obj){
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			sessionStorage.kssj=dateToString(new Date(ckssj.setDate(1)),2);
 			sessionStorage.jssj=getCurrentDate(2);
-			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,"","temp",sessionStorage.kssj,sessionStorage.jssj);
 			break;
 		case 3:
 			sel.style.display="";
@@ -3149,7 +3150,7 @@ function seletime(obj){
 			sessionStorage.jssj = dateToString(new Date(cjssj - oneday * cjssj.getDate()),2);
 			//$("#warnlogdata-tbody tr").empty();
 			//layer.alert("没有符合条件的记录",info_showtime);
-			gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,"","temp",sessionStorage.kssj,sessionStorage.jssj);
 		break;
 		case  4:
 			sel.style.display="";
@@ -3188,7 +3189,7 @@ var sorter=false;
 				var tr = tbody.rows;
 				if (tbody.sortCol == Idx){
 					sorter=(!sorter);
-				}
+				}else{sorter=false}
                 var trValue = new Array();
                 for (var i=0; i<tr.length; i++ ) {
 					trValue[i] = tr[i];  //
@@ -3212,7 +3213,8 @@ var sorter=false;
                 var fragment = document.createDocumentFragment();  //新建一个代码片段，用于保存排序后的结果
                 for (var i=0; i<trValue.length; i++ ) {
                     fragment.appendChild(trValue[i]);
-                }
+				}
+				tbody.clear;
                 tbody.appendChild(fragment); //将排序的结果替换掉之前的值
                 tbody.sortCol = Idx;
             }

@@ -199,7 +199,7 @@
 	<script>
 	var pageSize = 50;    //每页显示的记录条数
 	var curPage=0;        //当前页
-	var lastPage;        //最后页
+	//var lastPage;        //最后页
 	var direct=0;        //方向
 	var len;            //总行数
 	var page;            //总页数
@@ -569,7 +569,7 @@
 			layer.alert("已经是最后一页了",info_showtime);
 			return ;
 		}
-		lastPage = curPage;
+		//lastPage = curPage;
 		// 修复当len=1时，curPage计算得0的bug
 		if (len > pageSize) {
 			curPage = ((curPage + direct + len) % len);
@@ -644,7 +644,7 @@
 		var i_sel=$('input[name="timeselect"]:checked').val();//20200403添加筛选条件改变后自动刷新列表
 		switch(i_sel*1){
 			case 0:	case 1:	case 2:	case 3:	case 4:
-				gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+				gethistorydata(sessionStorage.SensorId,"event","",sessionStorage.kssj,sessionStorage.jssj);
 				break;
 			case 5:
 				showrealworning();
