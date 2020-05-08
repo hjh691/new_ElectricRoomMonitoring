@@ -1010,6 +1010,8 @@
 										var configs=new Object();
 										configs=data.Result.Configs;
 										localStorage.setItem("Configs",JSON.stringify(configs));
+									}else{
+										localStorage.setItem("Configs",null);
 									}
 									refreshiframe();
 								} else {

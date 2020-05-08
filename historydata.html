@@ -69,21 +69,22 @@
 			style="width:160px;font-size:16px;height: 30px;" ></input>
 			<input class="button" type="button" id="chaxun" value="查询" onclick="queryhistorydata()" 
 			style="font-size:16px;height: 30px;line-height: 30px;" ></input></span>
-			</div>	</div>		
-			<div  class="rowlay">
-				<ul class="count_info" text-align="center" >
-					<!--<li style="width:50px"><b>站名：</b></li><a href="javascript:void(0)class="rowlay" " 
-				onclick="seletime(1)">昨天</a> 
-					<li id="station_name"style="width:100px;margin-right:0px"> </li>method5('historytable')-->
-					<li style="width:50px;margin-right:0px"><b>标签名称：</b> </li>
-					<li id="normal_count"style="width:100px;margin-right:10px"> </li>
-					<li style="width:50px;margin-right:0px"><b>记录数：</b></li>
-					<li id="count_val"style="width:50px;margin-right:0px" >  </li>
-					<li style="width:100px;margin-right:0px"><a href="javascript:void(0)" 
-						style="margin-left:20px;" onclick="exporttoexcel('historytable')" >
-						<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a></li>
-				</ul>
-			</div>
+			</div>	
+		</div>		
+		<div  class="rowlay">
+			<ul class="count_info" text-align="center" >
+				<!--<li style="width:50px"><b>站名：</b></li><a href="javascript:void(0)class="rowlay" " 
+			onclick="seletime(1)">昨天</a> 
+				<li id="station_name"style="width:100px;margin-right:0px"> </li>method5('historytable')-->
+				<li style="width:50px;margin-right:0px"><b>标签名称：</b> </li>
+				<li id="normal_count"style="width:100px;margin-right:10px"> </li>
+				<li style="width:50px;margin-right:0px"><b>记录数：</b></li>
+				<li id="count_val"style="width:50px;margin-right:0px" >  </li>
+				<li style="width:100px;margin-right:0px"><a href="javascript:void(0)" 
+					style="margin-left:20px;" onclick="exporttoexcel('historytable')" >
+					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a></li>
+			</ul>
+		</div>
 		
 		<div class="parent panel panel-default" style="text-align: center;">
 		<div class="charttab-head" id="tab-head" style="height: 40px">
@@ -137,7 +138,7 @@
 					for(var l in configs[p]){
 						if(configs[p][l].Name==name){
 							catalog=configs[p][l].Catalog;
-							break;
+							return;
 						}
 					}
 				}
@@ -210,7 +211,7 @@
 				queryhistorydata(0);
 			}
 		}
-		function appenddisplaytype(time){
+		function appenddisplaytype(element_id,time){
 			if(sessionStorage.SensorId>=0){
 				for(var k=0;k<sensors.length;k++){
 					if(sensors[k].Value.Id==sessionStorage.SensorId){
@@ -222,13 +223,22 @@
 					var s_des=configs[catalog]//如果有，读取其所有配置项
 					for(var p in s_des){
 						var lab=document.createElement("label");
-						lab.className="btn btn-primary";
 						if(p==0){
 							name=s_des[p].Name;
 							catalog=s_des[p].Catalog;
 							lab.className="btn btn-primary active"
+						}else{
+							lab.className="btn btn-primary";
 						}
+						/*var ainput=document.createElement("input");
+						ainput.className="catalog";
+						ainput.setAttribute("type","radio");
+						ainput.setAttribute("name","radios");
+						ainput.setAttribute("value",s_des[p].Name);
+						ainput.innerHTML=s_des[p].Desc;
+						lab.appendChild(ainput);*/
 						lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
+						//lab.innerHTML=s_des[p].Desc;
 						document.getElementById("display_type").appendChild(lab);
 						
 					}
@@ -293,7 +303,7 @@
 			for (var int = 0; int < tableLength; int++) {
 				tbl.deleteRow(0);
 			}
-			gethistorydata(sessionStorage.SensorId,"","temp",kssj, jssj);
+			gethistorydata(sessionStorage.SensorId,catalog,name,kssj, jssj);
 			isfirst=false;
 			//document.getElementById("timedefine").style.display="none";
 		}
@@ -755,7 +765,7 @@
 			$("#historydata-tbody tr").empty();
 			var objS = document.getElementById("jcdd");
 			sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
-			gethistorydata(sessionStorage.SensorId,"","temp",sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
 		}
 	</script>
 </body>

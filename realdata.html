@@ -89,7 +89,34 @@
 					</a></li>
 			</ul>
 		</div>
+		<div class="condition" style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: auto;height:40px;line-height: 40px;"><label> 显示内容:</label>
+			<span id="display_type">
+				
+			</span>
+			<span>
+				<button type="button" id="chaxun" value="刷新" onclick="btn_refresh_click()"
+						style="font-size:14px;height: 30px;line-height:30px;margin-left: 20px;padding: 0px;">
+						<span class="glyphicon glyphicon-refresh" style="margin:5px"></span>刷新</button>
+			</span>
+		</div>
 		<div style="text-align: center;overflow: auto;" >
+			
+			<table class="tablesorter" id="realtable" width="1000px" style=" margin:auto;" >
+				<thead id="tab_head">
+				<tr >
+					<th  onclick="$.sortTable.sort('realtable',0)" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
+					<!--th>数据编号</thonclick="sortt('.tmpvalue')"-->
+					<th  onclick="$.sortTable.sort('realtable',1)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
+					<th  onclick="$.sortTable.sort('realtable',2)"><a href="javascript:">实时值<span class="value1"></span></a></th>
+					<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>-->
+					<th >查看历史数据</th>
+					<th >查看告警信息</th><!---->
+					<th style="width:18px;border:0px solid black;"></th>
+				</tr>
+			</thead>
+				<tbody id='realdata-tbody' >
+				</tbody>
+			</table>
 			<div style="text-align: center;font-size: 18px;">
 				<a id="btn0"></a>
 				<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
@@ -103,21 +130,7 @@
 				<a>页&nbsp;</a>
 				<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
 			</div>
-		<table class="tablesorter" id="realtable" width="1000px" style=" margin:auto;" >
-			<tr >
-				<th  onclick="$.sortTable.sort('realtable',0)" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
-				<!--th>数据编号</thonclick="sortt('.tmpvalue')"-->
-				<th  onclick="$.sortTable.sort('realtable',1)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
-				<th  onclick="$.sortTable.sort('realtable',2)"><a href="javascript:">实时值<span class="value1"></span></a></th>
-				<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>-->
-				<th >查看历史数据</th>
-				<th >查看告警信息</th><!---->
-				<th style="width:18px;border:0px solid black;"></th>
-			</tr>
-			<tbody id='realdata-tbody' >
-			</tbody>
-		</table>
-	</div>
+		</div>
 	</div>
 	<script type="text/javascript" src="js/realdata.js">
 		

@@ -414,11 +414,15 @@
 	}
 	.condition{
 		/*font-size: 14px;*/
-		margin-top: 5px;
+		margin: 5px;
 		height: 30px;
 		line-height: 30px;
 	}
 	.btn{
 		height:30px
+	}
+	.select_text{
+		width: 300px;
+		
 	}
 	

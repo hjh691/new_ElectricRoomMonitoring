@@ -58,12 +58,12 @@
 	}
 	</style>
 </head>
-<body onload="initwarnlog()">
+<body >
 	<div>
 		<div class="pagecard" id="pagecard1" style="margin-bottom:10px;display: none;">
 			<h3 >告警信息</h3>			
 		</div>
-		<!--<div style="text-align: center;height:30px;" >
+		<!--<div style="text-align: center;height:30px;" onload="initwarnlog()">
 		<table class="table" style="border:0px;"align="center">
 			<tr >
 			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td>
@@ -79,40 +79,47 @@
 			</input><input class="button"type="button" id="chaxun"style="width:100px" value="查询全站" onclick="querywarnlog(1)" ></input></td>
 			</tr>
 		</table>-->
-			<div class="rowlay" ><b>
-				计量点名称：
-			<select id="jcdd" onchange="gradeChange()" size="1" >
+		<div style="margin-bottom: 0;" >
+			<span class="condition" >
+				<label>计量点名称：</label>
+			<select id="jcdd" onchange="gradeChange()"  style="border-radius: 5px;">
 			</select ><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()" style="display:none"></a>
-			<span>告警类型：</span>
-			<span class="dropup" style="position: relative;">
-			<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
-				<span class="select_text" data-is-select="false">Dro pup</span>
-				<span class="caret"></span>
-			</button>-->
-			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
-				<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black"></input>
-			</label>
-			<ul class="dropdown-menu dropdown_item" style="bottom: auto;">
-				<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
-				<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li>
-			</ul><!-- 为了方便演示，type设置text了，实际中可以设置成hidden -->
 			</span>
-			</div>
-			<div class="rowlay" >
-			<span ><label><input type="radio" value="5" onclick="seletime(this)" name="timeselect"></input>实时</label></span>
-			<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
-			<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
-			<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
-			<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"></input>上月</label></span>
-			<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(this)" name="timeselect"></input>自定义</label></span>
-			<span id="timedefine" style="display: none;">
-			起止时间
-			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"></input>至
-			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_warning" style="width:160px;font-size:16px;height: 30px;" ></input>
-			<input class="button" type="button" id="chaxun" value="查询" onclick="querywarnlog(0)" style="font-size:16px;height: 30px;line-height: 30px;" ></input>
-			<input class="button"type="button" id="chaxun"style="width:100px;font-size:16px;height: 30px;line-height: 30px;display:none" value="查询全站" onclick="querywarnlog(1)" ></input></b>
+			<span><label>显示内容：</label></span>
+			<span id="display_type" class="btn-group" data-toggle="buttons">
+				<label class="btn btn-primary active"><input type="radio" class="catalog" name="options" value="">全部</label>
 			</span>
+			
+			<div class="condition" >
+				<span><label>事件类型：</label></span>
+				<span class="dropup" style="position: relative;">
+				<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
+					<span class="select_text" data-is-select="false">Dro pup</span>
+					<span class="caret"></span>
+				</button>-->
+				<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
+					<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;"></input>
+				</label>
+				<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="event_type">
+					<!-- 为了方便演示，type设置text了，实际中可以设置成hidden<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
+					<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li> -->
+				</ul>
+				</span>
+				<span ><label><input type="radio" value="5" onclick="seletime(this)" name="timeselect"></input>实时</label></span>
+				<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
+				<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
+				<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
+				<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"></input>上月</label></span>
+				<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(this)" name="timeselect"></input>自定义</label></span>
+				<span id="timedefine" style="display: none;">
+				起止时间
+				<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"></input>至
+				<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_warning" style="width:160px;font-size:16px;height: 30px;" ></input>
+				<input class="button" type="button" id="chaxun" value="查询" onclick="querywarnlog(0)" style="font-size:16px;height: 30px;line-height: 30px;" ></input>
+				<input class="button"type="button" id="chaxun"style="width:100px;font-size:16px;height: 30px;line-height: 30px;display:none" value="查询全站" onclick="querywarnlog(1)" ></input></b>
+				</span>
 			</div>
+		</div>
 		<div  class="rowlay" style="margin-bottom:10px; width:100%;display: none;" text-align="center">
 			<ul class="count_info" text-align="center" >
 				<!--<li style="width:50px"><b>站名：</b></li><span> <a id="realwarnlog" href="javascript:void(0)" onclick="disrealwarnlog()">当前</a></span>-->
@@ -127,22 +134,7 @@
 			</ul>
 		</div>
 		<div text-align="center">
-			<div style="text-align: center;margin:6px;font-size: 18px;">
-			<a id="btn0"></a>
-			<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
-			<a id="sjzl"></a>&nbsp;
-			<a  href="javascript:void(0)" id="btn1" onclick="firstPage()">首页</a>
-			<a  href="javascript:void(0)" id="btn2" onclick="frontPage()">上一页</a>
-			<a  href="javascript:void(0)" id="btn3" onclick="nextPage()">下一页</a>
-			<a  href="javascript:void(0)" id="btn4" onclick="LastPage()">尾页</a>&nbsp;
-			<a>转到&nbsp;</a>
-			<input id="changePage" type="text" size="1" maxlength="4"/>
-			<a>页&nbsp;</a>
-			<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
-			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="exporttoexcel('warnlogtable')">
-				<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
-			<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;display:none;" id="tongji" onclick="tongji('tongjitable')">告警统计</a>
-			</div>
+			
 			<table id="warnlogtable" style="margin: auto;">
 				<caption id="war_caption" style="text-align: center;font-size:22px;color:black;">告警信息统计表</caption>
 				<tr>
@@ -168,6 +160,22 @@
 				<tbody id='warnlogdata-tbody' style="width:820px;height:540px; overflow:auto;">
 				</tbody>
 			</table>
+			<div style="text-align: center;margin:6px;font-size: 18px;">
+				<a id="btn0"></a>
+				<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
+				<a id="sjzl"></a>&nbsp;
+				<a  href="javascript:void(0)" id="btn1" onclick="firstPage()">首页</a>
+				<a  href="javascript:void(0)" id="btn2" onclick="frontPage()">上一页</a>
+				<a  href="javascript:void(0)" id="btn3" onclick="nextPage()">下一页</a>
+				<a  href="javascript:void(0)" id="btn4" onclick="LastPage()">尾页</a>&nbsp;
+				<a>转到&nbsp;</a>
+				<input id="changePage" type="text" size="1" maxlength="4"/>
+				<a>页&nbsp;</a>
+				<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
+				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="exporttoexcel('warnlogtable')">
+					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
+				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;display:none;" id="tongji" onclick="tongji('tongjitable')">告警统计</a>
+			</div>
 			<!--<table id="tongjitable" style="margin:auto;display: none;">
 				<tr>
 					<th >测量点名称</th>
@@ -207,7 +215,165 @@
 	var end;
 	var count,count_l=0,count_h=0;
 	var $table;
+	var configs;
+	var name="",catalog="";
+	initwarnlog();
 	updatapcnav(8);
+	$(function () {
+		$(".btn").click(function(){
+			$(this).button('toggle');
+			name= $(".catalog:checked").val();
+			getcatalog(name);
+			gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+		});
+		
+	});
+	function getcatalog(aname){
+		if(aname==""){
+			catalog="";
+			return;
+		}
+		if(configs){
+			for(var p in configs){
+				for(var l in configs[p]){
+					if(configs[p][l].Name==name){
+						catalog=configs[p][l].Catalog;
+						return;
+					}
+				}
+			}
+		}
+	}
+	//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
+function initwarnlog() {
+	var parentid=-100,parentname="";
+	var maps=[];
+	sessionStorage.pageindex = 5;
+	document.getElementById("kssj_warning").value = sessionStorage.kssj;
+	document.getElementById("jssj_warning").value = sessionStorage.jssj;
+	var sel_sensor=document.getElementById("jcdd");
+	for (var i = 0; i < sel_sensor.length; i++) {
+		sel_sensor.removeChild(sel_sensor.options[0]);
+		sel_sensor.remove(0);
+		sel_sensor.options[0] = null;
+	}
+	sensors=JSON.parse(localStorage.getItem("sensors"));
+	configs=JSON.parse(localStorage.getItem("Configs"));
+	if(sensors!=null){
+		for(var i=0;i<sensors.length;i++){
+			if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
+				parentid=sensors[i].Value.ParentId;
+				for(var j=0;j<sensors.length;j++){
+					if(sensors[j].id==parentid){
+						parentname=sensors[j].Value.Name+"_";
+						break;
+					}
+				}
+			}
+			var map=new Object();
+			map.value=sensors[i].id;
+			map.name=parentname+sensors[i].Value.Name;
+			maps.push(map);
+		}
+		var compare = function (obj1, obj2) {
+			var val1 = obj1.name;
+			var val2 = obj2.name;
+			if (val1 < val2) {
+				return -1;
+			} else if (val1 > val2) {
+				return 1;
+			} else {
+				return 0;
+			}            
+		} 
+		maps.sort(compare);
+		for(var k=0;k<maps.length;k++){
+			var op=document.createElement("option");
+			op.setAttribute("value",maps[k].value);
+			op.innerHTML=maps[k].name;
+			sel_sensor.appendChild(op);
+		}
+		appenddisplaytype();
+	}
+	setSelectOption("jcdd", sessionStorage.SensorId);
+	sessionStorage.SensorId = sel_sensor.value;
+	if(sessionStorage.SensorId=="")
+		sessionStorage.SensorId=-1;
+	//GetSensorsByStation();
+	if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")){
+		sessionStorage.timeindex=0;
+	}
+	$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
+	seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
+	if(sessionStorage.timeindex==4){
+		querywarnlog();
+	}
+	if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
+		if(typeof(w1) == "undefined") {
+			w1 = new Worker("delay_worker.js");
+		}
+		var i=0;
+		w1.onmessage = function(event) {
+			//document.getElementById("result").innerHTML = event.data;
+			i++
+			if(i%60==0){
+				if(sessionStorage.timeindex==5)
+				showrealworning();
+			}
+		};
+	} else {
+		var t1 = window.setInterval("getrealdatabynodeid(-1);",60000);
+	}
+	function appenddisplaytype(){
+		if(sessionStorage.SensorId>=0){
+			for(var k=0;k<sensors.length;k++){
+				if(sensors[k].Value.Id==sessionStorage.SensorId){
+					allcatalog=sensors[k].Value.Catalog;//读取对应的Catalog项
+					break;
+				}
+			}
+			if(configs.hasOwnProperty(allcatalog)){//检查配置中是否有catalog项
+				var s_des=configs[allcatalog]//如果有，读取其所有配置项
+				for(var p in s_des){
+					var lab=document.createElement("label");
+					/*if(p==0){
+						name=s_des[p].Name;
+						catalog=s_des[p].Catalog;
+						lab.className="btn btn-primary active"
+					}else{}*/
+					lab.className="btn btn-primary";
+					
+					lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
+					document.getElementById("display_type").appendChild(lab);
+					
+					if(s_des[p].Catalog=="event"&&s_des[p].Name=="event"){
+						var config=new Object()
+						config=JSON.parse(s_des[p].Config);
+						if(config){
+							for(var c in config){
+								var li=document.createElement("li");
+								var lab=document.createElement("label");
+								//lab.setAttribute("style","margin-left:20px")
+								var ainput=document.createElement("input");
+								ainput.setAttribute("type","checkbox");
+								ainput.setAttribute("name","checkbox");
+								ainput.setAttribute("value",c);
+								ainput.className="check_box";
+								var spn=document.createElement("span");
+								spn.innerHTML=config[c];
+								lab.appendChild(ainput);
+								lab.appendChild(spn);
+								//lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
+								li.appendChild(lab);
+								document.getElementById("event_type").appendChild(li);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
 	function decodedatas(obj_data){
 		objS = document.getElementById("jcdd");
 		var name;
@@ -228,11 +394,11 @@
 			if(obj_data&&obj_data.length>0){
 				var warning_type=document.getElementById("select_text").value;
 				if(warning_type.length>0){
-					type_str=warning_type.split(",");
+					type_str=warning_type.split(";");
 					sift=true;
 				}else{
-					warning_type="越上限,越下限";
-					type_str=warning_type.split(",");
+					warning_type="越上限;越下限";
+					type_str=warning_type.split(";");
 					sift=false;
 				}
 				var tr_arr=[],td_arr=[];
@@ -309,7 +475,7 @@
 						tr.appendChild(td_dadr);
 						tr.appendChild(td_dtype);
 						for(var j=0;j<type_str.length;j++){
-							if(obj_data[i].Message==type_str[j]){
+							if(obj_data[i].Message.indexOf(type_str[j])!=-1){
 								$table.insertBefore(tr,window.eval("tr"+(j+1)));
 								count_l[j]=count_l[j]+1;
 								count++;
@@ -383,7 +549,7 @@
 		document.getElementById("count_val").innerHTML="";
 		var objS = document.getElementById("jcdd");
 		sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
-		gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+		gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
 	}
 	function stopWorker() 
 		{ 
@@ -613,20 +779,20 @@
 		}
 		if(selectText!=""){
 			if(selectText.indexOf(selected_text)>=0){//判断是否已经勾选过
-				selectText=selectText.replace(selected_text,"").replace(",,",",");//替换掉
+				selectText=selectText.replace(selected_text,"").replace(";;",";");//替换掉
 				//selectVal=selectVal.replace(selected_val,"").replace(",,",",");//替换掉
 				//判断最后一个字符是否是逗号
-				if(selectText.charAt(selectText.length - 1)==","){
+				if(selectText.charAt(selectText.length - 1)==";"){
 					//去除末尾逗号
 					selectText=selectText.substring(0,selectText.length - 1);
 					//selectVal=selectVal.substring(0,selectVal.length - 1);
 				}
 				//判断第一个字符是否是逗号，是的话去掉。
-				if(selectText.charAt(0)==","){
+				if(selectText.charAt(0)==";"){
 					selectText=selectText.substring(1);
 				}
 			}else{
-				selectText+=","+selected_text;
+				selectText+=";"+selected_text;
 				//selectVal+=","+selected_val;
 			}
 		}else{
@@ -644,7 +810,7 @@
 		var i_sel=$('input[name="timeselect"]:checked').val();//20200403添加筛选条件改变后自动刷新列表
 		switch(i_sel*1){
 			case 0:	case 1:	case 2:	case 3:	case 4:
-				gethistorydata(sessionStorage.SensorId,"event","",sessionStorage.kssj,sessionStorage.jssj);
+				gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
 				break;
 			case 5:
 				showrealworning();

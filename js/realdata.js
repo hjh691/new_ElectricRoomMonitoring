@@ -4,7 +4,7 @@ var chart_type = "", chart_unit = "", chart_max = 100, chart_min = 0, chart_sigl
 var start_angle = 0, end_angle = 180;
 var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
-var sname;
+var sname,sid,type_td;
 let isfirst = "true";
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0;
 var colors = [];
@@ -16,9 +16,12 @@ var len;            //总行数
 var page;            //总页数
 var begin;
 var end;
-var count;
+var count=0;
 var $table;
 var sign = '>';
+var allconfigs;
+var allselect=null;
+var typename;
 function initpage() {
     updatapcnav(3);
     if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
@@ -39,7 +42,92 @@ function initpage() {
         //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
         var t1 = window.setInterval("getrealdatabynodeid(-1);", 60000);
     }
+    appendalldisplaytype("display_type");
     getrealdatabynodeid(-1);
+}
+function appendalldisplaytype(){
+    allconfigs=JSON.parse(localStorage.Configs);
+    if(allconfigs){//检查配置中是否有catalog项
+        for(var ac in allconfigs){//如果有，读取其所有配置项
+            var s_des=allconfigs[ac];
+            for(var p in s_des){
+                var lab=document.createElement("label");
+                lab.setAttribute("style","margin-left:20px")
+                var ainput=document.createElement("input");
+                ainput.setAttribute("type","checkbox");
+                ainput.setAttribute("name","options");
+                ainput.setAttribute("value",s_des[p].Name);
+                //ainput.setAttribute('onclick','checkboxclick("'+s_des[p].Name+'")')
+                ainput.innerText=s_des[p].Desc;
+                ainput.className="catalog";
+                var spn=document.createElement("span");
+                spn.innerHTML=s_des[p].Desc;
+                if(p==0){
+                    name=s_des[p].Name;
+                    catalog=s_des[p].Catalog;
+                    ainput.checked=true;
+                    lab.className=""
+                }else{
+                    lab.className="";
+                }
+                lab.appendChild(ainput);
+                lab.appendChild(spn);
+                //lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
+                document.getElementById("display_type").appendChild(lab);
+                
+            }
+        }
+    }
+}
+//刷新按钮点击事件
+function btn_refresh_click(obj){
+    allselect = $('[name="options"]');
+    if(allselect&&allselect.length>0){
+        refresh_tabhead(allselect);//根据选项刷新表头
+        decoderealdata(allselect);
+    }
+}
+function refresh_tabhead(sel){
+    var tab_head=document.getElementById("tab_head");
+    for (var j = tab_head.rows.length - 1; j >= 0; j--) {
+        tab_head.removeChild(tab_head.rows[j]);
+    }
+    var th_tr=document.createElement("tr");
+    var th_th=document.createElement("th");
+    th_th.setAttribute("onclick","$.sortTable.sort('realtable',0)");
+    var aa=document.createElement("a");
+    aa.setAttribute("href","javascript");
+    aa.innerHTML='测量点名称<span class="sensorname"></span>';
+    th_th.appendChild(aa);
+    th_tr.appendChild(th_th);
+    th_th=document.createElement("th");
+    th_th.setAttribute("onclick","$.sortTable.sort('realtable',1)");
+    aa=document.createElement("a");
+    aa.setAttribute("href","javascript");
+    aa.innerHTML='测量时间<span class="time"></span>';
+    th_th.appendChild(aa);
+    th_tr.appendChild(th_th);
+    
+    for(k in sel){
+        count++;
+        th_th=document.createElement("th");
+        th_th.setAttribute("onclick","$.sortTable.sort('realtable',"+(k+2)+"0)");
+        aa=document.createElement("a");
+        aa.setAttribute("href","javascript");
+        aa.innerHTML=sel[k].textContent+'<span class="value"'+(k+1)+'></span>';
+        th_th.appendChild(aa);
+        th_tr.appendChild(th_th);
+        if(!sel[k].checked){
+            th_th.setAttribute("style","display:none");
+        }
+    }
+    th_th=document.createElement("th");
+    th_th.innerHTML="查看历史数据";
+    th_tr.appendChild(th_th);
+    th_th=document.createElement("th");
+    th_th.innerHTML="查看告警信息";
+    th_tr.appendChild(th_th);
+    tab_head.appendChild(th_tr);
 }
 //var t_pt=0;
 //表格排序使用插件
@@ -62,7 +150,7 @@ updatachart(chart_type);
 initseries(datas);
 initchart2();
 initpage();
-function decoderealdata() {
+function decoderealdata(sel) {
     //$("#realdata-tbody tr").empty();
     obj_realdata = JSON.parse(localStorage.getItem("realdata"));
     $table = document.getElementById('realdata-tbody');
@@ -75,76 +163,133 @@ function decoderealdata() {
     var pt = 0;
     var kssj = getCurrentDate(1) + " 00:00:00";
     var jssj = getCurrentDate(2);
-    if (sensors != null) {
-        for (var i = 0; i < sensors.length; i++) {
-            var sid = sensors[i].id + "";
-            if ((obj_realdata))
-             for(var j=0;j<obj_realdata.length;j++) {
-                if(obj_realdata[j].SensorId==sid){
+    var grouptype;
+    var isnew=true,isfind=false,isbreak=false;
+    var atr;
+    sid=-1;
+    if (obj_realdata) {
+        for (var j=0;j<obj_realdata.length;j++) {
+            typename=obj_data.Name;
+            grouptype=obj_data.Catalog;
+            if(obj_realdata[j].SensorId==sid){
+                isnew=false;
+            }else{ isnew=true;}
+            if (sensors&&isnew)
+            for (var i = 0; i < sensors.length; i++) {
+                if(obj_realdata[j].SensorId==sensors[i].id){
+                    sid = sensors[i].id + "";
+                    type_td = sensors[i].Value.Catalog;
                     sname = sensors[i].Value.Name;
-                    var xs = 1;//sensors[i].Value.Factor;  //数据结构修改，后台的value数据已经乘上系数，svalue为未乘以系数的原始数据
-                    var type_td = sensors[i].Value.Catalog;
-                    //if(type_td=="pd"){xs=xs*-1}
-                    obj_data = (obj_realdata)[j];////sid
-                    //添加数据列表项
-                    var tr = document.createElement('tr');
-                    tr.setAttribute("onclick", "tableclick(this)");//ondblclick
-                    var tdename = document.createElement('td');
-                    //var tdsalary=document.createElement('td');
-                    var tdid = document.createElement('td');
-                    var tdtype = document.createElement('td');
-                    var tdtime = document.createElement('td');
-                    var tdvalue = document.createElement('td');
-                    var tdvalue2 = document.createElement('td');
-                    var tdhistory = document.createElement('td');
-                    var tdwarnlog = document.createElement('td');
-                    var tdmessage = document.createElement('td');
-                    tdename.innerHTML = sname;
-                    tdid.innerHTML = sid;
-                    tdid.style.cssText = "display:none";
-                    tdtype.innerHTML = type_td;
-                    tdtype.style.cssText = "display:none";
-                    tdtime.innerHTML = obj_data.Time; //jsonObject[i].color;
-                    kssj = (obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-                    jssj = obj_data.Time;
-                    tdvalue.innerHTML = (obj_data.Value * xs).toFixed(Number_of_decimal);
-                    //tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);//此处应为第二个数值，目前没有意义
-                    tdhistory.setAttribute('backgroundColor', '#ffffff');
-                    tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
-                    tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
-                    tdwarnlog.setAttribute('onclick', 'towarnlog(' + sid + ')');
-                    tdwarnlog.setAttribute('backgroundColor', '#ffffff');
-                    //tdwarnlog.style.cssText="display:none";
-                    tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
-                    var mes = obj_data.Message;
-                    tdmessage.innerHTML = mes;
-                    tdmessage.style.cssText = "display:none";
-                    tr.appendChild(tdename);
-                    tr.appendChild(tdtime);
-                    tr.appendChild(tdvalue);
-                    //tr.appendChild(tdvalue2);
-                    tr.appendChild(tdhistory);
-                    tr.appendChild(tdwarnlog);//z不显示
-                    tr.appendChild(tdid);//不显示
-                    tr.appendChild(tdtype);//不显示
-                    tr.appendChild(tdmessage);//不显示 告警信息
-                    var cl = "#000";
-                    //隔行显示不同的颜色
-                    //if (pt % 2 == 1) {
-                    //	cl="#16b9c9";
-                    //}
-                    if (mes) {
-                        cl = "#f20";
-                    }
-                    tr.style.color = cl;
-                    pt++;
-                    $table.appendChild(tr);
-                    $(".time").text('');
-                    $(".sensorname").text('');
-                    $(".value1").text('');
-                    $(".value2").text('');
+                    isfind=true;
                     break;
                 }
+            }
+            if(isfind){
+                //isnew=true;
+                obj_data = (obj_realdata)[j];////sid
+                if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，
+                    atr=document.createElement("tr");
+                    for(var k=0;k<(count+4);k++){
+                        var atd=document.createElement("td");
+                        atr.appendChild(td);
+                    }
+                    atr.cells[0].innerHTML=sid;
+                    atr.cells[0].style.ccsText="display:none";
+                    atr.cells[1].innerHTML=sname;//第一列添加标签名称，
+                    atr.cells[2].innerHTML=obj_data.Time;//第二列添加测量时间
+                    atr.cells[count+3].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
+                    atr.cells[count+4].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
+                    for(var k in sel){
+                        if(sel[k].value==typename){
+                            atr.cells[k+1].innerHTML=obj_data.Value.toFixed(Number_of_decimal);
+                        }
+                        if(!sel[k].checked){
+                            atr.cells[k+1].style.cssText = "display:none";
+                        }
+                    }
+                    isnew=false;
+                    $table.appendChild(atr);
+                }else{//不是新标签
+                    for(var l=0;l<$table.rows.length;l++){
+                        if($table.rows[l].cells[0].innerHTML==obj_data.SensorId){
+                            for(k in sel){//对照用户所选显示项，添加显示值到对应列，
+                                if(sel[k].value==typename){
+                                    $table.rows[l].cells[k+3].innerHTML=obj_data.Value.toFixed(Number_of_decimal);
+                                    isbreak=true;
+                                    break;
+                                }
+                            }
+                            if(isbreak) break;
+                        }
+                    }
+                }
+                
+                var xs = 1;//sensors[i].Value.Factor;  //数据结构修改，后台的value数据已经乘上系数，svalue为未乘以系数的原始数据
+                
+                //if(type_td=="pd"){xs=xs*-1}
+                
+                if(isbreak){
+                    continue;
+                }
+                //添加数据列表项
+                var tr = document.createElement('tr');
+                tr.setAttribute("onclick", "tableclick(this)");//ondblclick
+                var tdename = document.createElement('td');
+                //var tdsalary=document.createElement('td');
+                var tdid = document.createElement('td');
+                var tdtype = document.createElement('td');
+                var tdtime = document.createElement('td');
+                var tdvalue = document.createElement('td');
+                var tdvalue2 = document.createElement('td');
+                var tdhistory = document.createElement('td');
+                var tdwarnlog = document.createElement('td');
+                var tdmessage = document.createElement('td');
+                tdename.innerHTML = sname;
+                tdid.innerHTML = sid;
+                tdid.style.cssText = "display:none";
+                tdtype.innerHTML = type_td;
+                tdtype.style.cssText = "display:none";
+                tdtime.innerHTML = obj_data.Time; //jsonObject[i].color;
+                kssj = (obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
+                jssj = obj_data.Time;
+                tdvalue.innerHTML = (obj_data.Value * xs).toFixed(Number_of_decimal);
+                //tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);//此处应为第二个数值，目前没有意义
+                tdhistory.setAttribute('backgroundColor', '#ffffff');
+                tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
+                tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
+                tdwarnlog.setAttribute('onclick', 'towarnlog(' + sid + ')');
+                tdwarnlog.setAttribute('backgroundColor', '#ffffff');
+                //tdwarnlog.style.cssText="display:none";
+                tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
+                var mes = obj_data.Message;
+                tdmessage.innerHTML = mes;
+                tdmessage.style.cssText = "display:none";
+                tr.appendChild(tdename);
+                tr.appendChild(tdtime);
+                tr.appendChild(tdvalue);
+                //tr.appendChild(tdvalue2);
+                tr.appendChild(tdhistory);
+                tr.appendChild(tdwarnlog);//z不显示
+                tr.appendChild(tdid);//不显示
+                tr.appendChild(tdtype);//不显示
+                tr.appendChild(tdmessage);//不显示 告警信息
+                var cl = "#000";
+                //隔行显示不同的颜色
+                //if (pt % 2 == 1) {
+                //	cl="#16b9c9";
+                //}
+                if (mes) {
+                    cl = "#f20";
+                }
+                tr.style.color = cl;
+                pt++;
+                $table.appendChild(tr);
+                $(".time").text('');
+                $(".sensorname").text('');
+                $(".value1").text('');
+                $(".value2").text('');
+                break;
+                
             }
         }
         //document.getElementById('count_val').innerHTML = pt + "条";
@@ -199,7 +344,7 @@ function decoderealdata() {
                 } else {
                     isfirst = "false";
                     //myChart2.showLoading();
-                    gethistorydata(sensor_Id, kssj, jssj, 1);
+                    gethistorydata(sensor_Id,type_td,typename, kssj, jssj, 1);
                 }
             }//else{	//$table.rows[0].ondblclick();	//}
         } else {
@@ -253,7 +398,7 @@ function tableclick(tr) {
         kssj = (tr.cells[1].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
         jssj = (tr.cells[1].innerHTML);
         myChart2.showLoading();
-        gethistorydata(sessionStorage.SensorId, kssj, jssj, 1);
+        gethistorydata(sessionStorage.SensorId,type_td,typename, kssj, jssj, 1);
     }
     //maxval=0;
     refreshData();
