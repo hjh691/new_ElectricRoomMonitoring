@@ -15,8 +15,9 @@
         <script type="text/javascript" src="js/layer/layer.js"></script>
         <script type="text/javascript" src="js/echarts.js"></script>
         <!--<script type="text/javascript" src="js/cvi_busy_lib.js"></script>
-        <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
-        <script type="text/javascript" src="js/function.js"></script>-->
+        <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>-->
+        
+        <script type="text/javascript" src="js/function.js"></script><script  type="text/javascript" src="js/realstate.js"></script>
         <style>
             .container{
                 width: 100%;
@@ -514,29 +515,7 @@
             </div>
         </div>
         <script>
-            function updatanavbar(num){
-                for(var i=1;i<=3;i++){
-                    var nav=document.getElementById("nav"+i);
-                    if(nav==null){//如果为null。就获取父窗口下的元素。
-                        nav=window.parent.document.getElementById("nav"+i);
-                    }
-                    nav.className=""
-                    //nav.style.backgroundColor="";//come up with come from to
-                    if(i==num){
-                        //nav.style.backgroundColor="#c0c0c0";
-                        nav.className="active"
-                    }
-                }
-            }
-            $(function (){$("[data-toggle='popover']").popover();});
-            $(function(){
-                $(".tab a:last").tab("show");
-                //updatapcnav(14);
-            });
-            /**vocabulary unit part glass discover invent paper coal hit pit 
-             *  
-             * 
-            */
         </script>
+        
     </body>
 </html>

@@ -217,9 +217,10 @@
 	var $table;
 	var configs;
 	var name="",catalog="";
-	initwarnlog();
+	var allcatalog;
 	updatapcnav(8);
 	$(function () {
+		initwarnlog();
 		$(".btn").click(function(){
 			$(this).button('toggle');
 			name= $(".catalog:checked").val();
@@ -293,7 +294,6 @@ function initwarnlog() {
 			op.innerHTML=maps[k].name;
 			sel_sensor.appendChild(op);
 		}
-		appenddisplaytype();
 	}
 	setSelectOption("jcdd", sessionStorage.SensorId);
 	sessionStorage.SensorId = sel_sensor.value;
@@ -305,6 +305,7 @@ function initwarnlog() {
 	}
 	$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
 	seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
+	appenddisplaytype();
 	if(sessionStorage.timeindex==4){
 		querywarnlog();
 	}
@@ -332,7 +333,7 @@ function initwarnlog() {
 					break;
 				}
 			}
-			if(configs.hasOwnProperty(allcatalog)){//检查配置中是否有catalog项
+			if((configs)&&(configs.hasOwnProperty(allcatalog))){//检查配置中是否有catalog项
 				var s_des=configs[allcatalog]//如果有，读取其所有配置项
 				for(var p in s_des){
 					var lab=document.createElement("label");
@@ -781,13 +782,13 @@ function initwarnlog() {
 			if(selectText.indexOf(selected_text)>=0){//判断是否已经勾选过
 				selectText=selectText.replace(selected_text,"").replace(";;",";");//替换掉
 				//selectVal=selectVal.replace(selected_val,"").replace(",,",",");//替换掉
-				//判断最后一个字符是否是逗号
+				//判断最后一个字符是否是分号
 				if(selectText.charAt(selectText.length - 1)==";"){
-					//去除末尾逗号
+					//去除末尾分号
 					selectText=selectText.substring(0,selectText.length - 1);
 					//selectVal=selectVal.substring(0,selectVal.length - 1);
 				}
-				//判断第一个字符是否是逗号，是的话去掉。
+				//判断第一个字符是否是分号，是的话去掉。
 				if(selectText.charAt(0)==";"){
 					selectText=selectText.substring(1);
 				}

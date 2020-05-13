@@ -1877,7 +1877,7 @@ function decodedatas(obj_chartdatas) {
 	var lengenddata = [];
 	var obj_chartdata=[];
 	var seriess=[];
-	var myChart = echarts.init(document.getElementById('main'));
+	var myChart = echarts.init(document.getElementById('chart1'));
 	myChart.clear();
 	if(obj_chartdatas.length<=0){
 		return;
@@ -2958,7 +2958,7 @@ function getrealdatabynodeid(nodeid){
 									refreshData();
 								}else{
 									if(sessionStorage.pageindex==2){
-										document.getElementById('iframe_main').contentWindow.refreshData()
+										document.getElementById('iframe_main').contentWindow.refreshData();
 									}
 								};
 								return;
@@ -3106,8 +3106,13 @@ var sorter=false;
         //命名空间
 		sortTable:{
             sort:function(tableId,Idx){
-                var table = document.getElementById(tableId);
-                var tbody = table.tBodies[1];
+				if(tableId=="realtable"){
+					if(Idx>=2){
+						tdtype=getCatalog(Idx-2);
+					}
+				}
+				var table = document.getElementById(tableId);
+                var tbody = table.tBodies[0];//
 				var tr = tbody.rows;
 				if (tbody.sortCol == Idx){
 					sorter=(!sorter);

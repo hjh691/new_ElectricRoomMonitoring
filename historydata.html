@@ -123,12 +123,13 @@
 		var jssj=getCurrentDate(2);
 		var catalog="",name="";
 		var configs;
-		initpage();
 		$(function () {
+			initpage();
 			$(".btn").click(function(){
 				$(this).button('toggle');
 				name= $(".catalog:checked").val();
 				getcatalog(name);
+				queryhistorydata();
 			});
 			
 		});
@@ -197,8 +198,7 @@
 				}
 			}
 			setSelectOption("jcdd", sessionStorage.SensorId);
-			appenddisplaytype()
-			
+			appenddisplaytype();
 			if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")||(sessionStorage.timeindex>4)){
 				sessionStorage.timeindex=0;
 			}
@@ -219,7 +219,7 @@
 						break;
 					}
 				}
-				if(configs.hasOwnProperty(catalog)){//检查配置中是否有catalog项
+				if((configs)&&(configs.hasOwnProperty(catalog))){//检查配置中是否有catalog项
 					var s_des=configs[catalog]//如果有，读取其所有配置项
 					for(var p in s_des){
 						var lab=document.createElement("label");
@@ -288,7 +288,8 @@
 				layer.alert("请指定截至时间",info_showtime);
 				return;
 			}
-			if((sessionStorage.SensorId==sel.value)&&(sessionStorage.kssj==kssj)&&(sessionStorage.jssj==jssj)&&(!isfirst)){
+			if((sessionStorage.SensorId==sel.value)&&(sessionStorage.kssj==kssj)&&(sessionStorage.jssj==jssj)&&(!isfirst)
+			    &&(sessionStorage.typecatalog==catalog)&&(sessionStorage.typename==name)){
 				layer.alert("查询条件与上一次相同，请重新选择!",info_showtime)
 				return;
 			}
@@ -296,6 +297,8 @@
 			sessionStorage.jssj = jssj;
 			sessionStorage.SensorId = sel.value;
 			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
+			sessionStorage.typename=name;
+			sessionStorage.typecatalog=catalog;
 			//xs=sensors[sel.selectedIndex].Value.Factor;
 			//$("#historydata-tbody tr").empty();
 			var tbl = document.getElementById('historydata-tbody');
