@@ -288,7 +288,7 @@
 		min-width:200px;
 	}
 	.tree{
-		width:280px;
+		min-width:200px;
 		overflow:auto;
 	}
 	/* KeFuDiv */
@@ -404,8 +404,8 @@
 	}
 	
 	#realdata-tbody{
-		width:1020px;
-		height:420px;
+		/*width:1020px;*/
+		height:400px;
 		overflow:auto;
 	}
 	/*20200210 实现数据表格的隔行换色效果，css结构伪类实现*/

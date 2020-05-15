@@ -17,16 +17,43 @@
         <!--<script type="text/javascript" src="js/cvi_busy_lib.js"></script>
         <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>-->
         
-        <script type="text/javascript" src="js/function.js"></script><script  type="text/javascript" src="js/realstate.js"></script>
+        <script type="text/javascript" src="js/function.js"></script>
         <style>
             .container{
                 width: 100%;
                 margin-left: 5px;
                 margin-right: 5px;
             }
+            th,td{
+                border:1px solid black;
+                text-align:center;
+                line-height:center;
+                width:200px;
+                height:30px;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            table {
+                /*设置相邻单元格的边框间的距离*/
+                border-spacing: 0;
+                /*表格设置合并边框模型*/
+                border-collapse: collapse;
+                text-align: center;
+            }
+            /*关键设置 tbody出现滚动条 height: 500px;overflow-y: scroll;*/
+            table tbody {
+                display: block;
+            }
+            table thead,
+            tbody tr {
+                display: table;
+                table-layout: fixed;
+            }
         </style>
     </head>
-    <body>
+    <body onunload="stopWorker()" >
         <!--导航栏
         <div style="text-align:center" class="navbar navbar-default" >
                 <ul class="nav navbar-nav">
@@ -72,32 +99,38 @@
                 <li><a href="#tab_air" data-toggle="tab"><i class="glyphicon glyphicon-random"></i> 空调</a></li>
             </ul>
             <div class="tab-content" id='tab-content'>
-                <div class="tab-pane in active fade" id="tab_guard" align="center">
+                <div class="tab-pane in active fade" align="center" id="tab_guard">
                     <img src="res/menjin.png" style="width:300px;height:150px;">
-                    <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
-                        <p class="lable" >设备编号</p>
-                        <p class="lable" >安装位置</p>
-                        <p class="lable" style="width:100px;">当前状态</p>
-                        <p class="lable" style="width:200px;">详细信息</p>
-                        <p class="lable" style="width:100px;">操作控制</p>
-                        <p class="lable" style="width:100px;">关联信息</p>
-                    </div><!---->
-                    <div class="bg" >
-                        <p class="lable" id="door1">door1</p>
-                        <p class="lable" id="name_door1">1#大门</p>
-                        <p class="normal" id="sf_door1">关闭</p>
-                        <p class="lable" id="info_door1">正常关闭</p>
-                        <p class="set"><img src="res/close.png" style="height:30px;vertical-align: middle;" onclick="guard_changestated(this,'door1')" title="点击进行状态控制"/></p>
-                        <p class="set"><button onclick="guard_other(this,'door1')">更多<b class="caret"></b></button></p>
-                    </div>
-                    <div class="bg">
-                        <p class="lable" id="door2">door2</p>
-                        <p class="lable" id="name_door2">2#门</p>
-                        <p class="unnormal" id="sf_door2">告警</p>
-                        <p class="lable" id="info_door2">长时间处</p>
-                        <p class="set" ><img src="res/open.png" style="height:30px;vertical-align: middle;" onclick="guard_changestated(this,'door2')" title="点击进行状态控制"/></p>
-                        <p class="set"><button onclick="guard_other(this,'door2')">更多<b class="caret"></b></button></p>
-                    </div>
+                    <table >
+                        <thead>
+                            <tr class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
+                                <th class="lable" >设备编号</th>
+                                <th class="lable" >安装位置</th>
+                                <th class="lable" style="width:100px;">当前状态</th>
+                                <th class="lable" style="width:200px;">详细信息</th>
+                                <th class="lable" style="width:100px;">操作控制</th>
+                                <th class="lable" style="width:100px;">关联信息</th>
+                            </tr>
+                        </thead><!---->
+                        <tbody id="guard_tbody">
+                            <tr class="bg" >
+                            <td class="lable" id="door1">door1</td>
+                            <td class="lable" id="name_door1">1#大门</td>
+                            <td class="normal" id="sf_door1">关闭</td>
+                            <td class="lable" id="info_door1">正常关闭</td>
+                            <td class="set"><img src="res/close.png" style="height:30px;vertical-align: middle;" onclick="guard_changestated(this,'door1')" title="点击进行状态控制"/></td>
+                            <td class="set"><button onclick="guard_other(this,'door1')">更多<b class="caret"></b></button></td>
+                        </tr>
+                        <tr class="bg">
+                            <td class="lable" id="door2">door2</td>
+                            <td class="lable" id="name_door2">2#门</td>
+                            <td class="unnormal" id="sf_door2">告警</td>
+                            <td class="lable" id="info_door2">长时间处</td>
+                            <td class="set" ><img src="res/open.png" style="height:30px;vertical-align: middle;" onclick="guard_changestated(this,'door2')" title="点击进行状态控制"/></td>
+                            <td class="set"><button onclick="guard_other(this,'door2')">更多<b class="caret"></b></button></td>
+                        </tr>
+                    </tbody>
+                </table>
                     <div class="fudongdiv" id="guard_fudong" onmousedown="guard_hideself(this) ">
                         <div align="center">
                             <h3 id="guard_bind_name">1#大门</h3>
@@ -111,30 +144,36 @@
                 <div class="tab-pane fade" id="tab_light" align="center">
                     <!--h3-- style="text-align: center">灯光状态</!--h3-->
                     <img src="res/light001.jpg" style="width:300px;height:150px">
-                    <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
-                        <p class="lable" >设备编号</p>
-                        <p class="lable" >安装位置</p>
-                        <p class="lable" style="width:100px;">当前状态</p>
-                        <p class="lable" style="width:200px;">详细信息</p>
-                        <p class="lable" style="width:100px;">开关控制</p>
-                        <p class="lable" style="width:100px;">关联信息</p>
-                    </div><!---->
-                    <div class="bg" >
-                        <p class="lable" id="light1">l001</p>
-                        <p class="lable" id="name_light1">主控室</p>
-                        <p class="normal" id="sf_light1">点亮</p>
-                        <p class="lable" id="info_light1">正常照明</p>
-                        <p class="set"><img src="res/d9.png" style="height:30px;vertical-align: middle;" onclick="light_changestated(this,'light1')"/></p>
-                        <p class="set"><button onclick="light_other(this,'light1')">更多<b class="caret"></b></button></p>
-                    </div>
-                    <div class="bg">
-                        <p class="lable" id="light2">l002</p>
-                        <p class="lable" id="name_light2">设备机房</p>
-                        <p class="unenabled" id="sf_light2">关闭</p>
-                        <p class="lable" id="info_light2">正常关闭</p>
-                        <p class="set" ><img src="res/d3.png" style="height:30px;vertical-align: middle;" onclick="light_changestated(this,'light2')"/></p>
-                        <p class="set"><button onclick="light_other(this,'light2')">更多<b class="caret"></b></button></p>
-                    </div><!--  -->
+                    <table>
+                        <thead>
+                        <tr class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
+                            <td class="lable" >设备编号</td>
+                            <td class="lable" >安装位置</td>
+                            <td class="lable" style="width:100px;">当前状态</td>
+                            <td class="lable" style="width:200px;">详细信息</td>
+                            <td class="lable" style="width:100px;">开关控制</td>
+                            <td class="lable" style="width:100px;">关联信息</td>
+                        </tr><!---->
+                        </thead>
+                        <tbody id="light_tbody">
+                        <tr class="bg" >
+                            <td class="lable" id="light1">l001</td>
+                            <td class="lable" id="name_light1">主控室</td>
+                            <td class="normal" id="sf_light1">点亮</td>
+                            <td class="lable" id="info_light1">正常照明</td>
+                            <td class="set"><img src="res/d9.png" style="height:30px;vertical-align: middle;" onclick="light_changestated(this,'light1')"/></td>
+                            <td class="set"><button onclick="light_other(this,'light1')">更多<b class="caret"></b></button></td>
+                        </tr>
+                        <tr class="bg">
+                            <td class="lable" id="light2">l002</td>
+                            <td class="lable" id="name_light2">设备机房</td>
+                            <td class="unenabled" id="sf_light2">关闭</td>
+                            <td class="lable" id="info_light2">正常关闭</td>
+                            <td class="set" ><img src="res/d3.png" style="height:30px;vertical-align: middle;" onclick="light_changestated(this,'light2')"/></td>
+                            <td class="set"><button onclick="light_other(this,'light2')">更多<b class="caret"></b></button></td>
+                        </tr><!--  -->
+                        </tbody>
+                    </table>
                     <div class="fudongdiv" id="light_fudong" onmousedown="light_hideself(this) ">
                         <div align="center">
                             <p id="light_bind_name">主控室</p>
@@ -146,37 +185,43 @@
                         <div id="zxd_x">
                         <a title="点击关闭"><b></b></a></div>
                         <div class="content"><a href=""><img src="res/ac.jpg"></a></div>
-                        </div>-->
+                        </div>--><!---->
                     <script type="text/javascript" src="js/light.js"></script>
                 </div>
                 <div class="tab-pane  fade" id="tab_smoken" align="center">
                     <div>
                         <img src="res/yg001.jpg" style="width:200px;height:150px;">
                     </div>
-                    <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
-                        <p class="lable">设备编号</p>
-                        <p class="lable" >设备名称</p>
-                        <p class="lable" style="width:100px;">当前状态</p>
-                        <p class="lable" style="width:100px;">运行状态</p>
-                        <p class="lable" style="width:100px;">设置复位</p>
-                        <p class="lable" style="width:100px;">关联信息</p>
-                    </div><!---->
-                    <div class="bg" >
-                        <p class="lable">smokeing-01</p>
-                        <p class="lable" id="name_smoking-01">1#感应区</p>
-                        <p class="normal" id="sf_smoking-01">正常</p>
-                        <p class="set"><img id="smoking_01" src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking-01')"/></p>
-                        <p class="set"><button id="btn_rese_1t" onclick="smoking_reset('smoking-01')">设置/复位</button></p>
-                        <p class="set"><button id="btn_other_1" onclick="smoking_other(this,'smoking-01')">更多<b class="caret"></b></button></p>
-                    </div>
-                    <div class="bg">
-                        <p class="lable">smoking0102</p>
-                        <p class="lable" id="name_smoking0102">2#感应区</p>
-                        <p class="unnormal" id="sf_smoking0102">告警</p>
-                        <p class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking0102')"/></p>
-                        <p class="set"><button id="btn_reset_2"  onclick="smoking_reset('smoking0102')">设置/复位</button></p>
-                        <p class="set"><button id="btn_other_2" onclick="smoking_other(this,'smoking0102')">更多<b class="caret"></b></button></p>
-                    </div>
+                    <table>
+                        <thead>
+                        <tr class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
+                        <td class="lable">设备编号</td>
+                        <td class="lable" >设备名称</td>
+                        <td class="lable" style="width:100px;">当前状态</td>
+                        <td class="lable" style="width:100px;">运行状态</td>
+                        <td class="lable" style="width:100px;">设置复位</td>
+                        <td class="lable" style="width:100px;">关联信息</td>
+                        </tr><!---->
+                        </thead>
+                        <tbody id="smoken_tbody">
+                        <tr class="bg" >
+                        <td class="lable">smokeing-01</td>
+                        <td class="lable" id="name_smoking-01">1#感应区</td>
+                        <td class="normal" id="sf_smoking-01">正常</td>
+                        <td class="set"><img id="smoking_01" src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking-01')"/></td>
+                        <td class="set"><button id="btn_rese_1t" onclick="smoking_reset('smoking-01')">设置/复位</button></td>
+                        <td class="set"><button id="btn_other_1" onclick="smoking_other(this,'smoking-01')">更多<b class="caret"></b></button></td>
+                        </tr>
+                        <tr class="bg">
+                            <td class="lable">smoking0102</td>
+                            <td class="lable" id="name_smoking0102">2#感应区</td>
+                            <td class="unnormal" id="sf_smoking0102">告警</td>
+                            <td class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking0102')"/></td>
+                            <td class="set"><button id="btn_reset_2"  onclick="smoking_reset('smoking0102')">设置/复位</button></td>
+                            <td class="set"><button id="btn_other_2" onclick="smoking_other(this,'smoking0102')">更多<b class="caret"></b></button></td>
+                        </tr>
+                        </tbody>
+                    </table>
                     <div class="fudongdiv" id="smoking_fudong" onmousedown="smoking_hideself(this) ">
                         <div align="center">
                             <p id="smoking_bind_name">主控室</p>
@@ -190,30 +235,36 @@
                 <div class="tab-pane  fade" id="tab_flooding" align="center">
                     <!--<h3 style="text-align: center">水浸监测状态</h3>-->
                     <img src="res/shuijin2.jpg" style="width:300px;height:200px">
-                    <div class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
-                        <p class="lable">设备编号</p>
-                        <p class="lable">安装位置</p>
-                        <p class="lable" style="width:100px;">当前状态</p>
-                        <p class="lable" style="width:100px;">运行状态</p>
-                        <p class="lable" style="width:100px;">设置复位</p>
-                        <p class="lable" style="width:100px;">关联信息</p>
-                    </div><!---->
-                    <div class="bg" >
-                        <p class="lable" id="bh_1">flooding-01</p>
-                        <p class="lable" id="name_flooding-01">1#配电柜</p>
-                        <p class="normal" id="sf_flooding-01">正常</p>
-                        <p class="set"><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="flooding_changestated(this,'flooding-01')"/></p>
-                        <p class="set"><button onclick="flooding_reset('flooding-01')">设置/复位</button></p>
-                        <p class="set"><button onclick="flooding_other(this,'flooding-01')">更多<b class="caret"></b></button></p>
-                    </div>
-                    <div class="bg">
-                        <p class="lable" id="bh_2">flooding-01-02</p>
-                        <p class="lable" id="name_flooding-01-02">2#配电柜</p>
-                        <p class="unnormal" id="sf_flooding-01-02">告警</p>
-                        <p class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="flooding_changestated(this,'flooding-01-02')"/></p>
-                        <p class="set"><button onclick="flooding_reset('flooding-01-02')">设置/复位</button></p>
-                        <p class="set"><button onclick="flooding_other(this,'flooding-01-02')">更多<b class="caret"></b></button></p>
-                    </div>
+                    <table>
+                        <thead>
+                        <tr class="bg" style="background-color: white;color: rgb(7, 11, 243);border-width: 0px;font-size: 20px;font:bold">
+                        <td class="lable">设备编号</td>
+                        <td class="lable">安装位置</td>
+                        <td class="lable" style="width:100px;">当前状态</td>
+                        <td class="lable" style="width:100px;">运行状态</td>
+                        <td class="lable" style="width:100px;">设置复位</td>
+                        <td class="lable" style="width:100px;">关联信息</td>
+                        </tr><!---->
+                        </thead>
+                        <tbody id="flooding_tbody">
+                        <tr class="bg" >
+                        <td class="lable" id="bh_1">flooding-01</td>
+                        <td class="lable" id="name_flooding-01">1#配电柜</td>
+                        <td class="normal" id="sf_flooding-01">正常</td>
+                        <td class="set"><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="flooding_changestated(this,'flooding-01')"/></td>
+                        <td class="set"><button onclick="flooding_reset('flooding-01')">设置/复位</button></td>
+                        <td class="set"><button onclick="flooding_other(this,'flooding-01')">更多<b class="caret"></b></button></td>
+                        </tr>
+                        <tr class="bg">
+                            <td class="lable" id="bh_2">flooding-01-02</td>
+                            <td class="lable" id="name_flooding-01-02">2#配电柜</td>
+                            <td class="unnormal" id="sf_flooding-01-02">告警</td>
+                            <td class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="flooding_changestated(this,'flooding-01-02')"/></td>
+                            <td class="set"><button onclick="flooding_reset('flooding-01-02')">设置/复位</button></td>
+                            <td class="set"><button onclick="flooding_other(this,'flooding-01-02')">更多<b class="caret"></b></button></td>
+                        </tr>
+                        </tbody>
+                    </table>
                     <div class="fudongdiv" id="flooding_fudong" onmousedown="flooding_hideself(this) ">
                         <div align="center">
                             <p id="flooding_bind_name">主控室</p>
@@ -516,6 +567,6 @@
         </div>
         <script>
         </script>
-        
+        <script  type="text/javascript" src="js/realstate.js"></script>
     </body>
 </html>

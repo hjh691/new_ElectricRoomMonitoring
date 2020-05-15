@@ -1863,8 +1863,8 @@ function querychartvalue() {
 	document.getElementById("timedefine").style.display="none";
 }
 
-//绘图变化趋势图   used by electricroommonitor 
-function decodedatas(obj_chartdatas) {
+//绘图变化趋势图   used by electricroommonitor chart.html
+function decodedatas(obj_chartdatas,apt,atitle) {
 	//var iserror = false,
 	//err_info = "获取";
 	//var isnull = false,
@@ -1877,7 +1877,7 @@ function decodedatas(obj_chartdatas) {
 	var lengenddata = [];
 	var obj_chartdata=[];
 	var seriess=[];
-	var myChart = echarts.init(document.getElementById('chart1'));
+	var myChart = echarts.init(document.getElementById('chart'+apt));
 	myChart.clear();
 	if(obj_chartdatas.length<=0){
 		return;
@@ -1890,31 +1890,33 @@ function decodedatas(obj_chartdatas) {
 			var series=new Object();
 			series.name=check_name[i]
 			lengenddata.push(check_name[i]);
-			obj_chartdata=obj_chartdatas[sensorid];
+			obj_chartdata=obj_chartdatas;//[sensorid];
 			if(obj_chartdata){
 				pb= new Array();
 				maxvalue=minvalue=parseFloat(obj_chartdata[0].Value);
 				for (var j = 0; j <obj_chartdata.length; j++) {
-					pb.push([strtodatetime(obj_chartdata[j].Time), obj_chartdata[j].Value, j]);
-					if(parseFloat(obj_chartdata[j].Value)>maxvalue){
-						maxvalue=parseFloat(obj_chartdata[j].Value);
+					if(obj_chartdata[j].SensorId==sensorid){
+						pb.push([strtodatetime(obj_chartdata[j].Time), obj_chartdata[j].Value, j]);
+						if(parseFloat(obj_chartdata[j].Value)>maxvalue){
+							maxvalue=parseFloat(obj_chartdata[j].Value);
+						}
+						if(parseFloat(obj_chartdata[j].Value)<minvalue){
+							minvalue=parseFloat(obj_chartdata[j].Value);
+						}
+						var tr=document.createElement("tr")
+						var td_name=document.createElement("td");
+						td_name.innerHTML=check_name[i];
+						var td_time=document.createElement("td");
+						td_time.innerHTML=obj_chartdata[j].Time;
+						var td_value=document.createElement("td");
+						td_value.innerHTML=obj_chartdata[j].Value;//.toFixed(2);
+						var td_bz=document.createElement("td");
+						tr.appendChild(td_name);
+						tr.appendChild(td_time);
+						tr.appendChild(td_value);
+						tr.appendChild(td_bz);
+						tbody.appendChild(tr);
 					}
-					if(parseFloat(obj_chartdata[j].Value)<minvalue){
-						minvalue=parseFloat(obj_chartdata[j].Value);
-					}
-					var tr=document.createElement("tr")
-					var td_name=document.createElement("td");
-					td_name.innerHTML=check_name[i];
-					var td_time=document.createElement("td");
-					td_time.innerHTML=obj_chartdata[j].Time;
-					var td_value=document.createElement("td");
-					td_value.innerHTML=obj_chartdata[j].Value;//.toFixed(2);
-					var td_bz=document.createElement("td");
-					tr.appendChild(td_name);
-					tr.appendChild(td_time);
-					tr.appendChild(td_value);
-					tr.appendChild(td_bz);
-					tbody.appendChild(tr);
 				}
 				if(i==0){
 					maxval=maxvalue;
@@ -2048,8 +2050,14 @@ function decodedatas(obj_chartdatas) {
 	lengenddata.push("最大值");
 	lengenddata.push("平均值");
 	lengenddata.push("最小值");*/
-	maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
-	minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
+	if(maxval==minval){
+		maxval=maxval*1.5;
+		minval=minval/2;
+	}else{
+		maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
+		minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
+	}
+	
 	drawchart();
 	//绘制图形线条
 	function drawchart() {
@@ -2058,7 +2066,7 @@ function decodedatas(obj_chartdatas) {
 			color: ['#ff8c00', '#FF0000','#00ff00',"#9400D3","#00BFFF","#4B0082","#20B2AA","#0000CD"," #FF4500 "],//
 			backgroundColor: '#d0d0d0',
 			title : {
-						text : ' 变化趋势比对  ',
+						text : atitle+' 变化趋势比对  ',
 						x:"center",
 						subtext:jiange+"   "+kssj+"——"+jssj,
 						subtextStyle:{
@@ -2157,6 +2165,7 @@ function decodedatas(obj_chartdatas) {
 		};
 		myChart.hideLoading();
 		myChart.setOption(option);
+		myChart.resize();
 	}
 }
 function strtodatetime(str) {
@@ -2926,7 +2935,13 @@ function getrealdatabynodeid(nodeid){
 					sessionStorage.errortime++;
 					if (errorThrown == "Unauthorized") {
 						value0=0;value1=0;sname="";
-						refreshData();
+						if(typeof refreshData === "function"){
+							refreshData();
+						}else{
+							if(sessionStorage.pageindex==2){
+								document.getElementById('iframe_main').contentWindow.refreshData();
+							}
+						};
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败',info_showtime);
 						//sessionStorage.islogin = "false"
 					} else {
@@ -3037,7 +3052,7 @@ function seletime(obj){
 			sel.style.display="";
 			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
 			sessionStorage.jssj = getCurrentDate(2) ;
-			gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			timedefine.style.display="none";
 			//layer.alert("没有符合条件的记录",info_showtime);
 			break;
@@ -3051,7 +3066,7 @@ function seletime(obj){
 			var yesterdayend=cjssj-oneday;
 			sessionStorage.jssj=dateToString(new Date(yesterdayend),2);
 			//$("#warnlogdata-tbody tr").empty();
-			gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			//layer.alert("没有符合条件的记录",info_showtime);
 			break;
 		case 2:
@@ -3060,7 +3075,7 @@ function seletime(obj){
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			sessionStorage.kssj=dateToString(new Date(ckssj.setDate(1)),2);
 			sessionStorage.jssj=getCurrentDate(2);
-			gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			break;
 		case 3:
 			sel.style.display="";
@@ -3072,7 +3087,7 @@ function seletime(obj){
 			sessionStorage.jssj = dateToString(new Date(cjssj - oneday * cjssj.getDate()),2);
 			//$("#warnlogdata-tbody tr").empty();
 			//layer.alert("没有符合条件的记录",info_showtime);
-			gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 		break;
 		case  4:
 			sel.style.display="";
@@ -3107,8 +3122,9 @@ var sorter=false;
 		sortTable:{
             sort:function(tableId,Idx){
 				if(tableId=="realtable"){
-					if(Idx>=2){
-						tdtype=getCatalog(Idx-2);
+					if(Idx>=3){
+						catalog=getCatalog(Idx-3);
+						title_index=Idx;
 					}
 				}
 				var table = document.getElementById(tableId);
@@ -3158,4 +3174,21 @@ function exporttoexcel(tabid){
 		exclude_links: true,
 		exclude_inputs: true
 	});
+}
+//通过配置名称获取配置分组catalog的值
+function getcatalog(aname){
+	var acatalog;
+	if(aname==""){
+		acatalog="";
+	}else
+	if(configs){
+		for(var p in configs){
+			for(var l in configs[p]){
+				if(configs[p][l].Name==aname){
+					acatalog=configs[p][l].Catalog;
+				}
+			}
+		}
+	}
+	return acatalog;
 }

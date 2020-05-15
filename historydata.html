@@ -121,19 +121,19 @@
 		var sel_sensor=document.getElementById("jcdd");
 		var type="";
 		var jssj=getCurrentDate(2);
-		var catalog="",name="";
+		var catalog="",dname="";
 		var configs;
 		$(function () {
 			initpage();
 			$(".btn").click(function(){
 				$(this).button('toggle');
-				name= $(".catalog:checked").val();
-				getcatalog(name);
-				queryhistorydata();
+				dname= $(".catalog:checked").val();
+				catalog=getcatalog(dname);
+				gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
 			});
 			
 		});
-		function getcatalog(aname){
+		/*function getcatalog(aname){
 			if(configs){
 				for(var p in configs){
 					for(var l in configs[p]){
@@ -144,7 +144,7 @@
 					}
 				}
 			}
-		}
+		}*/
 		function btnclick(){
 			var level_select= $("radio:checked").val();
 		}
@@ -224,7 +224,7 @@
 					for(var p in s_des){
 						var lab=document.createElement("label");
 						if(p==0){
-							name=s_des[p].Name;
+							dname=s_des[p].Name;
 							catalog=s_des[p].Catalog;
 							lab.className="btn btn-primary active"
 						}else{
@@ -289,7 +289,7 @@
 				return;
 			}
 			if((sessionStorage.SensorId==sel.value)&&(sessionStorage.kssj==kssj)&&(sessionStorage.jssj==jssj)&&(!isfirst)
-			    &&(sessionStorage.typecatalog==catalog)&&(sessionStorage.typename==name)){
+			    &&(sessionStorage.typecatalog==catalog)&&(sessionStorage.typename==dname)){
 				layer.alert("查询条件与上一次相同，请重新选择!",info_showtime)
 				return;
 			}
@@ -297,7 +297,7 @@
 			sessionStorage.jssj = jssj;
 			sessionStorage.SensorId = sel.value;
 			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
-			sessionStorage.typename=name;
+			sessionStorage.typename=dname;
 			sessionStorage.typecatalog=catalog;
 			//xs=sensors[sel.selectedIndex].Value.Factor;
 			//$("#historydata-tbody tr").empty();
@@ -306,7 +306,7 @@
 			for (var int = 0; int < tableLength; int++) {
 				tbl.deleteRow(0);
 			}
-			gethistorydata(sessionStorage.SensorId,catalog,name,kssj, jssj);
+			gethistorydata(sessionStorage.SensorId,catalog,dname,kssj, jssj);
 			isfirst=false;
 			//document.getElementById("timedefine").style.display="none";
 		}
@@ -695,6 +695,7 @@
 				};
 				myChart.hideLoading();
 				myChart.setOption(option);
+				myChart.resize;
 			}
 			function jisuan(a1,a2,){
 				for (var i = 1; i <obj_data.length; i++) {
@@ -768,7 +769,7 @@
 			$("#historydata-tbody tr").empty();
 			var objS = document.getElementById("jcdd");
 			sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
-			gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 		}
 	</script>
 </body>

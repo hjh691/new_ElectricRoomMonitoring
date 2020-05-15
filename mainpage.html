@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/bootstrap.min.css" />
 	<link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
 	<link rel="stylesheet" href="css/electricroommonitoring.css" />
-	<title>机房监控</title>
+	<title>智能云平台</title>
 	<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/config.js"></script>
@@ -195,7 +195,7 @@
 						i++
 						if (i % 60 == 0) {
 							//sendbeat();//getrealsbydataid();
-							//getrealdatabynodeid(-1);
+							getrealdatabynodeid(-1);
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}
 					};
@@ -333,7 +333,7 @@
 				nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
 				//nodeIcon: 'glyphicon glyphicon-lock',
 				emptyIcon: '',    //没有子节点的节点图标
-				enableLinks: true,//必须在节点属性给出href属性
+				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象
 				multiSelect: false,    //多选
 				searchResultColor: "black",
 				//color: "", //所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
@@ -475,7 +475,7 @@
 							localStorage.setItem("sensors", null);
 							sessionStorage.nodeId = data.id;
 							sessionStorage.nodeId = p_node.id;
-							if(!data.hasOwnProperty("nodes"))
+							//if(!data.hasOwnProperty("nodes"))
 							GetSensorsByNode(sessionStorage.nodeId);
 							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
 							nodeid = data.nodeId;
@@ -999,7 +999,7 @@
 								var obj_sensors = [];
 								var result = data.Result;
 								if (!jQuery.isEmptyObject(result.Sensors)) {
-									//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
+									localStorage.setItem("sensor_tree",JSON.stringify(data.Result.Sensors));
 									maps = [];
 									var sensors = buildsensor(data.Result.Sensors);//(JSON.parse(localStorage.getItem("sensors")));
 									localStorage.setItem("sensors", JSON.stringify(sensors));

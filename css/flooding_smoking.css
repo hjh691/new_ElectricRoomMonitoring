@@ -28,7 +28,7 @@
     border : solid grey 0px;
     background-color: rgb(18, 134, 14);
     display:table-cell;
-    border-radius: 15px;
+    border-radius: 10px;
     vertical-align: middle;
     text-align:center;
 }
@@ -39,7 +39,7 @@
     border : solid grey 0px;
     background-color: rgba(202, 5, 5, 0.781);
     display:table-cell;
-    border-radius: 15px;
+    border-radius: 10px;
     vertical-align: middle;
     text-align:center;
 }
@@ -50,7 +50,7 @@
     border : solid grey 0px;
     background-color: grey;
     display:table-cell;
-    border-radius: 15px;
+    border-radius: 10px;
     vertical-align: middle;
     text-align:center;
 }
@@ -108,7 +108,7 @@ li a{
 .normal_air{
     background-color:rgba(4, 105, 4, 0.993);
     border:solid white 0px;
-    border-radius: 15px;
+    border-radius: 10px;
     text-align:  center;
     vertical-align: middle;
     width:100px;
@@ -119,7 +119,7 @@ li a{
 .unnormal_air{/**/
     background-color:rgba(204, 6, 6, 0.993);
     border:solid white 0px;
-    border-radius: 15px;
+    border-radius: 10px;
     text-align:  center;
     vertical-align: middle;
     width:100px;

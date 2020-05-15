@@ -216,35 +216,20 @@
 	var count,count_l=0,count_h=0;
 	var $table;
 	var configs;
-	var name="",catalog="";
+	var dname="",catalog="";
 	var allcatalog;
 	updatapcnav(8);
 	$(function () {
 		initwarnlog();
 		$(".btn").click(function(){
 			$(this).button('toggle');
-			name= $(".catalog:checked").val();
-			getcatalog(name);
-			gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+			dname= $(".catalog:checked").val();
+			catalog=getcatalog(dname);
+			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 		});
 		
 	});
-	function getcatalog(aname){
-		if(aname==""){
-			catalog="";
-			return;
-		}
-		if(configs){
-			for(var p in configs){
-				for(var l in configs[p]){
-					if(configs[p][l].Name==name){
-						catalog=configs[p][l].Catalog;
-						return;
-					}
-				}
-			}
-		}
-	}
+	
 	//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
 function initwarnlog() {
 	var parentid=-100,parentname="";
@@ -550,7 +535,7 @@ function initwarnlog() {
 		document.getElementById("count_val").innerHTML="";
 		var objS = document.getElementById("jcdd");
 		sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
-		gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+		gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 	}
 	function stopWorker() 
 		{ 
@@ -811,7 +796,7 @@ function initwarnlog() {
 		var i_sel=$('input[name="timeselect"]:checked').val();//20200403添加筛选条件改变后自动刷新列表
 		switch(i_sel*1){
 			case 0:	case 1:	case 2:	case 3:	case 4:
-				gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+				gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 				break;
 			case 5:
 				showrealworning();

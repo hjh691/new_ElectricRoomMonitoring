@@ -88,11 +88,11 @@
 					<div class="row" align="center">
 						<div id="chart1" class="col-xs-11 col-sm-11 displaytype1"  >
 						</div>
-						<div id="chart2" class="col-xs-11 col-sm-5"  style=" display: none;">
+						<div id="chart3" class="col-xs-11 col-sm-5"  style=" display: none;">
 						</div>
 					</div>
 					<div class="row">
-						<div id="chart3" class="col-xs-11 col-sm-5 "  style="display: none; ">
+						<div id="chart2" class="col-xs-11 col-sm-5 "  style="display: none; ">
 						</div>
 						<div id="chart4" class="col-xs-11 col-sm-5"  style="display: none;">
 						</div>
@@ -104,7 +104,7 @@
 						style="width:130px;font-size:16px;height: 30px;border-radius: 5px;"></input>
 					</p>
 					<div style="font-size: 16px;">
-						<label class="title-right">显示内容：</label>
+						<label class="title-right">显示内容：</label><b style="font-size: 50%;color:red">*选项类别不能大于4个</b>
 						<span class="dropup" style="position: relative;" >
 						<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
 							<span class="select_text" data-is-select="false">Dro pup</span>
@@ -158,6 +158,7 @@
 		var sensors,configs;
 		var sel_str=[];
 		var ch1,ch2,ch3,ch4;
+		var cname,catalog;
 		updatapcnav(7);
 		inithistorychart();
 		function inithistorychart() {
@@ -265,7 +266,7 @@
 		function itemclick(obj){//多选列表项的点击响应过程
 			var allobj = $('[name="checks"]');
 			var c=0;
-			for(k in allobj){
+			for(var k in allobj){
 				if(allobj[k].checked){
 					c++;
 				}
@@ -300,16 +301,28 @@
 			sessionStorage.cxsj=jssj;
 			var obj = $('[name="checks"]');
 			check_name=[];check_val=[];
-			for(k in obj){
+			for(var k=0;k<obj.length;k++){
 				if(obj[k].checked && obj[k].value != "-1"){
 					check_val.push(parseInt(obj[k].value));
 					check_name.push(obj[k].id);
 				}
 			}
-			gethistorybysensors(check_val);
+			var allobj = $('[name="checkbox"]');
+			var pt=0;
+			for(var i=0;i<sel_str.length;i++){
+				for(var j=0;j<allobj.length;j++){
+					if(allobj[j].parentElement.outerText==sel_str[i]){
+						cname=allobj[j].value;
+						catalog=getcatalog(cname);
+						pt++;
+						gethistorybysensors(check_val,catalog,cname,pt,sel_str[i]);
+					}
+				}
+			}
+			
 		}
-		function gethistorybysensors(arr_sensors){
-			var url = jfjk_base_config.baseurl + "/GetHistoriesBySensors?from="+kssj+"&to="+jssj;
+		function gethistorybysensors(arr_sensors,acatalog,aname,apt,atitle){
+			var url = jfjk_base_config.baseurl + "/GetHistoriesBySensors?catalog="+acatalog+"&name="+aname+"&from="+kssj+"&to="+jssj;
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
 				$.ajax({
@@ -345,7 +358,7 @@
 							sessionStorage.islogin = true;
 							if (data.Error == null) {
 								if (!jQuery.isEmptyObject(data.Result.Datas)) {
-									decodedatas( data.Result.Datas);
+									decodedatas( data.Result.Datas,apt,atitle);
 								} else {
 									layer.alert("没有符合条件的记录",info_showtime);
 									decodedatas([]);//20200214,传一个空数组
@@ -365,7 +378,7 @@
 	$(document).on("click",".check_box",function(event){
 		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
 		//获取多选列表的所有选项内容。
-		var allobj = $('[name="checkbox"]');
+		
 		//勾选的项
 		var $selectTextDom=$(this).parent().parent().parent("ul").siblings("label").children(".select_text");
 		//勾选项的值
@@ -419,9 +432,9 @@
 				break;
 			case 2:
 				ch1.className="col-xs-11 col-sm-11 displaytype2";
-				ch3.className="col-xs-11 col-sm-11 displaytype2";
-				ch3.setAttribute("style","display:block");
-				ch2.setAttribute("style","display:none");
+				ch2.className="col-xs-11 col-sm-11 displaytype2";
+				ch2.setAttribute("style","display:block");
+				ch3.setAttribute("style","display:none");
 				ch4.setAttribute("style","display:none");
 				break;
 			case 3:
