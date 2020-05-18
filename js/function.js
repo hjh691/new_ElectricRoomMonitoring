@@ -2276,7 +2276,7 @@ function getgraphics() {
 		layer.alert('与服务器连接失败',info_showtime);
 	}
 }
-//获取指定编号的图形属性信息，从而来绘制图形。
+//获取指定编号的图形属性信息，从而来绘制图形。user by electricroommontioring drawmap.html
 function GetBinary(binariesid) {
 	sessionStorage.pageindex = 1;
 	if (typeof(binariesid) != "undefined") {
@@ -2676,9 +2676,9 @@ function refreshpages() {
 		break;
 	}
 }
-var ij =0;
+/*var ij =0;
 function sortt(className) {
-	/*var listName=new Array();
+	var listName=new Array();
 	var listNameOld=new Array();
 	var listTr=new Array();
 	var listSort=new Array();
@@ -2745,7 +2745,7 @@ function sortt(className) {
 		//b=true;
 		}
 	}
-*/
+
 	if (ij % 2 == 0) {
 		$(className).text('▲');
 		ij++;
@@ -2754,7 +2754,7 @@ function sortt(className) {
 		ij++;
 	}
 	//setTimeout("moduletable('realdata-tbody')", 200)
-}
+}*/
 function sortarray(arrs){
 	var arr=[];
 	arr=arrs;
@@ -2771,38 +2771,6 @@ function sortarray(arrs){
 	} 
 	arr.sort(compare);
 }
-/*
-function moduletable(atableid) {  //no used 
-	var tbody = document.getElementById(atableid);
-	if (tbody == null) {
-		tbody = iframe_main.document.getElementById(atableid);
-	}
-	var trs = tbody.getElementsByTagName("tr");
-	for (var i = 0; i < trs.length; i++) {
-		if (i % 2 == 0) {
-			//trs[i].style.backgroundColor = "#16b9c9";
-			//trs[i].cells[1].style.backgroundColor = "#16b9c9";
-			//trs[i].cells[2].style.backgroundColor = "#16b9c9";
-			var cl1=trs[i].style.backgroundColor;
-			if ((cl1 != "rgb(255, 255, 0)")&&(cl1!="#16b9c9")) {
-				trs[i].style.backgroundColor = "#16b9c9";
-			}
-			if (atableid == "realwarning-tbody") {
-				trs[i].cells[4].style.backgroundColor = "#16b9c9";
-			}		} else {
-			//trs[i].style.backgroundColor = "#FFFFFF";
-			//trs[i].cells[1].style.backgroundColor = "#FFFFFF";
-			//trs[i].cells[2].style.backgroundColor = "#FFFFFF";
-			var cl=trs[i].style.backgroundColor;
-			if ((cl1 != "rgb(255, 255, 0)")&&(cl1!="#16b9c9")){
-				trs[i].style.backgroundColor = "#FFFFFF";
-			}
-			if (atableid == "realwarning-tbody") {
-				trs[i].cells[4].style.backgroundColor = "#FFFFFF";
-			}
-		}
-	}
-}*/
 //进度条
 /*
  * 显示圆圈加载进度条  used by electricroommonitor
@@ -2915,7 +2883,7 @@ function initsysteminfo(){//used by electricroommonitor
 	document.getElementById("p4").innerHTML = jfjk_base_config.copyright;
 	//document.getElementById('add').innerHTML = jfjk_base_config.company;
 }
-//获取实时数据  used by electricroommonitor
+//获取实时数据  used by electricroommonitor mainpage.html realdata.html
 function getrealdatabynodeid(nodeid){
 	//sessionStorage.jssj=getCurrentDate(2);
 	if (typeof(nodeid)!="undefined"&&nodeid!==null) {
@@ -3125,6 +3093,8 @@ var sorter=false;
 					if(Idx>=3){
 						catalog=getCatalog(Idx-3);
 						title_index=Idx;
+						isfirst=true;//更改排序项的同时更改显示项，重新获取数据刷新图表；
+						btn_refresh_click();//刷新图表
 					}
 				}
 				var table = document.getElementById(tableId);

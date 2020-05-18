@@ -332,7 +332,7 @@ function initwarnlog() {
 					lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
 					document.getElementById("display_type").appendChild(lab);
 					
-					if(s_des[p].Catalog=="event"&&s_des[p].Name=="event"){
+					if(s_des[p].Catalog=="event"&&s_des[p].Name=="event"){//告警类型
 						var config=new Object()
 						config=JSON.parse(s_des[p].Config);
 						if(config){

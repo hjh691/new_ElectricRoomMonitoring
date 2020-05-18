@@ -21,7 +21,7 @@ var $table;
 var sign = '>';
 var allconfigs;
 var allselect=null;
-var typename="";
+var typename="",titlename="";
 var tab_head;
 //var obj_realdata;
 var datas = [];
@@ -59,8 +59,15 @@ function initpage() {
     }
     appendalldisplaytype("display_type");
     btn_refresh_click();
-    getrealdatabynodeid(-1);
 }
+$(function () {
+    $(".btn").click(function(){
+        $(this).button('toggle');
+        dname= $(".btn:checked").val();
+        catalog=getcatalog(dname);
+        gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+    });
+});
 function appendalldisplaytype(){
     allconfigs=JSON.parse(localStorage.Configs);
     if(allconfigs){//检查配置中是否有catalog项
@@ -73,6 +80,7 @@ function appendalldisplaytype(){
                 ainput.setAttribute("type","checkbox");
                 ainput.setAttribute("name","options");
                 ainput.setAttribute("value",s_des[p].Name);
+                ainput.className="btn";
                 //ainput.setAttribute('onclick','checkboxclick("'+s_des[p].Name+'")')
                 ainput.innerText=s_des[p].Desc;
                 ainput.className="catalog";
@@ -90,7 +98,6 @@ function appendalldisplaytype(){
                 lab.appendChild(spn);
                 //lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
                 document.getElementById("display_type").appendChild(lab);
-                
             }
         }
         $.sortTable.sort('realtable',3);
@@ -247,20 +254,25 @@ function stopWorker() {
     w1.terminate();
     w1 = undefined;
 };
-
 function getCatalog(index){
     var  catalogsel = $('[name="options"]');
     typename=catalogsel[index].value;
+    titlename=catalogsel[index].textContent;//显示项的标题 //20200518
     if(allconfigs){
         for(var q in allconfigs){
             for(var l in allconfigs[q]){
                 if(allconfigs[q][l].Name==typename){
+                    if(allconfigs[q][l].Config){
+                        config=allconfigs[q][l].Config; //20200518 获取配置项参数
+                        chart_unit=config.Unit;
+                        chart_max=config.Top;
+                        chart_min=config.Bot;
+                    }
                     return allconfigs[q][l].Catalog;
                 }
             }
         }
     }
-   
 }
 function decoderealdata(obj_realdata) {
     //$("#realdata-tbody tr").empty();
@@ -461,9 +473,6 @@ function decoderealdata(obj_realdata) {
                 }
             }
         }
-        //document.getElementById('count_val').innerHTML = pt + "条";
-        //document.getElementById('normal_count').innerHTML=count-err_count+"条";
-        //document.getElementById('err_count').innerHTML = 0 + "条";
         if (pt > 0) {
             var tableLength = $table.rows.length;
             for (var int = 0; int < tableLength; int++) {
@@ -478,13 +487,13 @@ function decoderealdata(obj_realdata) {
                 var lasttime = $table.rows[sessionStorage.t_p].cells[2].innerHTML;
                 //var myChart2 = echarts.init(document.getElementById('realdata_chart'));
                 updatachart(typename);
-                value0 = ($table.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;
+                value0 = ($table.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;//字符转实数；
                 //value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
                 var heightpx = $("#realdata-tbody tr").height() + 1;//加1是网格线的宽度
                 var ppt = +sessionStorage.t_p;
                 $("#realdata-tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行
                 $table.rows[ppt].style.backgroundColor = color_table_cur;
-                if (isfirst != "true") {
+                if (isfirst != true) {
                     var temp_option = myChart2.getOption();
                     if (temp_option.series[0]) {
                         if (temp_option.series[0].data[temp_option.series[0].data.length - 1][0] < strtodatetime(lasttime)) {
@@ -511,7 +520,7 @@ function decoderealdata(obj_realdata) {
                         refreshData();
                     }
                 } else {
-                    isfirst = "false";
+                    isfirst = false;
                     //myChart2.showLoading();
                     gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
                 }
@@ -530,24 +539,33 @@ function updatachart(atype) {
     switch (atype.toLowerCase()) {
         case "temp":
         case "tmp":
-            chart_min = -30;
-            chart_max = 170;
+            if(!chart_min)//20200518 如果获取的配置项参数为空或不存在，则赋予默认值
+                chart_min = -30;
+            if(!chart_max)
+                chart_max = 170;
             start_angle = -45;
-            chart_unit = "℃"
+            if(!chart_unit)
+                chart_unit = "℃"
             chart_sigle = "";
             colors = [[0.15, '#1e90ff'], [0.4, '#090'], [0.6, '#ffa500'], [0.8, '#ff4500'], [1, '#ff0000']];
             break;
         case "pd":
-            chart_min = 0;
-            chart_max = -100;
-            chart_unit = "dB";
+            if(!chart_min)
+                chart_min = 0;
+            if(!chart_max)
+                chart_max = -100;
+            if(!chart_unit)
+                chart_unit = "dB";
             chart_sigle = ""
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
             break;
         default:
-            chart_min = 0;
-            chart_max = 100;
-            chart_unit = "";
+            if(!chart_min)
+                chart_min = 0;
+            if(!chart_max)
+                chart_max = -100;
+            if(!chart_unit)
+                chart_unit = "";
             chart_sigle = ""
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
     }
@@ -556,7 +574,6 @@ function tableclick(tr) {
     $(tr).siblings("tr[backgroundColor!='#ff0']").css("background", "");
     sessionStorage.t_p = tr.rowIndex - 1;
     sname = tr.cells[1].innerHTML;
-
     //chart_type = tr.cells[tr.cells.length-2].innerHTML;
     updatachart(typename);
     if(title_index!=-1)
@@ -767,7 +784,7 @@ function refreshData() {
         value = option.series[i].data[0].value;
         option.series[i].detail.formatter = chart_sigle + value + ': \n\n' + option.series[i].name + ' ';//+chart_unit;
         option.series[i].data[0].name = chart_unit;//sname;
-        option.title.text = sname;
+        option.title.text = sname+" : "+titlename;//添加显示项的标题指示；
         //形成进度条式的填充仪表效果并分段显示不同延时用于指示不同状态。    
         /*if(value<20){
             option.series[i].axisLine.lineStyle.color[0]=[value/100,'blue'];
@@ -792,7 +809,9 @@ function decodedatas(obj_chartdata) {
     //t;
     myChart2.clear();
     if (obj_chartdata == null) {
+        maxvalue=NaN;//20200518
         myChart2.hideLoading();
+        refreshData();//20200518
         return;
         //drawchart();
     }
@@ -821,16 +840,17 @@ function decodedatas(obj_chartdata) {
     //myChart.setOption(option);
     refreshData();
     drawchart();
+    decoderealdata();//进行一次实时数据刷新，完善图表的指示内容；//20200518
     //绘制图形线条
     function drawchart() {
         //var myChart = echarts.init(document.getElementById('main'));
         var lengenddata1 = [];
-        lengenddata1.push("实时值");
+        lengenddata1.push(titlename);//20200518
         var option2 = {
             color: ['#FF0000', '#FFFF00'],//,'#00ff00'
             backgroundColor: '#d0d0d0',
             title: {
-                text: '当天变化趋势图',
+                text: titlename+' : 当天变化趋势图',//20200518
                 x: "center",
             },/**/
             tooltip: {
