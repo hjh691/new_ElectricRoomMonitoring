@@ -1398,7 +1398,7 @@ function Alert(str, delay) {
 	msgObj.style.textAlign = "center";
 	msgObj.style.lineHeight = "25px";
 	msgObj.style.zIndex = "10001";
-	msgObj.setAttribute("onclick", "closewin(" + ranid + ")");
+	//msgObj.setAttribute("onclick", "closewin(" + ranid + ")");
 	document.body.appendChild(msgObj);
 	//提示信息标题  
 	var title = document.createElement("h4");
@@ -1484,7 +1484,7 @@ function gethistorydata(sensorid,catalog,name,kssj, jssj,aparent) {
 								//	decodedatas(null);
 								//}
 							} else {
-								layer.alert("没有符合条件的记录",info_showtime);
+								layer.alert("没有符合条件的记录",1000);
 								decodedatas(null);
 							}
 						} else {

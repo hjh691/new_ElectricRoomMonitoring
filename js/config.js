@@ -50,7 +50,7 @@ jfjk_base_config.bg_src="res/bj04.jpg"
  //告警统计标识
  warning_sign_low="越下限";
  warning_sign_hight="越上限";
- info_showtime=2000;
+ info_showtime=1500;
  color_table_cur="#85e494";
  color_table_even="#87CEFA";
  /**
