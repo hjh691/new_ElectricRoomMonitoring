@@ -199,12 +199,12 @@ li a{
 }
 .donghuan{/*用于图表显示的div*/
     width:160px;
-    height:170px;
+    height:160px;
     border: solid #222 0px;
 }
 .input ,.output{
     width:805px;
-    height:342px;
+    height:330px;
     background-color: #555;
     margin-bottom: 10px;
 }

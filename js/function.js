@@ -127,7 +127,6 @@ function LoginOrder(name, ps) {
 		success: function(data, status) {
 			var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 			if (status == "success") {
-
 				if (data.Error == null) {
 					sessionStorage.token = data.Result.Token;
 					sessionStorage.username = name;
@@ -136,8 +135,6 @@ function LoginOrder(name, ps) {
 						window.location.href = "mainpage.html";
 					} else {
 						sessionStorage.errortime = 0;
-						//sessionStorage.dataId = 0;
-						//refreshpages();
 					}
 				} else {
 					sessionStorage.islogin = false;
@@ -390,7 +387,6 @@ function sendbeat() {
 				}
 			}
 		});/**/
-		//getrealsbydataid();
 	} else {
 		sessionStorage.islogin = false;
 		Alert("与服务器连接失败", info_showtime);
@@ -608,11 +604,11 @@ function showfudongdiv() {
 function hidefudongdiv() {
 	//if (document.getElementById("KeFuDiv").style.display == "block") {
 	//	document.getElementById("KeFuDiv").style.display = "none";
-	//}
+	//}this is my program code 
 	document.getElementById("KeFuDiv").hidden;
 	//parent.window.document.getElementById('iframe_main').src='realwarning.html';
 }
-//获取全部的实时数据// used by electricroommonitoring
+//获取全部的实时数据//
 function getrealsbydataid() {
 	var stationname = "",
 	sensorname = "",
@@ -1209,7 +1205,6 @@ function inithistorychart() {
 	}
 	//drawchart()
 }*/
-
 //初始化短信日志查询页面（在进入短信日志页面时触发）。
 function initsmslog() {
 	sessionStorage.pageindex = 6;
@@ -1520,10 +1515,10 @@ function querywarnlog(num) {
 	}
 	sessionStorage.jssj = jssj;
 	$("#warnlogdata-tbody tr").empty();
-	if (num == 0) {
-		gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+	if (num == 0) {//name 改为dname 20200520 edit;at the options was null,get the all data;
+		gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 	} else {
-		gethistorydata(sessionStorage.SensorId,catalog,name,sessionStorage.kssj,sessionStorage.jssj);
+		gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 	}
 }
 //获取告警信息列表  
@@ -1879,58 +1874,62 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 	var seriess=[];
 	var myChart = echarts.init(document.getElementById('chart'+apt));
 	myChart.clear();
-	if(obj_chartdatas.length<=0){
-		return;
-	}
-	$("#comprate-tbody tr").empty();
-	var tbody=document.getElementById("comprate-tbody");
-	if(check_val.length>0){
-		for(var i=0;i<check_val.length;i++){
-			var sensorid=check_val[i];
-			var series=new Object();
-			series.name=check_name[i]
-			lengenddata.push(check_name[i]);
-			obj_chartdata=obj_chartdatas;//[sensorid];
-			if(obj_chartdata){
-				pb= new Array();
-				maxvalue=minvalue=parseFloat(obj_chartdata[0].Value);
-				for (var j = 0; j <obj_chartdata.length; j++) {
-					if(obj_chartdata[j].SensorId==sensorid){
-						pb.push([strtodatetime(obj_chartdata[j].Time), obj_chartdata[j].Value, j]);
-						if(parseFloat(obj_chartdata[j].Value)>maxvalue){
-							maxvalue=parseFloat(obj_chartdata[j].Value);
+	if(obj_chartdatas.length>0){
+		var tbody=document.getElementById("comprate-tbody");
+		if(check_val.length>0){
+			var title_tr=document.createElement("tr");
+			var title_th=document.createElement("th");
+			title_th.setAttribute("colspan","4");
+			title_th.innerHTML=atitle;
+			title_tr.appendChild(title_th);
+			tbody.appendChild(title_tr);
+			for(var i=0;i<check_val.length;i++){
+				var sensorid=check_val[i];
+				var series=new Object();
+				series.name=check_name[i]
+				lengenddata.push(check_name[i]);
+				obj_chartdata=obj_chartdatas;//[sensorid];
+				if(obj_chartdata){
+					pb= new Array();
+					maxvalue=minvalue=parseFloat(obj_chartdata[0].Value);
+					for (var j = 0; j <obj_chartdata.length; j++) {
+						if(obj_chartdata[j].SensorId==sensorid){
+							pb.push([strtodatetime(obj_chartdata[j].Time), obj_chartdata[j].Value, j]);
+							if(parseFloat(obj_chartdata[j].Value)>maxvalue){
+								maxvalue=parseFloat(obj_chartdata[j].Value);
+							}
+							if(parseFloat(obj_chartdata[j].Value)<minvalue){
+								minvalue=parseFloat(obj_chartdata[j].Value);
+							}
+							var tr=document.createElement("tr")
+							var td_name=document.createElement("td");
+							td_name.innerHTML=check_name[i];
+							var td_time=document.createElement("td");
+							td_time.innerHTML=obj_chartdata[j].Time;
+							var td_value=document.createElement("td");
+							td_value.innerHTML=obj_chartdata[j].Value;//.toFixed(2);
+							var td_bz=document.createElement("td");
+							tr.appendChild(td_name);
+							tr.appendChild(td_time);
+							tr.appendChild(td_value);
+							tr.appendChild(td_bz);
+							tbody.appendChild(tr);
 						}
-						if(parseFloat(obj_chartdata[j].Value)<minvalue){
-							minvalue=parseFloat(obj_chartdata[j].Value);
-						}
-						var tr=document.createElement("tr")
-						var td_name=document.createElement("td");
-						td_name.innerHTML=check_name[i];
-						var td_time=document.createElement("td");
-						td_time.innerHTML=obj_chartdata[j].Time;
-						var td_value=document.createElement("td");
-						td_value.innerHTML=obj_chartdata[j].Value;//.toFixed(2);
-						var td_bz=document.createElement("td");
-						tr.appendChild(td_name);
-						tr.appendChild(td_time);
-						tr.appendChild(td_value);
-						tr.appendChild(td_bz);
-						tbody.appendChild(tr);
+					}
+					if(i==0){
+						maxval=maxvalue;
+						minval=minvalue;
+					}else{
+						maxval=maxval>maxvalue?maxval:maxvalue;
+						minval=minval<minvalue?minval:minvalue;
 					}
 				}
-				if(i==0){
-					maxval=maxvalue;
-					minval=minvalue;
-				}else{
-					maxval=maxval>maxvalue?maxval:maxvalue;
-					minval=minval<minvalue?minval:minvalue;
-				}
+				series.type='line',
+				series.showAllSymbol=true,
+				series.symbolSize= 1,
+				series.data= pb
+				seriess.push(series);
 			}
-			series.type='line',
-			series.showAllSymbol=true,
-			series.symbolSize= 1,
-			series.data= pb
-			seriess.push(series);
 		}
 	}
 	/*//if(Math.ceil(senconds/1000/60)<1430){
@@ -2057,7 +2056,6 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 		maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
 		minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
 	}
-	
 	drawchart();
 	//绘制图形线条
 	function drawchart() {
@@ -2108,7 +2106,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 				show: true,
 				start: 0
 			},
-			legend: {
+			legend: {//图例
 				data: lengenddata,
 				orient:"horizontal",//"vertical",忍得住孤独，耐得住寂寞，挺得住痛苦，顶得住压力，挡得住诱惑，经得起折腾，受得起打击，丢得起面子，担得起责任，提得起精神。
 				x:'left',//多琢磨事少琢磨人，多向前看少往后看，多当面说少背后议，多换位思考少本位主义，多补台少拆台，多理解少指责，多揽过少争功。
@@ -2118,7 +2116,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 			grid: {
 				y2: 80
 			},
-			xAxis: [{
+			xAxis: [{//x轴
 				type: 'time',
 				splitNumber: 10,
 				axisLine: {
@@ -2129,7 +2127,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 					onZero:false
 				},
 			}],
-			yAxis: [{
+			yAxis: [{//Y轴
 				type: 'value',
 				axisLine: {
 					lineStyle: {
@@ -2168,6 +2166,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 		myChart.resize();
 	}
 }
+//字符串转日期时间函数格式：yyyy-mm-dd hh:mm:ss
 function strtodatetime(str) {
 	var year = str.substring(0, 4);
 	var month = str.substring(5, 7);
@@ -2187,7 +2186,7 @@ function initdrawing() {
 	document.getElementById("iframe_main").src = 'drawmap.html';
 	//$('#graphicslist tr:eq(1)').attr("checked", true);
 }
-//获取图形信息列表
+//获取图形信息列表 no used
 function getgraphics() {
 	var pt = 0;
 	$("#graphicslist tr").empty();
@@ -2232,7 +2231,6 @@ function getgraphics() {
 						for (var i = 0; i < data.Result.Graphics.length; i++) { //data.Result.length2 0 0 8 2 0 0 4 7 8 5 07
 							var tr = document.createElement('tr');
 							tr.setAttribute("onclick", "c1(this)");
-
 							tr.setAttribute("style", "margin-top:5px");
 							tr.setAttribute("style", "margin-left:30px ");
 							var tdid = document.createElement('td');
@@ -2264,7 +2262,6 @@ function getgraphics() {
 						}
 						var trs = tbody.getElementsByTagName("tr");
 						trs[pt].onclick();
-
 						document.getElementById("iframe_main").src = 'drawmap.html'
 					} else {
 						layer.alert(data.Error,info_showtime);
@@ -2885,7 +2882,6 @@ function initsysteminfo(){//used by electricroommonitor
 }
 //获取实时数据  used by electricroommonitor mainpage.html realdata.html
 function getrealdatabynodeid(nodeid){
-	//sessionStorage.jssj=getCurrentDate(2);
 	if (typeof(nodeid)!="undefined"&&nodeid!==null) {
 		var url = jfjk_base_config.baseurl + "GetRealsNew?dataId=" + nodeid;
 		url = encodeURI(url);
@@ -2964,7 +2960,6 @@ function getrealdatabynodeid(nodeid){
 		}
 		//sleep(10000);
 	 }
-		//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
 	}
 }
 function sleep(numberMillis) {    

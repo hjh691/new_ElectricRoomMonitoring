@@ -89,17 +89,17 @@
         </div>-->
         <div class="container" style="margin: 0;padding:0 ;">
             <ul class="nav nav-tabs" disabled='disabled' id="nav" style="font-size: 16px;font-style: italic;margin-top: 0px;">
-                <li class="active"><a href="#tab_guard" data-toggle="tab"><i class="glyphicon glyphicon-log-in"></i> 门禁</a></li>
-                <li ><a href="#tab_light" data-toggle="tab"><i class="glyphicon glyphicon-cog" ></i> 灯光</a></li>
-                <li><a href="#tab_smoken" data-toggle="tab"><i class="glyphicon glyphicon-cloud-upload"></i> 烟感</a></li>
-                <li><a href="#tab_flooding" data-toggle="tab"><i class="glyphicon glyphicon-tint"></i> 水浸</a></li>
-                <li><a href="#tab_ups" data-toggle="tab"><i class="glyphicon glyphicon-retweet"></i> UPS</a></li>
-                <li><a href="#tab_hum" data-toggle="tab"><i class="glyphicon glyphicon-flash"></i> 动力</a></li>
-                <li><a href="#tab_room" data-toggle="tab"><i class="glyphicon glyphicon-leaf"></i> 环境</a></li>
-                <li><a href="#tab_air" data-toggle="tab"><i class="glyphicon glyphicon-random"></i> 空调</a></li>
+                <li id="guard"><a href="#tab_guard" data-toggle="tab"><i class="glyphicon glyphicon-log-in"></i> 门禁</a></li>
+                <li class="active" id="light"><a href="#tab_light" data-toggle="tab"><i class="glyphicon glyphicon-cog" ></i> 灯光</a></li>
+                <li id="smoken"><a href="#tab_smoken" data-toggle="tab"><i class="glyphicon glyphicon-cloud-upload"></i> 烟感</a></li>
+                <li id="flooding"><a href="#tab_flooding" data-toggle="tab"><i class="glyphicon glyphicon-tint"></i> 水浸</a></li>
+                <li id="ups"><a href="#tab_ups" data-toggle="tab"><i class="glyphicon glyphicon-retweet"></i> UPS</a></li>
+                <li id="hum"><a href="#tab_hum" data-toggle="tab"><i class="glyphicon glyphicon-flash"></i> 动力</a></li>
+                <li id="room"><a href="#tab_room" data-toggle="tab"><i class="glyphicon glyphicon-leaf"></i> 环境</a></li>
+                <li id="air"><a href="#tab_air" data-toggle="tab"><i class="glyphicon glyphicon-random"></i> 空调</a></li>
             </ul>
             <div class="tab-content" id='tab-content'>
-                <div class="tab-pane in active fade" align="center" id="tab_guard">
+                <div class="tab-pane fade" align="center" id="tab_guard">
                     <img src="res/menjin.png" style="width:300px;height:150px;">
                     <table >
                         <thead>
@@ -141,7 +141,7 @@
                     <script type="text/javascript" src="js/guard.js"></script>
                     <!-- instrument piece pice -->
                 </div>
-                <div class="tab-pane fade" id="tab_light" align="center">
+                <div class="tab-pane fade in active" id="tab_light" align="center">
                     <!--h3-- style="text-align: center">灯光状态</!--h3-->
                     <img src="res/light001.jpg" style="width:300px;height:150px">
                     <table>
@@ -275,7 +275,7 @@
                     <script type="text/javascript" src="js/flooding.js"></script>
                 </div>
                 <div class="tab-pane fade" id="tab_ups">
-                    <div id="div1" style="position:absolute ; width:100%;height:100%;background-repeat:no-repeat;background-size:cover;min-width: 800px;min-height: 600px;z-index:-1 ">
+                    <div id="div1" style="position:absolute ; width:100%;height:90%;background-repeat:no-repeat;background-size:cover;min-width: 800px;min-height: 600px;z-index:-1 ">
                         <img src="res/ups.jpg" style="width:100%; height:100%;min-width: 800px;min-height: 600px;z-index:-1"/>
                         <!---->
                         <div class="textbox" id="txb-shidian" style="left:6%;top:15%;">
@@ -314,7 +314,7 @@
                 </div>
                 <div class="tab-pane fade" id="tab_hum">
                     <div align="center">
-                        <h2 style="text-align:center">动力监测</h2>
+                        <!--<h2 style="text-align:center">动力监测</h2>-->
                         <div style="width:805px;background:#adf7b8;">
                             <h4 style="text-align:center; padding-top: 10px;color:#000;">输入端</h4>
                             <div class="input">
@@ -347,7 +347,7 @@
                                     </tr>
                                     <tr >
                                         <td colspan="2"> 
-                                            <div style="width: 320px;height: 170px;" id="chart-P" ></div>
+                                            <div style="width: 320px;height: 160px;" id="chart-P" ></div>
                                         </td>
                                         <td>
                                             <div class="donghuan" id="chart-iA"></div>
@@ -393,7 +393,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan=2>
-                                            <div style="width:320px;height: 170px" id="chart-p"></div>
+                                            <div style="width:320px;height: 160px" id="chart-p"></div>
                                         </td>
                                         <td>
                                             <div class="donghuan" id="chart-ia"></div>

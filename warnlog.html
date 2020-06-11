@@ -87,7 +87,7 @@
 			</span>
 			<span><label>显示内容：</label></span>
 			<span id="display_type" class="btn-group" data-toggle="buttons">
-				<!--<label class="btn btn-primary active"><input type="radio" class="catalog" name="options" value="">全部</label>-->
+				<label class="btn btn-primary active"><input type="radio" class="catalog" name="options" value="">其他</label><!---->
 			</span>
 			
 			<div class="condition" >
@@ -143,7 +143,7 @@
 					<th>终止时间</th>
 					<th id="tj_zzsj"></th>
 				</tr>
-				<tr>
+				<tr style="display:none;">
 					<th>越上限</th>
 					<th id="count_first"></th>
 					<th id="count_second">越下限</th>
@@ -189,7 +189,7 @@
 					<th>二级告警</th>
 					<th>三级告警</th>
 				</tr><th>告警次数</th>-->
-				
+				<!--这是注释内容（This is an explaninwext-->
 				<!--<tr >
 					<th colspan="4">一级告警</th>
 				</tr>
@@ -332,7 +332,7 @@ function initwarnlog() {
 					lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
 					document.getElementById("display_type").appendChild(lab);
 					
-					if(s_des[p].Catalog=="event"&&s_des[p].Name=="event"){//告警类型
+					if(s_des[p].Catalog=="event"&&s_des[p].Name=="event"){//告警、事件类型
 						var config=new Object()
 						config=JSON.parse(s_des[p].Config);
 						if(config){

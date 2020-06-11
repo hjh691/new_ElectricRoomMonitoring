@@ -1,462 +1,302 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	<link rel="stylesheet" href="css/bootstrap.min.css" />
-	<!--script src="js/zrender.min.js"></script-->
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
-	<script type="text/javascript" src="js/bootstrap.js"></script>
-	<script type="text/javascript" src="js/config.js"></script>
-	<script type="text/javascript" src="js/cvi_busy_lib.js"></script>
-	<script type="text/javascript" src="js/echarts.js"></script>
-	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
-	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
-	<link rel="stylesheet" href="css/electricroommonitoring.css" />
-	<script type="text/javascript" src="js/layer/layer.js"></script>
-	<title>趋势图</title>
-	<script type="text/javascript" src="js/function.js"></script>
-	<style>
-		html,
-		body{
-			width: 100%;
-			height: 100%;
-		}/**/
-		.title-right {
-			width:100px;
-		}
-		input:checked + span {
-			color: #337ab7;
-			font-weight: bold;
-		}
-		*{
-			margin:0px;
-			padding:0px;
-		}
-    /**/
-		th,td{
-			border:1px solid black;
-			text-align:center;
-			line-height:center;
-			width:200px;
-			height:30px;
-		}
-		td{
-			border:1px solid black;
-			text-align:center;
-			line-height:center;
-		}
-		* {
-			margin: 0;
-			padding: 0;
-		}
-		table {
-			/*设置相邻单元格的边框间的距离*/
-			border-spacing: 0;
-			/*表格设置合并边框模型*/
-			border-collapse: collapse;
-			text-align: center;
-		}
-		/*关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
-		table tbody {
-			display: block;
-		}
-		table thead,
-		tbody tr {
-			display: table;
-			table-layout: fixed;
-		}
-		/*关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
-		
-		table thead {
-			width: calc( tbody.width )
-		}
-		table thead th {
-			background: #ccc;
-		}*/
-	</style>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Insert title here</title>
+    <style>
+html,body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    align: left;
+    valign: left;
+}
+</style>
+    <!-- 引入 ECharts 文件 -->
+    <script src="./js/echarts.js"></script>
 </head>
 <body>
-	<div>
-		<div class="pagecard" id="pagecard1">
-			<p style="text-align:center;font-size:20px"><b>趋势对比</b></p>
-		</div>
-		<div class="container" style="text-align: center;width:100%;"><!--class="parent" class="column  MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 20px;flex:2.5;-->
-			<div class="row" style="width: 100%;margin-top: 10px;">
-				<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 "  style="margin-left: 0;margin-right: 0;" >
-					<div class="row" align="center">
-						<div id="chart1" class="col-xs-11 col-sm-11 displaytype1"  >
-						</div>
-						<div id="chart3" class="col-xs-11 col-sm-5"  style=" display: none;">
-						</div>
-					</div>
-					<div class="row">
-						<div id="chart2" class="col-xs-11 col-sm-5 "  style="display: none; ">
-						</div>
-						<div id="chart4" class="col-xs-11 col-sm-5"  style="display: none;">
-						</div>
-					</div>
-				</div>
-				<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" id="fine" style="text-align: left; margin-left: 0;margin-right: 0;">
-					<div sytle="text-align:left;float:left">
-					<p><label class="title-right" >时间选择：</label><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" id="cxsj" 
-						style="width:130px;font-size:16px;height: 30px;border-radius: 5px;"></input>
-					</p>
-					<div style="font-size: 16px;">
-						<label class="title-right">显示内容：</label><b style="font-size: 50%;color:red">*选项类别不能大于4个</b>
-						<span class="dropup" style="position: relative;" >
-						<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
-							<span class="select_text" data-is-select="false">Dro pup</span>
-							<span class="caret"></span>
-						</button>-->
-						<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
-							<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;"></input>
-						</label>
-						<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="display_type">
-							<!--<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
-							<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li>为了方便演示，type设置text了，实际中可以设置成hidden -->
-						</ul> 
-						</span>
-					</div>
-					<p><label class="title-right">计量点名称：</label>
-						<!--<a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
-							<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">
-						</select>-->
-						<input class="button" type="button" id="chaxun" value="对比" onclick="oneChoice()"
-							style="font-size:16px;height: 30px;line-height: 30px;"></input>
-						<input class="button" type="button" id="allcheck" value="取消选择" onclick="allChoice()"
-							style="font-size:16px;width:100px;height: 30px;line-height: 30px;"></input>
-							<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('compratetable')">
-								<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
-					</p>
-					<form  id="jcdd" style="background-color: #dcdcdc;height: 500px;overflow: auto;font-size:16px;">
-						<p><input type="checkbox" value="0" οnclick="allChoice()" id="allCheck" name="checks"/>全选 </p>
-					</form>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div align="center" >
-			<table id="compratetable" style="display: none;">
-				<caption style="text-align: center;font-size:18px;">多点数据比对</caption>
-				<tr >
-					<th>测量点名称</th>
-					<th>测量时间</th>
-					<th>数值</th>	
-					<th>备注</th>
-				</tr>
-				<tbody id='comprate-tbody' style="width:1020px;height:600px; overflow:auto;">
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<script>
-		//初始化历史数据图形显示页面（在进入趋势图页面时触发）。
-		var check_val = [],check_name=[];
-		var kssj,jssj;
-		var sensors,configs;
-		var sel_str=[];
-		var ch1,ch2,ch3,ch4;
-		var cname,catalog;
-		updatapcnav(7);
-		inithistorychart();
-		function inithistorychart() {
-			//return;
-			sessionStorage.pageindex = 4;
-			ch1=document.getElementById("chart1");
-			ch2=document.getElementById("chart2");
-			ch3=document.getElementById("chart3");
-			ch4=document.getElementById("chart4");
-			var parentid = -100, parentname = "";
-			var maps = [];
-			document.getElementById("cxsj").value = (sessionStorage.cxsj).substr(0,11);
-			var sel_sensor = document.getElementById("jcdd");
-			for (var i = sel_sensor.length-1; i >= 0; i--) {
-				sel_sensor.removeChild(sel_sensor.children[i]);
-			}
-			sensors=JSON.parse(localStorage.getItem("sensors"));
-			configs=JSON.parse(localStorage.Configs);
-			
-			if (sensors != null) {
-				for (var i = 0; i < sensors.length; i++) {
-					if ((sensors[i].Value.ParentId != "-1") && (sensors[i].Value.ParentId != parentid)) {
-						parentid = sensors[i].Value.ParentId;
-						for (var j = 0; j < sensors.length; j++) {
-							if (sensors[j].id == parentid) {
-								parentname = sensors[j].Value.Name + "_";
-								break;
-							}
-						}
-					}
-					var map = new Object();
-					map.value = sensors[i].id;
-					map.name = parentname + sensors[i].Value.Name;
-					maps.push(map);
-				}
-				var compare = function (obj1, obj2) {
-					var val1 = obj1.name;
-					var val2 = obj2.name;
-					return val1.localeCompare(val2);
-					/*if (val1 < val2) {
-						return -1;
-					} else if (val1 > val2) {
-						return 1;
-					} else {
-						return 0;
-					}*/
-				}
-				maps.sort(compare);
-				for (var k = 0; k < maps.length; k++) {//将标签添加到多选列表中
-					var p = document.createElement("p");
-					var lab=document.createElement("label");
-					var input=document.createElement("input");
-					input.setAttribute("type","checkbox");
-					input.setAttribute("name","checks");
-					input.setAttribute("id",maps[k].name);
-					input.setAttribute("value",maps[k].value);
-					input.setAttribute('onclick','itemclick(this)');
-					var spn=document.createElement("span");
-					spn.innerHTML=maps[k].name;
-					lab.appendChild(input);
-					lab.appendChild(spn);
-					p.appendChild(lab);
-					sel_sensor.appendChild(p);
-				}
-			}
-			appenddisplaytype();
-			//setSelectOption("jcdd", sessionStorage.SensorId);
-			//querychartvalue();
-		}
-		//添加显示控制选项
-		function appenddisplaytype(){
-			allconfigs=JSON.parse(localStorage.Configs);
-    		if(allconfigs){
-				for(var ac in allconfigs){//如果有，读取其所有配置项
-            		var s_des=allconfigs[ac];//如果有，读取其所有配置项
-					for(var p in s_des){
-						var li=document.createElement("li");
-						var lab=document.createElement("label");
-						//lab.setAttribute("style","margin-left:20px")
-						var ainput=document.createElement("input");
-						ainput.setAttribute("type","checkbox");
-						ainput.setAttribute("name","checkbox");
-						ainput.setAttribute("value",s_des[p].Name);
-						ainput.className="check_box";
-						var spn=document.createElement("span");
-						spn.innerHTML=s_des[p].Desc;
-						lab.appendChild(ainput);
-						lab.appendChild(spn);
-						//lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
-						li.appendChild(lab);
-						document.getElementById("display_type").appendChild(li);
-					}
-				}
-			}
-		}
-		/*$(function () {
-			$(".check_box").click(function(){
-				$(this).button('toggle');
-				name= $(".check_box:checked").val();
-				//getcatalog(name);
-				//queryhistorydata();
-			});
-			
-		});*/
-		function itemclick(obj){//多选列表项的点击响应过程
-			var allobj = $('[name="checks"]');
-			var c=0;
-			for(var k in allobj){
-				if(allobj[k].checked){
-					c++;
-				}
-			}
-			if(c>6){
-				obj.checked=false;
-				alert("对比测量点不能大于6个!",info_showtime);
-			}
-		}
-		function refreshsensorslist() {
-			window.parent.GetSensorsByNode(sessionStorage.nodeId);
-		}
-		function allChoice(){//取消选择项
-			var obj = $('[name="checks"]');
-			var btn=document.getElementById("allcheck")
-			//if(btn.value=="全选"){
-			//	for(var i=0;i<obj.length;i++){
-			//		obj[i].checked=true;
-			//	}
-			//	btn.value="全不选";
-			//}else{
-				for(var i=0;i<obj.length;i++){
-					obj[i].checked=false;
-				}
-			//	btn.value="全选";
-			//}
-		}
-		//对比按钮
-		function oneChoice(){
-			kssj=document.getElementById("cxsj").value+" 00:00:00"
-			jssj=document.getElementById("cxsj").value+" 23:59:59"
-			sessionStorage.cxsj=jssj;
-			var obj = $('[name="checks"]');
-			check_name=[];check_val=[];
-			for(var k=0;k<obj.length;k++){
-				if(obj[k].checked && obj[k].value != "-1"){
-					check_val.push(parseInt(obj[k].value));
-					check_name.push(obj[k].id);
-				}
-			}
-			var allobj = $('[name="checkbox"]');
-			var pt=0;
-			for(var i=0;i<sel_str.length;i++){
-				for(var j=0;j<allobj.length;j++){
-					if(allobj[j].parentElement.outerText==sel_str[i]){
-						cname=allobj[j].value;
-						catalog=getcatalog(cname);
-						pt++;
-						gethistorybysensors(check_val,catalog,cname,pt,sel_str[i]);
-					}
-				}
-			}
-			
-		}
-		function gethistorybysensors(arr_sensors,acatalog,aname,apt,atitle){
-			var url = jfjk_base_config.baseurl + "/GetHistoriesBySensors?catalog="+acatalog+"&name="+aname+"&from="+kssj+"&to="+jssj;
-			url = encodeURI(url);
-			if (sessionStorage.islogin == "true") {
-				$.ajax({
-					beforeSend: function(request) {
-						request.setRequestHeader("_token", sessionStorage.token);
+<div id="main"
+     style="height: 100%; width: 100%; border: 0px; text-align: left; align: left; valign: left;"></div>
+<script type="text/javascript">
+	 Number_of_decimal=2;
+	var data=[{"Time":"2020-06-01 01:35:00","Value":89.5},{"Time":"2020-06-01 01:45:00","Value":44.5},{"Time":"2020-06-01 02:45:34","Value":59.5},{"Time":"2020-06-01 04:47:44","Value":75.5}]
+	decodedatas(data);
+	//  通用属性定义
+    var options = {
+                color: ['#FFFF00', '#FF0000','#00ff00'],//
+                backgroundColor: '#d0d0d0',
+                title : {
+                    text : "趋势图"
+                },
+                tooltip : {
+                    show : false
+                },
+                toolbox : {
+                    show : false
+                },
+                dataZoom: {
+						show: true,
+						start: 0
 					},
-					url: url,
-					type: 'POST',
-					dataType: 'json',
-					contentType: "application/json",
-					data:JSON.stringify(arr_sensors),
-					timeout: 10000,
-					error: function(jqXHR, textStatus, errorThrown) {
-						sessionStorage.errortime++;
-						ajaxLoadingHidden();
-						decodedatas([]);//20200214,传一个空数组
-						//myChart.hideLoading();
-						if (errorThrown == "Unauthorized") {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败',info_showtime);
-						} else {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败',info_showtime);
-						}
-						if(sessionStorage.errortime>3){
-							sessionStorage.islogin=false;
-							sessionStorage.errortime=0;
-						}
+					legend: {
+						//data: lengenddata,
+						orient:"horizontal",//"vertical",
+						x:'left',
+						y:'30',
+						//color: 'white',
 					},
-					success: function(data, status) {
-						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-						ajaxLoadingHidden();
-						if (status == "success") {
-							sessionStorage.errortime = 0;
-							sessionStorage.islogin = true;
-							if (data.Error == null) {
-								if (!jQuery.isEmptyObject(data.Result.Datas)) {
-									decodedatas( data.Result.Datas,apt,atitle);
-								} else {
-									layer.alert("没有符合条件的记录",info_showtime);
-									decodedatas([]);//20200214,传一个空数组
-								}
-							} else {
-								decodedatas([]);//20200214,传一个空数组
-								layer.alert(data.Error,info_showtime);
-							}
-						}
-					}
-				});
-			} else {
-				Alert("用户未登录，您无权完成此次操作", info_showtime);
-			}
-		}
-	//动态添加的元素注册添加点击事件
-	$(document).on("click",".check_box",function(event){
-		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
-		//获取多选列表的所有选项内容。
-		
-		//勾选的项
-		var $selectTextDom=$(this).parent().parent().parent("ul").siblings("label").children(".select_text");
-		//勾选项的值
-		//var $selectValDom=$(this).parent().parent().parent("ul").siblings(".select_val");
-		//是否有选择项了
-		var isSelected=$selectTextDom[0].getAttribute("data-is-select");
-		var selectText="";//文本值，用于显示
-		//var selectVal=$selectValDom.val();//实际值，会提交到后台的
-		var selected_text=$(this).siblings("span").text();//当次勾选的文本值
-		var selected_val=$(this).val();//当次勾选的实际值
-		//判断是否选择过
-		if(isSelected=="true"){
-			selectText=$selectTextDom.val();
-		}
-		if(selectText!=""){
-			if(selectText.indexOf(selected_text)>=0){//判断是否已经勾选过
-				selectText=selectText.replace(selected_text,"").replace(";;",";");//替换掉
-				//selectVal=selectVal.replace(selected_val,"").replace(",,",",");//替换掉
-				//判断最后一个字符是否是分号
-				if(selectText.charAt(selectText.length - 1)==";"){
-					//去除末尾分号
-					selectText=selectText.substring(0,selectText.length - 1);
-					//selectVal=selectVal.substring(0,selectVal.length - 1);
-				}
-				//判断第一个字符是否是分号，是的话去掉。
-				if(selectText.charAt(0)==";"){
-					selectText=selectText.substring(1);
-				}
+            };
+        //创建折线图
+        function createLineChart(dataArray){
+        var pa=[];
+        for(var i=0;i<dataArray.length;i++){
+            pa.push([strtodatetime(dataArray[i].time),dataArray[i].value,i+1]);
+        }
+        options = {
+        xAxis : [
+            {
+                type : 'time',
+                //boundaryGap : false,
+                //data : timeArray,//['第一种','第二种','第三种']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name:'成交',
+                type:'line',
+                //smooth:true,
+                //itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data:pa,//dataArray
+             }
+            ]
+        };
+    }
+        function createChart(chartKind,dataArray){
+            if (chartKind=='line') {
+                doCreatChart(createLineChart(dataArray));
+            };
+            if (chartKind=='bar') {
+                doCreatChart(createBarChart(dataArray));
+            };
+            if (chartKind=='pie') {
+                doCreatChart(createPieChart(dataArray));
+            };
+        }
+
+        function doCreatChart(specificChartFunction){
+
+            /*require(
+            ['echarts','echarts/theme/macarons','echarts/chart/line',
+            'echarts/chart/bar','echarts/chart/pie'
+            ],*/
+            //function(ec,theme){
+            myChart =echarts.init(document.getElementById('main'));
+            //myChart.showLoading({
+            //    text : "图表数据正在努力加载..."
+            //});
+            specificChartFunction;
+            myChart.setOption(options); //先把可选项注入myChart中
+            //myChart.hideLoading();
+            //}
+        //);
+        }
+        function strtodatetime(str) {
+            var year = str.substring(0, 4);
+            var month = str.substring(5, 7);
+            var day = str.substring(8, 10);
+            var hour = str.substring(11, 13);
+            var minute = str.substring(14, 16);
+            var sencond = str.substr(17);
+            return new Date(year, month - 1, day, hour, minute, sencond);
+        }
+        function decodedatas(obj_data){
+			kssj="2020-06-01 01:00:01",jssj="2020-06-01 23:00:02";
+			var count = 0;
+			var maxvalue=0,minvalue=0,avgvalue=0,ps=0,ct=1,maxval=0,minval=0;
+			var stime=new Date(kssj).getTime();
+			var etime=new Date(jssj).getTime();
+			var senconds=etime-stime;
+			var pa = [],pb = [],pc = [];
+			var jiange="";
+			var myChart = echarts.init(document.getElementById('main'));
+			myChart.clear();
+            if(Math.ceil(senconds/1000/60)<=1440){
+				jiange="按小时统计";
+				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].Value);
+				maxval=minval=maxvalue;
+				var strtime=obj_data[0].Time.substr(0,13);
+				var temp=parseInt(strtime.substr(11));
+				jisuan(11,13);
+				avgvalue=(avgvalue/ct);
+				pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
+				pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
+				pc.push([strtodatetime(strtime+":00"),minvalue , ps])
 			}else{
-				selectText+=";"+selected_text;
-				//selectVal+=","+selected_val;
+				jiange="按日统计";
+				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].Value);
+				maxval=minval=maxvalue;
+				var strtime=obj_data[0].Time.substr(0,10);
+				var temp=parseInt(strtime.substr(8));
+				jisuan(8,10);//参数是区日期时间格式串的起始和结束位置的由零算起的索引值。2020-04-16 14:50:10，
+				avgvalue=(avgvalue/ct);
+				pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
+				pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
+				pc.push([strtodatetime(strtime+":00"),minvalue , ps])
 			}
-		}else{
-			selectText=selected_text;
-			//selectVal=selected_val;
-		}
-		$selectTextDom.val(selectText);
-		//$selectValDom.val(selectVal);
-		if(selectText==""){
-			$selectTextDom.text("请选择");
-			$selectTextDom[0].setAttribute("data-is-select","false");
-		}else{
-			$selectTextDom[0].setAttribute("data-is-select","true");
-			sel_str=selectText.split(";")
-			switch(sel_str.length){
-			case 1:
-				ch1.className="col-xs-11 col-sm-11 displaytype1";
-				ch2.setAttribute("style","display:none");
-				ch3.setAttribute("style","display:none");
-				ch4.setAttribute("style","display:none");
-				break;
-			case 2:
-				ch1.className="col-xs-11 col-sm-11 displaytype2";
-				ch2.className="col-xs-11 col-sm-11 displaytype2";
-				ch2.setAttribute("style","display:block");
-				ch3.setAttribute("style","display:none");
-				ch4.setAttribute("style","display:none");
-				break;
-			case 3:
-				ch1.className="col-xs-11 col-sm-5 displaytype2";
-				ch3.className="col-xs-11 col-sm-5 displaytype2";
-				ch3.setAttribute("style","display:block");
-				ch2.className="col-xs-11 col-sm-5 displaytype2";
-				ch2.setAttribute("style","display:block");
-				ch4.setAttribute("style","display:none");
-				break;
-			case 4:
-				ch1.className="col-xs-11 col-sm-5 displaytype2";
-				ch3.className="col-xs-11 col-sm-5 displaytype2";
-				ch3.setAttribute("style","display:block");
-				ch2.className="col-xs-11 col-sm-5 displaytype2";
-				ch2.setAttribute("style","display:block");
-				ch4.className="col-xs-11 col-sm-5 displaytype2";
-				ch4.setAttribute("style","display:block");
-				break;
+    		count =ps+1;//obj_data.length;
+			var lengenddata = [];
+			lengenddata.push("最大值");
+			lengenddata.push("平均值");
+			lengenddata.push("最小值");
+			maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
+			minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
+			drawchart();
+			function drawchart() {
+				//var myChart = echarts.init(document.getElementById('main'));
+				var option = {
+					color: ['#FFFF00', '#FF0000','#00ff00'],//
+					backgroundColor: '#d0d0d0',
+					title : {
+								text : ' 变化趋势图  ',//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+
+								x:"center",
+								//subtext:jiange+"   "+kssj+"——"+jssj,
+								subtextStyle:{
+									color: "#000",
+								}
+							},/**/
+					tooltip: {
+						trigger: 'item',
+						formatter: function(params) {
+							var date = new Date(params.value[0]);
+							data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' +
+							 date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+							return data + '<br/>' + params.value[1];
+						}
+					},
+					toolbox: {
+						show: true,
+						feature: {
+							mark: {
+								show: true
+							},
+							dataView: {
+								show: true,
+								readOnly: false
+							},
+							magicType: {
+								show: true,
+								type: ['line']
+							},
+							//, 'bar', 'stack', 'tiled'
+							restore: {
+								show: true
+							},
+							saveAsImage: {
+								show: true
+							}
+						}
+					},
+					dataZoom: {
+						show: true,
+						start: 0
+					},
+					legend: {
+						data: lengenddata,///////////
+						orient:"horizontal",//"vertical",
+						x:'left',
+						y:'30',
+						//color: 'white',
+					},
+					grid: {
+						y2: 80
+					},
+					xAxis: [{
+						type: 'time',
+						splitNumber: 6,
+						axisLine: {
+							lineStyle: {
+								color: 'black',
+								width: 2
+							},
+							onZero:false
+						}
+					}],
+					yAxis: [{
+						type: 'value',
+						axisLine: {
+							lineStyle: {
+								color: 'black',
+								width: 2
+							}
+						},
+						min:minval,
+						max:maxval,
+					}],
+					series: [/**/{
+						name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
+						type: 'line',
+						showAllSymbol: true,
+						symbolSize: 1,
+						data: pa
+					},
+					{
+						name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
+						type: 'line',
+						showAllSymbol: true,
+						symbolSize: 1,
+						data: pb
+					},
+					{
+						name: lengenddata[2],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"最小值",
+						type: 'line',
+						showAllSymbol: true,
+						symbolSize: 1,
+						data: pc
+					}/**/
+					]
+				};
+				myChart.hideLoading();
+				myChart.setOption(option);
+				myChart.resize;
+			}
+			function jisuan(a1,a2){
+                for (var i = 1; i <obj_data.length; i++) {
+					if(parseInt(obj_data[i].Time.substr(a1,a2))==temp){
+						if(parseFloat(obj_data[i].Value)>maxvalue){
+							maxvalue=parseFloat(obj_data[i].Value);
+						}
+						if(parseFloat(obj_data[i].Value)<minvalue){
+							minvalue=parseFloat(obj_data[i].Value);
+						}
+						if(parseFloat(obj_data[i].Value)>maxval){
+							maxval=parseFloat(obj_data[i].Value);
+						}
+						if(parseFloat(obj_data[i].Value)<minval){
+							minval=parseFloat(obj_data[i].Value);
+						}
+						avgvalue=(parseFloat(avgvalue)+parseFloat(obj_data[i].Value));
+						ct++;
+					}else{
+						avgvalue=(avgvalue/ct);
+						pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
+						pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
+						pc.push([strtodatetime(strtime+":00"),minvalue , ps])
+						maxvalue=minvalue=avgvalue=parseFloat(obj_data[i].Value);
+						strtime=obj_data[i].Time.substr(0,a2);
+						temp=parseInt(strtime.substr(a1));
+						ps++;
+						ct=1;
+					}
+				}
 			}
 		}
-	})
-	</script>
+    </script>
 </body>
 </html>

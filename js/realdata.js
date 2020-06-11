@@ -297,7 +297,7 @@ function decoderealdata(obj_realdata) {
     if (obj_realdata) {
         refresh_tabhead(v_sel);//根据选项刷新表头的显示内容
         var title_len=tab_head.rows[0].cells.length;
-        if(v_sel){//有显示控制选择项时进行如下操作， 20200509 编写，还需测试完善。
+        if(v_sel){//有显示控制选择项时进行如下操作.
             for (var j=0;j<obj_realdata.length;j++) {
                 dname=obj_realdata[j].Name;
                 grouptype=obj_realdata[j].Catalog;
