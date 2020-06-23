@@ -1872,6 +1872,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 	var lengenddata = [];
 	var obj_chartdata=[];
 	var seriess=[];
+	var step=false;
 	var myChart = echarts.init(document.getElementById('chart'+apt));
 	myChart.clear();
 	if(obj_chartdatas.length>0){
@@ -1924,10 +1925,11 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 						minval=minval<minvalue?minval:minvalue;
 					}
 				}
-				series.type='line',
-				series.showAllSymbol=true,
-				series.symbolSize= 1,
-				series.data= pb
+				series.type='line';
+				series.step= step;
+				series.showAllSymbol=true;
+				series.symbolSize= 1;
+				series.data= pb;
 				seriess.push(series);
 			}
 		}
@@ -2108,10 +2110,10 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 			},
 			legend: {//图例
 				data: lengenddata,
-				orient:"horizontal",//"vertical",忍得住孤独，耐得住寂寞，挺得住痛苦，顶得住压力，挡得住诱惑，经得起折腾，受得起打击，丢得起面子，担得起责任，提得起精神。
-				x:'left',//多琢磨事少琢磨人，多向前看少往后看，多当面说少背后议，多换位思考少本位主义，多补台少拆台，多理解少指责，多揽过少争功。
-        		y:'45',//多看多听多想多学习多行动 主动反馈、主动建议、主动协作、主动分项
-				//color: 'white',//不抱怨父母无能，不抱怨父母啰嗦，不抱怨父母抱怨，不抱怨父母迟缓，不抱怨父母生病。
+				orient:"horizontal",//"vertical",
+				x:'left',//
+        		y:'45',//
+				//color: 'white',//
 			},
 			grid: {
 				y2: 80

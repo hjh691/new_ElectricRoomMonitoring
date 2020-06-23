@@ -38,7 +38,6 @@
 				onclick="showcontactus()"/>
 			<input id="nav12" type="button" class="topbar-bigbutton" value="APP下载"
 				style="background:url(res/chilun.jpg) no-repeat center top;" onclick="showdownload()"/>
-			
 			<!--<input type="button"  class="topbar-bigbutton" value="数据浏览" style="background:url(res/sanse.jpg) no-repeat center top;margin-top:10px;"></input>-->
 			<input id="nav13" type="button" class="topbar-bigbutton" value="操作指南"
 				style="background:url(res/bar.jpg) no-repeat center top;" onclick="showhelp()"/>
@@ -139,6 +138,7 @@
 		var sensorsnode=null;
 		var nodes = null, nodeid = -1;
 		sessionStorage.txid=-1;//20200228 初始化一次图形id
+		sessionStorage.nodetype=1;
 		/*$(function(){
 			$(".tab a:last").tab("show");
 		})*/
@@ -269,7 +269,7 @@
 					content.style.height = mheight + "px";
 				}
 			}
-			//initIndex();//窗口尺寸变化时是否重画所有内容。
+			initIndex();//窗口尺寸变化时是否重画所有内容。
 		}
 		window.onresize = window.onscroll = refreshwindow;//  
 		function resetContent() {
@@ -368,6 +368,7 @@
 					$("#tree").treeview('collapseAll')//,nodeid);//关闭展开
 					sessionStorage.name = data.nodeId;
 					if(data.Catalog=="视频监控"){
+						sessionStorage.nodetype=0;//全局变量，用于存储节点类型，来区分要显示的内容（导航栏标题，iframe对应的html页，历史数据变化趋势的取值等）
 						maps = [];
 						infotreedata = [];
 						infotreeobj = {};
@@ -393,8 +394,9 @@
 							nodeid = data.nodeId;
 						}
 						//document.getElementById("iframe_main").src="http://192.168.10.164";
-						updatanav(0);
+						updatanav(sessionStorage.nodetype);
 					}else if ((data.Catalog =="测温" )||(data.Catalog=="局部放电")||(data.Catalog=="局放")) {
+						sessionStorage.nodetype=1;
 						maps = [];
 						infotreedata = [];
 						infotreeobj = {};
@@ -420,8 +422,9 @@
 							nodeid = data.nodeId;
 						}
 						//iframe_main.window.num=0;
-						updatanav(1);
+						updatanav(sessionStorage.nodetype);
 					} else if(data.Catalog=="机房监控"){//20200304
+						sessionStorage.nodetype=2;
 						var p_node = getThe_level_nodeid(data, 2);
 						if (data.nodeId != nodeid && data.level <= 2) {
 							localStorage.setItem("sensors", null);
@@ -466,7 +469,7 @@
 							infotreeobj.value = 0;
 						}
 						infotreedata.push(infotreeobj);
-						updatanav(2);
+						updatanav(sessionStorage.nodetype);
 					} else {
 						//updatanav(1);
 						//sessionStorage.SensorId = data.id;
@@ -514,7 +517,7 @@
 							infotreeobj.value = 0;
 						}
 						infotreedata.push(infotreeobj);
-						updatanav(1);
+						updatanav(sessionStorage.nodetype);
 					}
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 						p_node = getThe_level_nodeid(data, i);
@@ -611,17 +614,19 @@
 			GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
 			GetBinariesByType("NodeGraphic", infotreeobj.id);
 			if(firstNode.Catalog=="视频监控"){
-				updatanav(0);
+				sessionStorage.nodetype=0;
+				updatanav(sessionStorage.nodetype);
 			}else if(firstNode.Catalog=="机房监控"){
-				updatanav(2);
-			}else{updatanav(1);}
+				sessionStorage.nodetype=2;
+				updatanav(sessionStorage.nodetype);
+			}else{updatanav(sessionStorage.nodetype);}
 			//setTimeout(function(){if(sessionStorage.pageindex==0){
 			//	document.getElementById("iframe_main").src="infototal.html";
 			//}},3000);
 		}
-		//更新导航栏信息（主要用于区分视频监控与其他子系统的的操作信息
+		//更新导航栏信息（主要用于区分视频监控、机房监控与其他子系统的的操作信息
 		function updatanav(type){
-			switch(type){
+			switch(type*1){//使用变量后参数变为字符串型，需转换成数值型；或者在case语句中使用"0"来代替0。否则不匹配。
 				case 0:
 				document.getElementById("li_realdata").style.display="none"
 				document.getElementById("li_historydata").style.display="none";
@@ -657,7 +662,7 @@
 					document.getElementById("li_historystate").style.display="inline";
 					document.getElementById("li_historydata").style.display="none";
 					document.getElementById("li_warnlog").style.display="inline"
-					document.getElementById("li_historychart").style.display="inline";
+					document.getElementById("li_historychart").style.display="none";
 					document.getElementById("li_preview").style.display="none";
 					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==2)){
 						sessionStorage.pageindex=10;
@@ -668,7 +673,7 @@
 				break;
 			}
 		}
-		function showpage(pid){
+		function showpage(pid){//调试用显示不同的页面，正常只有0值。
 			updatapcnav(10);
 			switch(pid){
 				case 0:
@@ -889,16 +894,6 @@
 			sessionStorage.pageindex=8;
 			document.getElementById("iframe_main").src="video.html";
 		}
-		function loaddata(mdata) {
-			if ((mdata.text === "保定") || (mdata.text == "测温")) {
-				document.getElementById("realstate").style.display = "inline";
-			} else {
-				document.getElementById("realstate").style.display = "none";
-			}
-		}
-		function reloadDataGrid() {
-			isfree = "true";
-		}
 		//获取指定节点的图形列表
 		function GetBinariesByType(atype, anodeid) {
 			//var url = jfjk_base_config.baseurl + "/GetBinariesByType?type=" + atype + "&typeid=" + anodeid;//GetSensorsByNode?nodeId
@@ -984,6 +979,7 @@
 						sessionStorage.errortime++;
 						isfree = "true";
 						localStorage.setItem("sensors", null);
+						localStorage.setItem("Configs",null);
 						refreshiframe();
 						if(sessionStorage.errortime>3){
 							sessionStorage.islogin=false;
@@ -1016,11 +1012,19 @@
 									refreshiframe();
 								} else {
 									localStorage.setItem("sensors", null);
+									if(!jQuery.isEmptyObject(result.Configs)){//20200428 add
+										var configs=new Object();
+										configs=data.Result.Configs;
+										localStorage.setItem("Configs",JSON.stringify(configs));
+									}else{
+										localStorage.setItem("Configs",null);
+									}
 									sessionStorage.islogin = true;
 									refreshiframe();
 								}
 							} else {
 								localStorage.setItem("sensors", null);
+								localStorage.setItem("Configs",null);
 								layer.alert(data.Error);
 								sessionStorage.islogin = true;
 								refreshiframe();
@@ -1476,3 +1480,7 @@
 	</script>
 </body>
 </html>
+<!--1 sessionStorage.nodetype 节点类型，控制页面显示响应的内容和操作，原来导航栏的更新参数为直接的数值，采用此变量后自动变成字符串型，
+	在判断时需先行转换成数值型，或者采用字符串的对比方式。否则不能正确匹配。
+  2 去掉机房监控系统下的多点趋势对比
+  3 在获取指定节点的标签返回为空或异常时，系统保存的配置项数据及时复位更新的-->

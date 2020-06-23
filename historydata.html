@@ -44,7 +44,6 @@
 		<div class="pagecard" id="pagecard1" style="display: none;">
 			<p style="text-align:center;font-size:20px;" ><b>历史数据</b></p>
 		</div>
-		
 		<div class="panel panel-default" style="height:80px;overflow:auto;margin-bottom: 0;" >
 			<span id="sensor_select" class="condition ">
 				<label>计量点名称</label>
@@ -53,7 +52,6 @@
 				onclick="refreshsensorslist()" ></a>
 			</span>
 			<span id="display_type"class="btn-group"  data-toggle="buttons">
-				
 			</span>
 			<div class="condition " >
 			<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
@@ -119,7 +117,7 @@
 		var sensors;
 		var isfirst=true;
 		var sel_sensor=document.getElementById("jcdd");
-		var type="";
+		var type="",step=true;
 		var jssj=getCurrentDate(2);
 		var catalog="",dname="";
 		var configs,scatalog;
@@ -332,22 +330,23 @@
 				document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
 				return;
 			}
-			/*if(Math.ceil(senconds/1000/60)<1430){
+			if(sessionStorage.nodetype==2){//Math.ceil(senconds/1000/60)<1430//如果是机房监控，则显示所有数据，并使图形显示为阶梯图，表示开关状态。
+				step='end';
 				for (var i = 0; i <obj_data.length; i++) {
 					var tr = document.createElement('tr');
 					if (i % 2 == 0) {
 						tr.setAttribute('style', "background-color:#16b9c9");
 					}
 					var tdname = document.createElement('td');
-					tdname.setAttribute('class', 'seneorname');
+					tdname.className="seneorname";// setAttribute('class', 'seneorname');
 					var tdtime = document.createElement('td');
-					tdtime.setAttribute('class', 'time');
+					tdtime.className="time";// setAttribute('class', 'time');
 					var tdvalue1 = document.createElement('td');
-					tdvalue1.setAttribute('class', 'value1'); //给单元格添加类名属性
+					tdvalue1.className="value1";// setAttribute('class', 'value1'); //给单元格添加类名属性
 					var tdvalue2 = document.createElement('td');
-					tdvalue2.setAttribute('class', 'value2');
+					tdvalue2.className="value2";// setAttribute('class', 'value2');
 					var tdvalue3=document.createElement("td");
-					tdvalue3.setAttribute("class",'value3');
+					tdvalue3.className="value3";// setAttribute("class",'value3');
 					tdname.innerHTML=sessionStorage.SensorName;
 					tdvalue1.innerHTML = obj_data[i].Value;
 					//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
@@ -359,11 +358,16 @@
 					tr.appendChild(tdvalue1);
 					tr.appendChild(tdvalue2);
 					tr.appendChild(tdvalue3);
-					var tbody = document.getElementById('historydata-tbody'); Terra cotta warriors.
+					var tbody = document.getElementById('historydata-tbody');
 					tbody.appendChild(tr);
+					pa.push([strtodatetime(strtime+":00"), obj_data[i].Value, ps]);
+					pb.push([strtodatetime(strtime+":00"), obj_data[i].Value, ps]);
+					pc.push([strtodatetime(strtime+":00"),obj_data[i].Value , ps]);
+					ps++;
 				}
-				ps=obj_data.length;
-			}else */if(Math.ceil(senconds/1000/60)<=1440){
+				//ps=obj_data.length;
+			}else /**/if(Math.ceil(senconds/1000/60)<=1440){
+				step=false;
 				jiange="按小时统计";
 				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].Value);
 				maxval=minval=maxvalue;
@@ -469,6 +473,7 @@
 				pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
 				pc.push([strtodatetime(strtime+":00"),minvalue , ps])
 			}else{
+				step=false;
 				jiange="按日统计";
 				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].Value);
 				maxval=minval=maxvalue;
@@ -669,10 +674,11 @@
 						},
 						min:minval,
 						max:maxval,
-					}],
-					series: [/**/{
+					}],/**/
+					series: [{
 						name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
 						type: 'line',
+						step: step,
 						showAllSymbol: true,
 						symbolSize: 1,
 						data: pa
@@ -680,6 +686,7 @@
 					{
 						name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
 						type: 'line',
+						step: step,
 						showAllSymbol: true,
 						symbolSize: 1,
 						data: pb
@@ -687,12 +694,13 @@
 					{
 						name: lengenddata[2],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"最小值",
 						type: 'line',
+						step: step,
 						showAllSymbol: true,
 						symbolSize: 1,
 						data: pc
-					}/**/
+					}
 					]
-				};
+				};/**/
 				myChart.hideLoading();
 				myChart.setOption(option);
 				myChart.resize;

@@ -21,6 +21,7 @@
     <script type="text/javascript" src="js/bootstrap.js" ></script>
     <script  type="text/javascript" src="js/config.js"></script>
     <script  type="text/javascript" src="js/layer/layer.js"></script>
+    <script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
     <script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
     <script type="text/javascript" src="js/echarts.js"></script>
     <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
@@ -37,7 +38,7 @@
                 </div>
             </div>
             <div class="col-xs-8 col-md-9 col-lg-10" style="border:rgb(90, 89, 89) solid 1px;;height: 100%;">
-                <div style="height:40px;overflow:auto;">
+                <div style="height:45px;overflow:auto;margin-top:5px;">
                     <div class="rowlay" style="text-align: left;background:white;">
                         <span ><label><input type="radio" value="0" onclick="seltime(this)" name="timeselect" ></input>当天</label> </span>
                         <span ><label><input type="radio" value="1" onclick="seltime(this)" name="timeselect"></input>昨天</label></span>
@@ -49,13 +50,17 @@
                         <input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_historystate"></input><label style="margin-left: 5px;"> 至</label>
                         <input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_historystate"></input>
                         <input class="button" type="button" id="chaxun_historystate" value="查询" onclick="queryhistorystate()"></input></span>
+                        <span id="display_type"class="btn-group"  data-toggle="buttons" style="float: right;right:50px">
+                            <lable class="btn btn-primary active"><input class="catalog" type="radio" name="options" value="Name_p" >abc</lable>
+                            <label class="btn btn-primary"><input class="catalog" type="radio" name="options" value="Name_q" >dfg</label>
+                        </span>
                     </div>
                 </div>
                 <div class="parent" style="text-align: center;">
                     <div class="charttab-head" id="state_tab_head" style="height: 40px">
                         <div id="h3" class=" selected btn-primary" onclick="changetype();" style="width:100px;" title="切换到数据列表">数据列表</div>
                     </div>
-                    <div class="column" align="center" id="state_his_list" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;">
+                    <div class="column" align="center" id="state_his_list" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;display: none;">
                         <table id="state_his_table" width="800px"  >
                             <caption id="state_his_caption" style="text-align:center;font-size:18px;"></caption>
                             <tr>
@@ -83,20 +88,36 @@
                         </table>
                     </div>
                     <div class="column"  id="state_his_main" align="center" 
-                        style="height:500px;width:800px;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;margin: 20px;display: none;"></div>
+                        style="height:500px;width:800px;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;margin: 20px;"></div>
                     </div>
             </div>
         </div>
     </div>
     <script type="text/javascript" src="js/function.js"></script><!---->
     <script>
-        initpage();
+        var sensors;
+        var arr_data=[];
+        var data;
+        var catalog="",dname="";
+        $(function () {
+			initpage();
+			$(".btn").click(function(){
+				$(this).button('toggle');
+				dname= $(".catalog:checked").val();
+				//catalog=getcatalog(dname);
+				gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
+			});
+			
+		});
         function initpage(){
-            updatapcnav(15);
+            //updatapcnav(15);
             var asessor=(parent.sensorsnode);
             var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
             var treenode=buildnode(treeseneors,0);
             inittreeview(treenode);
+            sensors=JSON.parse(localStorage.getItem("sensors"));
+			//configs=JSON.parse(localStorage.Configs);
+            appenddisplaytype();
             var parentid=-100,parentname="";
 			var maps=[];
 			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
@@ -106,42 +127,17 @@
         }
         function inittreeview(anodes) {
             $('#tree_chi').treeview({
-				data: anodes,    // 数据源
+				data: anodes,    // 数据源  qirenyoutian yiqingyingxiang  zhuangxiubushun  yijianbutongyi  haizixuexiburangrenfangxin 
 				showCheckbox: false,   //是否显示复选框
 				highlightSelected: true,    //是否高亮选中
 				nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
-				//nodeIcon: 'glyphicon glyphicon-lock',
+				//nodeIcon: 'glyphicon glyphicon-lock',//
 				emptyIcon: '',    //没有子节点的节点图标
 				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象
 				multiSelect: false,    //多选
 				searchResultColor: "black",
 				//color: "", //所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
 				backColor: "#adf7b8", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
-				//borderColor: "#000000", //边框颜色。如果不想要可见的边框，则可以设置showBorder为false。        String
-				//nodeIcon: "glyphicon glyphicon-stop", //所有节点的默认图标
-				//checkedIcon: "glyphicon glyphicon-check", //节点被选中时显示的图标         String
-				//collapseIcon: "glyphicon glyphicon-minus", //节点被折叠时显示的图标        String
-				//expandIcon: "glyphicon glyphicon-plus", //节点展开时显示的图标        String
-				//emptyIcon: "glyphicon", //当节点没有子节点的时候显示的图标              String
-				//enableLinks: false, //是否将节点文本呈现为超链接。前提是在每个节点基础上，必须在数据结构中提供href值。        Boolean
-				//highlightSearchResults: true, //是否高亮显示被选中的节点        Boolean
-				//levels: 2, //设置整棵树的层级数  Integer
-				//multiSelect: false, //是否可以同时选择多个节点      Boolean
-				//onhoverColor: "#F5F5F5", //光标停在节点上激活的默认背景色      String
-				//selectedIcon: "glyphicon glyphicon-stop", //节点被选中时显示的图标     String
-				//searchResultBackColor: "", //当节点被选中时的背景色
-				//searchResultColor: "", //当节点被选中时的前景色
-				//selectedBackColor: "", //当节点被选中时的背景色
-				//selectedColor: "#FFFFFF", //当节点被选中时的前景色
-				//showBorder: true, //是否在节点周围显示边框
-				//showCheckbox: false, //是否在节点上显示复选框
-				//showIcon: true, //是否显示节点图标
-				//showTags: false, //是否显示每个节点右侧的标记。前提是这个标记必须在每个节点基础上提供数据结构中的值。
-				//uncheckedIcon: "glyphicon glyphicon-unchecked", //未选中的复选框时显示的图标，可以与showCheckbox一起使用
-				//onNodeChecked: function (event,data) {
-				//	console.log("nodeId = "+data.nodeId);
-				//	console.log("id = "+data.id);
-				//},
 				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
 					//var selectnode=$("#tree_chi").treeview('getSelected');
 					$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开
@@ -151,6 +147,11 @@
 						$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 					}
                     $("#tree_chi").treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
+                    sessionStorage.SensorId=data.id
+                    appenddisplaytype();
+                    sessionStorage. SensorName=data.text;
+                    //catalog=getcatalog(dname);
+                    queryhistorystate();
                     //对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO Something。
                     ////if(data.text=="门禁"){
                     //    document.getElementById("tree_chi").style.height="50%";
@@ -175,8 +176,6 @@
 			//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
 			$('#tree_chi').treeview('selectNode', [firstNode, { silent: true }]);
 			//$("#tree_chi").treeview("selectNode", firstNode);//将第一个节点设置为选中状态*/**/
-			//获取指定node的sensors
-			//GetSensorsByNode(sessionStorage.nodeid);
 			//infotreeobj.isload="false";
 			/*if ((firstNode.hasOwnProperty("nodes")) && (firstNode.nodes.length > 0) && (firstNode.level < 2)) {
 				infotreeobj.children = decode(firstNode.nodes);
@@ -202,13 +201,39 @@
                 return anode;
             }
         }
+        function appenddisplaytype(element_id,time){
+			if((sessionStorage.SensorId>=0)&&(sensors)){
+				for(var k=0;k<sensors.length;k++){//由标签id在所有的标签列表中找到对应的配置项（大项）
+					if(sensors[k].Value.Id==sessionStorage.SensorId){
+						scatalog=sensors[k].Value.Catalog;//读取对应的Catalog项
+						break;
+					}
+				}
+				if((configs)&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有所需要的大项catalog项
+					var s_des=configs[scatalog]//如果有，读取其所有配置项细节
+					for(var p in s_des){
+						var lab=document.createElement("label");
+						if(p==0){
+							dname=s_des[p].Name;
+							catalog=s_des[p].Catalog;
+							lab.className="btn btn-primary active";
+						}else{
+							lab.className="btn btn-primary";
+						}
+						lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
+						//lab.innerHTML=s_des[p].Desc;
+						document.getElementById("display_type").appendChild(lab);
+					}
+				}
+			}
+		}
         function seltime(obj){
             //var sel=document.getElementById("jcdd");
             sessionStorage.timeindex=$('input[name="timeselect"]:checked').val();//obj.value*1;
             var oneday=1000*60*60*24;
             var today = new Date();
             var ckssj,cjssj,ttime;
-            var timedefine=document.getElementById("timedefine");//guojiguanxixueefshenglinqijing
+            var timedefine=document.getElementById("timedefine");//
             //document.getElementById("count_val").innerHTML="";
             switch(obj.value*1){
                 case 0:
@@ -227,8 +252,8 @@
                     cjssj=new Date((getCurrentDate(1)+" 23:59:59").replace(/-/g,"/"));
                     var yesterdayend=cjssj-oneday;
                     sessionStorage.jssj=dateToString(new Date(yesterdayend),2);
-                    //$("#warnlogdata-tbody tr").empty();//year month day  hour minute second week bowl nephew 
-                    //layer.alert("没有符合条件的记录",info_showtime);//January Feburay March April May June July August September October November December
+                    //$("#warnlogdata-tbody tr").empty();//
+                    //layer.alert("没有符合条件的记录",info_showtime);//
                     break;
                 case 2:
                     //sel.style.display="";
@@ -236,7 +261,6 @@
                     ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
                     sessionStorage.kssj=dateToString(new Date(ckssj.setDate(1)),2);
                     sessionStorage.jssj=getCurrentDate(2);
-
                     break;
                 case 3:
                     //sel.style.display="";
@@ -268,14 +292,14 @@
 			if(title.innerText=="数据列表"){
 				document.getElementById("state_his_list").style.display="";
 				document.getElementById("state_his_main").style.display="none";
-				title.title="切换到趋势图页面"
+				title.title="切换到趋势图页面";
                 title.innerText="趋势图";
                 
 			}else if(title.innerText=="趋势图"){
 				document.getElementById("state_his_list").style.display="none";
 				document.getElementById("state_his_main").style.display="";
 				title.innerText="数据列表";
-                title.title="切换到数据列表页面"
+                title.title="切换到数据列表页面";
 			}
         }
         function buildnode(data, level) {
@@ -339,7 +363,7 @@
 							icon = "glyphicon glyphicon-tint";//
 					}
 					if (level == 0) {
-						icon = "glyphicon glyphicon-home"
+						icon = "glyphicon glyphicon-home";
 					}
 					anodes.icon = icon;
 					//var chi_len = data[j].Children.length;
@@ -352,6 +376,7 @@
             return tree;
         }
         function queryhistorystate(){
+            arr_data=[];
             var tb=document.getElementById("historystate-tbody");
             var tableLength = tb.rows.length;
             for (var int = 0; int < tableLength; int++) {
@@ -359,6 +384,7 @@
 			}
             var kssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
             for(var i=0;i<11;i++){
+                data=new Object();
                 var tr=document.createElement("tr");
                 var tdtime=document.createElement("td");
                 kssj.setMinutes(i*5);
@@ -373,8 +399,218 @@
                 var tdnote=document.createElement("td");
                 tr.appendChild(tdnote);
                 tb.appendChild(tr);
+                data.Time=dateToString(new Date(kssj),2);
+                data.Name=sessionStorage.SensorName;
+                if(i%3==0){
+                    data.Value=0;
+                }else{
+                    data.Value=1;
+                }
+                arr_data.push(data);
             }
+            decodedatas(arr_data);
         }
+        function decodedatas(obj_data){
+            var count = 0;
+			var maxvalue=0,minvalue=0,avgvalue=0,ps=0,ct=1,maxval=0,minval=0;
+			var stime=new Date(sessionStorage.kssj).getTime();
+			var etime=new Date(sessionStorage.jssj).getTime();
+			var senconds=etime-stime;
+			var pa = [],pb = [],pc = [];
+			var jiange="";
+			var myChart = echarts.init(document.getElementById('state_his_main'));
+			myChart.clear();
+			//$("#historydata-tbody tr").empty();
+			var tbl = document.getElementById('historystate-tbody');
+			var tableLength = tbl.rows.length;
+			for (var int = 0; int < tableLength; int++) {
+				tbl.deleteRow(0);
+			}
+			//数据以表格行的形式添加进table中，其实现隔行颜色区分。
+			if((obj_data==null)||(obj_data.length<=0)){
+				//document.getElementById('count_val').innerHTML = count + "条";
+				//document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
+				return;
+			}
+            step='end';
+            maxval=minval=obj_data[0].Value;
+            for (var i = 0; i <obj_data.length; i++) {
+                
+                if(parseFloat(obj_data[i].Value)>maxval){
+                    maxval=parseFloat(obj_data[i].Value);
+                }
+                if(parseFloat(obj_data[i].Value)<minval){
+                    minval=parseFloat(obj_data[i].Value);
+                }
+                var tr = document.createElement('tr');
+                tr.setAttribute("onclick","tableclick(this)");
+                if (i % 2 == 1) {
+                    tr.setAttribute('style', "background-color:#87CEFA");
+                }
+                var tdname = document.createElement('td');
+                tdname.className="sensorname";// setAttribute('class', 'sensorname');
+                var tdtime = document.createElement('td');
+                tdtime.className="time";// setAttribute('class', 'time');
+                var tdvalue1 = document.createElement('td');
+                tdvalue1.className="value1";// setAttribute('class', 'value1'); //给单元格添加类名属性
+                var tdvalue2 = document.createElement('td');
+                tdvalue2.className="value2";// setAttribute('class', 'value2');
+                var tdvalue3=document.createElement("td");
+                tdvalue3.className="value3";// setAttribute("class",'value3');
+                tdname.innerHTML=sessionStorage.SensorName;
+                tdvalue1.innerHTML = obj_data[i].Value;
+                //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
+                tdtime.innerHTML = obj_data[i].Time; //jsonObject[i].color;
+                //tdvalue2.innerHTML = obj_data[i].Value;
+                //tdvalue3.innerHTML= obj_data[i].Value;
+                //tr.appendChild(tdname);
+                tr.appendChild(tdtime);
+                tr.appendChild(tdvalue1);
+                tr.appendChild(tdvalue2);
+                tr.appendChild(tdvalue3);
+                var tbody = document.getElementById('historystate-tbody');
+                tbody.appendChild(tr);
+                pa.push([strtodatetime(obj_data[i].Time), obj_data[i].Value, ps]);
+                //pb.push([strtodatetime(strtime+":00"), obj_data[i].Value, ps]);
+                //pc.push([strtodatetime(strtime+":00"),obj_data[i].Value , ps]);
+                ps++;
+            }
+            //表标题
+			document.getElementById("state_jcd_name").innerHTML=sessionStorage.SensorName;
+			document.getElementById("state_tongji_time").innerHTML=sessionStorage.kssj+"—"+sessionStorage.jssj;
+			document.getElementById("state_his_caption").innerHTML=jiange+"报表";
+			//count =ps+1;//obj_data.length;
+			//document.getElementById('count_val').innerHTML ="<span class='badge' style='font-size:18px'>"+ count + "条";
+			//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
+			//document.getElementById('normal_count').innerHTML = "<span class='badge' style='font-size:18px'>"+sessionStorage.SensorName;
+			var lengenddata = [];
+			lengenddata.push("最大值");
+			lengenddata.push("平均值");
+            lengenddata.push("最小值");
+            if(maxval==minval){
+                maxval=1.5*maxval;
+                minval=0.5*minval;
+            }
+			maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
+			minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
+			drawchart();
+			function drawchart() {
+				//var myChart = echarts.init(document.getElementById('main'));
+				var option = {
+					color: ['#FF7F00', '#FF0000','#00ff00'],//
+					backgroundColor: '#d0d0d0',
+					title : {
+								text : sessionStorage.SensorName+" 变化趋势图",//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+' 变化趋势图  ',
+								x:"center",
+								subtext:jiange+"   "+sessionStorage.kssj+"——"+sessionStorage.jssj,
+								subtextStyle:{
+									color: "#000",
+								}
+							},/**/
+					tooltip: {
+						trigger: 'item',
+						formatter: function(params) {
+							var date = new Date(params.value[0]);
+							data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' +
+							 date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+							return data + '<br/>' + params.value[1];
+						}
+					},
+					toolbox: {
+						show: true,
+						feature: {
+							mark: {
+								show: true,
+							},
+							dataView: {
+								show: true,
+								readOnly: false,
+							},
+							magicType: {
+								show: true,
+								type: ['line'],
+							},
+							//, 'bar', 'stack', 'tiled'
+							restore: {
+								show: true,
+							},
+							saveAsImage: {
+								show: true,
+							}
+						},
+					},
+					dataZoom: {
+						show: true,
+						start: 0,
+					},
+					legend: {
+						data: lengenddata,
+						orient:"horizontal",//"vertical",
+						x:'left',
+						y:'30',
+						//color: 'white',
+					},
+					grid: {
+						y2: 80,
+					},
+					xAxis: [{
+						type: 'time',
+						splitNumber: 10,
+						axisLine: {
+							lineStyle: {
+								color: 'black',
+								width: 2,
+							},
+							onZero:false,
+						},
+					}],
+					yAxis: [{
+						type: 'value',
+						axisLine: {
+							lineStyle: {
+								color: 'black',
+								width: 2,
+							},
+						},
+						min:minval,
+						max:maxval,
+					}],
+					series: [{
+						name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
+						type: 'line',
+						step: step,
+						showAllSymbol: true,
+						symbolSize: 1,
+						data: pa
+					}/*,
+					{
+						name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
+						type: 'line',
+						step: step,
+						showAllSymbol: true,
+						symbolSize: 1,
+						data: pb
+					},
+					{
+						name: lengenddata[2],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"最小值",
+						type: 'line',
+						step: step,
+						showAllSymbol: true,
+						symbolSize: 1,
+						data: pc
+					}*/
+					]
+				};/**/
+				myChart.hideLoading();
+				myChart.setOption(option);
+				myChart.resize;
+			}
+        }
+        function tableclick(tr){
+			$(tr).siblings().css("background","");
+			$(tr).css("background",color_table_cur);//区分选中行
+		}
     </script>
 </body>
 </html>
+<!--历史数据报表表头内容（标签名称和统计时间段），返回为空时的处理（非空非零未定义的判断处理),配置项的匹配取值，圆形进度条插件的引入，-->

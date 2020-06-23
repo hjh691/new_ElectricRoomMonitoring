@@ -1,12 +1,13 @@
 //var t1 = window.setInterval("getrealdatabystation(1);",30000);
 //getrealdatabynodeid(-1);
+//当没有数据返回时更新页面造成报某变量未定义的问题value0.
 var chart_type = "", chart_unit = "", chart_max = 100, chart_min = 0, chart_sigle = "", is_have = false;
 var start_angle = 0, end_angle = 180;
 var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
 var sname,sid,type_td,title_index=3;
 let isfirst = "true";
-var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0;
+var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0;//value0未定义错误
 var colors = [];
 var pageSize = 100;    //每页显示的记录条数
 var curPage = 0;        //当前页
@@ -45,12 +46,11 @@ function initpage() {
         }
         var i = 0;
         w1.onmessage = function (event) {
-            //document.getElementById("result").innerHTML = event.data;
+            //document.getElementById("result").innerHTML = event.data;travel
             i++
             if (i % 60 == 0) {
                 //getrealdatabynodeid(-1);
                 decoderealdata();
-                //getrealdatabynodeid(0);
             }
         };
     } else {
@@ -491,7 +491,7 @@ function decoderealdata(obj_realdata) {
                 //value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
                 var heightpx = $("#realdata-tbody tr").height() + 1;//加1是网格线的宽度
                 var ppt = +sessionStorage.t_p;
-                $("#realdata-tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行
+                $("#realdata-tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行张丽欣
                 $table.rows[ppt].style.backgroundColor = color_table_cur;
                 if (isfirst != true) {
                     var temp_option = myChart2.getOption();
@@ -515,7 +515,7 @@ function decoderealdata(obj_realdata) {
                             maxvalue = value0;
                             option.series[0].data[0].value = maxvalue;
                             option.series[1].data[0].value = value0;
-                            //myChart.setOption(option);
+                            //myChart.setOption(option);//
                         }
                         refreshData();
                     }

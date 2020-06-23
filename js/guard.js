@@ -4,14 +4,14 @@ function guard_changestated(obj,eId){
         obj.src="res/open.png";
         if(em!=null){
             em.className="unenabled";
-            em.innerHTML="关闭";
+            em.innerHTML="关门";
         }
         document.getElementById("info_"+eId).innerHTML="正常关闭";
     }else{
         obj.src="res/close.png";
         if(em!=null){
             em.className="normal";
-            em.innerHTML="打开";
+            em.innerHTML="开门";
         }
         document.getElementById("info_"+eId).innerHTML="正常打开";
     }
@@ -41,10 +41,10 @@ function createline(id,name,state,info){
     epname.innerHTML=name;
     ediv.appendChild(epname);
     var epstate=document.createElement("td");
-    if(state=="开启"){
+    if(state=="开门"){
         epstate.className="normal";
         filename="'res/open.png'";
-    }else if(state=="关闭"){
+    }else if(state=="关门"){
         epstate.className="normal";
         filename="'res/close.png'";
     }else if(state=="告警"){
@@ -69,7 +69,7 @@ function createline(id,name,state,info){
     ediv.appendChild(epother);
     return ediv;
 }
-document.getElementById("guard_tbody").appendChild(createline("door3","name3","关闭","正常关闭"));
+document.getElementById("guard_tbody").appendChild(createline("door3","name3","关门","正常关闭"));
 
 function guard_other(obj,eid){
     document.getElementById("guard_fudong").style.left=(obj.parentElement.parentElement.offsetParent.offsetLeft+obj.parentElement.parentElement.offsetWidth)+"px";
