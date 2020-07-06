@@ -31,7 +31,7 @@
     <div class="container" style="height:700px;">
         <div class="row" style="height:100%;">
             <div class="col-xs-4 col-md-3 col-lg-2" style="border: rgb(90, 89, 89) solid 1px;height: 100%;">
-                <div><label style="font-size:16px">设备列表:</label></div>
+                <div><label style="font-size:16px">设备(标签)列表:</label></div>
                 <div class="leftmenu" id="leftmenu" style="width: 100%;border: rgb(90, 89, 89) solid 0px;background-color: #adf7b8;height:90%">
                     <div class="tree " id="tree_chi" style="width: 100%;height:100%;">
                     </div>
@@ -56,12 +56,27 @@
                         </span>
                     </div>
                 </div>
+                <div  class="rowlay">
+                    <ul class="count_info" text-align="center" >
+                        <!--<li style="width:50px"><b>站名：</b></li><a href="javascript:void(0)class="rowlay" " 
+                    onclick="seletime(1)">昨天</a> 
+                        <li id="station_name"style="width:100px;margin-right:0px"> </li>method5('historytable')-->
+                        <li style="width:50px;margin-right:0px"><b>标签名称：</b> </li>
+                        <li id="normal_count"style="width:100px;margin-right:10px"> </li>
+                        <li style="width:50px;margin-right:0px"><b>记录数：</b></li>
+                        <li id="count_val"style="width:50px;margin-right:0px" >  </li>
+                        <li style="width:100px;margin-right:0px"><a href="javascript:void(0)" 
+                            style="margin-left:20px;" onclick="exporttoexcel('historytable')" >
+                            <img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a></li>
+                    </ul>
+                </div>
                 <div class="parent" style="text-align: center;">
                     <div class="charttab-head" id="state_tab_head" style="height: 40px">
                         <div id="h3" class=" selected btn-primary" onclick="changetype();" style="width:100px;" title="切换到数据列表">数据列表</div>
                     </div>
                     <div class="column" align="center" id="state_his_list" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;display: none;">
                         <table id="state_his_table" width="800px"  >
+                           
                             <caption id="state_his_caption" style="text-align:center;font-size:18px;"></caption>
                             <tr>
                                 <th>监测点名称</th>
@@ -90,6 +105,13 @@
                     <div class="column"  id="state_his_main" align="center" 
                         style="height:500px;width:800px;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;margin: 20px;"></div>
                     </div>
+                    <div class="progress progress-striped" >
+                        <div class="progress-bar progress-bar-info" style="width:30%"> </div>
+                        <div class="progress-bar progress-bar-danger" style="width:50%"></div>
+                        <div class="progress-bar progress-bar-success" style="width:10%;"></div> 
+                        <div class="progress-bar progress-bar-warning" style="width: 10%;"></div>
+                    </div>
+                    <div class="input-group"></div>
             </div>
         </div>
     </div>
@@ -110,7 +132,7 @@
 			
 		});
         function initpage(){
-            //updatapcnav(15);
+            //updatapcnav(15);//*************
             var asessor=(parent.sensorsnode);
             var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
             var treenode=buildnode(treeseneors,0);
@@ -133,21 +155,22 @@
 				nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
 				//nodeIcon: 'glyphicon glyphicon-lock',//
 				emptyIcon: '',    //没有子节点的节点图标
-				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象
+				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象 
 				multiSelect: false,    //多选
 				searchResultColor: "black",
 				//color: "", //所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
 				backColor: "#adf7b8", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
 				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
 					//var selectnode=$("#tree_chi").treeview('getSelected');
-					$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开
+					$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 
 					//sessionStorage.jfjk_nodeid = data.nodeId;
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 						p_node = getThe_level_nodeid(data, i);
 						$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 					}
                     $("#tree_chi").treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
-                    sessionStorage.SensorId=data.id
+                    sessionStorage.SensorId=data.id;
+                    sessionStorage.jfjk_nodeid=data.nodeId;
                     appenddisplaytype();
                     sessionStorage. SensorName=data.text;
                     //catalog=getcatalog(dname);
@@ -166,34 +189,18 @@
 			if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
 				sessionStorage.jfjk_nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
 			}
-			var firstNode = $("#tree_chi").treeview("getNode", sessionStorage.jfjk_nodeid);
-			$("#tree_chi").treeview('expandNode', [firstNode, { levels: 2, silent: true }]);//展开第一个节点
-			for (var i = 0; i < firstNode.level; i++) {//逐级展开所选节点的父节点。
-				var p_node = getThe_level_nodeid(firstNode, i);
+			var currentNode = $("#tree_chi").treeview("getNode", sessionStorage.jfjk_nodeid);
+			$("#tree_chi").treeview('expandNode', [currentNode, { levels: 2, silent: true }]);//展开第一个节点
+			for (var i = 0; i < currentNode.level; i++) {//逐级展开所选节点的父节点。
+				var p_node = getThe_level_nodeid(currentNode, i);
 				$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 			}
-			$("#tree_chi").treeview('expandNode', [firstNode.nodeId, { levels: 1, silent: true }]);
+			$("#tree_chi").treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
 			//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
-			$('#tree_chi').treeview('selectNode', [firstNode, { silent: true }]);
-			//$("#tree_chi").treeview("selectNode", firstNode);//将第一个节点设置为选中状态*/**/
-			//infotreeobj.isload="false";
-			/*if ((firstNode.hasOwnProperty("nodes")) && (firstNode.nodes.length > 0) && (firstNode.level < 2)) {
-				infotreeobj.children = decode(firstNode.nodes);
-			}
-			infotreedata.push(infotreeobj);
-			maps = [];
-			localStorage.setItem("sensors", null);
-			if(!firstNode.hasOwnProperty("nodes"))
-			GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
-			GetBinariesByType("NodeGraphic", infotreeobj.id);
-			if(firstNode.Catalog=="视频监控"){
-				updatanav(0);
-			}else if(firstNode.Catalog=="机房监控"){
-				updatanav(2);
-			}else{updatanav(1);}
-			//setTimeout(function(){if(sessionStorage.pageindex==0){
-			//	document.getElementById("iframe_main").src="infototal.html";
-			//}},3000);*///sleep fo five minute then begin dong meng shi guo lianheguo 
+            $('#tree_chi').treeview('selectNode', [currentNode, { silent: true }]);
+            sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
+			//$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
+			/**/
             function getThe_level_nodeid(anode, alevel) {
                 while (anode.level > alevel) {
                     anode = ($("#tree_chi").treeview("getParent", anode))
@@ -241,6 +248,7 @@
                     sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
                     sessionStorage.jssj = getCurrentDate(2) ;
                     timedefine.style.display="none";
+                    gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
                     //layer.alert("没有符合条件的记录",info_showtime);
                     break;
                 case 1:
@@ -252,6 +260,7 @@
                     cjssj=new Date((getCurrentDate(1)+" 23:59:59").replace(/-/g,"/"));
                     var yesterdayend=cjssj-oneday;
                     sessionStorage.jssj=dateToString(new Date(yesterdayend),2);
+                    gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
                     //$("#warnlogdata-tbody tr").empty();//
                     //layer.alert("没有符合条件的记录",info_showtime);//
                     break;
@@ -261,6 +270,7 @@
                     ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
                     sessionStorage.kssj=dateToString(new Date(ckssj.setDate(1)),2);
                     sessionStorage.jssj=getCurrentDate(2);
+                    gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
                     break;
                 case 3:
                     //sel.style.display="";
@@ -272,7 +282,7 @@
                     sessionStorage.jssj = dateToString(new Date(cjssj - oneday * cjssj.getDate()),2);
                     //$("#warnlogdata-tbody tr").empty();
                     //layer.alert("没有符合条件的记录",info_showtime);
-                    //gethistorydata(sessionStorage.SensorId,sessionStorage.kssj,sessionStorage.jssj);
+                    gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
                 break;
                 case  4:
                     //sel.style.display="";
@@ -284,6 +294,7 @@
                     if(timedefine.style.display=="none"){
                         timedefine.style.display="inline";
                     }
+                    gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
                 break;
             }
         }
@@ -403,11 +414,37 @@
                 data.Name=sessionStorage.SensorName;
                 if(i%3==0){
                     data.Value=0;
+                }else if(i%2==0){
+                    data.Value=3;
                 }else{
-                    data.Value=1;
+                    data.Value=2;
                 }
                 arr_data.push(data);
-            }
+            }/**/
+            /*var kssj = document.getElementById("kssj_historystate").value;
+			if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
+				layer.alert("请指定开始时间",info_showtime);
+				return;
+			}
+			var jssj = document.getElementById("jssj_historystate").value;
+			if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
+				layer.alert("请指定截至时间",info_showtime);
+				return;
+			}
+			sessionStorage.kssj = kssj;
+			sessionStorage.jssj = jssj;
+			//sessionStorage.SensorId =firstNode;
+			//sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
+			sessionStorage.typename=dname;
+			sessionStorage.typecatalog=catalog;
+			//xs=sensors[sel.selectedIndex].Value.Factor;
+			//$("#historydata-tbody tr").empty();
+			var tbl = document.getElementById('historystate-tbody');//家装的坑：水电、地暖要设计好，先改水电
+			var tableLength = tbl.rows.length;
+			for (var int = 0; int < tableLength; int++) {
+				tbl.deleteRow(0);
+			}
+            gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);*/
             decodedatas(arr_data);
         }
         function decodedatas(obj_data){
@@ -420,22 +457,20 @@
 			var jiange="";
 			var myChart = echarts.init(document.getElementById('state_his_main'));
 			myChart.clear();
-			//$("#historydata-tbody tr").empty();
+			//$("#historydata-tbody tr").empty();//清除原表中的记录
 			var tbl = document.getElementById('historystate-tbody');
 			var tableLength = tbl.rows.length;
 			for (var int = 0; int < tableLength; int++) {
 				tbl.deleteRow(0);
 			}
-			//数据以表格行的形式添加进table中，其实现隔行颜色区分。
 			if((obj_data==null)||(obj_data.length<=0)){
-				//document.getElementById('count_val').innerHTML = count + "条";
-				//document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
+				document.getElementById('count_val').innerHTML = count + "条";
+				document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
 				return;
-			}
-            step='end';
-            maxval=minval=obj_data[0].Value;
-            for (var i = 0; i <obj_data.length; i++) {
-                
+			}//
+            step='end';//图形选项，为矩形波，
+            maxval=minval=obj_data[0].Value; maxval=minval=obj_data[0].Value;//给最大值和最小值变量赋值
+            for (var i = 0; i <obj_data.length; i++) {//求最大值和最小值，并加入列表中
                 if(parseFloat(obj_data[i].Value)>maxval){
                     maxval=parseFloat(obj_data[i].Value);
                 }
@@ -461,8 +496,8 @@
                 tdvalue1.innerHTML = obj_data[i].Value;
                 //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
                 tdtime.innerHTML = obj_data[i].Time; //jsonObject[i].color;
-                //tdvalue2.innerHTML = obj_data[i].Value;
-                //tdvalue3.innerHTML= obj_data[i].Value;
+                tdvalue2.innerHTML = obj_data[i].Value;
+                tdvalue3.innerHTML= obj_data[i].Value;
                 //tr.appendChild(tdname);
                 tr.appendChild(tdtime);
                 tr.appendChild(tdvalue1);
@@ -471,18 +506,18 @@
                 var tbody = document.getElementById('historystate-tbody');
                 tbody.appendChild(tr);
                 pa.push([strtodatetime(obj_data[i].Time), obj_data[i].Value, ps]);
-                //pb.push([strtodatetime(strtime+":00"), obj_data[i].Value, ps]);
-                //pc.push([strtodatetime(strtime+":00"),obj_data[i].Value , ps]);
+                //pb.push([strtodatetime(obj_data[i].Time), obj_data[i].Value, ps]);
+                //pc.push([strtodatetime(obj_data[i].Time),obj_data[i].Value , ps]);
                 ps++;
             }
             //表标题
 			document.getElementById("state_jcd_name").innerHTML=sessionStorage.SensorName;
 			document.getElementById("state_tongji_time").innerHTML=sessionStorage.kssj+"—"+sessionStorage.jssj;
 			document.getElementById("state_his_caption").innerHTML=jiange+"报表";
-			//count =ps+1;//obj_data.length;
-			//document.getElementById('count_val').innerHTML ="<span class='badge' style='font-size:18px'>"+ count + "条";
+			count =ps;//obj_data.length;
+			document.getElementById('count_val').innerHTML ="<span class='badge' style='font-size:18px'>"+ count + "条";
 			//document.getElementById('station_name').innerHTML = sessionStorage.stationName;
-			//document.getElementById('normal_count').innerHTML = "<span class='badge' style='font-size:18px'>"+sessionStorage.SensorName;
+			document.getElementById('normal_count').innerHTML = "<span class='badge' style='font-size:18px'>"+sessionStorage.SensorName;
 			var lengenddata = [];
 			lengenddata.push("最大值");
 			lengenddata.push("平均值");
@@ -500,7 +535,7 @@
 					color: ['#FF7F00', '#FF0000','#00ff00'],//
 					backgroundColor: '#d0d0d0',
 					title : {
-								text : sessionStorage.SensorName+" 变化趋势图",//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+' 变化趋势图  ',
+								text : sessionStorage.SensorName+" 变化图",//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+' 变化趋势图  ',
 								x:"center",
 								subtext:jiange+"   "+sessionStorage.kssj+"——"+sessionStorage.jssj,
 								subtextStyle:{
@@ -573,7 +608,7 @@
 							},
 						},
 						min:minval,
-						max:maxval,
+						max:maxval,//
 					}],
 					series: [{
 						name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
@@ -613,4 +648,7 @@
     </script>
 </body>
 </html>
-<!--历史数据报表表头内容（标签名称和统计时间段），返回为空时的处理（非空非零未定义的判断处理),配置项的匹配取值，圆形进度条插件的引入，-->
+<!--历史数据报表表头内容（标签名称和统计时间段），返回为空时的处理（非空非零未定义的判断处理),配置项的匹配取值，圆形进度条插件的引入，
+  树形菜单选项不能被保留的问题，第一次进入时标签id没有被赋值（默认）的问题；时段选择后进行数据刷新;
+  测试web端客户程序功能，优化代码结构，用bootstrap既有类名替代CSS样式，
+  编辑云平台纤细设计说明书之web端以及Android客户端的功能介绍，学习bootstrap的定义组件（警告框、进度条、-->

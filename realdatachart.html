@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Insert title here</title>
+    <style>
+html,body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    align: left;
+    valign: left;
+}
+</style>
+    <!-- 引入 ECharts 文件 -->
+    <script src="./js/echarts.js"></script>
+</head>
+<body>
+<div id="main"
+     style="height: 100%; width: 100%; border: 0px; text-align: left; align: left; valign: left;background:#d0d0d0"></div>
+<script type="text/javascript">
+    var data=[{"Time":"2020-06-01 01:35:00","Value":89.5},{"Time":"2020-06-02 01:45:00","Value":49.5},{"Time":"2020-06-02 02:35:00","Value":49.5},{"Time":"2020-06-03 01:35:00","Value":75.5}];
+
+    //var data=JSON.parseJSON(data1);
+    var myChart2=echarts.init(document.getElementById('main'));
+    Number_of_decimal=2;
+    var Flag="";
+    //  通用属性定义
+    var options = {
+        title : {
+            text : "Echart测试"
+        },
+        tooltip : {
+            show : false
+        },
+        toolbox : {
+            show : false
+        },
+    };
+    decodedatas(data,"A1");
+    addline({"time":"2020-06-03 05:35:12","value":37.3});
+    //创建折线图
+    function createLineChart(dataArray){
+        var pa=[];
+            for(var i=0;i<dataArray.length;i++){
+                pa.push([strtodatetime(dataArray[i].Time),dataArray[i].Value,i+1]);
+            }
+        options = {
+        xAxis : [
+            {
+                type : 'time',//'category',
+                boundaryGap : false,
+                //data : ['第一种','第二种','第三种']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name:'成交',
+                type:'line',
+                step:'middle',
+                smooth:true,
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                data:pa,// dataArray
+             }
+            ]
+        };
+    }
+    function createChart(chartKind,dataArray){
+        if (chartKind=='line') {
+            doCreatChart(createLineChart(dataArray));
+            Flag=flag;
+            //var data=[{"Time":"2020-06-01 04:34:00","Value":89.5},{"Time":"2020-06-01 05:34:00","Value":59.5},{"Time":"2020-06-02 04:34:00","Value":75.5}]
+            //decodedatas(dataArray,name);
+        };
+        if (chartKind=='bar') {
+            doCreatChart(createBarChart(dataArray));
+        };
+        if (chartKind=='pie') {
+            doCreatChart(createPieChart(dataArray));
+        };
+    }
+    function doCreatChart(specificChartFunction){
+        /*require(
+        ['echarts','echarts/theme/macarons','echarts/chart/line',
+        'echarts/chart/bar','echarts/chart/pie'
+        ],*/
+        //function(ec,theme){
+        myChart =echarts.init(document.getElementById('main'));
+        //myChart.showLoading({
+        //    text : "图表数据正在努力加载..."
+        //});
+        specificChartFunction;
+        myChart.setOption(options); //先把可选项注入myChart中
+        //myChart.hideLoading();
+        //}
+    //);
+    }
+    function strtodatetime(str) {
+        var year = str.substring(0, 4);
+        var month = str.substring(5, 7);
+        var day = str.substring(8, 10);
+        var hour = str.substring(11, 13);
+        var minute = str.substring(14, 16);
+        var sencond = str.substr(17);
+        return new Date(year, month - 1, day, hour, minute, sencond);
+    }
+
+    function decodedatas(obj_chartdata,titlename) {
+        maxval=0;
+        //var iserror = false,
+        //err_info = "获取";
+        //var isnull = false,
+        //nullname = "";
+        var pa = [];
+        var myChart2=echarts.init(document.getElementById('main'));
+        myChart2.clear();
+        if (obj_chartdata == null) {
+            myChart2.hideLoading();
+            return;
+        }
+        minval = maxval =0;//value0;// obj_chartdata[0].Value;
+        for (var i = 0; i < obj_chartdata.length; i++) {
+            pa.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
+            if (parseFloat(obj_chartdata[i].Value) > maxval) {
+                maxval = obj_chartdata[i].Value;
+            }
+            if (parseFloat(obj_chartdata[i].Value) < minval) {
+                minval = obj_chartdata[i].Value;
+            }
+        }
+        maxvalue = (maxval * 1).toFixed(Number_of_decimal);
+        minvalue = (minval * 1).toFixed(Number_of_decimal);
+        maxval = (maxval * 1 + (maxval - minval) * 0.2).toFixed(Number_of_decimal);
+        minval = (minval * 1 - (maxval - minval) * 0.2).toFixed(Number_of_decimal);
+        var lengenddata = [];
+        lengenddata.push("当天峰值");
+        lengenddata.push("实时值");
+        //lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457");
+        //option.series[0].data[0].value = maxvalue;
+        //option.series[0].data[0]
+        //myChart.setOption(option);
+        //refreshData();
+        drawchart();
+        //decoderealdata();//进行一次实时数据刷新，完善图表的指示内容；//20200612
+        //绘制图形线条
+        function drawchart() {
+            //var myChart = echarts.init(document.getElementById('main'));
+            var lengenddata1 = [];
+            lengenddata1.push(titlename);//20200518
+            var option2 = {
+                color: ['#FF0000', '#FFFF00'],//,'#00ff00'
+                backgroundColor: '#d0d0d0',
+                title: {
+                    text: titlename+' : 当天变化趋势图',//20200518
+                    x: "center",
+                },/**/
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        var date = new Date(params.value[0]);
+                        data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+                        return data + '<br/>' + params.value[1];
+                    }
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        mark: {
+                            show: true
+                        },
+                        dataView: {
+                            show: true,
+                            readOnly: false
+                        },
+                        magicType: {
+                            show: true,
+                            type: ['line']
+                        },
+                        //, 'bar', 'stack', 'tiled'
+                        restore: {
+                            show: true
+                        },
+                        saveAsImage: {
+                            show: true
+                        }
+                    }
+                },
+                dataZoom: {
+                    show: true,
+                    start: 0
+                },
+                legend: {
+                    data: lengenddata1,
+                    orient: "horizontal",//"vertical",
+                    x: 'center',
+                    y: '30',
+                    //color: 'white',
+                },
+                grid: {
+                    y2: 80
+                },
+                xAxis: [{
+                    type: 'time',
+                    splitNumber: 10,
+                    axisLine: {
+                        lineStyle: {
+                            color: 'black',
+                            width: 2
+                        },
+                        onZero: false,
+                    },
+                }],
+                yAxis: [{
+                    type: 'value',
+                    axisLine: {
+                        lineStyle: {
+                            color: 'black',
+                            width: 2
+                        }
+                    },
+                    min: minval,
+                    max: maxval,
+                }],
+                series: [{/**/
+                    name: lengenddata1[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
+                    type: 'line',
+                    step: 'middle',
+                    showAllSymbol: true,
+                    symbolSize: 9,
+                    data: pa,
+                    //smooth: true//平滑曲线
+                },
+                ]
+            };
+            myChart2.hideLoading();
+            myChart2.setOption(option2);
+        }
+    }
+    function addline(data){
+        if(data){
+            var temp_option = myChart2.getOption();
+            if (temp_option.series[0]!=null) {
+                if (temp_option.series[0].data[temp_option.series[0].data.length - 1][0] < strtodatetime(data.time)) {
+                    temp_option.series[0].data.push([strtodatetime(data.time), data.value, temp_option.series[0].data.length]);
+                    //temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
+                    if (maxvalue < data.value) {
+                        maxvalue = data.value;
+                        maxval = (maxvalue + (maxvalue - minvalue) * 0.2).toFixed(Number_of_decimal);
+                        temp_option.yAxis[0].max = maxval;
+                    }
+                    if (minvalue > data.value) {
+                        minvalue = data.value;
+                        minval = (minvalue - (maxvalue - minvalue) * 0.2).toFixed(Number_of_decimal);
+                        temp_option.yAxis[0].min = minval;
+                    }
+                    myChart2.setOption(temp_option);
+                }
+            }
+        }
+    }
+    </script>
+</body>
+</html>

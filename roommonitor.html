@@ -33,14 +33,14 @@
                             <div class="donghuan"></div>
                         </td>
                         <td >
-                            <div class="donghuan" style="display: flex;flex-align: center;align-items: center;">
-                                <ul style="list-style-type:none;font-size: 16px;width:100%;margin-bottom: 0px">
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
+                            <div class="donghuan" style="display: flex;align-items: center;">
+                                <ul style="list-style-type:none;font-size: 16px;width:100%;margin-bottom: 0px;padding-inline-start: 0;">
+                                    <li>PT变比:<lab id="PTA">10:1</lab></li>
+                                    <li>CT变比:<lab id="CTB">20:5</lab></li>
+                                    <li>PT变比:<lab id="PTB">10:1</lab></li>
+                                    <li>CT变比:<lab id="CTB">20:5</lab></li>
+                                    <li>PT变比:<lab id="PTC">10:1</lab></li>
+                                    <li>CT变比:<lab id="CTC">20:5</lab></li>
                                 </ul>
                             </div>
                         </td>
@@ -79,14 +79,14 @@
                             </div>
                         </td>
                         <td>
-                            <div class="donghuan" style="display: flex;text-align: center;align-items: center;">
-                                <ul style="color:#fff;list-style-type:none;font-size: 16px;width:100%; ">
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
-                                    <li>PT变比:10:1</li>
-                                    <li>CT变比:20:5</li>
+                            <div class="donghuan" style="display: flex;align-items: center;">
+                                <ul style="color:#fff;list-style-type:none;font-size: 16px;width:100%;margin-bottom: 0px;padding-inline-start: 0; ">
+                                    <li>PT变比:<lab id="pta">10:1</lab></li>
+                                    <li>CT变比:<lab id="cta">20:5</lab></li>
+                                    <li>PT变比:<lab id="ptb">10:1</lab></li>
+                                    <li>CT变比:<lab id="ctb">20:5</lab></li>
+                                    <li>PT变比:<lab id="ptc">10:1</lab></li>
+                                    <li>CT变比:<lab id="ctc">20:5</lab></li>
                                 </ul>
                             </div>
                         </td>
@@ -138,7 +138,22 @@
         var chart_ic=echarts.init(document.getElementById("chart-ic"));
         //初始化数据
         var category = ['A相功率','B相功率', 'C相功率'];
-        var barDatas = [[800, 850, 750],[450,600,1200]];
+        var barDatas = [[1500, 1500, 1500],[1500,1500,1500]];
+        initbarchart(chart_P,barDatas[0]);
+        initbarchart(chart_p,barDatas[1]);
+        initgaugechart(chart_va,[{name:'a相电压',value:300}]);
+        initgaugechart(chart_vb,[{name:'b相电压',value:300}]);
+        initgaugechart(chart_vc,[{name:'c相电压',value:300}]);
+        initgaugechart(chart_vA,[{name:'A相电压',value:300}]);
+        initgaugechart(chart_vB,[{name:'B相电压',value:300}]);
+        initgaugechart(chart_vC,[{name:'C相电压',value:300}]);
+        initgaugechart(chart_ia,[{name:'a相电流',value:5}]);
+        initgaugechart(chart_ib,[{name:'b相电流',value:5}]);
+        initgaugechart(chart_ic,[{name:'c相电流',value:5}]);
+        initgaugechart(chart_iA,[{name:'A相电流',value:5}]);
+        initgaugechart(chart_iB,[{name:'B相电流',value:5}]);
+        initgaugechart(chart_iC,[{name:'C相电流',value:5}]);
+        window.setInterval(refreshchart,5000);
         function initbarchart(chartid,bardata){
         var option_bar = {
             tooltip: {
@@ -160,6 +175,7 @@
             },
             xAxis: {
                 type: 'value',
+                max:2000,
                 axisLine: {
                     show: true,
                     lineStyle:{
@@ -235,8 +251,6 @@
         };
         chartid.setOption(option_bar);
         }
-        initbarchart(chart_P,barDatas[0]);
-        initbarchart(chart_p,barDatas[1]);
         function initgaugechart(chartid,data){
             var unit="V",vmax=400,spl=4;
             var str=new Object();
@@ -253,25 +267,25 @@
                 show: false,
                 feature: {
                     mark: {
-                        show: true
+                        show: true,
                     },
                     restore: {
-                        show: true
+                        show: true,
                     },
                     saveAsImage: {
-                        show: true
+                        show: true,
                     }
                 }
             },
             series: [{ 
                 name: data[0].name,//'电压',
                 type: 'gauge',
-                center: ['50%', "50%"], // 默认全局居中
-                radius: '70%',//半径
+                center: ['80%', "70%"], // 默认全局居中
+                radius: '100%',//半径
                 min: 0,
                 max: vmax,
-                //startAngle: 180,//起始角度
-                //endAngle: 0,//终止角度
+                startAngle: 180,//起始角度
+                endAngle: 90,//终止角度
                 splitNumber: spl,//
                 axisLine: { // 坐标轴线
                     lineStyle: { // 属性lineStyle控制线条样式
@@ -301,7 +315,7 @@
                         width: 1,
                         color: '#fff',
                         shadowColor: '#fff', //默认透明
-                        shadowBlur: 10
+                        shadowBlur: 10,
                     }
                 },
                 pointer: {
@@ -313,20 +327,20 @@
                 },
                 title: {
                     show: true,
-                    offsetCenter: [0, '140%'], // x, y，单位px
+                    offsetCenter: ['-110%', '-120%'], // x, y，单位px
                     textStyle: {
                         color: 'white',
-                        fontSize: 16
+                        fontSize: 16,
                     }
 
                 },
                 detail: {
                     show: true,
-                    offsetCenter: ['-10%', '85%'],
+                    offsetCenter: ['-40%', '30%'],
                     formatter: '{value}'+unit,
                     textStyle: {
                         fontSize: 14,
-                        color:'#F8F43C'
+                        color:'#F8F43C',
                     }
 
                 },
@@ -336,38 +350,42 @@
         }
         chartid.setOption(option_gauge);
         }
-        initgaugechart(chart_va,[{name:'a相电压',value:30}]);
-        initgaugechart(chart_vb,[{name:'b相电压',value:30}]);
-        initgaugechart(chart_vc,[{name:'c相电压',value:30}]);
-        initgaugechart(chart_ia,[{name:'a相电流',value:30}]);
-        initgaugechart(chart_vA,[{name:'A相电压',value:30}]);
-        initgaugechart(chart_vB,[{name:'B相电压',value:30}]);
-        initgaugechart(chart_vC,[{name:'C相电压',value:30}]);
-        initgaugechart(chart_ib,[{name:'b相电流',value:30}]);
-        initgaugechart(chart_ic,[{name:'c相电流',value:30}]);
-        initgaugechart(chart_iA,[{name:'A相电流',value:30}]);
-        initgaugechart(chart_iB,[{name:'B相电流',value:30}]);
-        initgaugechart(chart_iC,[{name:'C相电流',value:30}]);
-        window.setInterval(refreshchart,5000);
         function refreshchart(){
-            var value=(Math.random() * 400).toFixed(0) - 0;
-            initgaugechart(chart_va,[{name:'a相电压',value:(Math.random() * 400).toFixed(0) - 0}]);
-            initgaugechart(chart_vb,[{name:'b相电压',value:(Math.random() * 400).toFixed(0) - 0}]);
-            initgaugechart(chart_vc,[{name:'c相电压',value:(Math.random() * 400).toFixed(0) - 0}]);
-            initgaugechart(chart_ia,[{name:'a相电流',value:(Math.random() * 5).toFixed(2) - 0}]);
-            initgaugechart(chart_vA,[{name:'A相电压',value:(Math.random() * 400).toFixed(0) - 0}]);
-            initgaugechart(chart_vB,[{name:'B相电压',value:(Math.random() * 400).toFixed(0) - 0}]);
-            initgaugechart(chart_vC,[{name:'C相电压',value:(Math.random() * 400).toFixed(0) - 0}]);
-            initgaugechart(chart_ib,[{name:'b相电流',value:(Math.random() * 5).toFixed(2) - 0}]);
-            initgaugechart(chart_ic,[{name:'c相电流',value:(Math.random() * 5).toFixed(2) - 0}]);
-            initgaugechart(chart_iA,[{name:'A相电流',value:(Math.random() * 5).toFixed(2) - 0}]);
-            initgaugechart(chart_iB,[{name:'B相电流',value:(Math.random() * 5).toFixed(2) - 0}]);
-            initgaugechart(chart_iC,[{name:'C相电流',value:(Math.random() * 5).toFixed(2) - 0}]);
-            for(i=0;i<barDatas.length;i++){
+            var UA=300+((Math.random() * 100).toFixed(1) - 0);
+            var UB=300+((Math.random() * 100).toFixed(1) - 0);
+            var UC=300+((Math.random() * 100).toFixed(1) - 0);
+            var ua=300+((Math.random() * 100).toFixed(1) - 0);
+            var ub=300+((Math.random() * 100).toFixed(1) - 0);
+            var uc=300+((Math.random() * 100).toFixed(1) - 0);
+            var IA=(Math.random() * 5).toFixed(2) - 0;
+            var IB=(Math.random() * 5).toFixed(2) - 0;
+            var IC=(Math.random() * 5).toFixed(2) - 0;
+            var ia=(Math.random() * 5).toFixed(2) - 0;
+            var ib=(Math.random() * 5).toFixed(2) - 0;
+            var ic=(Math.random() * 5).toFixed(2) - 0;
+            initgaugechart(chart_va,[{name:'a相电压',value:ua}]);
+            initgaugechart(chart_vb,[{name:'b相电压',value:ub}]);
+            initgaugechart(chart_vc,[{name:'c相电压',value:uc}]);
+            initgaugechart(chart_ia,[{name:'a相电流',value:ia}]);
+            initgaugechart(chart_vA,[{name:'A相电压',value:UA}]);
+            initgaugechart(chart_vB,[{name:'B相电压',value:UB}]);
+            initgaugechart(chart_vC,[{name:'C相电压',value:UC}]);
+            initgaugechart(chart_ib,[{name:'b相电流',value:ib}]);
+            initgaugechart(chart_ic,[{name:'c相电流',value:ic}]);
+            initgaugechart(chart_iA,[{name:'A相电流',value:IA}]);
+            initgaugechart(chart_iB,[{name:'B相电流',value:IB}]);
+            initgaugechart(chart_iC,[{name:'C相电流',value:IC}]);
+            /*for(i=0;i<barDatas.length;i++){
                 for(j=0;j<barDatas[i].length;j++){
                     barDatas[i][j]=(Math.random() * 1000).toFixed(0) - 0;
                 }
-            }
+            }*/
+            barDatas[0][0]=(UA*IA).toFixed(2);
+            barDatas[0][1]=(UB*IB).toFixed(2);
+            barDatas[0][2]=(UC*IC).toFixed(2);
+            barDatas[1][0]=(ua*ia).toFixed(2);
+            barDatas[1][1]=(ub*ib).toFixed(2);
+            barDatas[1][2]=(uc*ic).toFixed(2);
             initbarchart(chart_P,barDatas[0]);
             initbarchart(chart_p,barDatas[1]);
         }

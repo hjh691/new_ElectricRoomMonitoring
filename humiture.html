@@ -5,8 +5,15 @@
         <title>温湿度状态</title>
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/flooding_smoking.css"/><!---->
+        <link rel="stylesheet" href="css/electricroommonitoring.css"/>
     </head>
     <body>
+        <div class="rowlay" align="center"> 
+            <span class="condition" >
+                <label>计量点名称：</label>
+            <select id="jcdd" onchange="gradeChange()"  style="border-radius: 5px;">
+            </select >
+        </div>
         <h2 align="center">当前温湿度</h2>
         <div align="center"> 
             <table id="humiture">
@@ -14,7 +21,7 @@
                     <td class="ht-pointname" >
                         <p class="ht-pointname">现场温湿度</p>
                     </td>
-                    <td > 
+                    <td >
                         <div class="ht-gauge" id="ht-gauge"></div>
                     </td>
                     <td >
@@ -27,5 +34,4 @@
         <script type="text/javascript" src="js/echarts.js"></script>
         <script type="text/javascript" src="js/humiture.js"></script>
     </body>
-
 </html>

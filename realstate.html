@@ -5,8 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <link rel="shortcut icon" href="#" />
         <link rel="stylesheet" href="css/bootstrap.min.css" />
-       <!-- <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
-        <link rel="stylesheet" href="css/electricroommonitoring.css" />-->
+       <!-- <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />-->
+        <link rel="stylesheet" href="css/electricroommonitoring.css" />
         <link rel="stylesheet" href="css/flooding_smoking.css"/><!---->
         <title>变电站智能辅助系统云平台</title>
         <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
@@ -43,6 +43,9 @@
                 text-align: center;
             }
             /*关键设置 tbody出现滚动条 height: 500px;overflow-y: scroll;*/
+            .nav>li>a{
+                padding:0;
+            }
             table tbody {
                 display: block;
             }
@@ -50,6 +53,9 @@
             tbody tr {
                 display: table;
                 table-layout: fixed;
+            }
+            tr:nth-child(even){
+                background-color:rgb(87, 86, 86);/*去掉样式表中的隔行分色显示*/
             }
         </style>
     </head>
@@ -89,8 +95,8 @@
         </div>-->
         <div class="container" style="margin: 0;padding:0 ;">
             <ul class="nav nav-tabs" disabled='disabled' id="nav" style="font-size: 16px;font-style: italic;margin-top: 0px;">
-                <li id="guard"><a href="#tab_guard" data-toggle="tab"><i class="glyphicon glyphicon-log-in"></i> 门禁</a></li>
-                <li class="active" id="light"><a href="#tab_light" data-toggle="tab"><i class="glyphicon glyphicon-cog" ></i> 灯光</a></li>
+                <li class="active" id="guard"><a href="#tab_guard" data-toggle="tab"><i class="glyphicon glyphicon-log-in"></i> 门禁</a></li>
+                <li id="light"><a href="#tab_light" data-toggle="tab"><i class="glyphicon glyphicon-cog" ></i> 灯光</a></li>
                 <li id="smoken"><a href="#tab_smoken" data-toggle="tab"><i class="glyphicon glyphicon-cloud-upload"></i> 烟感</a></li>
                 <li id="flooding"><a href="#tab_flooding" data-toggle="tab"><i class="glyphicon glyphicon-tint"></i> 水浸</a></li>
                 <li id="ups"><a href="#tab_ups" data-toggle="tab"><i class="glyphicon glyphicon-retweet"></i> UPS</a></li>
@@ -99,7 +105,7 @@
                 <li id="air"><a href="#tab_air" data-toggle="tab"><i class="glyphicon glyphicon-random"></i> 空调</a></li>
             </ul>
             <div class="tab-content" id='tab-content'>
-                <div class="tab-pane fade" align="center" id="tab_guard">
+                <div class="tab-pane fade in active" align="center" id="tab_guard">
                     <img src="res/menjin.png" style="width:300px;height:150px;">
                     <table >
                         <thead>
@@ -141,7 +147,7 @@
                     <script type="text/javascript" src="js/guard.js"></script>
                     <!-- instrument piece pice -->
                 </div>
-                <div class="tab-pane fade in active" id="tab_light" align="center">
+                <div class="tab-pane fade " id="tab_light" align="center">
                     <!--h3-- style="text-align: center">灯光状态</!--h3-->
                     <img src="res/light001.jpg" style="width:300px;height:150px">
                     <table>
@@ -327,11 +333,11 @@
                                             <div class="donghuan" style="display: flex;text-align: center;align-items: center;">
                                                 <ul style="color:#fff;list-style-type:none;font-size: 16px;width:100%;margin-bottom: 0px">
                                                     <li>PT变比:10:1</li>
-                                                    <li>CT变比:200:5</li>
+                                                    <li>CT变比:20:5</li>
                                                     <li>PT变比:10:1</li>
-                                                    <li>CT变比:200:5</li>
+                                                    <li>CT变比:20:5</li>
                                                     <li>PT变比:10:1</li>
-                                                    <li>CT变比:200:5</li>
+                                                    <li>CT变比:20:5</li>
                                                 </ul>
                                             </div>
                                         </td>
@@ -412,6 +418,12 @@
                     <script type="text/javascript" src="js/roommonitor.js"></script>
                 </div>
                 <div class="tab-pane fade" id="tab_room">
+                    <div class="rowlay" align="center"> 
+                        <span class="condition" >
+                            <label>计量点名称：</label>
+                        <select id="jcdd" onchange="gradeChange()"  style="border-radius: 5px;">
+                        </select >
+                    </div>
                     <div align="center"> 
                         <table id="humiture">
                             <tr>

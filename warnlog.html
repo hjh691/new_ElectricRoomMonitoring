@@ -227,7 +227,7 @@
 	});
 	
 	//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
-function initwarnlog() {
+	function initwarnlog() {
 	var parentid=-100,parentname="";
 	var maps=[];
 	sessionStorage.pageindex = 5;
@@ -254,7 +254,7 @@ function initwarnlog() {
 			}
 			var map=new Object();
 			map.value=sensors[i].id;
-			map.name=parentname+sensors[i].Value.Name;
+			map.name=parentname+sensors[i].Value.Name; 
 			maps.push(map);
 		}
 		var compare = function (obj1, obj2) {
@@ -352,6 +352,10 @@ function initwarnlog() {
 						}
 					}
 				}
+			}else{
+				var li=document.createElement("li");
+				li.text="没有可选项";
+				document.getElementById("event_type").text="没有可选项";
 			}
 		}
 	}
@@ -802,3 +806,4 @@ function initwarnlog() {
 	</script>
 </body>
 </html>
+<!--告警类型项目的添加为空时提示，历史状态页添加信息统计显示项 bootstap的组件内容类定义，对代码进行简化-->

@@ -194,14 +194,13 @@
 						//document.getElementById("result").innerHTML = event.data;
 						i++
 						if (i % 60 == 0) {
-							//sendbeat();//getrealsbydataid();
+							//sendbeat();
 							getrealdatabynodeid(-1);
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}
 					};
 				} else {
-					//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
-					var t1 = window.setInterval(sendbeat, 60000);//getrealsbydataid
+					var t1 = window.setInterval(sendbeat, 60000);//getrealsbydataid\\baoguochen//abcde 
 				}
 				window.setInterval("resetContent()", 200);
 				refreshwindow();
@@ -209,6 +208,16 @@
 				$(".tab a:last").tab("show");
 			}
 		);
+		//launchFullScreen(document.documentElement);//全屏显示
+		function launchFullScreen(element) {
+			if(element.requestFullScreen) {
+			element.requestFullScreen();
+			} else if(element.mozRequestFullScreen) {
+			element.mozRequestFullScreen();
+			} else if(element.webkitRequestFullScreen) {
+			element.webkitRequestFullScreen();
+			}
+		}
 		function refreshwindow() {//重画窗口，规定 尺寸,尤其是浮动窗口的位置
 			sessionStorage.framepage = document.getElementById("iframe_main").src;
 			if(sessionStorage.framepage.indexOf("video.html")>=0){
@@ -354,7 +363,7 @@
 				//searchResultColor: "", //当节点被选中时的前景色
 				//selectedBackColor: "", //当节点被选中时的背景色
 				//selectedColor: "#FFFFFF", //当节点被选中时的前景色
-				//showBorder: true, //是否在节点周围显示边框
+				//showBorder: true, //是否在节点周围显示边框 btn-praty
 				//showCheckbox: false, //是否在节点上显示复选框
 				//showIcon: true, //是否显示节点图标
 				//showTags: false, //是否显示每个节点右侧的标记。前提是这个标记必须在每个节点基础上提供数据结构中的值。
@@ -1483,4 +1492,8 @@
 <!--1 sessionStorage.nodetype 节点类型，控制页面显示响应的内容和操作，原来导航栏的更新参数为直接的数值，采用此变量后自动变成字符串型，
 	在判断时需先行转换成数值型，或者采用字符串的对比方式。否则不能正确匹配。
   2 去掉机房监控系统下的多点趋势对比
-  3 在获取指定节点的标签返回为空或异常时，系统保存的配置项数据及时复位更新的-->
+  3 在获取指定节点的标签返回为空或异常时，系统保存的配置项数据及时复位更新的
+  4 添加全屏显示控制；
+  其他公司模拟网址： Acrelcloud-6000安全用电管理平台体验地址：http://cloud.acrel.cn/    用户名：acrel  密码：123456
+  
+-->
