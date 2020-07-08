@@ -36,14 +36,14 @@
 			<span>
 			<tr>
 			<td class="table-lable"> 登录密码:</td>
-			<td>	<input id="up-yhmm" type="password"  style="width:150px" value="admin"></input><span id="txt_editpassword" style="color:red;font-size:12px;margin-left:10px"><a href="javascript:showeditpassword()">修改密码</a></span>
+			<td>	<input id="up-yhmm" type="password"  style="width:150px" value=""></input><span id="txt_editpassword" ><a href="javascript:showeditpassword()" style="color:red;font-size:12px;margin-left:10px">修改密码</a></span>
 			</td>
 			</tr>
 			</span>
 			<span>
 			<tr >
 			<td class="table-lable"id="up-editpassword" style="display: none;">新密码:</td>
-			<td>	<input id="up-yhmmqr" type="password" style="width:150px;display: none;" value=""></input><span id="txt_postpassword" style="color:red;font-size:12px;margin-left:10px;display: none;"><a href="javascript:postpassword()">提交修改</a></span>
+			<td>	<input id="up-yhmmqr" type="password" style="width:150px;display: none;" value=""></input><span id="txt_postpassword" style="display: none;"><a href="javascript:postpassword()" style="color:red;font-size:12px;margin-left:10px;">提交修改</a></span>
 			</td>
 			</tr>
 			</span>
@@ -118,16 +118,16 @@
 				data:JSON.stringify(arruserinfo),
 				timeout: 10000,
 				error: function(XMLHttpRequest, textStatus, errorThrown) {
-					layer.alert('用户信息修改操作失败,请稍后重试！');
+					layer.alert('用户信息修改操作失败,请稍后重试！',info_showtime);
 				},
 				success: function(data, status) {
 					if (status == "success") {
 						if (data.Error == null) {
-							layer.alert("用户信息修改成功，请用新密码登录");
+							layer.alert("用户信息修改成功，请用新密码登录",info_showtime);//不添加时长参数不能自行关闭
 							window.location.href = "javascript:void(0)";
 							return;
 						} else {
-							layer.alert(data.Error);
+							layer.alert(data.Error,info_showtime);
 						}
 					}
 				}

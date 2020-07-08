@@ -45,7 +45,7 @@ function decoderealdata(){
     var pt = [0,0,0,0,0,0,0,0];
     //var kssj = getCurrentDate(1) + " 00:00:00";
     //var jssj = getCurrentDate(2);
-    var grouptype;
+    var grouptype,bondinginfo;
     var isnew=true,isfind=false,isbreak=false;
     var atr;
     sid=-1;
@@ -54,6 +54,7 @@ function decoderealdata(){
             for (var j=0;j<obj_realdata.length;j++) {
                 typename=obj_realdata[j].Name;
                 grouptype=obj_realdata[j].Catalog;
+                bondinginfo=obj_realdata[j].Desc
                 if(obj_realdata[j].SensorId==sid){//是否为新的标签项
                     isnew=false;
                 }else{ 
@@ -143,8 +144,9 @@ function decoderealdata(){
                                 break;
                             case "room"://动力检测 同上
                                 pt[7]++;
-                                switch(obj_data.Value){
+                                switch(grouptype){
                                     case a:
+                                        refreshchart(obj.data.Value,bondinginfo);//roommonitor.js
                                     case b:
                                     case c:
                                 }
@@ -242,7 +244,7 @@ function setactive(aid){
     }
 }
 function initpage() {
-    updatapcnav(14);//
+    //updatapcnav(14);
     var parentid=-100,parentname="";
 	var maps=[];
     if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
@@ -258,7 +260,7 @@ function initpage() {
             }
         };/**/
     } else {
-        //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";beijing dongfeng chengjiang huashan 
+        //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
         var t1 = window.setInterval("getrealdatabynodeid(-1);", 60000);//定时刷新页面定时器；
     }
     var sel_sensor=document.getElementById("jcdd");
@@ -311,10 +313,17 @@ function stopWorker() {//停止自动刷新数据
     w1.terminate();
     w1 = undefined;
 };
-/***调整布局，添加检测标签下拉选项，解决自定义与原样式表的参数冲突问题，编写页面初始化标签项的添加过程，数据处理的过程函数，模拟效果。检测标签选项改变时的系统响应过程 
- * 本周:1. 对web端的程序进行测试和完善 2. 编辑27000的外审的资料 3. 学习了bootstrap框架的相关知识。下周：继续对云平台前端程序的功能进行调试和优化。
- *
- * 今日工作：1 云平台（耗时6小时，调试web程序功能，编写动态判断当前所处的panel页面和当前所选择的列表tab编号的方法，以及动力监测页面数据的筛选和解析过程）
- * 2. 其他非项目：学习jQuery的各种选择器的语法和效果；公司例会：互感器培训。 
- * 明日计划：测试文本程序，编辑电源监测页面的数据处理功能
+/**1. duiecharttubiaopeizhicanshujinxingyouhua,xianshixiaoguogenmeiguanheli
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
 */

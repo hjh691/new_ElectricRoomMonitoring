@@ -29,34 +29,40 @@ initgaugechart(chart_ic,[{name:'c相电流',value:5}]);
 initgaugechart(chart_iA,[{name:'A相电流',value:5}]);
 initgaugechart(chart_iB,[{name:'B相电流',value:5}]);
 initgaugechart(chart_iC,[{name:'C相电流',value:5}]);
-window.setInterval(refreshchart,5000);
+window.setInterval(refreshchart,5000);/**/
 function initbarchart(chartid,bardata){
     var option_bar = {
+        title :{
+            show:true,
+            text: '功率(Kw)',
+            textStyle:{
+                color: "blue",
+            },
+        },
         tooltip: {
             trigger: 'axis',
             axisPointer: {
                 type: 'shadow'
             }
         },
-        //color: ['#ff0', '#0F0','#F00'],
+        color: ['#ff0', '#0F0','#F00'],
         grid: {
-            //left: '2%',
-            //right: '5%',
-            //bottom: '2%',
-            //top:'2%',
-            x: 20,
-            y: 25,
-            x2: 30,
-            y2: 20,
-            containLabel: true
+            x: 20,//left: '2%',
+            y: 25,//right: '5%',
+            x2: 30,//bottom: '2%',
+            y2: 20,//top:'2%',
+            containLabel: true,
+            borderColor :"#fff",
+            borderWidt:1,
         },
         xAxis: {
             type: 'value',
-            max: 2000,
+            //max: 2000,
             axisLine: {
                 show: true,
                 lineStyle:{
-                    color:"#fff"
+                    color:"#fff",
+                    width:2,
                 }
             },
             axisLabel:{
@@ -66,14 +72,23 @@ function initbarchart(chartid,bardata){
             },
             axisTick: {
                 show: false
-            }
+            },
+            position: 'top',
+            //axisLabel :{
+                //formatter : '{value}Kw',
+                //rotate :30,
+            //},
         },
         yAxis: {
             type: 'category',
             data: category,
-            splitLine: {show: false},
+            splitLine: {show: true},
             axisLine: {
-                show: false
+                show: true,
+                lineStyle:{
+                    color:"#fff",
+                    width:2,
+                },
             },
             axisTick: {
                 show: false
@@ -81,12 +96,13 @@ function initbarchart(chartid,bardata){
             axisLabel:{
                 show:true,
                 textStyle:{color:"#fff"},
-                color:"#fff"
+                color:"#fff",
             },
             offset: 0,
             nameTextStyle: {
                 fontSize: 15
-            }
+            },
+            inverse: true,
         },
         series: [
             {
@@ -98,7 +114,7 @@ function initbarchart(chartid,bardata){
                 smooth: true,
                 label: {
                     normal: {
-                        show: true,
+                        show: true,//
                         position: 'right',
                         offset: [5, -2],
                         textStyle: {
@@ -109,7 +125,7 @@ function initbarchart(chartid,bardata){
                 },
                 itemStyle: {
                     emphasis: {
-                        barBorderRadius: 7
+                        barBorderRadius: 2
                     },
                     normal: {
                         barBorderRadius: 7,
@@ -197,7 +213,6 @@ function initgaugechart(chartid,data){
                     color: '#000',
                     //shadowColor: '#fff', //默认透明
                     //shadowBlur: 10,
-                    
                     fontSize:12,
                 },
             },
@@ -217,7 +232,6 @@ function initgaugechart(chartid,data){
                 color: '#F00',
                 shadowColor: '#00f', //默认透明
                 shadowBlur: 5,
-                
             },
             itemStyle:{
                 color:'#000',
@@ -243,18 +257,18 @@ function initgaugechart(chartid,data){
                     color:'#18343C'
                 }
             },
-            data:[data[0]],//[{value: 20,name: '电压'}],// [data]
+            data:[data[0]],//[{value: 20,name: '电压'}],// renbao pingan taipingyang dadi yangguang fude 
         }]
     }
     chartid.setOption(option_gauge);
 }
-function refreshchart(){
-    var UA=300+((Math.random() * 100).toFixed(1) - 0);
-    var UB=300+((Math.random() * 100).toFixed(1) - 0);
-    var UC=300+((Math.random() * 100).toFixed(1) - 0);
-    var ua=300+((Math.random() * 100).toFixed(1) - 0);
-    var ub=300+((Math.random() * 100).toFixed(1) - 0);
-    var uc=300+((Math.random() * 100).toFixed(1) - 0);
+function refreshchart(avalue,bonding){
+    var UA=((Math.random() * 220).toFixed(1) - 0);
+    var UB=((Math.random() * 220).toFixed(1) - 0);
+    var UC=((Math.random() * 220).toFixed(1) - 0);
+    var ua=((Math.random() * 220).toFixed(1) - 0);
+    var ub=((Math.random() * 220).toFixed(1) - 0);
+    var uc=((Math.random() * 220).toFixed(1) - 0);
     var IA=(Math.random() * 5).toFixed(2) - 0;
     var IB=(Math.random() * 5).toFixed(2) - 0;
     var IC=(Math.random() * 5).toFixed(2) - 0;
@@ -278,12 +292,70 @@ function refreshchart(){
             barDatas[i][j]=(Math.random() * 1000).toFixed(0) - 0;
         }
     }*/
-    barDatas[0][0]=(UA*IA).toFixed(2);
-    barDatas[0][1]=(UB*IB).toFixed(2);
-    barDatas[0][2]=(UC*IC).toFixed(2);
-    barDatas[1][0]=(ua*ia).toFixed(2);
-    barDatas[1][1]=(ub*ib).toFixed(2);
-    barDatas[1][2]=(uc*ic).toFixed(2);
+    switch(bonding){
+        case "UA":
+            initgaugechart(chart_vA,[{name:"A相电压",value:avalue}]);
+            break;
+        case "UB":
+            initgaugechart(chart_vB,[{name:'B相电压',value:avalue}]);
+            break;
+        case "UC":
+            initgaugechart(chart_vC,[{name:'C相电压',value:avalue}]);
+            break;
+        case "ua":
+            initgaugechart(chart_va,[{name:"a相电压",value:avalue}]);
+            break;
+        case "ub":
+            initgaugechart(chart_vb,[{name:'b相电压',value:avalue}]);
+            break;
+        case "uc":
+            initgaugechart(chart_vc,[{name:'c相电压',value:avalue}]);
+            break;
+        case "IA":
+            initgaugechart(chart_iA,[{name:"A相电流",value:avalue}]);
+            break;
+        case "IB":
+            initgaugechart(chart_iB,[{name:'B相电流',value:avalue}]);
+            break;
+        case "IC":
+            initgaugechart(chart_iC,[{name:'C相电流',value:avalue}]);
+            break;
+        case "ia":
+            initgaugechart(chart_ia,[{name:"a相电流",value:avalue}]);
+            break;
+        case "ib":
+            initgaugechart(chart_ib,[{name:'b相电流',value:avalue}]);
+            break;
+        case "ic":
+            initgaugechart(chart_ic,[{name:'c相电流',value:avalue}]);
+            break;
+    }
+    UA=chart_vA.getOption().series[0].data[0].value;
+    UB=chart_vA.getOption().series[0].data[0].value;
+    UC=chart_vA.getOption().series[0].data[0].value;
+    ua=chart_va.getOption().series[0].data[0].value;
+    ub=chart_vb.getOption().series[0].data[0].value;
+    uc=chart_vc.getOption().series[0].data[0].value;
+    IA=chart_iA.getOption().series[0].data[0].value;
+    IB=chart_iB.getOption().series[0].data[0].value;
+    IC=chart_iC.getOption().series[0].data[0].value;
+    ia=chart_ia.getOption().series[0].data[0].value;
+    ib=chart_ib.getOption().series[0].data[0].value;
+    ic=chart_ic.getOption().series[0].data[0].value;
+    var auA=document.getElementById("PT_A").innerHTML.split(":")
+    var tuA=auA[0]/auA[1];
+    var aiA=document.getElementById("CT_A").innerHTML.split(":");
+    var tiA=aiA[0]/aiA[1];
+    var aua=document.getElementById("pt_a").innerHTML.split(":");
+    var tua=aua[0]/aua[1];
+    var aia=document.getElementById("ct_a").innerHTML.split(":");
+    var tia=aia[0]/aia[1];
+    barDatas[0][0]=(UA*IA*tuA*tiA/1000).toFixed(2);
+    barDatas[0][1]=(UB*IB*tuA*tiA/1000).toFixed(2);
+    barDatas[0][2]=(UC*IC*tuA*tiA/1000).toFixed(2);
+    barDatas[1][0]=(ua*ia*tua*tia/1000).toFixed(2);
+    barDatas[1][1]=(ub*ib*tua*tia/1000).toFixed(2);
+    barDatas[1][2]=(uc*ic*tua*tia/1000).toFixed(2);
     initbarchart(chart_P,barDatas[0]);
     initbarchart(chart_p,barDatas[1]);
-}
+}/**duiyixiechongfudaimajinxinghebingchongxiechenghanshujinxfuyong,jingjianjiegou */

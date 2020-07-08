@@ -20,6 +20,7 @@
     display:table-cell;
     border-radius: 5px;
     text-align:center;/**/
+    font-size:16px;
 }/**/
 .normal{
     width:100px;
@@ -114,7 +115,7 @@ li a{
     width:100px;
     height:35px;
     line-height: 35px;
-    margin:5px 0px;
+    margin:5px 10px;
 }
 .unnormal_air{/**/
     background-color:rgba(204, 6, 6, 0.993);
@@ -125,15 +126,15 @@ li a{
     width:100px;
     height:35px;
     line-height: 35px;
-    margin:5px 0px;
+    margin:5px 10px;
 }
 .lable_set{/**/
     font-size: 18px;
     font-style: oblique b;
     text-align:  center;
     vertical-align: middle;
-    height:35px;
-    line-height: 35px;
+    height:30px;
+    line-height: 30px;
     margin:5px 0px;
 }
 .lable_arow{/*带有右向三角形的标签*/
@@ -207,6 +208,21 @@ li a{
     height:330px;
     background-color: #555;
     margin-bottom: 10px;
+}
+.rowlay{
+    width:100%;
+    text-align: center;
+    font-size:16px;
+    background:#adf7b8;
+    vertical-align:center;
+    height:35px;
+    line-height: 35px;
+    /*margin-bottom:5px;*/
+}
+.rowlay select{
+    font-size:18px;
+    width:253px;
+    vertical-align:-10%;
 }
 /***/
 /*div>p.lable{

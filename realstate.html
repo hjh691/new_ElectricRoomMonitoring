@@ -5,8 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <link rel="shortcut icon" href="#" />
         <link rel="stylesheet" href="css/bootstrap.min.css" />
-       <!-- <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />-->
-        <link rel="stylesheet" href="css/electricroommonitoring.css" />
+       <!-- <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
+        <link rel="stylesheet" href="css/electricroommonitoring.css" />-->
         <link rel="stylesheet" href="css/flooding_smoking.css"/><!---->
         <title>变电站智能辅助系统云平台</title>
         <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
@@ -24,12 +24,12 @@
                 margin-left: 5px;
                 margin-right: 5px;
             }
-            th,td{
-                border:1px solid black;
-                text-align:center;
+            .hum{
+                border:1px solid black;/**/
+                /*text-align:center;
                 line-height:center;
                 width:200px;
-                height:30px;
+                height:30px;*/
             }
             * {
                 margin: 0;
@@ -43,9 +43,7 @@
                 text-align: center;
             }
             /*关键设置 tbody出现滚动条 height: 500px;overflow-y: scroll;*/
-            .nav>li>a{
-                padding:0;
-            }
+            
             table tbody {
                 display: block;
             }
@@ -100,8 +98,8 @@
                 <li id="smoken"><a href="#tab_smoken" data-toggle="tab"><i class="glyphicon glyphicon-cloud-upload"></i> 烟感</a></li>
                 <li id="flooding"><a href="#tab_flooding" data-toggle="tab"><i class="glyphicon glyphicon-tint"></i> 水浸</a></li>
                 <li id="ups"><a href="#tab_ups" data-toggle="tab"><i class="glyphicon glyphicon-retweet"></i> UPS</a></li>
-                <li id="hum"><a href="#tab_hum" data-toggle="tab"><i class="glyphicon glyphicon-flash"></i> 动力</a></li>
-                <li id="room"><a href="#tab_room" data-toggle="tab"><i class="glyphicon glyphicon-leaf"></i> 环境</a></li>
+                <li id="hum"><a href="#tab_room" data-toggle="tab"><i class="glyphicon glyphicon-flash"></i> 动力</a></li>
+                <li id="room"><a href="#tab_hum" data-toggle="tab"><i class="glyphicon glyphicon-leaf"></i> 环境</a></li>
                 <li id="air"><a href="#tab_air" data-toggle="tab"><i class="glyphicon glyphicon-random"></i> 空调</a></li>
             </ul>
             <div class="tab-content" id='tab-content'>
@@ -187,11 +185,7 @@
                             <li id="light_bind_view">绑定信息：2#视频</li>
                         </div>
                     </div>
-                    <!--<div style="z-index:999;display: block; position: fixed; left: 500px; top: 200px;">
-                        <div id="zxd_x">
-                        <a title="点击关闭"><b></b></a></div>
-                        <div class="content"><a href=""><img src="res/ac.jpg"></a></div>
-                        </div>--><!---->
+                    <!----><!---->
                     <script type="text/javascript" src="js/light.js"></script>
                 </div>
                 <div class="tab-pane  fade" id="tab_smoken" align="center">
@@ -280,6 +274,11 @@
                     </div>
                     <script type="text/javascript" src="js/flooding.js"></script>
                 </div>
+                <style>
+                    #div1 li{
+                        color:white;
+                    }
+                </style>
                 <div class="tab-pane fade" id="tab_ups">
                     <div id="div1" style="position:absolute ; width:100%;height:90%;background-repeat:no-repeat;background-size:cover;min-width: 800px;min-height: 600px;z-index:-1 ">
                         <img src="res/ups.jpg" style="width:100%; height:100%;min-width: 800px;min-height: 600px;z-index:-1"/>
@@ -291,17 +290,17 @@
                             <li >输入频率<input class="ups-edit" id="sd_pl" value=50.01 title="输入端频率"></input></li>
                         </div>
                         <div class="textbox" id="txb-batter" style="left:6%;top:60%;">
-                            <li>电池状态 <input class="ups-stated" id="bat_state" value="正常"></input></li>
-                            <li >电池容量<input class="ups-edit" id="bat_con" value=220.34></input></li>
-                            <li >电池电压<input class="ups-edit" id="bat_val" value=220.34></input></li>
-                            <li >电池频率<input class="ups-edit" id="bat_pl" value=50></input></li>
+                            <li>电池状态<input class="ups-stated" id="bat_state" value="正常"></input></li>
+                            <li>电池容量<input class="ups-edit" id="bat_con" value=220.34></input></li>
+                            <li>电池电压<input class="ups-edit" id="bat_val" value=220.34></input></li>
+                            <li>电池频率<input class="ups-edit" id="bat_pl" value=50></input></li>
                         </div>
                         <div class="textbox" id="txb-switch" style="left:35%;top:4%;">
                             <li >Ａ相电压<input class="ups-edit" id="pl_a" value=220.34 title="旁路电压UA"></input></li>
                             <li></li>
-                            <li style="display: inline">Ｂ相电压<input class="ups-edit" id="pl_b" value=220.34 title="旁路电压UA"></input></li>
+                            <li style="display: inline">Ｂ相电压<input class="ups-edit" id="pl_b" value=220.34 title="旁路电压UB"></input></li>
                             <li style="display: inline">旁路频率<input class="ups-edit" id="pl_pl" value=49.99 title="旁路频率"></input></li>
-                            <li >Ｃ相电压<input class="ups-edit" id="pl_c" value=220.34 title="旁路电压UA"></input></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="pl_c" value=220.34 title="旁路电压UC"></input></li>
                         </div>
                         <div class="textbox" id="txb-device" style="left:73%;top:48%;">
                             <li >Ａ相电压<input class="ups-edit" id="dev_a" value=220.34 title="设备端电压UA"></input></li>
@@ -318,7 +317,7 @@
                     </div>
                     <script type="text/javascript" src="js/ups.js"></script>
                 </div>
-                <div class="tab-pane fade" id="tab_hum">
+                <div class="tab-pane fade" id="tab_room">
                     <div align="center">
                         <!--<h2 style="text-align:center">动力监测</h2>-->
                         <div style="width:805px;background:#adf7b8;">
@@ -326,29 +325,29 @@
                             <div class="input">
                                 <table class="format">
                                     <tr>
-                                        <td > 
+                                        <!--<td > 
                                             <div class="donghuan"></div>
-                                        </td>
+                                        </td>-->
                                         <td >
-                                            <div class="donghuan" style="display: flex;text-align: center;align-items: center;">
+                                            <div class="donghuan" style="width:320px;display: flex;text-align: center;align-items: center;">
                                                 <ul style="color:#fff;list-style-type:none;font-size: 16px;width:100%;margin-bottom: 0px">
-                                                    <li>PT变比:10:1</li>
-                                                    <li>CT变比:20:5</li>
-                                                    <li>PT变比:10:1</li>
-                                                    <li>CT变比:20:5</li>
-                                                    <li>PT变比:10:1</li>
-                                                    <li>CT变比:20:5</li>
+                                                    <li>PT变比:<lable id="PT_A">1:1</lable></li>
+                                                    <li>CT变比:<lable id="CT_A">20:5</lable></li>
+                                                    <li>PT变比:<lable id="PT_B">1:1</lable></li>
+                                                    <li>CT变比:<lable id="CT_B">20:5</lable></li>
+                                                    <li>PT变比<lable id="PT_C">1:1</lable></li>
+                                                    <li>CT变比:<lable id="CT_C">20:5</lable></li>
                                                 </ul>
                                             </div>
                                         </td>
                                         <td >
-                                            <div class="donghuan" id="chart-vA"></div>
+                                            <div class="donghuan hum" id="chart-vA"></div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-vB"></div>
+                                            <div class="donghuan hum" id="chart-vB"></div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-vC"></div>
+                                            <div class="donghuan hum" id="chart-vC"></div>
                                         </td>
                                     </tr>
                                     <tr >
@@ -356,13 +355,13 @@
                                             <div style="width: 320px;height: 160px;" id="chart-P" ></div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-iA"></div>
+                                            <div class="donghuan hum" id="chart-iA"></div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-iB"></div>
+                                            <div class="donghuan hum" id="chart-iB"></div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-iC"></div>
+                                            <div class="donghuan hum" id="chart-iC"></div>
                                         </td>
                                     </tr>
                                 </table>
@@ -371,30 +370,30 @@
                             <div class="output" >
                                 <table class="format">
                                     <tr>
-                                        <td class="donghuan">
+                                        <!--<td class="donghuan">
                                             <div class="donghuan"> 
                                             </div>
-                                        </td>
+                                        </td>-->
                                         <td>
-                                            <div class="donghuan" style="display: flex;text-align: center;align-items: center;">
+                                            <div class="donghuan" style="width:320px;display: flex;text-align: center;align-items: center;left:-200px;">
                                                 <ul style="color:#fff;list-style-type:none;font-size: 16px;width:100%; ">
-                                                    <li>PT变比:10:1</li>
-                                                    <li>CT变比:200:5</li>
-                                                    <li>PT变比:10:1</li>
-                                                    <li>CT变比:200:5</li>
-                                                    <li>PT变比:10:1</li>
-                                                    <li>CT变比:200:5</li>
+                                                    <li>PT变比:<lable id="pt_a">1:1</lable></li>
+                                                    <li>CT变比:<lable id="ct_a">200:5</lable></li>
+                                                    <li>PT变比:<lable id="pt_b">1:1</lable></li>
+                                                    <li>CT变比:<lable id="ct_b">200:5</lable></li>
+                                                    <li>PT变比:<lable id="pt_c">1:1</lable></li>
+                                                    <li>CT变比:<lable id="ct_c">200:5</lable></li>
                                                 </ul>
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-va"></div>
+                                            <div class="donghuan hum" id="chart-va"></div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-vb"></div>
+                                            <div class="donghuan hum" id="chart-vb"></div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-vc"></div>
+                                            <div class="donghuan hum" id="chart-vc"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -402,13 +401,13 @@
                                             <div style="width:320px;height: 160px" id="chart-p"></div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-ia"></div>
+                                            <div class="donghuan hum" id="chart-ia"></div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-ib"></div>
+                                            <div class="donghuan hum" id="chart-ib"></div>
                                         </td>
                                         <td>
-                                            <div class="donghuan" id="chart-ic"></div>
+                                            <div class="donghuan hum" id="chart-ic"></div>
                                         </td>
                                     </tr>
                                 </table>
@@ -417,7 +416,7 @@
                     </div>
                     <script type="text/javascript" src="js/roommonitor.js"></script>
                 </div>
-                <div class="tab-pane fade" id="tab_room">
+                <div class="tab-pane fade" id="tab_hum">
                     <div class="rowlay" align="center"> 
                         <span class="condition" >
                             <label>计量点名称：</label>
@@ -443,15 +442,15 @@
                 </div>
                 <div class="tab-pane fade" id="tab_air" align="center" >
                     <h2 >精密空调实时参数状态</h2>
-                    <div class="container" style="background-color: gray;color:white;border-radius: 5px;width:1050px;">
-                        <div class="row" >
+                    <div class="container" style="background-color: gray;color:white;border-radius: 5px;width:1050px;margin-top:20px">
+                        <div class="row" style="margin-top:30px;">
                             <div class="col-xs-4 ac" style="text-align: center;">
-                                <p style="text-align:center;font-size: 20px;margin:10px 10px;" onclick="air_reset()">现场温湿度</p>
+                                <p style="text-align:center;font-size: 20px;margin-top:10px;" onclick="air_reset()">现场温湿度</p>
                                 <table align="center">
-                                    <tr style="width:300px;margin-top:30px;">
+                                    <tr style="width:300px;margin-top:0px;">
                                         <td style="text-align: center;width:100px">
-                                            <li style="list-style-image: url(res/t1.jpg);margin:5px 0px"></li>
-                                            <li id="tmp-value" style="vertical-align:center;height: 25px;margin:5px 0px"> 40 ℃</li>
+                                            <li style="list-style-image: url(res/t1.jpg);margin:10px 0px"></li>
+                                            <li id="tmp-value" style="vertical-align:center;height: 20px;margin:5px 0px"> 40 ℃</li>
                                         </td>
                                         <td style="text-align: center;width:100px">
                                             <li></li>
@@ -466,10 +465,10 @@
                                             <li  class="ac-ht lable_set" id="t_bottom">20</li>
                                         </td>
                                     </tr>
-                                    <tr style="width:300px;margin-top:10px;">
+                                    <tr style="width:300px;margin-top:10px;background-color: gray;">
                                         <td>
-                                            <li style="list-style-image: url(res/s1.jpg);margin:5px 0px"></li>
-                                            <li id="swt-value" style="vertical-align:center;height: 25px;margin:5px 0px"> 30 %</li>
+                                            <li style="list-style-image: url(res/s1.jpg);margin:0px 0px"></li>
+                                            <li id="swt-value" style="vertical-align:center;height: 20px;margin:5px 0px"> 30 %</li>
                                         </td>
                                         <td style="text-align: right;margin:5px 0px">
                                             <li></li>
@@ -486,7 +485,7 @@
                                     </tr>
                                 </table>
                             </div>
-                            <div class="col-xs-4 ac" style="text-align:center" align="center" >
+                            <div class="col-xs-4 ac" style="text-align:center;margin-top:10px;" align="center" >
                                 <img src="res/ac.jpg" />
                             </div>
                             <div class="col-xs-4 ac" align="center">
@@ -516,9 +515,9 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" style="margin-top:30px">
                             <div class="col-xs-4 ac" >
-                                <table align="center" style="width:100%;height:90%">
+                                <table align="center" style="width:100%;height:90%;margin:10px 10px;">
                                     <td>
                                         <li class="lable_arow">1#加热器工作状态</li>
                                         <li class="lable_arow">2#加热器工作状态</li>
@@ -536,7 +535,7 @@
                                 </table>
                             </div>
                             <div class="col-xs-4 ac">
-                                <table align="center" style="width:100%;height:90%">
+                                <table align="center" style="width:100%;height:90%;margin:10px 10px;">
                                     <td>
                                         <li class="lable_arow">1#加热器工作状态</li>
                                         <li class="lable_arow">2#加热器工作状态</li>
@@ -554,7 +553,7 @@
                                 </table>
                             </div>
                             <div class="col-xs-4 ac" >
-                                <table align="center" style="width:100%;height:90%">
+                                <table align="center" style="width:100%;height:90%;margin:10px 10px;">
                                     <td>
                                         <li class="lable_arow">1#加热器工作状态</li>
                                         <li class="lable_arow">2#加热器工作状态</li>
@@ -580,5 +579,7 @@
         <script>
         </script>
         <script  type="text/javascript" src="js/realstate.js"></script>
+        <!--修改动力监测页面布局，变比居中，去除表格边线，解决精密空调监测页面的部分元素显示不全和格式不正确的问题（样式表定义互相影响），
+            以及表格行颜色不同等，编写动力数据处理程序，页面和变量初始化-->
     </body>
 </html>

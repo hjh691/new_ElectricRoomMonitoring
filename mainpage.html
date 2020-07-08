@@ -139,9 +139,7 @@
 		var nodes = null, nodeid = -1;
 		sessionStorage.txid=-1;//20200228 初始化一次图形id
 		sessionStorage.nodetype=1;
-		/*$(function(){
-			$(".tab a:last").tab("show");
-		})*/
+		
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
@@ -185,7 +183,7 @@
 		$(document).ready(
 			function () {
 				$("#KeFuDiv").roll({ speed: 3 });//字幕滚动
-				if (typeof (Worker) !== "undefined") {//定时器多任务
+				/*if (typeof (Worker) !== "undefined") {//定时器多任务
 					if (typeof (w) == "undefined") {
 						w = new Worker("delay_worker.js");
 					}
@@ -199,7 +197,7 @@
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}
 					};
-				} else {
+				} else */{
 					var t1 = window.setInterval(sendbeat, 60000);//getrealsbydataid\\baoguochen//abcde 
 				}
 				window.setInterval("resetContent()", 200);
@@ -766,10 +764,10 @@
 					timeout: 10000,
 					error: function (jqXHR, textStatus, errorThrown) {
 						inittreeview();
-						layer.alert('获取系统目录列表数据失败');
+						layer.alert('获取系统目录列表数据失败',info_showtime);
 						sessionStorage.errortime++;
 						if(sessionStorage.errortime<3){
-							//getNodes();
+							//getNodes();//video.html mainpage.html function.js userprofile 
 						}else{
 							sessionStorage.islogin=false;
 						}
@@ -791,7 +789,7 @@
 								inittreeview(nodes);
 								GetSensors();//将标签挂接到节点树。
 							} else {
-								layer.alert(data.Error);
+								layer.alert(data.Error,info_showtime);
 								sessionStorage.islogin = ture;
 							}
 						}
@@ -903,7 +901,7 @@
 			sessionStorage.pageindex=8;
 			document.getElementById("iframe_main").src="video.html";
 		}
-		//获取指定节点的图形列表
+		//获取指定节点的图形列表  //Fresh strawberries tastes good
 		function GetBinariesByType(atype, anodeid) {
 			//var url = jfjk_base_config.baseurl + "/GetBinariesByType?type=" + atype + "&typeid=" + anodeid;//GetSensorsByNode?nodeId
 			var url = jfjk_base_config.baseurl + "/GetNodeGraphicsByNode?nodeId="+ anodeid;
@@ -955,7 +953,7 @@
 								}
 							} else {
 								localStorage.setItem("binaries", null);
-								layer.alert(data.Error);
+								layer.alert(data.Error,info_showtime);
 								sessionStorage.islogin = true;
 								refreshiframe();
 							}
@@ -1034,7 +1032,7 @@
 							} else {
 								localStorage.setItem("sensors", null);
 								localStorage.setItem("Configs",null);
-								layer.alert(data.Error);
+								layer.alert(data.Error,info_showtime);
 								sessionStorage.islogin = true;
 								refreshiframe();
 							}
@@ -1153,7 +1151,7 @@
 								}
 							} else {
 								localStorage.setItem("allsensors", null);
-								layer.alert(data.Error);
+								layer.alert(data.Error,info_showtime);
 								sessionStorage.islogin = ture;
 							}
 						}
@@ -1490,10 +1488,6 @@
 </body>
 </html>
 <!--1 sessionStorage.nodetype 节点类型，控制页面显示响应的内容和操作，原来导航栏的更新参数为直接的数值，采用此变量后自动变成字符串型，
-	在判断时需先行转换成数值型，或者采用字符串的对比方式。否则不能正确匹配。
-  2 去掉机房监控系统下的多点趋势对比
-  3 在获取指定节点的标签返回为空或异常时，系统保存的配置项数据及时复位更新的
-  4 添加全屏显示控制；
   其他公司模拟网址： Acrelcloud-6000安全用电管理平台体验地址：http://cloud.acrel.cn/    用户名：acrel  密码：123456
   
 -->

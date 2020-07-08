@@ -216,6 +216,7 @@ function logout() {
 		init_var();
 	}
 }
+//页面变量复位 use by electricroommonitoring
 function init_var(){
 	sessionStorage.SensorId=-1;
 	sessionStorage.BinariesId=-1;
@@ -420,149 +421,6 @@ function showusername() {
 //用户属性页面
 function loaduserprofile(){
 	document.getElementById("iframe_main").src="userprofile.html";
-}
-//获取指定站点的实时数据 no_use
-function getrealdatabystation(id) {
-	sessionStorage.pageindex = 2;
-	var count = 0,
-	err_count = 0;
-	if (typeof(sessionStorage.stationID) != "undefined") {
-		var url = jfjk_base_config.baseurl + "GetRealsByStation?stationId=" + sessionStorage.stationID;
-		url = encodeURI(url);
-		if (sessionStorage.islogin == "true") {
-			$.ajax({
-				beforeSend: function(request) {
-					request.setRequestHeader("_token", sessionStorage.token);
-				},
-				url: url,
-				type: 'GET',
-				dataType: 'json',
-				timeout: 10000,
-				error: function(jqXHR, textStatus, errorThrown) {
-					sessionStorage.errortime++;
-					if (errorThrown == "Unauthorized") {
-						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败',info_showtime);
-					} else {
-						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败',info_showtime);
-					}
-				},
-				success: function(data, status) {
-					var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-					if (status == "success") {
-						sessionStorage.errortime = 0;
-						sessionStorage.islogin = true;
-						if (data.Error == null) {
-							if (jQuery.isEmptyObject(data.Result.Datas)) {
-								if (id == 0) {
-									//layer.alert("没有符合条件的记录",info_showtime);
-									layer.alert("没有符合条件的记录",info_showtime);
-								}
-								return;
-							}
-							if (data.Result.Datas.hasOwnProperty("Tmp")) {
-								/**/
-								var tbody = document.getElementById('realdata-tbody');
-								var trs = tbody.getElementsByTagName("tr");
-								//data.Result.Datas.Tmp.sort(data.Result.Datas.Tmp.SensorId);
-								for (var i = 0; i < data.Result.Datas.Tmp.length; i++) {
-									for (var j = 0; j < trs.length; j++) {
-										if (trs[j].cells[0].childNodes[0].data == data.Result.Datas.Tmp[i].SensorId) {
-											trs[j].cells[2].innerHTML = data.Result.Datas.Tmp[i].Time;
-											trs[j].cells[3].innerHTML = data.Result.Datas.Tmp[i].Value;
-											break;
-										}
-									}
-									if (j >= trs.length) {
-										var tr = document.createElement('tr');
-										var tdid = document.createElement('td');
-										var tdename = document.createElement('td');
-										//var tdsalary=document.createElement('td');
-										var tdage = document.createElement('td');
-										var tddiscr = document.createElement('td');
-										var tdhistory = document.createElement('td');
-										var tdwarnlog = document.createElement('td'); {
-											tdid.innerHTML = data.Result.Datas.Tmp[i].SensorId;
-										}
-										for (j = 0; j < data.Result.Sensors.Sensors.length; j++) {
-											if (data.Result.Datas.Tmp[i].SensorId == data.Result.Sensors.Sensors[j].Id) {
-												tdename.innerHTML = data.Result.Sensors.Sensors[j].Name;
-												break;
-											}
-										}
-										//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
-										tdage.innerHTML = data.Result.Datas.Tmp[i].Time; //jsonObject[i].color;
-										tddiscr.innerHTML = data.Result.Datas.Tmp[i].Value;
-										tdhistory.setAttribute('backgroundColor', '#ffffff');
-										tdhistory.setAttribute('onclick', 'tohistory(' + tdid.innerHTML + ')');
-										tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
-										tdwarnlog.setAttribute('onclick', 'towarnlog(' + tdid.innerHTML + ')');
-										tdwarnlog.setAttribute('backgroundColor', '#ffffff');
-										tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
-										tr.appendChild(tdid);
-										tr.appendChild(tdename);
-										tr.appendChild(tdage);
-										tr.appendChild(tddiscr);
-										tr.appendChild(tdhistory);
-										tr.appendChild(tdwarnlog);
-										if (i % 2 == 0) {
-											tr.cells[0].style.backgroundColor = "#16b9c9";
-											tr.cells[1].style.backgroundColor = "#16b9c9";
-											tr.cells[2].style.backgroundColor = "#16b9c9";
-											tr.cells[3].style.backgroundColor = "#16b9c9";
-										} else {
-											tr.cells[0].style.backgroundColor = "#FFFFFF";
-											tr.cells[1].style.backgroundColor = "#FFFFFF";
-											tr.cells[2].style.backgroundColor = "#FFFFFF";
-											tr.cells[3].style.backgroundColor = "#FFFFFF";
-										}
-										//tdage.setAttribute('class','time');
-										//tdid.setAttribute('class','sensorid');
-										//tddiscr.setAttribute('class','tmpvalue');
-										//tdename.setAttribute('class','sensorname');
-										var tbody = document.getElementById('realdata-tbody');
-										tbody.appendChild(tr);
-									}
-								}
-								count = data.Result.Datas.Tmp.length;
-								//parent.window.showfudongdiv();
-							}
-							if (data.Result.Datas.hasOwnProperty("Err")) {
-								for (var i = 0; i < data.Result.Datas.Err.length; i++) {
-									if (jQuery.isEmptyObject(data.Result.Datas.Err[i].Value)) {
-										for (var j = 0; j < trs.length; j++) {
-											if (trs[j].cells[0].childNodes[0].data == data.Result.Datas.Err[i].SensorId) {
-												trs[j].cells[3].style.backgroundColor = trs[j].cells[2].style.backgroundColor;
-												//err_count++;
-												break;
-											}
-										}
-										continue;
-									}
-									for (var j = 0; j < trs.length; j++) {
-										if (trs[j].cells[0].childNodes[0].data == data.Result.Datas.Err[i].SensorId) {
-											trs[j].cells[3].style.backgroundColor = "#FFFF00";
-											err_count++;
-											break;
-										}
-									}
-								}
-								//err_count=data.Result.Datas.Err.length;
-							}
-							document.getElementById('count_val').innerHTML = count + "条";
-							//document.getElementById('normal_count').innerHTML=count-err_count+"条";
-							document.getElementById('err_count').innerHTML = err_count + "条";
-						} else {
-							layer.alert(data.Error, info_showtime);
-						}
-					}
-				}
-			});
-		} else {
-			layer.alert("与服务器连接失败",info_showtime);
-			//window.location.href="index.html";
-		}
-		document.getElementById('station_name').innerHTML = sessionStorage.stationName;
-	}
 }
 //跳转到历史数据  used by electricroommonitor
 function tohistory(sorid) {
@@ -1058,13 +916,14 @@ function initlist() {
 		getgraphics();
 	}
 }
-//显示新密码输入选项	
+//显示新密码输入选项 used by ele
 function showeditpassword() {
 	document.getElementById("up-editpassword").style.display = "inline";
 	document.getElementById("up-yhmmqr").style.display = "inline";
 	document.getElementById("txt_postpassword").style.display = "inline";
+	document.getElementById("txt_editpassword").style.display="none";
 }
-//提交密码修改内容
+//提交密码修改内容 used by ele
 function postpassword() {
 	//var yhbh=document.getElementById("up-yhbh").value;
 	//var yhmc=document.getElementById("up-yhmc").value;
@@ -1079,6 +938,12 @@ function postpassword() {
 		layer.alert("请输入新密码",info_showtime);
 		return;
 	}
+	document.getElementById("up-editpassword").style.display = "none";
+	document.getElementById("up-yhmmqr").style.display = "none";
+	document.getElementById("up-yhmmqr").value="";
+	document.getElementById("up-yhmm").value="";
+	document.getElementById("txt_postpassword").style.display = "none";
+	document.getElementById("txt_editpassword").style.display="inline";
 	var url = jfjk_base_config.baseurl + "ChangePass?pass=" + yhmm + "&newpass=" + xmm;
 	url = encodeURI(url);
 	$.ajax({
@@ -1100,8 +965,10 @@ function postpassword() {
 					top.location = "index.html";
 					return;
 				} else {
-					layer.alert(data.Error,info_showtime);
+					layer.alert(data.Error,info_showtime);//info_showtime 信息框显示时长，到时自动关闭 a(an),the
+					//i,you he(she,it) we you they my your his(her,its) our your their me you him(her,it),us you them;
 				}
+				
 			}
 		}
 	});
@@ -1205,134 +1072,7 @@ function inithistorychart() {
 	}
 	//drawchart()
 }*/
-//初始化短信日志查询页面（在进入短信日志页面时触发）。
-function initsmslog() {
-	sessionStorage.pageindex = 6;
-	document.getElementById("kssj_sms").value = sessionStorage.kssj;
-	document.getElementById("jssj_sms").value = sessionStorage.jssj;
-}
-/*根据站点变化获取站内的所有标签列表，当前页面是趋势图、历史数据、
-告警信息等几个页面时，对标签名称下拉列表框就那些初始化。
-*/
-function GetSensorsByStation() {
-	if (sessionStorage.islogin == "true") {
-		var url = jfjk_base_config.baseurl + "GetSensorsByStation?stationId=0" + sessionStorage.stationID;
-		url = encodeURI(url);
-		switch (sessionStorage.pageindex) {
-		case "3":
-			var sel = document.getElementById('jcdd');
-			for (var i = 0; i < sel.length; i++) {
-				sel.removeChild(sel.options[0]);
-				sel.remove(0);
-				sel.options[0] = null;
-			}
-			break;
-		case "4":
-			var sel = document.getElementById('jcdd');
-			var sel2 = document.getElementById('jcdd2');
-			var sel3 = document.getElementById('jcdd3');
-			for (var i = 0; i < sel.length; i++) {
-				sel.removeChild(sel.options[0]);
-				sel.remove(0);
-				sel.options[0] = null;
-				sel2.removeChild(sel2.options[0]);
-				sel2.remove(0);
-				sel2.options[0] = null;
-				sel3.removeChild(sel3.options[0]);
-				sel3.remove(0);
-				sel3.options[0] = null;
-			}
-			break;
-		}
-		$.ajax({
-			beforeSend: function(request) {
-				request.setRequestHeader("_token", sessionStorage.token);
-			},
-			url: url,
-			type: 'GET',
-			dataType: 'json',
-			timeout: 10000,
-			error: function(jqXHR, textStatus, errorThrown) {
-				sessionStorage.errortime++;
-				if (errorThrown == "Unauthorized") {
-					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取指定站标签操作失败', info_showtime);
-				} else {
-					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取指定站标签操作失败', info_showtime);
-				}
-			},
-			success: function(data, status) {
-				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-				if (status == "success") {
-					sessionStorage.errortime = 0;
-					sessionStorage.islogin = true;
-					if (data.Error == null) {
-						if (!jQuery.isEmptyObject(data.Result.Sensors)) {
-							//if(data.Result.hasOwnProperty('Sensors')){
-							for (var i = 0; i < data.Result.Sensors.length; i++) { //data.Result.length
-								var op = document.createElement('option');
-								var op2 = document.createElement('option');
-								var op3 = document.createElement('option');
-								op.setAttribute("value", data.Result.Sensors[i].Id);
-								op.innerHTML = data.Result.Sensors[i].Name;
-								op2.setAttribute("value", data.Result.Sensors[i].Id);
-								op2.innerHTML = data.Result.Sensors[i].Name;
-								op3.setAttribute("value", data.Result.Sensors[i].Id);
-								op3.innerHTML = data.Result.Sensors[i].Name;
-								switch (sessionStorage.pageindex) {
-								case '3':
-									var sel = document.getElementById('jcdd');
-									sel.appendChild(op);
-									break;
-								case '4':
-									var sel = document.getElementById('jcdd');
-									sel.appendChild(op);
-									var sel2 = document.getElementById('jcdd2');
-									sel2.appendChild(op2);
-									var sel3 = document.getElementById('jcdd3');
-									sel3.appendChild(op3);
-									break;
-								case '5':
-									var sel = document.getElementById('jcdd');
-									sel.appendChild(op);
-									break;
-								}
-							}
-							switch (sessionStorage.pageindex) {
-							case '3':
-								setSelectOption("jcdd", sessionStorage.SensorId);
-								SensorName = sel.options[sel.selectedIndex].text;
-								queryhistorydata(sessionStorage.kssj, sessionStorage.jssj);
-								break;
-							case '4':
-								var sel = document.getElementById('jcdd');
-								setSelectOption("jcdd", sessionStorage.firstid);
-								sessionStorage.firstname = sel.options[sel.selectedIndex].text; //赋值
-								var sel2 = document.getElementById('jcdd2');
-								setSelectOption("jcdd2", sessionStorage.sencondid);
-								sessionStorage.sencondname = sel.options[sel2.selectedIndex].text;
-								var sel3 = document.getElementById('jcdd3');
-								setSelectOption("jcdd3", sessionStorage.thirdid);
-								sessionStorage.thirdname = sel.options[sel3.selectedIndex].text;
-								//drawchart();
-								break;
-							case '5':
-								setSelectOption("jcdd", sessionStorage.SensorId);
-								sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
-								querywarnlog(flag_warning);
-							}
-						} else {
-							Alert("没有符合条件的记录", info_showtime);
-						}
-					} else {
-						layer.alert(data.Error,info_showtime);
-					}
-				}
-			}
-		});
-	} else {
-		layer.alert('与服务器连接断开',info_showtime);
-	}
-}
+
 //根据标签名称确定下，拉列表框的选中项///////已用  used by electricroommonitor 
 function setSelectOption(objid, sensor) {
 	var sel = document.getElementById(objid);
@@ -1634,9 +1374,9 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 				sessionStorage.errortime++;
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
-					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取告警信息操作失败');
+					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取告警信息操作失败',info_showtime);
 				} else {
-					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取告警信息操作失败');
+					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取告警信息操作失败',info_showtime);
 				}
 				if(sessionStorage.errortime>3){
 					sessionStorage.islogin=false;
@@ -2294,9 +2034,9 @@ function GetBinary(binariesid) {
 				error: function(jqXHR, textStatus, errorThrown) {
 					sessionStorage.errortime++;
 					if (errorThrown == "Unauthorized") {
-						Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取指定编号的图形操作失败');
+						Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取指定编号的图形操作失败',info_showtime);
 					} else {
-						Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取指定编号的图形操作失败');
+						Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取指定编号的图形操作失败',info_showtime);
 					}
 				},
 				success: function(data, status) {
