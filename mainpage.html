@@ -98,14 +98,14 @@
 	</div>
 	<!--底部公司版权 -->
 	<div>
-		<!--<div class="navigation" id="footer" style="height:30px;position: absolute;bottom:0px;left:0px;right:0px;">	
+		<div class="navigation" id="footer" style="height:30px;position: absolute;bottom:0px;left:0px;right:0px;">	
 			<div class="pc-footer" >
 				<ul class="pc-footer" align="center" style="margin:0 150px;">
 					<li ><a id="company_info" href="" target="_blank" ><img id="company_log" src="" width="20px" height="20px" > 保定金凯澳自动化设备有限公司</a></li>
-					<li ><a href="#" style="margin-left:500px" >实时告警窗口</a></li>display: none;
+					
 				</ul>
 			</div>
-		</div>-->
+		</div><!--<li ><a href="#" style="margin-left:500px" >实时告警窗口</a></li>display: none;-->
 		<!--告警信息悬浮窗style="display:none"-->
 		<div id="KeFuDiv" class="KeFuDiv" onmousedown="hidefudongdiv();" >
 			<!--屏幕滚动设置 <div class="affiche_text" id="alert_info">style="display: none;"
@@ -182,8 +182,8 @@
 		})(jQuery);
 		$(document).ready(
 			function () {
-				$("#KeFuDiv").roll({ speed: 3 });//字幕滚动
-				/*if (typeof (Worker) !== "undefined") {//定时器多任务
+				$("#KeFuDiv").roll({ speed: 3 });//字幕滚动/**/
+				if (typeof (Worker) !== "undefined") {//定时器多任务
 					if (typeof (w) == "undefined") {
 						w = new Worker("delay_worker.js");
 					}
@@ -197,7 +197,7 @@
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}
 					};
-				} else */{
+				} else {
 					var t1 = window.setInterval(sendbeat, 60000);//getrealsbydataid\\baoguochen//abcde 
 				}
 				window.setInterval("resetContent()", 200);
@@ -1489,5 +1489,5 @@
 </html>
 <!--1 sessionStorage.nodetype 节点类型，控制页面显示响应的内容和操作，原来导航栏的更新参数为直接的数值，采用此变量后自动变成字符串型，
   其他公司模拟网址： Acrelcloud-6000安全用电管理平台体验地址：http://cloud.acrel.cn/    用户名：acrel  密码：123456
-  
+  视频监控页添加至视频监控网址的跳转按钮
 -->

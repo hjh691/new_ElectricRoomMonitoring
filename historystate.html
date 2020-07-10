@@ -105,12 +105,12 @@
                     <div class="column"  id="state_his_main" align="center" 
                         style="height:500px;width:800px;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;margin: 20px;"></div>
                     </div>
-                    <div class="progress progress-striped" >
+                    <!--<div class="progress progress-striped" >
                         <div class="progress-bar progress-bar-info" style="width:30%"> </div>
                         <div class="progress-bar progress-bar-danger" style="width:50%"></div>
                         <div class="progress-bar progress-bar-success" style="width:10%;"></div> 
                         <div class="progress-bar progress-bar-warning" style="width: 10%;"></div>
-                    </div>
+                    </div>-->
                     <div class="input-group"></div>
             </div>
         </div>
@@ -126,19 +126,19 @@
 			$(".btn").click(function(){
 				$(this).button('toggle');
 				dname= $(".catalog:checked").val();
-				//catalog=getcatalog(dname);
+				catalog=getcatalog(dname);
 				gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
 			});
 			
 		});
         function initpage(){
-            //updatapcnav(15);//*************
+            updatapcnav(15);//*************
             var asessor=(parent.sensorsnode);
             var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
             var treenode=buildnode(treeseneors,0);
             inittreeview(treenode);
             sensors=JSON.parse(localStorage.getItem("sensors"));
-			//configs=JSON.parse(localStorage.Configs);
+			configs=JSON.parse(localStorage.Configs);
             appenddisplaytype();
             var parentid=-100,parentname="";
 			var maps=[];

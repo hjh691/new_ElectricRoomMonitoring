@@ -38,12 +38,12 @@
                 <div id="dplayer" style="width:400px;height:400px;background-color: gray;float:left">
                 </div></span>
                 <video id="videoElement" name="videoElement" class="centeredVideo" controls autoplay width="90%" height="300">
-                </video>-->
+                </video> border="0"-->
             </div>
             <div class="column" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;flex:1;">
                 <fieldset class="preview">
                     <legend >预览</legend>
-                    <table cellpadding="5" cellspacing="3" border="0">
+                    <table cellpadding="5" cellspacing="3">
                         <tr>
                             <td class="tt">码流类型</td>
                             <td>
@@ -58,6 +58,7 @@
                                 <button type="button"  value="开始预览" onclick="clickStartRealPlay();" ><span class="glyphicon glyphicon-play"></span><a href="javascript:void(0)">开始预览</a></button>
                                 <button type="button"  value="停止预览" onclick="clickStopRealPlay();" ><span class="glyphicon glyphicon-stop"></span><a href="javascript:void(0)">停止预览</a></button>
                                 <button ><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz"> 抓图</a></button>
+                                <button type="button" onclick="openvideopage();"><a href="javascript:void(0)" id="more"> 更多</a></button><!--TODO...更多视频操作，用于直接转监控系统页面-->
                             </td>
                         </tr>
                         <!--<tr>
@@ -457,6 +458,9 @@
                 paizhao.download="flvplayer.png";
             })
         }*/
+        function openvideopage(){
+            window.open("http://192.168.10.164"); //新窗口打开视频监控网址
+        }
     </script>
 </body>
 </html>

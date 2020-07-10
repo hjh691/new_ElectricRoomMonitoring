@@ -1,11 +1,12 @@
 //var t1 = window.setInterval("getrealdatabystation(1);",30000);
 //getrealdatabynodeid(-1);
-//当没有数据返回时更新页面造成报某变量未定义的问题value0.
+//当没有数据返回时更新页面造成报某变量未定义的问题value0. 
+//20200709 实时值图表详情显示当天峰值的提示（已修改），数据列表表头刷新可以点击刷新按钮进行刷新（不必有数据);图形配置刷新；（没数不刷新，或限值不匹配原来不正确,标题undfine）
 var chart_type = "", chart_unit = "", chart_max = 100, chart_min = 0, chart_sigle = "", is_have = false;
 var start_angle = 0, end_angle = 180;
 var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
-var sname,sid,type_td,title_index=3;
+var sname="",sid,type_td,title_index=3;
 let isfirst = "true";
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0;//value0未定义错误
 var colors = [];
@@ -106,7 +107,7 @@ function appendalldisplaytype(){
 //刷新按钮点击事件
 function btn_refresh_click(obj){
     allselect = $('[name="options"]');
-    //refresh_tabhead(allselect);
+    refresh_tabhead(allselect);
     decoderealdata();
 }
 function refresh_tabhead(sel){
@@ -258,6 +259,8 @@ function getCatalog(index){
     var  catalogsel = $('[name="options"]');
     typename=catalogsel[index].value;
     titlename=catalogsel[index].textContent;//显示项的标题 //20200518
+    updatachart(typename);//0709 更新图表配置
+    refreshData();
     if(allconfigs){
         for(var q in allconfigs){
             for(var l in allconfigs[q]){
@@ -539,32 +542,32 @@ function updatachart(atype) {
     switch (atype.toLowerCase()) {
         case "temp":
         case "tmp":
-            if(!chart_min)//20200518 如果获取的配置项参数为空或不存在，则赋予默认值
+            //if(!chart_min)//20200518 如果获取的配置项参数为空或不存在，则赋予默认值
                 chart_min = -30;
-            if(!chart_max)
+            //if(!chart_max)
                 chart_max = 170;
             start_angle = -45;
-            if(!chart_unit)
+            //if(!chart_unit)
                 chart_unit = "℃"
             chart_sigle = "";
             colors = [[0.15, '#1e90ff'], [0.4, '#090'], [0.6, '#ffa500'], [0.8, '#ff4500'], [1, '#ff0000']];
             break;
         case "pd":
-            if(!chart_min)
+            //if(!chart_min)
                 chart_min = 0;
-            if(!chart_max)
+            //if(!chart_max)
                 chart_max = -100;
-            if(!chart_unit)
+            //if(!chart_unit)
                 chart_unit = "dB";
             chart_sigle = ""
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
             break;
         default:
-            if(!chart_min)
+            //if(!chart_min)
                 chart_min = 0;
-            if(!chart_max)
+            //if(!chart_max)
                 chart_max = -100;
-            if(!chart_unit)
+            //if(!chart_unit)
                 chart_unit = "";
             chart_sigle = ""
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
@@ -755,7 +758,7 @@ function initseries(data) {
                 detail: {
                     show: true,
                     offsetCenter: [0, '100%'],
-                    formatter:  '{value}  \n\n' + '当天峰值: ' + ' ',//'实时值:\n\n' + ' ' + ' {value}  ' + chart_unit,
+                    formatter:  '{value}  \n\n' + '实时值: ' + ' ',//'实时值:\n\n' + ' ' + ' {value}  ' + chart_unit,
                     textStyle: {
                         fontSize: 20,
                         color: '#F8F43C'
@@ -900,7 +903,7 @@ function decodedatas(obj_chartdata) {
             },
             xAxis: [{
                 type: 'time',
-                splitNumber: 10,
+                splitNumber: 6,
                 axisLine: {
                     lineStyle: {
                         color: 'black',
@@ -926,7 +929,7 @@ function decodedatas(obj_chartdata) {
                 showAllSymbol: true,
                 symbolSize: 1,
                 data: pa,
-                smooth: true//平滑曲线
+                smooth: true//平滑曲线 sangeshijianjiedianshang
             },
                 /*{
                     name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",

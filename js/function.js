@@ -2810,11 +2810,13 @@ function updatapcnav(obj){
 		if(nav==null){//如果为null。就获取父窗口下的元素。
 			nav=window.parent.document.getElementById("nav"+i);
 		}
-		nav.style.color=""
-		nav.style.backgroundColor="";
-		if(i==obj){
-			nav.style.backgroundColor="#c0c0c0";
-			nav.style.color="#0000f0"
+		if(nav){
+			nav.style.color=""
+			nav.style.backgroundColor="";
+			if(i==obj){
+				nav.style.backgroundColor="#c0c0c0";
+				nav.style.color="#0000f0"
+			}
 		}
 	}
 }

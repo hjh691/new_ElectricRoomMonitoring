@@ -83,7 +83,8 @@ function decoderealdata(){
                                     case b:
                                     case c:
                                 }
-                                document.getElementById("guard_tbody").appendChild(createline("door"+pt[0],sname,"关闭","正常关闭"));
+                                document.getElementById("guard_tbody").appendChild(createline(sid,sname,"关闭","正常关闭"));
+                                $table = document.getElementById('guard_tbody');
                                 break;
                             case "light"://light为灯光控制，暂定，同上
                                 pt[1]++;
@@ -92,7 +93,8 @@ function decoderealdata(){
                                     case b:
                                     case c:
                                 }
-                                document.getElementById("light_tbody").appendChild(createline("l00"+pt[1],sname,"正常","正常熄灭"));//("l00"+i,"name"+i,"故障","无法点亮")
+                                document.getElementById("light_tbody").appendChild(createline(sid,sname,"正常","正常熄灭"));//("l00"+i,"name"+i,"故障","无法点亮")
+                                $table = document.getElementById('light_tbody');
                                 break;
                             case "smoken"://烟感暂定为”smoken”，同上
                                 pt[2]++;
@@ -101,7 +103,8 @@ function decoderealdata(){
                                     case b:
                                     case c:
                                 }
-                                document.getElementById("smoken_tbody").appendChild(createline("smoken"+pt[2],"name"+i,"告警"));
+                                document.getElementById("smoken_tbody").appendChild(createline(sid,sname,"告警"));
+                                $table = document.getElementById('smoken_tbody');
                                 break;
                             case "flooding"://水浸暂定为“flooding”，同上
                                 pt[3]++;
@@ -110,7 +113,8 @@ function decoderealdata(){
                                     case b:
                                     case c:
                                 }
-                                document.getElementById("flooding_tbody").appendChild(createline("flooding"+i,"name"+i,"正常"));
+                                document.getElementById("flooding_tbody").appendChild(createline(sid,sname,"正常"));
+                                $table = document.getElementById('flooding_tbody');
                                 break;
                             case "UPS"://UPS电源检测，暂定“ups",同上
                                 pt[4]++;
@@ -157,18 +161,19 @@ function decoderealdata(){
                             var atd=document.createElement("td");
                             atr.appendChild(td);
                         }
+                        count=v_sel.length;//count没有定义，取显示控制向的选取个数  709修改
                         atr.cells[0].innerHTML=sid;
                         atr.cells[0].style.ccsText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
                         atr.cells[2].innerHTML=obj_data.Time;//第二列添加测量时间
                         atr.cells[count+3].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
                         atr.cells[count+4].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
-                        for(var k in v_sel){//添加到指定列
+                        for(var k=0;k<v_sel.length;k++){//添加到指定列
                             if(v_sel[k].value==typename){
-                                atr.cells[k+1].innerHTML=obj_data.Value.toFixed(Number_of_decimal);
+                                atr.cells[k+3].innerHTML=obj_data.Value.toFixed(Number_of_decimal);
                             }
                             if(!v_sel[k].checked){
-                                atr.cells[k+1].style.cssText = "display:none";
+                                atr.cells[k+3].style.cssText = "display:none";
                             }
                         }
                         $table.appendChild(atr);//添加新行
@@ -244,12 +249,12 @@ function setactive(aid){
     }
 }
 function initpage() {
-    //updatapcnav(14);
+    updatapcnav(14);
     var parentid=-100,parentname="";
 	var maps=[];
     if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
         if (typeof (w1) == "undefined") {
-            //w1 = new Worker("delay_worker.js");
+            w1 = new Worker("delay_worker.js");
         }
         var i = 0;
         w1.onmessage = function (event) {
