@@ -12,12 +12,19 @@
    <script type="text/javascript" src="js/function.js"></script>
    <script src="js/flv.js"></script>
     <script src="js/hls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pearplayer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pearplayer"></script>-->
    <script src="js/DPlayer.min.js"></script>
 </head>
 <style>
+    .container{
+        width: 97%;
+        height:100%;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin:opx;
+    }
 </style>
 <body >
     <!--h1-- class="btn btn-success btn-large"><i class="glyphicon glyphicon-user"></i>Hello, world!<li><a href="#tab3" data-toggle="tab">Html</a></li>
@@ -27,9 +34,42 @@
         <li><a href="#tab2" data-toggle="tab">回放</a></li>
     </ul>-->
     <div class="tab-content"  allowfullscreen="true" >
-        <div class="parent" >
-            <div class="column" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;flex:1.1;">
-                <div id="dplayer" style="width:800px;height:600px;background-color: gray;">
+        <div class="container" >
+            <div class="col-xs-12 col-md-9 col-lg-9" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;flex:1.1;">
+                <div id="container" style="width:100%;height:600px;background-color: gray;">
+                    <div class="row">
+                        <div class="col-xs-4 clo-md-4 col-lg-4 cl_sel cl1" name="video" id="video0" > 
+                            <div id="dplayer0" style="width:100%;height:200px;background-color: gray;"></div>
+                        </div>
+                        <div class="col-xs-4 clo-md-4 col-lg-4 cl1" name="video" id="video1" > 
+                            <div id="dplayer1" style="width:100%;height:200px;background-color: gray;"></div>
+                        </div>
+                        <div class="col-xs-4 clo-md-4 col-lg-4 cl1" name="video" id="video2" > 
+                            <div id="dplayer2" style="width:100%;height:200px;background-color: gray;"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 clo-md-4 col-lg-4 cl1" name="video" id="video3" > 
+                            <div id="dplayer3" style="width:100%;height:200px;background-color: gray;"></div>
+                        </div>
+                        <div class="col-xs-4 clo-md-4 col-lg-4 cl1" name="video" id="video4" > 
+                            <div id="dplayer4" style="width:100%;height:200px;background-color: gray;"></div>
+                        </div>
+                        <div class="col-xs-4 clo-md-4 col-lg-4 cl1" name="video" id="video5" > 
+                            <div id="dplayer5" style="width:100%;height:200px;background-color: gray;"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 clo-md-4 col-lg-4 cl1" name="video" id="video6" > 
+                            <div id="dplayer6" style="width:100%;height:200px;background-color: gray;"></div>
+                        </div>
+                        <div class="col-xs-4 clo-md-4 col-lg-4 cl1" name="video" id="video7" > 
+                            <div id="dplayer7" style="width:100%;height:200px;background-color: gray;"></div>
+                        </div>
+                        <div class="col-xs-4 clo-md-4 col-lg-4 cl1" name="video" id="video8" > 
+                            <div id="dplayer8" style="width:100%;height:200px;background-color: gray;"></div>
+                        </div>
+                    </div>
                 </div>
                 <!--<div id="dplayer" style="width:400px;height:400px;background-color: gray;float:left">float: left;
                 </div>
@@ -40,14 +80,40 @@
                 <video id="videoElement" name="videoElement" class="centeredVideo" controls autoplay width="90%" height="300">
                 </video> border="0"-->
             </div>
-            <div class="column" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;flex:1;">
+            <div class="col-xs-12 col-md-3 col-lg-3" style="MARGIN-RIGHT: auto; MARGIN-LEFT: auto;flex:1;">
+                <fieldset disabled class="ptz" title="目前不可用">
+                    <legend >云台</legend>
+                    <div class="container"style="width:100%;height:100px;">
+                        <div class="row" style="margin-top:1px;">
+                            <button class="tt" type="button" onclick="ptz(1)"><span class="glyphicon glyphicon-triangle-left" style=" transform:rotate(45deg);"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(2)"><span  class="glyphicon glyphicon-triangle-top"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(3)"><span  class="glyphicon glyphicon-triangle-top" style=" transform:rotate(45deg);"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(4)"><span  class="glyphicon glyphicon-zoom-in"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(5)"><span  class="glyphicon glyphicon-zoom-out"></span><a href="javascript:void(0)"></a></button>
+                        </div>
+                        <div class="row" style="margin-top:10px;">
+                            <button class="tt" type="button" onclick="ptz(6)"><span  class="glyphicon glyphicon-triangle-left"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(7)"><span  class="glyphicon glyphicon-repeat"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(8)"><span  class="glyphicon glyphicon-triangle-right"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(9)"><span  class="glyphicon glyphicon-screenshot"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(10)"><span  class="glyphicon glyphicon-cd"></span><a href="javascript:void(0)"></a></button>
+                        </div>
+                        <div class="row" style="margin-top:10px;">
+                            <button class="tt" type="button" onclick="ptz(11)"><span  class="glyphicon glyphicon-triangle-bottom" style=" transform:rotate(45deg);"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(12)"><span  class="glyphicon glyphicon-triangle-bottom"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(13)"><span  class="glyphicon glyphicon-triangle-right" style=" transform:rotate(45deg);"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(14)"><span  class="glyphicon glyphicon-plus-sign"></span><a href="javascript:void(0)"></a></button>
+                            <button class="tt" type="button" onclick="ptz(15)"><span  class="glyphicon glyphicon-minus-sign"></span><a href="javascript:void(0)"></a></button>
+                        </div>
+                    </div>
+                </fieldset>
                 <fieldset class="preview">
                     <legend >预览</legend>
-                    <table cellpadding="5" cellspacing="3">
+                    <table cellpadding="10" cellspacing="10">
                         <tr>
                             <td class="tt">码流类型</td>
                             <td>
-                                <select id="streamtype" class="sel">
+                                <select id="streamtype" class="tt">
                                     <option value="0">主码流</option>
                                     <option value="1">子码流</option>
                                     <!--<option value="3">第三码流</option>
@@ -55,26 +121,37 @@
                                 </select>
                             </td>
                             <td>
-                                <button type="button"  value="开始预览" onclick="clickStartRealPlay();" ><span class="glyphicon glyphicon-play"></span><a href="javascript:void(0)">开始预览</a></button>
-                                <button type="button"  value="停止预览" onclick="clickStopRealPlay();" ><span class="glyphicon glyphicon-stop"></span><a href="javascript:void(0)">停止预览</a></button>
-                                <button ><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz"> 抓图</a></button>
-                                <button type="button" onclick="openvideopage();"><a href="javascript:void(0)" id="more"> 更多</a></button><!--TODO...更多视频操作，用于直接转监控系统页面-->
+                                
+                                <!--<button ><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz"> 抓图</a></button>
+                                <button type="button" onclick="openvideopage();"><a href="javascript:void(0)" id="more"> 更多</a></button>TODO...更多视频操作，用于直接转监控系统页面-->
                             </td>
                         </tr>
-                        <!--<tr>
+                        <tr style="height: 10px;"></tr>
+                        <tr>
                             <td class="tt">
                                 窗口分割数&nbsp;</td>
                             <td>
-                                <select class="sel" onchange="changeWndNum(this.value);">
+                                <select class="tt" onchange="changeWndNum(this.value);">
                                     <option value="1">1x1</option>
-                                    <option value="2" selected>2x2</option>
+                                    <option value="2" >2x2</option>
+                                    <option value="3" selected >3X3</option>
                                 </select>
                             </td>
-                            <td>
-                                <button ><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz"> 抓图</a></button>
+                            <td  class="tt">
                             </td>
                         </tr>
                         <tr>
+                            <td class="tt">
+                                <button type="button"  value="开始预览" onclick="clickStartRealPlay();" ><span class="glyphicon glyphicon-play"></span><a href="javascript:void(0)">开始预览</a></button>
+                            </td>
+                            <td class="tt">
+                                <button type="button"  value="停止预览" onclick="clickStopRealPlay();" ><span class="glyphicon glyphicon-stop"></span><a href="javascript:void(0)">停止预览</a></button>
+                            </td>
+                            <td class="tt">
+                                <button ><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz"> 抓图</a></button>
+                            </td>
+                        </tr>
+                        <!--<tr>
                             <td colspan="3"><button style="display: none;"><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz1"> 抓图</a></button>
                                 <input type="button" class="btn" value="抓图" onclick="clickCapturePic();" />onclick="clickCapturePic();"
                                 <input type="button" class="btn" value="开始录像" onclick="clickStartRecord();" />
@@ -92,7 +169,7 @@
                         </tr-->
                     </table>
                 </fieldset>
-                <fieldset class="clist">
+                <fieldset class="clist" >
                     <legend>设备列表</legend>
                     <form class="opinfo" id="sz_list"></form>
                 </fieldset>
@@ -145,11 +222,11 @@
                         </tr>
                     </table>
                 </fieldset>-->
-                <fieldset class="operate">
+                <!--<fieldset class="operate">
                     <legend>操作信息</legend>
                     <div id="opinfo" class="opinfo"></div>
                 </fieldset>
-               <!--<fieldset class="callback">
+               <fieldset class="callback">
                     <legend>事件回调信息</legend>
                     <div id="cbinfo" class="cbinfo"></div>
                 </fieldset>-->
@@ -163,6 +240,8 @@
     </div>
     <script>
         var sel_id,dp,isstop;
+        var va_id="dplayer0",a=0;
+        var dparray=[];
         //var player;
         //var element = document.getElementsByName('videoElement')[0];
         //$(function(){
@@ -279,8 +358,17 @@
             }
             setSelectOption("streamtype",sessionStorage.streamtype);
             //if(sessionStorage.videourl==""||typeof(sessionStorage.videourl)=="undefined")
-                clickStartRealPlay();//解决窗口变化预览停止的问题。
-                clickCapturePic();
+                //clickStartRealPlay();//解决窗口变化预览停止的问题。
+               // clickCapturePic();
+            $(".cl1").click(function(){//用于动态加载的元素的点击响应。
+                var allobj = $('[name="video"]');
+                for(var k=0;k<allobj.length;k++){
+                   $(allobj[k]).removeClass("cl_sel");
+                }
+                $(this).addClass("cl_sel");
+                a=this.id.substr(5,6);
+                va_id="dplayer"+a;
+            });
         }
         /*dp = new DPlayer({
             container: document.getElementById('dplayer'),
@@ -341,18 +429,26 @@
             ],
         });*/
         function clickStartRealPlay(){
+            dp=dparray[a];
             if(typeof(dp)!=="undefined"&&dp!="null"){//解决多次之间点击开始预览按钮造成多播放线程的问题。//
                 dp.pause();
                 dp.destroy();
+                dp=undefined;
+                dparray[a]=dp;
                 isstop=true;
+                return;
             }
             var radio=document.getElementsByName("checks");
-            sel_id=0;
-            for (i=0; i<radio.length; i++) {
-                if (radio[i].checked) {
-                    sel_id=(radio[i].value)
-                    sessionStorage.sel_id=sel_id;
-                }
+            if (typeof(sessionStorage.sel_id) =="undefined"){
+                sel_id=0;
+                for (i=0; i<radio.length; i++) {
+                    if (radio[i].checked) {
+                        sel_id=(radio[i].value)
+                        sessionStorage.sel_id=sel_id;
+                    }
+                }/**/
+            }else{
+                sel_id=sessionStorage.sel_id;
             }
             sessionStorage.streamtype=document.getElementById("streamtype").value;
             if (typeof(sel_id) !=="undefined") {
@@ -374,8 +470,8 @@
                 player.attachMediaElement(element);
                 player.load();
                 player.play();*/
-                dp = new DPlayer({
-                    container: document.getElementById('dplayer'),
+                dparray[a] = new DPlayer({
+                    container: document.getElementById(va_id),
                     autoplay: true,//自动播放
                     theme: '#FADFA3',
                     loop: false,//循环播放
@@ -391,6 +487,7 @@
                         type: 'flv',
                     },
                 });
+                dp=dparray[a];
                 dp.on('play',function(){
                     //console.log("预览成功");
                     showOPInfo("开始预览成功")
@@ -415,14 +512,16 @@
             }
         }
         function clickStopRealPlay(){
+            dp=dparray[a];
             if(typeof(dp)!=="undefined"&&dp!="null"){
                 isstop=true;
                 dp.pause();
                 dp.destroy();
                 dp=undefined;
+                dparray[a]=dp;
                 sessionStorage.videourl="";
-                sessionStorage.sel_id=-1;
-                showOPInfo("停止预览成功")
+                //sessionStorage.sel_id=-1;
+                showOPInfo("停止预览成功");
             }
             /*if(typeof player !=="undefined"&&player!=null){
                 isstop=true;
@@ -434,8 +533,9 @@
         }
         function getvalue(obj){
             sel_id=obj.value;
+            sessionStorage.sel_id=sel_id;
         }
-        function clickCapturePic(){
+        function clickCapturePic(){//抓图
             var zhuavideo=document.getElementById("pz");
             zhuavideo.addEventListener('click', function() {
                 const canvas = document.createElement("canvas");
@@ -461,6 +561,63 @@
         function openvideopage(){
             window.open("http://192.168.10.164"); //新窗口打开视频监控网址
         }
+        function changeWndNum(avalue){
+            switch(avalue*1){
+                case 1:
+                    for(var i=1;i<9;i++){
+                        document.getElementById("video"+i).style="display:none";
+                    }
+                    document.getElementById('video0').className="col-lg-12 cl1 cl_sel";
+                    document.getElementById('dplayer0').style.height="600px";
+                    //
+                    break;
+                case 2:
+                    for(var i=1;i<9;i++){
+                        document.getElementById("video"+i).style="display:none";
+                    }
+                    for(var i=0;i<2;i++){
+                        document.getElementById("video"+i).style="display:";
+                        document.getElementById('video'+i).className="col-xs-6 clo-md-6 col-lg-6 cl1 ";
+                        document.getElementById('dplayer'+i).style.height="300px";
+                    }
+                    for(var i=3;i<5;i++){
+                        document.getElementById("video"+i).style="display:";
+                        document.getElementById('video'+i).className="col-xs-6 clo-md-6 col-lg-6 cl1 ";
+                        document.getElementById('dplayer'+i).style.height="300px";
+                    }
+                    $("#video0").addClass("cl_sel");
+                    break;
+                case 3:
+                    for(var i=0;i<9;i++){
+                        document.getElementById("video"+i).style="display:";
+                        document.getElementById('video'+i).className="col-xs-4 clo-md-4 col-lg-4 cl1 ";
+                        document.getElementById('dplayer'+i).style.height="200px";
+                    }
+                    $("#video0").addClass("cl_sel");
+                    break;
+            }
+        }
+        function ptz(anum){
+            switch(anum*1){
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 15:
+            }
+        }
+        function appenddisplaytype(){}
     </script>
 </body>
 </html>
+<!--7.20添加云台控制按钮，编写视频通道与显示视窗之间的分配对应逻辑以及分别进行独立的预览和关闭程序，解决关闭后不能再次进行预览（除非再次单击通道号）的问题，以及偶有页面显示空白的问题-->

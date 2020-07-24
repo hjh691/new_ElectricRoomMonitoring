@@ -21,10 +21,10 @@
 		html,body{
 			width: 100%;
 			height: 100%;
-		}/**/
-		.title-right {
-			width:100px;
 		}
+		.title-right {
+			width:120px;
+		}/**/
 		input:checked + span {
 			color: #337ab7;
 			font-weight: bold;
@@ -63,12 +63,50 @@
 </head>
 <body>
 	<div>
-		<div class="pagecard" id="pagecard1">
-			<p style="text-align:center;font-size:20px"><b>趋势对比</b></p>
+		<!--<div class="pagecard" id="pagecard1">
+			<p style="text-align:center;font-size:20px;display: none;"><b>趋势对比</b></p>
+		</div>-->
+		<div style="text-align:left;padding-left: 10px;">
+			<span><label class="title-right">类别分组：</label></span>
+			<span class="dropup" style="position: relative;" >
+			<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
+				<span class="select_text" data-is-select="false">Dro pup</span>
+				<span class="caret"></span>
+			</button>-->
+			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
+				<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;"></input>
+			</label>
+			<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="display_type">
+				<!--<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
+				<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li>为了方便演示，type设置text了，实际中可以设置成hidden -->
+			</ul> <b style="font-size: 50%;color:red;margin-left:10px;">*选项类别不能大于4个</b>
+			</span>
+		</div>
+		<div  style="text-align:left;padding-left: 10px;">
+			<span><label class="title-right" >时间选择：</label></span>
+			<span>
+			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" id="cxsj" 
+				style="width:130px;font-size:16px;height: 30px;border-radius: 5px;"></input>
+			
+			
+			<!--<label class="title-right">计量点名称：</label>
+				<a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
+					<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">display:none
+				</select>-->
+				<input class="button" type="button" id="chaxun" value="对比" onclick="oneChoice()"
+					style="font-size:16px;height: 30px;line-height: 30px;margin-left: 10px;"></input>
+				<!--<input class="button" type="button" id="allcheck" value="取消选择" onclick="allChoice()"
+					style="font-size:16px;width:100px;height: 30px;line-height: 30px;"></input>-->
+					<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('compratetable')">
+						<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
+			</span>
+			<form  id="jcdd" style="background-color: #dcdcdc;height: 500px;overflow: auto;font-size:16px;display:none;">
+				<p><input type="checkbox" value="0" οnclick="allChoice()" id="allCheck" name="checks"/>全选 </p>
+			</form>
 		</div>
 		<div class="container" style="text-align: center;width:100%;"><!--class="parent" class="column  MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 20px;flex:2.5;-->
-			<div class="row" style="width: 100%;margin-top: 10px;">
-				<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 "  style="margin-left: 0;margin-right: 0;" >
+			<div class="row" style="width: 100%;margin-top: 10px;padding-left: 50px;">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 "  style="margin-left: 0;margin-right: 0;" >
 					<div class="row" align="center">
 						<div id="chart1" class="col-xs-11 col-sm-11 displaytype1"  >
 						</div>
@@ -82,43 +120,9 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" id="fine" style="text-align: left; margin-left: 0;margin-right: 0;">
-					<div sytle="text-align:left;float:left">
-					<p><label class="title-right" >时间选择：</label><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" id="cxsj" 
-						style="width:130px;font-size:16px;height: 30px;border-radius: 5px;"></input>
-					</p>
-					<div style="font-size: 16px;">
-						<label class="title-right">显示内容：</label><b style="font-size: 50%;color:red">*选项类别不能大于4个</b>
-						<span class="dropup" style="position: relative;" >
-						<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
-							<span class="select_text" data-is-select="false">Dro pup</span>
-							<span class="caret"></span>
-						</button>-->
-						<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
-							<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;"></input>
-						</label>
-						<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="display_type">
-							<!--<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
-							<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li>为了方便演示，type设置text了，实际中可以设置成hidden -->
-						</ul> 
-						</span>
-					</div>
-					<p><label class="title-right">计量点名称：</label>
-						<!--<a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
-							<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">display:none
-						</select>-->
-						<input class="button" type="button" id="chaxun" value="对比" onclick="oneChoice()"
-							style="font-size:16px;height: 30px;line-height: 30px;"></input>
-						<input class="button" type="button" id="allcheck" value="取消选择" onclick="allChoice()"
-							style="font-size:16px;width:100px;height: 30px;line-height: 30px;"></input>
-							<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('compratetable')">
-								<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
-					</p>
-					<form  id="jcdd" style="background-color: #dcdcdc;height: 500px;overflow: auto;font-size:16px;">
-						<p><input type="checkbox" value="0" οnclick="allChoice()" id="allCheck" name="checks"/>全选 </p>
-					</form>
-					</div>
-				</div>
+				<!--<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" id="fine" style="text-align: left; margin-left: 0;margin-right: 0;display:none">
+					
+				</div>-->
 			</div>
 		</div>
 		<div align="center" >
@@ -144,6 +148,7 @@
 		var sel_str=[];
 		var ch1,ch2,ch3,ch4;
 		var cname,catalog;
+		var isfound=false;
 		updatapcnav(7);
 		inithistorychart();
 		function inithistorychart() {
@@ -206,12 +211,25 @@
 			//querychartvalue();
 		}
 		//添加显示控制选项
-		function appenddisplaytype(){
+		function appenddisplaytype(anodeid){
+			//if(anodeid)
+			//	return;
+			var temp=document.getElementById("display_type");
 			allconfigs=JSON.parse(localStorage.Configs);
     		if(allconfigs){
 				for(var ac in allconfigs){//如果有，读取其所有配置项
             		var s_des=allconfigs[ac];//如果有，读取其所有配置项
 					for(var p in s_des){
+						for(var i=0;i<temp.children.length;i++){//0721 edit 判断是否存在配置项，如果存在则跳过继续，不存在则添加;
+							if((temp.children[i].children[0].children[0].value==s_des[p].Name)&&(temp.children[i].children[0].children[1].innerText==s_des[p].Desc)){
+								isfound=true;
+								break;
+							}
+						}
+						if(isfound){
+							isfound=false;
+							continue;
+						}//0721 edit/**/
 						var li=document.createElement("li");
 						var lab=document.createElement("label");
 						//lab.setAttribute("style","margin-left:20px")
@@ -226,12 +244,15 @@
 						lab.appendChild(spn);
 						//lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
 						li.appendChild(lab);
-						document.getElementById("display_type").appendChild(li);
+						temp.appendChild(li);
 						//var title_th =document.createElement("th");
 						//title_th.innerHTML=s_des[p].Desc;
 						//document.getElementById("table_title").appendChild(title_th);
 					}
 				}
+			}else{
+				for(var i=temp.childNodes.length;i>0;i--)
+				temp.removeChild(temp.childNodes[i-1]);
 			}
 		}
 		/*$(function () {//
@@ -275,17 +296,18 @@
 		}
 		//对比按钮
 		function oneChoice(){
+			var obj = window.parent.$("#tree_chi").treeview("getSelected");
 			$("#comprate-tbody tr").remove();
 			kssj=document.getElementById("cxsj").value+" 00:00:00"
 			jssj=document.getElementById("cxsj").value+" 23:59:59"
 			sessionStorage.cxsj=jssj;
-			var obj = $('[name="checks"]');
+			//var obj = $('[name="checks"]');
 			check_name=[];check_val=[];
 			for(var k=0;k<obj.length;k++){
-				if(obj[k].checked && obj[k].value != "-1"){
-					check_val.push(parseInt(obj[k].value));
-					check_name.push(obj[k].id);
-				}
+				//if(obj[k].checked && obj[k].value != "-1"){
+					check_val.push(parseInt(obj[k].id));
+					check_name.push(obj[k].text);
+				//}
 			}
 			if(check_val.length>0){
 				var allobj = $('[name="checkbox"]');
@@ -451,3 +473,5 @@
 	</script>
 </body>
 </html>
+<!--对比配置项根据标签进行动态添加以及去除重复项功能，页面根据对比项目自动进行动态调整显示图形视窗的功能，
+	编写树形菜单的双击响应程序（采用选中与释放之间的时间作为标准进行判断，小于一定时间视为双击，视频预览添加通道双击打开再次双击关闭功能 -->

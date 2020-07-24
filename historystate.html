@@ -32,7 +32,7 @@
         <div class="row" style="height:100%;">
             <div class="col-xs-4 col-md-3 col-lg-2" style="border: rgb(90, 89, 89) solid 1px;height: 100%;">
                 <div><label style="font-size:16px">设备(标签)列表:</label></div>
-                <div class="leftmenu" id="leftmenu" style="width: 100%;border: rgb(90, 89, 89) solid 0px;background-color: #adf7b8;height:90%">
+                <div class="leftmenu" id="child_menu" style="width: 100%;border: rgb(90, 89, 89) solid 0px;background-color: #adf7b8;height:95%">
                     <div class="tree " id="tree_chi" style="width: 100%;height:100%;">
                     </div>
                 </div>
@@ -159,7 +159,7 @@
 				multiSelect: false,    //多选
 				searchResultColor: "black",
 				//color: "", //所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
-				backColor: "#adf7b8", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				backColor: "#00f7b8", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
 				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
 					//var selectnode=$("#tree_chi").treeview('getSelected');
 					$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 

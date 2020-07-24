@@ -46,12 +46,13 @@ legend{
 	margin-top:-1px;
 }
 .clist{
-	width:450px;/*90%;*/
+	width:98%;/*450px;*/
 	height:500px;
 	padding:10px;
 	border:1px solid #7F9DB9;
 	margin-left:10px;
 	text-align: left;
+	display: none;
 }
 /*插件*/
 .plugin
@@ -154,7 +155,7 @@ fieldset
 /*预览*/
 .preview
 {
-	width:450px;/* 90%*/
+	width:98%;/* 450px;*/
 	padding:10px; 
 	margin-left:10px;
 	border:1px solid #7F9DB9;
@@ -188,14 +189,14 @@ fieldset
 /*云台*/
 .ptz
 {
-	width:450px;
+	width:98%;/*450px;*/
 	padding:10px;
 	margin-left:10px;
 	border:1px solid #7F9DB9;
 }
 .ptz .tt
 {
-	width:60px;
+	width:30px;
 }
 .ptz .txt
 {
@@ -203,9 +204,9 @@ fieldset
 }
 .ptz .btn
 {
-	width:45px;
+	width:30px;
 	height:22px;
-	line-height:18px;
+	line-height:22px;
 }
 .ptz .btn2
 {
@@ -326,7 +327,7 @@ fieldset
 /*操作信息*/
 .operate
 {
-	width:450px;/*480px;90%*/
+	width:90%;/*480px;*/
 	padding:10px;
 	margin-left:10px;
 	border:1px solid #7F9DB9;
@@ -384,4 +385,11 @@ fieldset
 .column{
 	flex: 1;
 	box-align:center;
+}
+.cl1{
+	border: rgb(94, 93, 93) solid 1px;
+	padding: 0px;
+}
+.cl_sel{
+	border: rgb(250, 34, 34) solid 1px;
 }

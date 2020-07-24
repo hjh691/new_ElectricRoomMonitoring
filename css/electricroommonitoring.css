@@ -93,7 +93,7 @@
 	}
 	.mainarea{
 		position:relative;
-		height:100%;
+		height:95%;
 		/*/height:700px;
 		margin-left:10px;
 		width:100%;border-width:1px 1px 1px 1px;border-style:solid;
@@ -156,7 +156,7 @@
 	}
 	/*导航条（水平）*/
 	.row-navigation{
-		background:#adf7b8;
+		
 		vertical-align:center;
 		width:100%;
 		height:40px;
@@ -164,7 +164,7 @@
 		min-width:500px;
 		
 		/*text-align:center;border: solid  rgba(8, 177, 106, 0.5) 2px;
-		border-radius: 10px;*/
+		border-radius: 10px;background:#adf7b8;*/
 	}
 	select{
 		height: 30px;
@@ -213,7 +213,7 @@
 		position: relative;
 	}
 	.pc-footer{
-		background-color:#eeb0b0;
+		background-color:rgba(0, 101, 105, 1);
 	}
 	.pc-footer li {
 		display: inline;
@@ -280,16 +280,31 @@
 		position:relative;
 		float:left;
 		width:15%;
-		height:100%;/*height:700px;*/
+		height:98%;/*height:700px;*/
 		border-style:solid;
-		border-width:0px 0px 0px 0px;
+		border-width:1px 1px 1px 1px;
 		border-color:#eeb0b0;
 		overflow:auto;
-		min-width:200px;
+		min-width:100px;
+		/*background-color: rgba(0, 101, 105, 1); #eee0e0;*/
 	}
 	.tree{
 		min-width:200px;
+		height:60%;
 		overflow:auto;
+		border-style:solid;
+		border-width:1px 1px 1px 1px;
+		border-color:#eeb0b0;
+		background-color: rgba(0, 101, 105, 1);
+	}
+	.tree1{
+		min-width:200px;
+		height:40%;
+		overflow:auto;
+		border-style:solid;
+		border-width:1px 1px 1px 1px;
+		border-color:#eeb0b0;
+		background-color: rgba(0, 101, 105, 1);
 	}
 	/* KeFuDiv */
 	.KeFuDiv{
@@ -310,18 +325,21 @@
 		font-weight:bold;
 	}
 	#realdata_gaugechart,#realdata_chart{
-		width: 50%;
-		height: 260px;
+		width: 90%;
+		height: 90%;
 		background-color: rgb(189, 187, 187);
 		MARGIN-RIGHT: auto; 
 		MARGIN-LEFT: auto;
-		margin: 10px;
+		margin: 10px;/**/
 	}
-	/*.condition {
-		color:#0000b0;
-		font-size:20px;
-		border:0px;
-	}*/
+	#realdata_chart1,#realdata_maxvalOfReal,
+	#realdata_rateOfNormal,#realdata_realdata,
+	#realdata_maxvalOfDay{
+		width: 90%;
+		height: 90%;
+		background-color: rgb(212, 209, 209);
+		margin: 20px;
+	}
 	.button{
 		width:60px;
 		font-size:18px;
@@ -398,6 +416,7 @@
 	}
 	.title-right{
 		font-size: 16px;
+		text-align: right;
 	}
 	span label {
 		color:rgb(8, 104, 182);
@@ -405,7 +424,7 @@
 	
 	#realdata-tbody{
 		/*width:1020px;*/
-		height:400px;
+		height:350px;
 		overflow:auto;
 	}
 	/*20200210 实现数据表格的隔行换色效果，JQUery+css结构伪类实现*/
@@ -413,8 +432,8 @@
 		background-color: #87CEFA;
 	}
 	.condition{
-		/*font-size: 14px;*/
-		margin: 5px;
+		/*font-size: 14px;
+		margin: 5px;*/
 		height: 30px;
 		line-height: 30px;
 	}

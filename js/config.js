@@ -13,15 +13,17 @@ jfjk_base_config.serverurl="http://jka.f3322.net:20000/_api/";
 //sessionStorage.videourl='';
 //界面用图片信息：
 //登录页面图片：
- jfjk_base_config.login_src="res/login.png";
+// jfjk_base_config.login_src="res/login.png";
+// 登录界面系统名称字体颜色：
+jfjk_base_config.appname_font_color="#fff";
 //登录界面底图
-jfjk_base_config.bg_src="res/bj04.jpg"
+jfjk_base_config.bg_src="res/bj011.jpg"
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
- jfjk_base_config.ver_id="Ver 1.0";
+ jfjk_base_config.ver_id="Ver 1.10";
  //发布日期
- jfjk_base_config.date="2020-03-28"
+ jfjk_base_config.date="2020-07-10"
 //公司名称
  jfjk_base_config.company="保定金凯澳自动化设备有限公司";
  //版权时间

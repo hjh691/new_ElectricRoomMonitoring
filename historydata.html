@@ -14,104 +14,133 @@
 	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
 	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	<style>
 	th,td{
         border:1px solid black;
         text-align:center;
         line-height:center;
-        width:200px;
+        
         height:30px;
-    }
-	table tbody {
+	}
+	th
+	{
+		border:0px solid black;
+	}
+	/*table tbody {width:150px;
 		display: block;
 	}
 	table thead,
 	tbody tr {
 		display: table;
 		table-layout: fixed;
-	}
+	}*/
 	span{
 		margin-left:10px;
 	}
 	a:visited{
 		color:red;
 	}
+	.container{
+		width: 99%;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
 	</style>
 </head>
 <body >
-	<div >
+	<div class="container" style="height:740px;">
+	<div class="row" style="height:100%;">
+	<!--<div class="col-xs-4 col-md-3 col-lg-2" style="border: rgb(90, 89, 89) solid 0px;height: 100%;display: none;">
+		<div><label style="font-size:16px">设备(标签)列表:</label></div>
+		<div class="leftmenu" id="child_menu" style="width: 100%;border: rgb(90, 89, 89) solid 0px;background-color: #eee0e0;height:95%">
+			<div class="tree " id="tree_chi" style="width: 100%;height:100%;">
+			</div>
+		</div>
+	</div>-->
+	<div class="col-xs-12 col-md-12 col-lg-12">
 		<div class="pagecard" id="pagecard1" style="display: none;">
 			<p style="text-align:center;font-size:20px;" ><b>历史数据</b></p>
 		</div>
 		<div class="panel panel-default" style="height:80px;overflow:auto;margin-bottom: 0;" >
-			<span id="sensor_select" class="condition ">
-				<label>计量点名称</label>
-				<select id="jcdd" onchange="gradeChange()">
-				</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" 
-				onclick="refreshsensorslist()" ></a>
-			</span>
-			<span id="display_type"class="btn-group"  data-toggle="buttons">
-			</span>
 			<div class="condition " >
-			<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
-			<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
-			<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
-			<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"></input>上月</label></span>
-			<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(this)" name="timeselect"></input>自定义</label></span>
-			<span id="timedefine" style="display: none;">
-			起止时间
-			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_history" 
-			style="width:160px;font-size:16px;height: 30px;"></input>至
-			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_history" 
-			style="width:160px;font-size:16px;height: 30px;" ></input>
-			<input class="button" type="button" id="chaxun" value="查询" onclick="queryhistorydata()" 
-			style="font-size:16px;height: 30px;line-height: 30px;" ></input></span>
+				<span><label>查询时间：</label></span>
+				<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
+				<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
+				<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
+				<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"></input>上月</label></span>
+				<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(this)" name="timeselect"></input>自定义</label></span>
+				<span id="timedefine" style="display: none;">
+				起止时间
+				<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_history" 
+				style="width:160px;font-size:16px;height: 30px;"></input>至
+				<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_history" 
+				style="width:160px;font-size:16px;height: 30px;" ></input>
+				</span>
+			</div>
+			<div class="condition" style="height: 30px;line-height:30px;">
+				<span id="sensor_select" class="condition " style="display:none"><!---->
+					<label>计量点名称</label>
+					<select id="jcdd" onchange="gradeChange()">
+					</select><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" 
+					onclick="refreshsensorslist()" ></a>
+				</span>
+				<span><label style="width:70px;"> 类别分组：</label></span>
+				<span id="display_type"class="btn-group"  data-toggle="buttons">
+				</span>
+				<span >
+					<input class="button" type="button" id="chaxun" value="查询" onclick="queryhistorydata()" 
+				style="font-size:16px;height: 30px;line-height: 30px;" ></input>
+				<a href="javascript:void(0)" 
+						style="margin-left:20px;" onclick="exporttoexcel('historytable')" >
+						<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
+				</span>
 			</div>	
 		</div>		
-		<div  class="rowlay">
+		<div  class="rowlay" style="display: none;">
 			<ul class="count_info" text-align="center" >
-				<!--<li style="width:50px"><b>站名：</b></li><a href="javascript:void(0)class="rowlay" " 
+			<!--	<li style="width:50px"><b>站名：</b></li><a href="javascript:void(0)class="rowlay" " 
 			onclick="seletime(1)">昨天</a> 
-				<li id="station_name"style="width:100px;margin-right:0px"> </li>method5('historytable')-->
+				<li id="station_name"style="width:100px;margin-right:0px"> </li>method5('historytable')<li style="width:100px;margin-right:0px"></li>-->
 				<li style="width:50px;margin-right:0px"><b>标签名称：</b> </li>
 				<li id="normal_count"style="width:100px;margin-right:10px"> </li>
 				<li style="width:50px;margin-right:0px"><b>记录数：</b></li>
 				<li id="count_val"style="width:50px;margin-right:0px" >  </li>
-				<li style="width:100px;margin-right:0px"><a href="javascript:void(0)" 
-					style="margin-left:20px;" onclick="exporttoexcel('historytable')" >
-					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a></li>
 			</ul>
 		</div>
-		
 		<div class="parent panel panel-default" style="text-align: center;">
 		<div class="charttab-head" id="tab-head" style="height: 40px">
 		<div id="h2" class="selected" onclick="changetype();" style="width:100px;">数据列表</div>
 		</div>
 		<div class="column" align="center" id="list" style="display: none;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;">
-		<table id="historytable" width="800px"  >
+		<table id="historytable" width="900px"  >
 			<caption id="his_caption" style="text-align:center;font-size:18px;"></caption>
-			<tr>
-				<th>测量点名称</th>
-				<th id="cld_name"></th>
-				<th>统计时间</th>
-				<th id="tongji_time"></th>
-			</tr>
 			<tr >
-				<!--<th>测量点编号</th>点名称 display: none; style="display: none;"-->
-				<th>测量时间</th>
-				<th>最大值</th>
-				<th>平均值</th>
-				<th>最小值</th>	
+				<th>测量点名称</th>
+				<th id="cld_name" colspan="2"></th>
+				<th>统计时间</th>
+				<th id="tongji_time" colspan="2"></th>
 			</tr>
-			<tbody id='historydata-tbody'  style="width:823px;height:550px; overflow:auto;">
+			<tr style="background-color: rgb(255,255,255);">
+				<!--<th>测量点编号</th>点名称 display: none; style="display: none;" -->
+				<td><b>时段</b></td>
+				<td><b>整点值</b></td>
+				<td><b>最大值</b></td>
+				<td><b>发生时刻</b></td>
+				<td><b>最小值</b></td>
+				<td><b>发生时刻</b></td>
+			</tr>
+			<tbody id='historydata-tbody'  style="width:900px;height:450px; overflow:auto;">
 			</tbody>
 		</table>
 		</div>
 		<div class="column"  id="main" align="center" 
-			style="height:500px;width:800px;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;margin: 20px;"></div>
+			style="height:450px;width:800px;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;margin: 20px;"></div>
 		</div>
 	</div>
+	</div>
+</div>
 	<script>
 		//var xs=1;
 		var sensors;
@@ -122,14 +151,7 @@
 		var catalog="",dname="";
 		var configs,scatalog;
 		$(function () {
-			initpage();
-			$(".btn").click(function(){
-				$(this).button('toggle');
-				dname= $(".catalog:checked").val();
-				catalog=getcatalog(dname);
-				gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
-			});
-			
+			initpage();			
 		});
 		/*function getcatalog(aname){
 			if(configs){
@@ -150,6 +172,9 @@
 			updatapcnav(5);
 			var parentid=-100,parentname="";
 			var maps=[];
+			//var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+            //var treenode=buildnode(treeseneors,0);
+            //inittreeview(treenode);
 			document.getElementById("kssj_history").value = sessionStorage.kssj;
 			document.getElementById("jssj_history").value = sessionStorage.jssj;
 			for (var i = 0; i < sel_sensor.options.length; i++) {
@@ -196,7 +221,7 @@
 				}
 			}
 			setSelectOption("jcdd", sessionStorage.SensorId);
-			appenddisplaytype();
+			appenddisplaytype(sessionStorage.SensorId);
 			if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")||(sessionStorage.timeindex>4)){
 				sessionStorage.timeindex=0;
 			}
@@ -209,10 +234,78 @@
 				queryhistorydata(0);
 			}
 		}
+		function inittreeview(anodes) {
+			var tree=$('#tree_chi')
+			tree.treeview({
+				data: anodes,    // 数据源  qirenyoutian yiqingyingxiang  zhuangxiubushun  yijianbutongyi  haizixuexiburangrenfangxin 
+				showCheckbox: false,   //是否显示复选框
+				highlightSelected: true,    //是否高亮选中
+				nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
+				//nodeIcon: 'glyphicon glyphicon-lock',//
+				emptyIcon: '',    //没有子节点的节点图标
+				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象 
+				multiSelect: false,    //多选
+				searchResultColor: "black",
+				color: "#fff",//所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
+				backColor: "rgba(0, 101, 105, 1);", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				showBorder: false, //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				onhoverColor: "#3075a5", //光标停在节点上激活的默认背景色      String
+				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
+					//var selectnode=$("#tree_chi").treeview('getSelected');
+					tree.treeview('collapseAll')//,nodeid);//关闭展开 
+					//sessionStorage.jfjk_nodeid = data.nodeId;
+					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
+						p_node = getThe_level_nodeid(data, i);
+						tree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+					}
+                    tree.treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
+                    
+					setSelectOption("jcdd", data.id);
+                    sessionStorage.jfjk_nodeid=data.nodeId;
+					//sessionStorage.SensorId=data.id;
+					appenddisplaytype(data.id);//0710
+                    sessionStorage. SensorName=data.text;
+                    //catalog=getcatalog(dname);
+                    //queryhistorydata();//0710
+                    //对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO Something。
+                    ////if(data.text=="门禁"){
+                    //    document.getElementById("tree_chi").style.height="50%";
+                    //    document.getElementById("tree1").style.display="block";
+                    //}else{
+                    //    document.getElementById("tree_chi").style.height="100%";
+                    //    document.getElementById("tree1").style.display="none";
+                    //}
+				}
+			});
+			tree.treeview('collapseAll');//关闭展开
+			if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
+				sessionStorage.jfjk_nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
+			}
+			var currentNode = tree.treeview("getNode", sessionStorage.jfjk_nodeid);
+			tree.treeview('expandNode', [currentNode, { levels: 2, silent: true }]);//展开第一个节点
+			for (var i = 0; i < currentNode.level; i++) {//逐级展开所选节点的父节点。
+				var p_node = getThe_level_nodeid(currentNode, i);
+				tree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+			}
+			tree.treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
+			//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
+            tree.treeview('selectNode', [currentNode, { silent: true }]);
+            sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
+			//$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
+			/**/
+            function getThe_level_nodeid(anode, alevel) {
+                while (anode.level > alevel) {
+                    anode = (tree.treeview("getParent", anode))
+                }
+                return anode;
+            }
+        }
 		function appenddisplaytype(element_id,time){
-			if(sessionStorage.SensorId>=0){
+			for(var i=document.getElementById("display_type").childElementCount;i>0;i--)
+			    document.getElementById("display_type").removeChild(document.getElementById("display_type").childNodes[i]);
+			if(element_id>=0){
 				for(var k=0;k<sensors.length;k++){
-					if(sensors[k].Value.Id==sessionStorage.SensorId){
+					if(sensors[k].Value.Id==element_id){
 						scatalog=sensors[k].Value.Catalog;//读取对应的Catalog项
 						break;
 					}
@@ -238,11 +331,89 @@
 						lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
 						//lab.innerHTML=s_des[p].Desc;
 						document.getElementById("display_type").appendChild(lab);
-						
 					}
 				}
 			}
+			$(".btn").click(function(){//用于动态加载的元素的点击响应。
+				$(this).button('toggle');
+				dname= $(".catalog:checked").val();
+				catalog=getcatalog(dname);
+				//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
+			});
 		}
+		function buildnode(data, level) {
+			var tree = [];
+            if (data == null || typeof(data) == "undefined") {
+                /*for (i = 0; i < 3; i++) {
+                    var anodes = new Object();
+                    anodes.text = "门禁" + (2 - i);
+                    anodes.id = i;
+                    anodes.Catalog="门禁";
+                    anodes.nodes = [];
+                    anodes.icon = "url(res/lock.png)";
+                    anodes.level=0;
+                    var node = '[{"text":"动环","id":' + ((i + 1) * 10) +',"icon":"glyphicon glyphicon-user","Catalog":"UPS","level":1},{"text":"水浸","id":' 
+                        + ((i + 1) * 10 + 1) + ',"level":1},{"text":"电源","id":' + ((i + 1) * 10 + 2) + ',"level":1},{"text":"环境","id":' + ((i + 1) * 10 + 3) 
+                        + ',"level":1},{"text":"灯光","id":' + ((i + 1) * 10 + 4) +
+                         ',"level":1,"nodes":[{"text":"门禁","id":543,"level":2},{"text":"水浸","id":345,"level":2}]}]';
+                    anodes.nodes = (JSON.parse(node));
+                    //var lnode=new Object();
+                    tree.push(anodes);
+                }*/
+            }else
+            for (var j = 0; j < data.length; j++) {
+					var anodes = new Object();
+					anodes.text = data[j].Value.Name;
+					anodes.id = data[j].Value.Id;
+                    anodes.ParentId=data[j].Value.ParentId;
+                    anodes.NodeId=data[j].Value.NodeId;//----
+                    anodes.Catalog = data[j].Value.Catalog;
+                    anodes.Address=data[j].Value.Address//----
+                    anodes.Group=data[j].Value.Group;//----
+                    anodes.Serial=data[j].Value.Serial;//----
+                    anodes.Location=data[j].Value.Location;//----
+					anodes.Config = data[j].Value.Config;
+					anodes.Time = data[j].Value.Time;
+					anodes.level = level;
+					if (data[j].Value.hasOwnProperty("NodeId")) {
+						anodes.NodeId = data[j].Value.NodeId;
+					}
+					var icon = 'glyphicon glyphicon-user';
+					switch (data[j].Value.Name) {
+						case "机房监控":
+							icon = 'glyphicon glyphicon-inbox';//
+							break;
+						case "门禁":
+							icon = 'glyphicon glyphicon-lock';//
+							break;
+						case "灯光":
+							icon = 'glyphicon glyphicon-cog';
+							break;
+						case "红外":
+							icon = 'glyphicon glyphicon-signal';
+							break;
+						case "动力":
+							icon = 'glyphicon glyphicon-retweet';
+							break;
+						case "环境":
+							icon = "glyphicon glyphicon-leaf";//
+							break;
+						case "水浸":
+							icon = "glyphicon glyphicon-tint";//
+					}
+					if (level == 0) {
+						icon = "glyphicon glyphicon-home";
+					}
+					anodes.icon = icon;
+					//var chi_len = data[j].Children.length;
+					if (data[j].Children&&data[j].Children.length != 0) {
+						anodes.nodes = [];
+						anodes.nodes = buildnode(data[j].Children, level + 1)
+					}
+					tree.push(anodes);
+				}
+            return tree;
+        }
 		function tableclick(tr){
 			$(tr).siblings().css("background","");
 			$(tr).css("background","#85e494");//区分选中行
@@ -276,24 +447,26 @@
 				layer.alert("请选择要查询的测量点名称",info_showtime);
 				return;
 			}
-			var kssj = document.getElementById("kssj_history").value;
-			if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
-				layer.alert("请指定开始时间",info_showtime);
-				return;
+			if(sessionStorage.timeindex==4){
+				var kssj = document.getElementById("kssj_history").value;
+				if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
+					layer.alert("请指定开始时间",info_showtime);
+					return;
+				}
+				var jssj = document.getElementById("jssj_history").value;
+				if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
+					layer.alert("请指定截至时间",info_showtime);
+					return;
+				}
+				if((sessionStorage.SensorId==sel.value)&&(sessionStorage.kssj==kssj)&&(sessionStorage.jssj==jssj)&&(!isfirst)
+					&&(sessionStorage.typecatalog==catalog)&&(sessionStorage.typename==dname)){
+					layer.alert("查询条件与上一次相同，请重新选择!",info_showtime)
+					return;
+				}
+				sessionStorage.kssj = kssj;
+				sessionStorage.jssj = jssj;
 			}
-			var jssj = document.getElementById("jssj_history").value;
-			if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
-				layer.alert("请指定截至时间",info_showtime);
-				return;
-			}
-			if((sessionStorage.SensorId==sel.value)&&(sessionStorage.kssj==kssj)&&(sessionStorage.jssj==jssj)&&(!isfirst)
-			    &&(sessionStorage.typecatalog==catalog)&&(sessionStorage.typename==dname)){
-				layer.alert("查询条件与上一次相同，请重新选择!",info_showtime)
-				return;
-			}
-			sessionStorage.kssj = kssj;
-			sessionStorage.jssj = jssj;
-			sessionStorage.SensorId = sel.value;
+			//sessionStorage.SensorId = sel.value;
 			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
 			sessionStorage.typename=dname;
 			sessionStorage.typecatalog=catalog;
@@ -304,15 +477,16 @@
 			for (var int = 0; int < tableLength; int++) {
 				tbl.deleteRow(0);
 			}
-			gethistorydata(sessionStorage.SensorId,catalog,dname,kssj, jssj);
+			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
 			isfirst=false;
 			//document.getElementById("timedefine").style.display="none";
 		}
 		function decodedatas(obj_data){
 			var count = 0;
-			var maxvalue=0,minvalue=0,avgvalue=0,ps=0,ct=1,maxval=0,minval=0;
+			var maxvalue=0,minvalue=0,avgvalue=0,ps=0,ct=1,maxval=0,minval=0,hourvalue=0;
 			var stime=new Date(sessionStorage.kssj).getTime();
 			var etime=new Date(sessionStorage.jssj).getTime();
+			var maxtime="",mintime="";
 			var senconds=etime-stime;
 			var pa = [],pb = [],pc = [];
 			var jiange="";
@@ -371,6 +545,8 @@
 				jiange="按小时统计";
 				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].Value);
 				maxval=minval=maxvalue;
+				hourvalue=obj_data[0].Value;
+				maxtime=mintime=obj_data[0].Time;
 				var strtime=obj_data[0].Time.substr(0,13);
 				var temp=parseInt(strtime.substr(11));
 				jisuan(11,13);
@@ -445,28 +621,42 @@
 				//tdname.setAttribute('class', 'seneorname');
 				var tdtime = document.createElement('td');
 				tdtime.className='time';
-				var tdvalue1 = document.createElement('td');
+				var tdhourvalue=document.createElement('td');
+				tdhourvalue.className="hvalue";
+				var tdvalue1 = document.createElement('td');//最大值
 				tdvalue1.className='value1'; //给单元格添加类名属性
-				var tdvalue2 = document.createElement('td');
+				var tdvalue2 = document.createElement('td');//平均值
 				tdvalue2.className='value2';
-				var tdvalue3=document.createElement("td");
+				var tdmaxtime=document.createElement('td');
+				tdmaxtime.className="maxtime";
+				var tdvalue3=document.createElement("td");//最小值
 				tdvalue3.className='value3';
+				var tdmintime=document.createElement('td');
+				tdmintime.className="mintime";
 				//tdname.innerHTML=sessionStorage.SensorName;
 				if(type=="pd"){
 					tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+					tdmaxtime.innerHTML=mintime;
 					tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+					tdmintime.innerHTML=maxtime;
 				}else{
 					tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+					tdmaxtime.innerHTML=maxtime;
 					tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+					tdmintime.innerHTML=mintime;
 				}
 				//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 				tdtime.innerHTML = strtime+":00"; //jsonObject[i].color;
+				tdhourvalue.innerHTML=hourvalue;
 				tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
 				//tr.appendChild(tdname);
 				tr.appendChild(tdtime);
+				tr.appendChild(tdhourvalue);
 				tr.appendChild(tdvalue1);
-				tr.appendChild(tdvalue2);
+				//tr.appendChild(tdvalue2);
+				tr.appendChild(tdmaxtime);
 				tr.appendChild(tdvalue3);
+				tr.appendChild(tdmintime);
 				var tbody = document.getElementById('historydata-tbody');
 				tbody.appendChild(tr);
 				pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
@@ -477,6 +667,8 @@
 				jiange="按日统计";
 				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].Value);
 				maxval=minval=maxvalue;
+				hourvalue=obj_data[0].Value;
+				maxtime=mintime=obj_data[0].Time;
 				var strtime=obj_data[0].Time.substr(0,10);
 				var temp=parseInt(strtime.substr(8));
 				jisuan(8,10);//参数是区日期时间格式串的起始和结束位置的由零算起的索引值。2020-04-16 14:50:10，
@@ -551,28 +743,42 @@
 				//tdname.setAttribute('class', 'seneorname');//white black red blue green brown yellow gray orange pink//
 				var tdtime = document.createElement('td');
 				tdtime.className='time';
-				var tdvalue1 = document.createElement('td');
-				tdvalue1.className='value1'; //给单元格添加类名属性//China Chinese//Japan Japanese//Canada Canadian//America American//England English
-				var tdvalue2 = document.createElement('td');
+				var tdhourvalue=document.createElement('td');
+				tdhourvalue.className="hvalue";
+				var tdvalue1 = document.createElement('td');//最大值
+				tdvalue1.className='value1'; //给单元格添加类名属性
+				var tdvalue2 = document.createElement('td');//平均值
 				tdvalue2.className='value2';
-				var tdvalue3=document.createElement("td");
+				var tdmaxtime=document.createElement('td');
+				tdmaxtime.className="maxtime";
+				var tdvalue3=document.createElement("td");//最小值
 				tdvalue3.className='value3';
+				var tdmintime=document.createElement('td');
+				tdmintime.className="mintime";
 				//tdname.innerHTML=sessionStorage.SensorName;
 				if(type=="pd"){
 					tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+					tdmaxtime.innerHTML=mintime;
 					tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+					tdmintime.innerHTML=maxtime;
 				}else{
 					tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+					tdmaxtime.innerHTML=maxtime;
 					tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+					tdmintime.innerHTML=mintime;
 				}
 				//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 				tdtime.innerHTML = strtime; //jsonObject[i].color;
+				tdhourvalue.innerHTML=hourvalue;
 				tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
 				//tr.appendChild(tdname);
 				tr.appendChild(tdtime);
+				tr.appendChild(tdhourvalue);
 				tr.appendChild(tdvalue1);
-				tr.appendChild(tdvalue2);
+				//tr.appendChild(tdvalue2);
+				tr.appendChild(tdmaxtime);
 				tr.appendChild(tdvalue3);
+				tr.appendChild(tdmintime);
 				var tbody = document.getElementById('historydata-tbody');
 				tbody.appendChild(tr);
 				pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
@@ -711,9 +917,11 @@
 						
 						if(parseFloat(obj_data[i].Value)>maxvalue){
 							maxvalue=parseFloat(obj_data[i].Value);
+							maxtime=obj_data[i].Time;
 						}
 						if(parseFloat(obj_data[i].Value)<minvalue){
 							minvalue=parseFloat(obj_data[i].Value);
+							mintime=obj_data[i].Time;
 						}
 						if(parseFloat(obj_data[i].Value)>maxval){
 							maxval=parseFloat(obj_data[i].Value);
@@ -734,37 +942,52 @@
 						//tdname.setAttribute('class', 'seneorname');
 						var tdtime = document.createElement('td');
 						tdtime.className='time';
-						var tdvalue1 = document.createElement('td');
+						var tdhourvalue=document.createElement('td');
+						tdhourvalue.className="hvalue";
+						var tdvalue1 = document.createElement('td');//最大值
 						tdvalue1.className='value1'; //给单元格添加类名属性
-						var tdvalue2 = document.createElement('td');
+						var tdvalue2 = document.createElement('td');//平均值
 						tdvalue2.className='value2';
-						var tdvalue3=document.createElement("td");
+						var tdmaxtime=document.createElement('td');
+						tdmaxtime.className="maxtime";
+						var tdvalue3=document.createElement("td");//最小值
 						tdvalue3.className='value3';
+						var tdmintime=document.createElement('td');
+						tdmintime.className="mintime";
 						//tdname.innerHTML=sessionStorage.SensorName;
 						if(type=="pd"){
 							tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+							tdmaxtime.innerHTML=mintime;
 							tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+							tdmintime.innerHTML=maxtime;
 						}else{
 							tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+							tdmaxtime.innerHTML=maxtime;
 							tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+							tdmintime.innerHTML=mintime;
 						}
 						//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 						if(a1==11){
 							tdtime.innerHTML = strtime+":00";//
 						}else{tdtime.innerHTML = strtime;}//+":00" //jsonObject[i].color;
-						
+						tdhourvalue.innerHTML=hourvalue;
 						tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
 						//tr.appendChild(tdname);
 						tr.appendChild(tdtime);
+						tr.appendChild(tdhourvalue);
 						tr.appendChild(tdvalue1);
-						tr.appendChild(tdvalue2);
+						//tr.appendChild(tdvalue2);
+						tr.appendChild(tdmaxtime);
 						tr.appendChild(tdvalue3);
+						tr.appendChild(tdmintime);
 						var tbody = document.getElementById('historydata-tbody');
 						tbody.appendChild(tr);
-						pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
-						pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
-						pc.push([strtodatetime(strtime+":00"),minvalue , ps])
+						pa.push([strtodatetime(strtime+":00"), maxvalue, ps]);
+						pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps]);
+						pc.push([strtodatetime(strtime+":00"),minvalue , ps]);
 						maxvalue=minvalue=avgvalue=parseFloat(obj_data[i].Value);
+						hourvalue=obj_data[i].Value;
+						maxtime=mintime=obj_data[i].Time;
 						strtime=obj_data[i].Time.substr(0,a2);
 						temp=parseInt(strtime.substr(a1));
 						ps++;
@@ -777,8 +1000,11 @@
 			$("#historydata-tbody tr").empty();
 			var objS = document.getElementById("jcdd");
 			sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
-			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 		}
 	</script>
 </body>
 </html>
+<!--添加在改变标签后自动刷新所对应的配置项内容以及动态添加的配置项的点击响应，时段选取与查询的对应关系，所选节点变化所定义的标签树的更新功能，查询和导出按钮位置
+
+-->

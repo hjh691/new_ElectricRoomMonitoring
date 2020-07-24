@@ -100,7 +100,8 @@ function rnd(n, m) {
 function initlogin() {
 	//document.getElementById("login_pic").src = jfjk_base_config.login_src;
 	document.getElementById("company_name").innerHTML = jfjk_base_config.app_name;
-	document.getElementById("main").style.backgroundImage="url("+jfjk_base_config.bg_src+" no-repeat center top ;background-size:100%";
+	document.getElementById("company_name").style="color:"+jfjk_base_config.appname_font_color;
+	document.getElementById("main").style="background:url("+jfjk_base_config.bg_src+") no-repeat center top ;background-size:100%";
 }
 //判断用户名和密码输入是否符合语法  used by electricroommonitor 
 function LoginOrder(name, ps) {
@@ -280,17 +281,21 @@ function initpage1() {
 }
 //初始化信息汇总页面
 function inittotalpage(){  // used by electricroommonitor
-	sessionStorage.pageindex=0;
-	document.getElementById("iframe_main").src="infototal.html";
+	if(sessionStorage.pageindex!=0){
+		sessionStorage.pageindex=0;
+		document.getElementById("iframe_main").src="infototal.html";
+	}
 }
 // 初始化实时数据页面，根据不同站点、不同子系统来调用不同的页面 used by electricroommonitor 
 function initrealdata(){
-	var pages=document.getElementById("iframe_main");
-	//var data=$("#tree").treeview("getSelected");
-	if(pages.src.indexOf("/realdata.html")<=0){
-		document.getElementById("iframe_main").src="realdata.html";
+	if(sessionStorage.pageindex!=2){
+		var pages=document.getElementById("iframe_main");
+		//var data=$("#tree").treeview("getSelected");
+		//if(pages.src.indexOf("/newrealdata.html")<=0){
+			document.getElementById("iframe_main").src="newrealdata.html";
+		//}
+		sessionStorage.pageindex=2;
 	}
-	sessionStorage.pageindex=2;
 	/*switch (data[0].text){
 		case "行唐":
 		case "测温":
@@ -338,20 +343,24 @@ function initrealdata(){
 }
 //初始化机房监控子系统实时状态页面...used by electricroommonitor
 function initrealstate(){
-	var pages=document.getElementById("iframe_main");
-	//var data=$("#tree").treeview("getSelected");
-	if(pages.src.indexOf("/realstate.html")<=0){
-		document.getElementById("iframe_main").src="realstate.html";
+	if(sessionStorage.pageindex!=10){
+		var pages=document.getElementById("iframe_main");
+		//var data=$("#tree").treeview("getSelected");
+		if(pages.src.indexOf("/realstate.html")<=0){
+			document.getElementById("iframe_main").src="realstate.html";
+		}
+		sessionStorage.pageindex=10;
 	}
-	sessionStorage.pageindex=10;
 }
 function inithistorystate(){
-	var pages=document.getElementById("iframe_main");
-	//var data=$("#tree").treeview("getSelected");
-	if(pages.src.indexOf("/historystate.html")<=0){
-		document.getElementById("iframe_main").src="historystate.html";
+	if(sessionStorage.pageindex!=11){
+		var pages=document.getElementById("iframe_main");
+		//var data=$("#tree").treeview("getSelected");
+		if(pages.src.indexOf("/historystate.html")<=0){
+			document.getElementById("iframe_main").src="historystate.html";
+		}
+		sessionStorage.pageindex=11;
 	}
-	sessionStorage.pageindex=11;
 }
 //网络连接心跳包 re_use used by electricroommonitor 
 function sendbeat() {
@@ -861,29 +870,37 @@ function loadstations_realdata() {
 //load//////reuse  used by electricroommonitor 
 function loadstations_historydata() {
 	//updatapcnav(5);
-	sessionStorage.pageindex = 3;
-	//var slistname = $("#head_list_name").text();
-	//if (slistname != "请选择站点:") {
-		//initlist();
-	//}
-	document.getElementById("iframe_main").src = 'historydata.html';
+	if(sessionStorage.pageindex!=3){
+		sessionStorage.pageindex = 3;
+		//var slistname = $("#head_list_name").text();
+		//if (slistname != "请选择站点:") {
+			//initlist();
+		//}
+		document.getElementById("iframe_main").src = 'historydata.html';
+	}
 }
 function loadstations_chart() {////reuse  used by electricroommonitor 
-	sessionStorage.pageindex = 4;
-	//var slistname = $("#head_list_name").text();
-	//if (slistname != "请选择站点:") {
-		//initlist();
-	//}
-	document.getElementById("iframe_main").src = 'chart.html';
+	if(sessionStorage.pageindex!=4){
+		sessionStorage.pageindex = 4;
+		//var slistname = $("#head_list_name").text();
+		//if (slistname != "请选择站点:") {
+			//initlist();
+		//}
+		//multiselect=true;
+		//inittreeview_level2();
+		document.getElementById("iframe_main").src = 'chart.html';
+	}
 }
 function loadstations_warnlog() {
-	//updatapcnav(8);
-	sessionStorage.pageindex = 5;
-	//var slistname = $("#head_list_name").text();
-	//if (slistname != "请选择站点:") {
-		//initlist();
-	//}
-	document.getElementById("iframe_main").src = 'warnlog.html';
+	if(sessionStorage.pageindex!=5){
+		//updatapcnav(8);
+		sessionStorage.pageindex = 5;
+		//var slistname = $("#head_list_name").text();
+		//if (slistname != "请选择站点:") {
+			//initlist();
+		//}
+		document.getElementById("iframe_main").src = 'warnlog.html';
+	}
 }
 function loadstations_smslog() {
 	sessionStorage.pageindex = 6;
@@ -1242,18 +1259,20 @@ function querywarnlog(num) {
 	}
 	sessionStorage.SensorId = sel.value;//document.getElementById("jcdd")
 	sessionStorage.SensorName = sel.options[document.getElementById("jcdd").selectedIndex].text;
-	var kssj = document.getElementById("kssj_warning").value;
-	if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
-		layer.alert("请指定开始时间",info_showtime);
-		return;
+	if(sessionStorage.timeindex==4){
+		var kssj = document.getElementById("kssj_warning").value;
+		if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
+			layer.alert("请指定开始时间",info_showtime);
+			return;
+		}
+		sessionStorage.kssj = kssj;
+		var jssj = document.getElementById("jssj_warning").value;
+		if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
+			layer.alert("请指定截至时间",info_showtime);
+			return;
+		}
+		sessionStorage.jssj = jssj;
 	}
-	sessionStorage.kssj = kssj;
-	var jssj = document.getElementById("jssj_warning").value;
-	if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
-		layer.alert("请指定截至时间",info_showtime);
-		return;
-	}
-	sessionStorage.jssj = jssj;
 	$("#warnlogdata-tbody tr").empty();
 	if (num == 0) {//name 改为dname 20200520 edit;at the options was null,get the all data;
 		gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
@@ -1804,7 +1823,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 		//var myChart = echarts.init(document.getElementById('main'));
 		var option = {
 			color: ['#ff8c00', '#FF0000','#00ff00',"#9400D3","#00BFFF","#4B0082","#20B2AA","#0000CD"," #FF4500 "],//
-			backgroundColor: '#d0d0d0',
+			backgroundColor: '#dcdcdc',
 			title : {
 						text : atitle+' 变化趋势比对  ',
 						x:"center",
@@ -1850,8 +1869,8 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 			},
 			legend: {//图例
 				data: lengenddata,
-				orient:"horizontal",//"vertical",
-				x:'left',//
+				orient:"vertical",//"horizontal",
+				x:'right',//'left'
         		y:'45',//
 				//color: 'white',//
 			},
@@ -1920,12 +1939,14 @@ function strtodatetime(str) {
 }
 //初始化绘图页面
 function initdrawing() {
-	sessionStorage.pageindex = 1;
-	//var slistname = $("#head_list_name").text();
-	//if (slistname != "请选择图形:") {
-	//	initlist();
-	//}
-	document.getElementById("iframe_main").src = 'drawmap.html';
+	if(sessionStorage.pageindex!=1){
+		sessionStorage.pageindex = 1;
+		//var slistname = $("#head_list_name").text();
+		//if (slistname != "请选择图形:") {
+		//	initlist();
+		//}
+		document.getElementById("iframe_main").src = 'drawmap.html';
+	}
 	//$('#graphicslist tr:eq(1)').attr("checked", true);
 }
 //获取图形信息列表 no used
@@ -2734,19 +2755,19 @@ function getname(key){
 }
 //不同时间段的选择响应（obj对应的选项对象)
 function seletime(obj){
-	var sel=document.getElementById("jcdd");
+	//var sel=document.getElementById("jcdd");
 	sessionStorage.timeindex=$('input[name="timeselect"]:checked').val();//obj.value*1;
 	if(obj.value*1==5){
-		sel.style.display="none";
+		//sel.style.display="none";
 		showrealworning();
 		return;
 	}
-	if(sel.options.length<=0){
+	/*if(sel.options.length<=0){
 		decodedatas(null);
 		layer.alert("请选择要查询的测量点名称",info_showtime);
 		return;
 	}
-	sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
+	sessionStorage.SensorName = sel.options[sel.selectedIndex].text;*/
 	var oneday=1000*60*60*24;
 	var today = new Date();
 	var ckssj,cjssj,ttime;
@@ -2754,15 +2775,15 @@ function seletime(obj){
 	document.getElementById("count_val").innerHTML="";
 	switch(obj.value*1){
 		case 0:
-			sel.style.display="";
+			//sel.style.display="";
 			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
 			sessionStorage.jssj = getCurrentDate(2) ;
-			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			timedefine.style.display="none";
 			//layer.alert("没有符合条件的记录",info_showtime);
 			break;
 		case 1:
-			sel.style.display="";
+			//sel.style.display="";
 			timedefine.style.display="none";
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			var yesterdaystar=ckssj-oneday;
@@ -2771,19 +2792,19 @@ function seletime(obj){
 			var yesterdayend=cjssj-oneday;
 			sessionStorage.jssj=dateToString(new Date(yesterdayend),2);
 			//$("#warnlogdata-tbody tr").empty();
-			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			//layer.alert("没有符合条件的记录",info_showtime);
 			break;
 		case 2:
-			sel.style.display="";
+			//sel.style.display="";
 			timedefine.style.display="none";
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			sessionStorage.kssj=dateToString(new Date(ckssj.setDate(1)),2);
 			sessionStorage.jssj=getCurrentDate(2);
-			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			break;
 		case 3:
-			sel.style.display="";
+			//sel.style.display="";
 			timedefine.style.display="none";	
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			var lastMonthFirst = new Date(ckssj - oneday * ckssj.getDate());
@@ -2792,10 +2813,10 @@ function seletime(obj){
 			sessionStorage.jssj = dateToString(new Date(cjssj - oneday * cjssj.getDate()),2);
 			//$("#warnlogdata-tbody tr").empty();
 			//layer.alert("没有符合条件的记录",info_showtime);
-			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 		break;
 		case  4:
-			sel.style.display="";
+			//sel.style.display="";
 			var timedefine=document.getElementById("timedefine");
 			if(timedefine.style.display=="none"){
 				timedefine.style.display="inline";
@@ -2818,6 +2839,37 @@ function updatapcnav(obj){
 				nav.style.color="#0000f0"
 			}
 		}
+	}
+	if(obj==7){
+		//if((multiselect==undefined)||(multiselect==null)){
+			window.parent.multiselect=true;
+		//}else{
+		//	multiselect=true;
+		//}
+	}else{
+		//if((multiselect==undefined)||(multiselect==null)){
+			window.parent.multiselect=false;
+		//}else{
+		//	multiselect=false;
+		//}
+	}
+	//if(window.parent.tree2)
+		window.parent.inittreeview_level2();
+	switch(obj){
+		case 4:
+		case 5:
+		case 7:
+		case 8:
+		case 15:
+			if(window.parent.tree2){
+				window.parent.document.getElementById('tree_chi').style.display="block";
+				window.parent.document.getElementById('tree').style.height='60%';
+				
+			}
+			break;			
+		default :
+		window.parent.document.getElementById("tree_chi").style.display="none";
+		window.parent.document.getElementById('tree').style.height='100%';
 	}
 }
 var sorter=false;

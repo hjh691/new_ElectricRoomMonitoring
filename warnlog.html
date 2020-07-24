@@ -11,19 +11,22 @@
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
 	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
-	<script  type="text/javascript" src="js/function.js"></script>
-	
-	<!--<script  type="text/javascript" src="js/radialIndicator.js"></script>-->
+	<script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
 	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
 	<!--<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>-->
+	<script  type="text/javascript" src="js/function.js"></script>
 	<style>
     /**/
-    th,td{
+	th,td
+	{
         border:1px solid black;
         text-align:center;
         line-height:center;
         width:200px;
         height:30px;
+    }	
+	th{
+        border:0px solid black;
     }	
 	table {
 		/*设置相邻单元格的边框间的距离*/
@@ -52,55 +55,53 @@
 	span{
 		margin-left:10px;
 	}
+	.container{
+		width: 99%;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
 	</style>
 </head>
 <body >
-	<div>
+	<div class="container" style="height:740px;">
+	<div class="row" style="height:100%;">
+	<!--<div class="col-xs-4 col-md-3 col-lg-2" style="border: rgb(90, 89, 89) solid 0px;height: 100%;display:none">
+		<div><label style="font-size:16px">设备(标签)列表:</label></div>
+		<div class="leftmenu" id="child_menu" style="width: 100%;border: rgb(90, 89, 89) solid 0px;background-color: #eee0e0;height:95%">
+			<div class="tree " id="tree_chi" style="width: 100%;height:100%;">
+			</div>
+		</div>
+	</div>-->
+	<div class="col-xs-12 col-md-12 col-lg-12">
 		<div class="pagecard" id="pagecard1" style="margin-bottom:10px;display: none;">
 			<h3 >告警信息</h3>			
 		</div>
-		<!--<div style="text-align: center;height:30px;" onload="initwarnlog()">
-		<table class="table" style="border:0px;"align="center">
-			<tr >
-			<td style="color:#0000b0;font-size:16px;width:120px;border:0px;"> 计量点名称 :</td>
-			<td style="width:100px;border:0px;width:120px;">	
-				<select id="jcdd" style="font-size:16px;width:153px;">
-				</select>
-			</td><head>morning</head>affternoon
-			<td class="condition"style="width:100px;"> 起止时间:</td>
-			<td class="condition"><input  type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:190px;"></input></td>
-			<td class="condition" style="width:30px;">至</td>
-			<td class="condition"><input  type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_warning" style="width:190px;"></input></td>
-			<td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="querywarnlog(0)" >
-			</input><input class="button"type="button" id="chaxun"style="width:100px" value="查询全站" onclick="querywarnlog(1)" ></input></td>
-			</tr>
-		</table>-->
 		<div style="margin-bottom: 0;" >
-			<span class="condition" >
+			<span class="condition" style="display: none;">
 				<label>计量点名称：</label>
 			<select id="jcdd" onchange="gradeChange()"  style="border-radius: 5px;">
 			</select ><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()" style="display:none"></a>
 			</span>
-			<span><label>显示内容：</label></span>
+			<span><label>类别分组：</label></span>
 			<span id="display_type" class="btn-group" data-toggle="buttons">
-				<label class="btn btn-primary active"><input type="radio" class="catalog" name="options" value="">其他</label><!---->
+				<label class="btn btn-primary active" id="type_other"><input type="radio" class="catalog" name="options" value="">其他</label><!---->
 			</span>
-			
+			<span><label>事件类型：</label></span>
+			<span class="dropup" style="position: relative;">
+			<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
+				<span class="select_text" data-is-select="false">Dro pup</span>
+				<span class="caret"></span>
+			</button>-->
+			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
+				<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;"></input>
+			</label>
+			<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="event_type">
+				<!-- 为了方便演示，type设置text了，实际中可以设置成hidden<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
+				<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li> -->
+			</ul>
+			</span>
 			<div class="condition" >
-				<span><label>事件类型：</label></span>
-				<span class="dropup" style="position: relative;">
-				<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
-					<span class="select_text" data-is-select="false">Dro pup</span>
-					<span class="caret"></span>
-				</button>-->
-				<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
-					<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;"></input>
-				</label>
-				<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="event_type">
-					<!-- 为了方便演示，type设置text了，实际中可以设置成hidden<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
-					<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li> -->
-				</ul>
-				</span>
+				<span><label>查询时间：</label></span>
 				<span ><label><input type="radio" value="5" onclick="seletime(this)" name="timeselect"></input>实时</label></span>
 				<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
 				<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
@@ -111,8 +112,13 @@
 				起止时间
 				<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"></input>至
 				<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_warning" style="width:160px;font-size:16px;height: 30px;" ></input>
-				<input class="button" type="button" id="chaxun" value="查询" onclick="querywarnlog(0)" style="font-size:16px;height: 30px;line-height: 30px;" ></input>
 				<input class="button"type="button" id="chaxun"style="width:100px;font-size:16px;height: 30px;line-height: 30px;display:none" value="查询全站" onclick="querywarnlog(1)" ></input></b>
+				</span>
+				<span>
+					<input class="button" type="button" id="chaxun" value="查询" onclick="querywarnlog()" 
+				style="font-size:16px;height: 30px;line-height: 30px;" ></input>
+				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="exporttoexcel('warnlogtable')">
+					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
 				</span>
 			</div>
 		</div>
@@ -122,15 +128,10 @@
 				<li id="station_name"style="width:50px;margin-right:10px;display:none"> </li>
 				<li style="width:50px;margin-right:10px">记录数：</li>
 				<li id="count_val"style="width:50px;margin-right:10px"> </li>
-				<!--<li style="width:50px;margin-right:10px"><b>标签名称：</b> </li>
-				<li id="normal_count"style="width:150px;margin-right:10px"> </li>
-				<li style="width:50px;margin-right:10px"><b>异常数：</b></li>
-				<li id="err_count"style="width:50px;margin-right:10px"> </li>method5('warnlogtable')-->
 				 <li style="width:50px;margin-right:10px"></li>
 			</ul>
 		</div>
 		<div text-align="center">
-			
 			<table id="warnlogtable" style="margin: auto;">
 				<caption id="war_caption" style="text-align: center;font-size:22px;color:black;">告警信息统计表</caption>
 				<tr>
@@ -146,14 +147,14 @@
 					<th id="count_third"></th>
 				</tr>
 				<tr >
-					<th style="display: none;">测量点编号</th>
-					<th>测量点名称</th>
-					<th>告警时间</th>
-					<th>数值</th>	
-					<th>告警内容</th>
+					<td style="display: none;">测量点编号</td>
+					<td>测量点名称</td>
+					<td>告警时间</td>
+					<td>数值</td>	
+					<td>告警内容</td>
 					<!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>-->
 				</tr>
-				<tbody id='warnlogdata-tbody' style="width:820px;height:540px; overflow:auto;">
+				<tbody id='warnlogdata-tbody' style="width:820px;height:520px; overflow:auto;">
 				</tbody>
 			</table>
 			<div style="text-align: center;margin:6px;font-size: 18px;">
@@ -168,37 +169,12 @@
 				<input id="changePage" type="text" size="1" maxlength="4"/>
 				<a>页&nbsp;</a>
 				<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
-				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="exporttoexcel('warnlogtable')">
-					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
 				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;display:none;" id="tongji" onclick="tongji('tongjitable')">告警统计</a>
 			</div>
-			<!--<table id="tongjitable" style="margin:auto;display: none;">
-				<tr>
-					<th >测量点名称</th>
-					<th id="cldmc"></th>
-					<th>统计时间</th>
-					<th id="tjsj"></th>
-				</tr>
-				<tr>
-					<th></th>
-					<th >一级告警</th>
-					<th>二级告警</th>
-					<th>三级告警</th>
-				</tr><th>告警次数</th>-->
-				<!--这是注释内容（This is an explaninwext-->
-				<!--<tr >
-					<th colspan="4">一级告警</th>
-				</tr>
-				<tr >
-					<th>测量点名称</th>
-					<th>告警时间</th>
-					<th>数值</th>	
-					<th>告警内容</th>
-				</tr>
-				<tbody id="tb_first"></tbody>
-			</table>-->
 		</div>
 		<div id="indicatorContainer"></div>
+	</div>
+	</div>
 	</div>
 	<script>
 	var pageSize = 50;    //每页显示的记录条数
@@ -214,16 +190,10 @@
 	var configs;
 	var dname="",catalog="";
 	var allcatalog;
+	var isfound=false;
 	updatapcnav(8);
 	$(function () {
-		initwarnlog();
-		$(".btn").click(function(){
-			$(this).button('toggle');
-			dname= $(".catalog:checked").val();
-			catalog=getcatalog(dname);
-			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
-		});
-		
+		initwarnlog();		
 	});
 	
 	//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
@@ -231,6 +201,9 @@
 	var parentid=-100,parentname="";
 	var maps=[];
 	sessionStorage.pageindex = 5;
+	var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+	var treenode=buildnode(treeseneors,0);
+	//inittreeview(treenode);
 	document.getElementById("kssj_warning").value = sessionStorage.kssj;
 	document.getElementById("jssj_warning").value = sessionStorage.jssj;
 	var sel_sensor=document.getElementById("jcdd");
@@ -286,17 +259,19 @@
 	}
 	$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
 	seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
-	appenddisplaytype();
+	appenddisplaytype(sessionStorage.SensorId);
 	if(sessionStorage.timeindex==4){
 		querywarnlog();
 	}
-	if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
+	if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。di strict/county  city  province can may must need/can't must not need't
 		if(typeof(w1) == "undefined") {
 			w1 = new Worker("delay_worker.js");
 		}
 		var i=0;
 		w1.onmessage = function(event) {
-			//document.getElementById("result").innerHTML = event.data;
+			//document.getElementById("result").innerHTML = event.data; an ce en 
+			//pic  ture  dis ad  ab  un  ch ar ing are ire our dr tr st ee ea ear tion ay age 
+			//sh tch er ent ant oo ed ck gr ty ly pr or im in ai ph qu ex student ew ell all 
 			i++
 			if(i%60==0){
 				if(sessionStorage.timeindex==5)
@@ -306,10 +281,154 @@
 	} else {
 		var t1 = window.setInterval("getrealdatabynodeid(-1);",60000);
 	}
-	function appenddisplaytype(){
-		if(sessionStorage.SensorId>=0){
+	
+}
+	function inittreeview(anodes) {
+		$('#tree_chi').treeview({
+			data: anodes,    // 数据源  
+			showCheckbox: false,   //是否显示复选框
+			highlightSelected: true,    //是否高亮选中
+			nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
+			//nodeIcon: 'glyphicon glyphicon-lock',//
+			emptyIcon: '',    //没有子节点的节点图标
+			enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象 
+			multiSelect: false,    //多选
+			searchResultColor: "black",
+			//color: "", //所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
+			backColor: "#eee0e0", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+			onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
+				//var selectnode=$("#tree_chi").treeview('getSelected');
+				$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 
+				//sessionStorage.jfjk_nodeid = data.nodeId;
+				for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
+					p_node = getThe_level_nodeid(data, i);
+					$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+				}
+				$("#tree_chi").treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
+				
+				setSelectOption("jcdd", data.id);
+				sessionStorage.jfjk_nodeid=data.nodeId;
+				//sessionStorage.SensorId=data.id;
+				appenddisplaytype(data.id);//0710
+				//initwarnlog();
+				sessionStorage. SensorName=data.text;
+				//catalog=getcatalog(dname);
+				//queryhistorydata();//0710
+				//对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO Something。
+				////if(data.text=="门禁"){
+				//    document.getElementById("tree_chi").style.height="50%";
+				//    document.getElementById("tree1").style.display="block";
+				//}else{
+				//    document.getElementById("tree_chi").style.height="100%";
+				//    document.getElementById("tree1").style.display="none";
+				//}
+			}
+		});
+		$("#tree_chi").treeview('collapseAll');//关闭展开
+		if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
+			sessionStorage.jfjk_nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
+		}
+		var currentNode = $("#tree_chi").treeview("getNode", sessionStorage.jfjk_nodeid);
+		$("#tree_chi").treeview('expandNode', [currentNode, { levels: 2, silent: true }]);//展开第一个节点
+		for (var i = 0; i < currentNode.level; i++) {//逐级展开所选节点的父节点。
+			var p_node = getThe_level_nodeid(currentNode, i);
+			$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+		}
+		$("#tree_chi").treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
+		//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
+		$('#tree_chi').treeview('selectNode', [currentNode, { silent: true }]);
+		sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
+		//$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
+		/**/
+		function getThe_level_nodeid(anode, alevel) {
+			while (anode.level > alevel) {
+				anode = ($("#tree_chi").treeview("getParent", anode))
+			}
+			return anode;
+		}
+	}
+	function buildnode(data, level) {
+		var tree = [];
+		if (data == null || typeof(data) == "undefined") {
+			/*for (i = 0; i < 0; i++) {
+				var anodes = new Object();
+				anodes.text = "门禁" + (2 - i);
+				anodes.id = i;
+				anodes.Catalog="门禁";
+				anodes.nodes = [];
+				anodes.icon = "url(res/lock.png)";fature
+				anodes.level=0;
+				var node = '[{"text":"动环","id":' + ((i + 1) * 10) +',"icon":"glyphicon glyphicon-user","Catalog":"UPS","level":1},{"text":"水浸","id":' 
+					+ ((i + 1) * 10 + 1) + ',"level":1},{"text":"电源","id":' + ((i + 1) * 10 + 2) + ',"level":1},{"text":"环境","id":' + ((i + 1) * 10 + 3) 
+					+ ',"level":1},{"text":"灯光","id":' + ((i + 1) * 10 + 4) +
+						',"level":1,"nodes":[{"text":"门禁","id":543,"level":2},{"text":"水浸","id":345,"level":2}]}]';
+				anodes.nodes = (JSON.parse(node));
+				//var lnode=new Object();
+				tree.push(anodes);
+			}*/
+		}else
+		for (var j = 0; j < data.length; j++) {
+				var anodes = new Object();
+				anodes.text = data[j].Value.Name;
+				anodes.id = data[j].Value.Id;
+				anodes.ParentId=data[j].Value.ParentId;
+				anodes.NodeId=data[j].Value.NodeId;//----
+				anodes.Catalog = data[j].Value.Catalog;
+				anodes.Address=data[j].Value.Address//----
+				anodes.Group=data[j].Value.Group;//----
+				anodes.Serial=data[j].Value.Serial;//----
+				anodes.Location=data[j].Value.Location;//----
+				anodes.Config = data[j].Value.Config;
+				anodes.Time = data[j].Value.Time;
+				anodes.level = level;
+				if (data[j].Value.hasOwnProperty("NodeId")) {
+					anodes.NodeId = data[j].Value.NodeId;
+				}
+				var icon = 'glyphicon glyphicon-user';
+				switch (data[j].Value.Name) {
+					case "机房监控":
+						icon = 'glyphicon glyphicon-inbox';//
+						break;
+					case "门禁":
+						icon = 'glyphicon glyphicon-lock';//
+						break;
+					case "灯光":
+						icon = 'glyphicon glyphicon-cog';
+						break;
+					case "红外":
+						icon = 'glyphicon glyphicon-signal';
+						break;
+					case "动力":
+						icon = 'glyphicon glyphicon-retweet';
+						break;
+					case "环境":
+						icon = "glyphicon glyphicon-leaf";//
+						break;
+					case "水浸":
+						icon = "glyphicon glyphicon-tint";//
+				}
+				if (level == 0) {
+					icon = "glyphicon glyphicon-home";
+				}
+				anodes.icon = icon;
+				//var chi_len = data[j].Children.length;
+				if (data[j].Children&&data[j].Children.length != 0) {
+					anodes.nodes = [];
+					anodes.nodes = buildnode(data[j].Children, level + 1)
+				}
+				tree.push(anodes);
+			}
+		return tree;
+	}
+	function appenddisplaytype(asensorid){
+		var temp=document.getElementById("event_type");
+		for(var i=document.getElementById("display_type").childElementCount;i>1;i--)
+			document.getElementById("display_type").removeChild(document.getElementById("display_type").childNodes[i-1]);
+		//for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
+		//	document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
+		if(asensorid>=0&&sensors){
 			for(var k=0;k<sensors.length;k++){
-				if(sensors[k].Value.Id==sessionStorage.SensorId){
+				if(sensors[k].Value.Id==asensorid){
 					allcatalog=sensors[k].Value.Catalog;//读取对应的Catalog项
 					break;
 				}
@@ -317,7 +436,7 @@
 			if((configs)&&(configs.hasOwnProperty(allcatalog))){//检查配置中是否有catalog项
 				var s_des=configs[allcatalog]//如果有，读取其所有配置项
 				for(var p in s_des){
-					var lab=document.createElement("label");
+					 lab=document.createElement("label");
 					/*if(p==0){
 						name=s_des[p].Name;
 						catalog=s_des[p].Catalog;
@@ -325,14 +444,25 @@
 					}else{}*/
 					lab.className="btn btn-primary";
 					
-					lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
-					document.getElementById("display_type").appendChild(lab);
+					lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" onclick=displaytype(this) >'+s_des[p].Desc;
+					var other=document.getElementById("type_other");
+					document.getElementById("display_type").insertBefore(lab,other);//类别
 					
-					if(s_des[p].Catalog=="event"&&s_des[p].Name=="event"){//告警、事件类型
+					if(s_des[p].Catalog=="event"&&s_des[p].Name=="event"){//告警、事件类型 age language
 						var config=new Object()
 						config=JSON.parse(s_des[p].Config);
 						if(config){
 							for(var c in config){
+								for(var i=0;i<temp.children.length;i++){//0721 edit 判断是否存在配置项，如果存在则跳过继续，不存在则添加;
+									if((temp.children[i].children[0].children[0].value==c)&&(temp.children[i].children[0].children[1].innerText==config[c])){
+										isfound=true;
+										break;
+									}
+								}
+								if(isfound){
+									isfound=false;
+									continue;
+								}//0721 edit
 								var li=document.createElement("li");
 								var lab=document.createElement("label");
 								//lab.setAttribute("style","margin-left:20px")
@@ -353,13 +483,31 @@
 					}
 				}
 			}else{
+				for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
+					document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
 				var li=document.createElement("li");
 				li.text="没有可选项";
 				document.getElementById("event_type").text="没有可选项";
 			}
-		}
+		}else{
+				for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
+					document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
+				var li=document.createElement("li");
+				li.text="没有可选项";
+				document.getElementById("event_type").text="没有可选项";
+			}
+		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。
+		$(".btn").click(function(){
+		$(this).button('toggle');
+		dname= $(".catalog:checked").val();
+		catalog=getcatalog(dname);
+		//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+	});
 	}
-}
+	function displaytype(obj){
+		dname= obj.value;
+		catalog=getcatalog(dname);
+	}
 	function decodedatas(obj_data){
 		objS = document.getElementById("jcdd");
 		var name;
@@ -535,7 +683,7 @@
 		document.getElementById("count_val").innerHTML="";
 		var objS = document.getElementById("jcdd");
 		sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
-		gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+		//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 	}
 	function stopWorker() 
 		{ 
@@ -639,19 +787,6 @@
 	function refreshsensorslist(){
 		window.parent.GetSensorsByNode(sessionStorage.nodeId);
 	}
-	/*function tongji(){
-		var txt_tj=document.getElementById("tongji");
-		if(txt_tj.innerText=="告警统计"){
-			txt_tj.innerText="告警查询"
-			document.getElementById("warnlogtable").style.display="none";
-			document.getElementById("tongjitable").style.display="";
-		}else{
-			txt_tj.innerText="告警统计"
-			document.getElementById("warnlogtable").style.display="";
-			document.getElementById("tongjitable").style.display="none";
-		}
-	}*/
-
 
 	function display(){   
 		//var $table=$("#warnlogdata-tbody");
@@ -796,7 +931,7 @@
 		var i_sel=$('input[name="timeselect"]:checked').val();//20200403添加筛选条件改变后自动刷新列表
 		switch(i_sel*1){
 			case 0:	case 1:	case 2:	case 3:	case 4:
-				gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+				//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 				break;
 			case 5:
 				showrealworning();
@@ -806,4 +941,7 @@
 	</script>
 </body>
 </html>
-<!--告警类型项目的添加为空时提示，历史状态页添加信息统计显示项 bootstap的组件内容类定义，对代码进行简化-->
+<!--告警类型项目的添加为空时提示，历史状态页添加信息统计显示项 bootstap的组件内容类定义，对代码进行简化
+	添加标签目录树，标签目录树的根据节点自动更新，配置项根据标签自动更新，时段与查询的对应，动态按钮组的响应过程，导出到excel按钮位置
+	点击时段选择跳出提示框，更换标签时，告警事件选项重复加载，采用二次树形菜单来选择标签项，标签选择项调整，原隐藏。
+-->

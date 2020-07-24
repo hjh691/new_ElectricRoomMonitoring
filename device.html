@@ -125,6 +125,7 @@
 			updatapcnav(9);
 			var parentid=-100,parentname="";
 			tbody=document.getElementById("device-tbody");
+			deleterows(tbody);
             sensors=JSON.parse(localStorage.getItem("sensors"));
 			if(sensors!=null){
 				for(var i=0;i<sensors.length;i++){
@@ -169,6 +170,11 @@
             }
             //display();//分页显示功能。 
         }
+		function deleterows(atable){
+			for(var i=atable.rows.length;i>0;i--){
+				atable.removeChild(atable.rows[i-1]);
+			}
+		}
 		function tableclick(tr){
 			$(tr).siblings().css("background","");
 			$(tr).css("background","#85e494");//区分选中行

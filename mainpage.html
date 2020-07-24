@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="css/bootstrap.min.css" />
 	<link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
 	<link rel="stylesheet" href="css/electricroommonitoring.css" />
-	<title>智能云平台</title>
+	<title>智能变电站辅助系统综合监测云平台</title>
 	<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/config.js"></script>
@@ -47,9 +47,12 @@
 	<!--header-->
 	<!--  内容  -->
 	<div id="chuangti" >
-		<!--左侧站名列表 <h4 id="head_list_name" align="left"  >变电站:</h4>-->
-		<div class="leftmenu" id="leftmenu" >
+		<!--左侧站名列表 <h4 id="head_list_name" align="left"  >变电站:</h4> style="display: none;"-->
+		<div class="leftmenu" id="leftmenu">
 			<div class="tree " id="tree" >
+			</div>
+			
+			<div class="tree1 " id="tree_chi" >
 			</div>
 		</div>
 		<div id="content" style="overflow: hidden;">
@@ -77,8 +80,9 @@
 			</div>
 			</nav>
 			<div class="mainarea" id="mainarea">
-				<iframe name="iframe_main" id="iframe_main" allowtransparency="true" allowfullscreen="true" style="width:100%;height:95%;" frameborder="0">
+				<iframe name="iframe_main" id="iframe_main" allowtransparency="true" allowfullscreen="true" style="width:100%;height:98%;" frameborder="0">
 				</iframe>
+				
 				<table id="warningtable" style="display:none">
 					<thead>
 						<tr>
@@ -98,11 +102,11 @@
 	</div>
 	<!--底部公司版权 -->
 	<div>
-		<div class="navigation" id="footer" style="height:30px;position: absolute;bottom:0px;left:0px;right:0px;">	
+		<div class="navigation" id="footer" style="height:30px;float:bottom;bottom:0px;left:0px;right:0px;">	
 			<div class="pc-footer" >
 				<ul class="pc-footer" align="center" style="margin:0 150px;">
-					<li ><a id="company_info" href="" target="_blank" ><img id="company_log" src="" width="20px" height="20px" > 保定金凯澳自动化设备有限公司</a></li>
-					
+					<li ><a id="company_info" href="" target="_blank" style="color:white;"><img id="company_log" src="" width="20px" height="20px" ><lab id="company_name"></lab></a></li>
+					<li style="color:white;" >Copyright<lab id="copyright_time"></lab></li>
 				</ul>
 			</div>
 		</div><!--<li ><a href="#" style="margin-left:500px" >实时告警窗口</a></li>display: none;-->
@@ -139,7 +143,12 @@
 		var nodes = null, nodeid = -1;
 		sessionStorage.txid=-1;//20200228 初始化一次图形id
 		sessionStorage.nodetype=1;
-		
+		var multiselect=false;
+		var tree2=false;
+		//最后一次触发节点Id
+		var lastSelectedNodeId = null;
+		//最后一次触发时间
+		var lastSelectTime = null;
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
@@ -202,7 +211,7 @@
 				}
 				window.setInterval("resetContent()", 200);
 				refreshwindow();
-				initIndex();
+				//initIndex();
 				$(".tab a:last").tab("show");
 			}
 		);
@@ -260,20 +269,20 @@
 				height -= m * main.style.borderWidth.replace("px", "");
 			}
 			if (height > 0) {
-				main.style.height = height + "px";
+				main.style.height = height*1-30 + "px";
 				var mheight = height;
 				if (menu.style.borderWidth) {
 					mheight -= m * menu.style.borderWidth.replace("px", "");
 				}
 				if (mheight > 0) {
-					menu.style.height = mheight + "px";
+					menu.style.height = mheight-30 + "px";
 				}
 				mheight = height;
 				if (content.style.borderWidth) {
 					mheight -= m * content.style.borderWidth.replace("px", "");
 				}
 				if (mheight > 0) {
-					content.style.height = mheight + "px";
+					content.style.height = mheight-30 + "px";
 				}
 			}
 			initIndex();//窗口尺寸变化时是否重画所有内容。
@@ -296,8 +305,10 @@
 		function initIndex() {
 			showusername();
 			document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
-			//document.getElementById('company_log').src = jfjk_base_config.log_src;
-			//document.getElementById('company_info').href = jfjk_base_config.company_url;
+			document.getElementById('company_log').src = jfjk_base_config.log_src;
+			document.getElementById('company_info').href = jfjk_base_config.company_url;
+			document.getElementById("company_name").innerHTML=jfjk_base_config.company;
+			document.getElementById("copyright_time").innerHTML=jfjk_base_config.ver_id+"/  "+jfjk_base_config.date;
 			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
 			sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
 			sessionStorage.cxsj = getCurrentDate(2);
@@ -310,8 +321,8 @@
 				inittreeview();
 			}
 			if (sessionStorage.framepage == "") {
+				document.getElementById("iframe_main").src = "infototal.html";
 				sessionStorage.pageindex = 0;
-				document.getElementById("iframe_main").src = "infototal.html"
 			} else {
 				document.getElementById("iframe_main").src = sessionStorage.framepage;
 			}
@@ -343,8 +354,9 @@
 				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象
 				multiSelect: false,    //多选
 				searchResultColor: "black",
-				//color: "", //所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
-				//backColor: "#000000", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				color: "#fff",//所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
+				backColor: "rgba(0, 101, 105, 1);", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				showBorder: false,
 				//borderColor: "#000000", //边框颜色。如果不想要可见的边框，则可以设置showBorder为false。        String
 				//nodeIcon: "glyphicon glyphicon-stop", //所有节点的默认图标
 				//checkedIcon: "glyphicon glyphicon-check", //节点被选中时显示的图标         String
@@ -355,7 +367,7 @@
 				//highlightSearchResults: true, //是否高亮显示被选中的节点        Boolean
 				//levels: 2, //设置整棵树的层级数  Integer
 				//multiSelect: false, //是否可以同时选择多个节点      Boolean
-				//onhoverColor: "#F5F5F5", //光标停在节点上激活的默认背景色      String
+				onhoverColor: "#3075a5", //光标停在节点上激活的默认背景色      String
 				//selectedIcon: "glyphicon glyphicon-stop", //节点被选中时显示的图标     String
 				//searchResultBackColor: "", //当节点被选中时的背景色
 				//searchResultColor: "", //当节点被选中时的前景色
@@ -374,6 +386,7 @@
 					//var selectnode=$("#tree").treeview('getSelected');
 					$("#tree").treeview('collapseAll')//,nodeid);//关闭展开
 					sessionStorage.name = data.nodeId;
+					localStorage.setItem("sensor_tree",null);
 					if(data.Catalog=="视频监控"){
 						sessionStorage.nodetype=0;//全局变量，用于存储节点类型，来区分要显示的内容（导航栏标题，iframe对应的html页，历史数据变化趋势的取值等）
 						maps = [];
@@ -418,6 +431,7 @@
 						} else {
 							infotreeobj.value = 0;
 						}
+						
 						infotreedata.push(infotreeobj);
 						if (data.nodeId != nodeid && data.level <= 2) {
 							localStorage.setItem("sensors", null);
@@ -478,7 +492,9 @@
 						infotreedata.push(infotreeobj);
 						updatanav(sessionStorage.nodetype);
 					} else {
-						//updatanav(1);
+						sessionStorage.nodetype=-1;
+						updatanav(sessionStorage.nodetype);
+						//updatanav(sessionStorage.nodetype);
 						//sessionStorage.SensorId = data.id;
 						var p_node = getThe_level_nodeid(data, 2);
 						if (data.nodeId != nodeid && data.level <= 2) {
@@ -524,7 +540,7 @@
 							infotreeobj.value = 0;
 						}
 						infotreedata.push(infotreeobj);
-						updatanav(sessionStorage.nodetype);
+						
 					}
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 						p_node = getThe_level_nodeid(data, i);
@@ -617,6 +633,7 @@
 			infotreedata.push(infotreeobj);
 			maps = [];
 			localStorage.setItem("sensors", null);
+			localStorage.setItem("sensor_tree",null);
 			if(!firstNode.hasOwnProperty("nodes"))
 			GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
 			GetBinariesByType("NodeGraphic", infotreeobj.id);
@@ -634,6 +651,17 @@
 		//更新导航栏信息（主要用于区分视频监控、机房监控与其他子系统的的操作信息
 		function updatanav(type){
 			switch(type*1){//使用变量后参数变为字符串型，需转换成数值型；或者在case语句中使用"0"来代替0。否则不匹配。
+				case -1:
+					document.getElementById("li_realdata").style.display="inline";
+					document.getElementById("li_realdata").style.disabled="inline";
+					document.getElementById("li_realstate").style.display="none";
+					document.getElementById("li_historystate").style.display="none";
+					document.getElementById("li_historydata").style.display="inline";
+					document.getElementById("li_warnlog").style.display="inline"
+					document.getElementById("li_historychart").style.display="inline";
+					document.getElementById("li_preview").style.display="none";
+					sessionStorage.pageindex=0;
+					break;
 				case 0:
 				document.getElementById("li_realdata").style.display="none"
 				document.getElementById("li_historydata").style.display="none";
@@ -666,8 +694,8 @@
 					var li=document.getElementById("li_realdata");
 					li.style.display="none";
 					document.getElementById("li_realstate").style.display="inline";
-					document.getElementById("li_historystate").style.display="inline";
-					document.getElementById("li_historydata").style.display="none";
+					document.getElementById("li_historystate").style.display="none";
+					document.getElementById("li_historydata").style.display="inline";
 					document.getElementById("li_warnlog").style.display="inline"
 					document.getElementById("li_historychart").style.display="none";
 					document.getElementById("li_preview").style.display="none";
@@ -681,7 +709,10 @@
 			}
 		}
 		function showpage(pid){//调试用显示不同的页面，正常只有0值。
-			updatapcnav(10);
+			if(sessionStorage.pageindex!=7){
+				updatapcnav(10);
+				document.getElementById("iframe_main").src="systeminfo.html";
+			}/*
 			switch(pid){
 				case 0:
 					document.getElementById("iframe_main").src="systeminfo.html";
@@ -697,9 +728,19 @@
 					break;
 				case 4:
 					document.getElementById("iframe_main").src = "smokedetector.html";
+					break;
 				case 5:
-					document.getElementById("iframe_main").src="video.html"
-			}
+					document.getElementById("iframe_main").src="video.html";
+					break;
+				case 11:
+					var amenu=document.getElementById("leftmenu");
+					if(amenu.style.display=="block"){
+						amenu.style.display="none";
+					}else{
+						amenu.style.display="block";
+					};
+					break;
+			}*/
 		}
 		function getThe_level_nodeid(anode, alevel) {
 			while (anode.level > alevel) {
@@ -881,25 +922,35 @@
 			return tree;
 		}
 		function showdownload() {
-			document.getElementById("iframe_main").src = "app_download.html"
-			sessionStorage.pageindex=200;
+			if(sessionStorage.pageindex!=200){
+				document.getElementById("iframe_main").src = "app_download.html"
+				sessionStorage.pageindex=200;
+			}
 		}
 		function showhelp() {
-			updatapcnav(13);
-			document.getElementById("iframe_main").src = "help.html"
-			sessionStorage.pageindex=100;
+			if(sessionStorage.pageindex!=100){
+				updatapcnav(13);
+				document.getElementById("iframe_main").src = "help.html"
+				sessionStorage.pageindex=100;
+			}
 		}
 		function showcontactus() {
-			document.getElementById("iframe_main").src = "ContactUs.html"
-			sessionStorage.pageindex=300;
+			if(sessionStorage.pageindex!=300){
+				document.getElementById("iframe_main").src = "ContactUs.html"
+				sessionStorage.pageindex=300;
+			}
 		}
 		function showdevice(){
-			document.getElementById("iframe_main").src="device.html";
-			sessionStorage.pageindex=6;
+			if(sessionStorage.pageindex!=6){
+				document.getElementById("iframe_main").src="device.html";
+				sessionStorage.pageindex=6;
+			}
 		}
 		function showpreview(){
-			sessionStorage.pageindex=8;
-			document.getElementById("iframe_main").src="video.html";
+			if(sessionStorage.pageindex!=8){
+				sessionStorage.pageindex=8;
+				document.getElementById("iframe_main").src="video.html";
+			}
 		}
 		//获取指定节点的图形列表  //Fresh strawberries tastes good
 		function GetBinariesByType(atype, anodeid) {
@@ -945,17 +996,17 @@
 									//var binaries=buildbinaries(data.Result.Binaries);//(JSON.parse(localStorage.getItem("sensors")));
 									localStorage.setItem("binaries", JSON.stringify(obj_Binaries));
 									//localStorage.binaries=obj_Binaries;
-									refreshiframe();
+									//refreshiframe();
 								} else {
 									localStorage.setItem("binaries", null);
 									sessionStorage.islogin = true;
-									refreshiframe();
+									//refreshiframe();
 								}
 							} else {
 								localStorage.setItem("binaries", null);
 								layer.alert(data.Error,info_showtime);
 								sessionStorage.islogin = true;
-								refreshiframe();
+								//refreshiframe();
 							}
 						}
 					}
@@ -965,7 +1016,7 @@
 				//inittreeview(null,0);
 			}
 			//if(atype==0){
-			refreshiframe();
+			//refreshiframe();
 			//}
 		}
 		function GetSensorsByNode(anodeid) {
@@ -986,7 +1037,9 @@
 						sessionStorage.errortime++;
 						isfree = "true";
 						localStorage.setItem("sensors", null);
+						localStorage.setItem("sensor_tree", null);
 						localStorage.setItem("Configs",null);
+						tree2=false;
 						refreshiframe();
 						if(sessionStorage.errortime>3){
 							sessionStorage.islogin=false;
@@ -1003,6 +1056,10 @@
 								var result = data.Result;
 								if (!jQuery.isEmptyObject(result.Sensors)) {
 									localStorage.setItem("sensor_tree",JSON.stringify(data.Result.Sensors));
+									var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+									var treenode=buildnode_level2(treeseneors,0);
+									inittreeview_level2(treenode);
+									tree2=true;
 									maps = [];
 									var sensors = buildsensor(data.Result.Sensors);//(JSON.parse(localStorage.getItem("sensors")));
 									localStorage.setItem("sensors", JSON.stringify(sensors));
@@ -1018,6 +1075,8 @@
 									}
 									refreshiframe();
 								} else {
+									tree2=false;
+									localStorage.setItem("sensor_tree",null);
 									localStorage.setItem("sensors", null);
 									if(!jQuery.isEmptyObject(result.Configs)){//20200428 add
 										var configs=new Object();
@@ -1030,6 +1089,7 @@
 									refreshiframe();
 								}
 							} else {
+								tree2=false;
 								localStorage.setItem("sensors", null);
 								localStorage.setItem("Configs",null);
 								layer.alert(data.Error,info_showtime);
@@ -1041,41 +1101,64 @@
 				});
 			} else {
 				Alert("用户未登录，您无权完成此次操作", info_showtime);
+				tree2=false;
 				inittreeview(null, 0);
 			}
-			refreshiframe();
+			//refreshiframe();
 		}
 		function refreshiframe() {
 			var frame=document.getElementById("iframe_main");
 			switch (sessionStorage.pageindex) {
 				case '0':
-					frame.src = "infototal.html";
+					if(frame.src.indexOf("/infototal.html")<=0){
+						frame.src = "infototal.html";
+					}else{
+						$("#iframe_main")[0].contentWindow.initinfototal();
+					}
 					break;
 				case "1":
-					frame.src = "drawmap.html";
+					if(frame.src.indexOf("/drawmap.html")<=0){
+						frame.src = "drawmap.html";
+					}else{		
 					//getrealdatabynodeid(-1);
-					//iframe_main.window.initpage();
+						$("#iframe_main")[0].contentWindow.initpage();
+					}
 					break;
 				case '2':
-					frame.src = "realdata.html";//getrealdatabynodeid(-1);
-					//iframe_main.window.initpage();
+					////getrealdatabynodeid(-1);
+					if(frame.src.indexOf("/newrealdata.html")>0){
+						$("#iframe_main")[0].contentWindow.initrealdata();
+					}else{
+						frame.src = "newrealdata.html";
+					}
 					break;
 				case '3':
-					frame.src = "historydata.html";
-					//iframe_main.window.initpage();
+					if(frame.src.indexOf("/historydata.html")>0){
+						$("#iframe_main")[0].contentWindow.initpage();
+					}else{
+						frame.src = "historydata.html";
+					}
+					//$("#iframe_main")[0].contentWindow.initpage();
 					break;
 				case '4':
-					frame.src = "chart.html";
-					//iframe_main.window.inithistorychart();
+					//frame.src = "chart.html";
+					$("#iframe_main")[0].contentWindow.inithistorychart();
 					break;
 				case '5':
-					frame.src = "warnlog.html";
+					//frame.src = "warnlog.html";
+					$("#iframe_main")[0].contentWindow.initwarnlog();
 					break;
 				case "6":
-					frame.src="device.html";
+					if(frame.src.indexOf("/device.html")>0){
+						$("#iframe_main")[0].contentWindow.initdevice();
+					}else{
+						frame.src = "device.html";
+					}
+					//frame.src="device.html";
 					break;
 				case "7":
-					frame.src="systeminfo.html";
+					//frame.src="systeminfo.html";
+					$("#iframe_main")[0].contentWindow.initsysteminfo();
 					break;
 				case "8":
 					frame.src="video.html";
@@ -1483,7 +1566,181 @@
 				}
 				inittreeview(nodes);
 			}
-		};
+		}
+		function inittreeview_level2(anodes) {
+			if(!anodes){
+				var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+				anodes=buildnode_level2(treeseneors,0);
+			}
+			$('#tree_chi').treeview({
+				data: anodes,    // 数据源  qirenyoutian yiqingyingxiang  zhuangxiubushun  yijianbutongyi  haizixuexiburangrenfangxin 
+				showCheckbox: false,   //是否显示复选框
+				highlightSelected: true,    //是否高亮选中
+				nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
+				//nodeIcon: 'glyphicon glyphicon-lock',//
+				emptyIcon: '',    //没有子节点的节点图标
+				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象 
+				multiSelect: multiselect,    //多选
+				searchResultColor: "black",
+				color: "#fff",//所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
+				backColor: "#0d7778",//"rgba(0, 151, 105, 1);", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				showBorder: false, //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				onhoverColor: "#3075a5", //光标停在节点上激活的默认背景色      String
+				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
+					//var selectnode=$("#tree_chi").treeview('getSelected');
+					$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 
+					//sessionStorage.jfjk_nodeid = data.nodeId;
+					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
+						p_node = getThe_level_nodeid(data, i);
+						$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+					}
+                    $("#tree_chi").treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
+                    
+					//setSelectOption("jcdd", data.id);
+                    sessionStorage.jfjk_nodeid=data.nodeId;
+					sessionStorage.SensorId=data.id;
+					sessionStorage.sel_id=data.id;
+					$("#iframe_main")[0].contentWindow.appenddisplaytype(data.id);//0710
+					sessionStorage. SensorName=data.text;
+					var sensorarray=$("#tree_chi").treeview("getSelected");
+					if(sensorarray.length>6){
+						$("#tree_chi").treeview("unselectNode",[data.nodeId]);
+						alert("对比测量点不能大于6个!",info_showtime);
+					}
+                    //catalog=getcatalog(dname);
+                    //queryhistorydata();//0710
+                    //对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO Something。student teacher study studies 
+                    ////if(data.text=="门禁"){
+                    //    document.getElementById("tree_chi").style.height="50%";
+                    //    document.getElementById("tree1").style.display="block";
+                    //}else{
+                    //    document.getElementById("tree_chi").style.height="100%";
+                    //    document.getElementById("tree1").style.display="none";
+					//}
+					clickNode(event, data)
+				},
+				onNodeUnselected : function(event,data){
+					clickNode(event, data);
+				}
+			});
+			
+			if(anodes.length>0){
+				$("#tree_chi").treeview('collapseAll');//关闭展开
+				if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
+					sessionStorage.jfjk_nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
+				}
+				var currentNode = $("#tree_chi").treeview("getNode", sessionStorage.jfjk_nodeid);
+				$("#tree_chi").treeview('expandNode', [currentNode, { levels: 2, silent: true }]);//展开第一个节点
+				for (var i = 0; i < currentNode.level; i++) {//逐级展开所选节点的父节点。
+					var p_node = getThe_level_nodeid(currentNode, i);
+					$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+				}
+				$("#tree_chi").treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
+				//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
+				$('#tree_chi').treeview('selectNode', [currentNode, { silent: true }]);
+				sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
+				//$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
+				/**/
+			}
+            function getThe_level_nodeid(anode, alevel) {
+                while (anode.level > alevel) {
+                    anode = ($("#tree_chi").treeview("getParent", anode))
+                }
+                return anode;
+            }
+        }
+		function buildnode_level2(data, level) {
+			var tree = [];
+            if (data == null || typeof(data) == "undefined") {
+                /*for (i = 0; i < 3; i++) {
+                    var anodes = new Object();
+                    anodes.text = "门禁" + (2 - i);
+                    anodes.id = i;
+                    anodes.Catalog="门禁";
+                    anodes.nodes = [];
+                    anodes.icon = "url(res/lock.png)";
+                    anodes.level=0;
+                    var node = '[{"text":"动环","id":' + ((i + 1) * 10) +',"icon":"glyphicon glyphicon-user","Catalog":"UPS","level":1},{"text":"水浸","id":' 
+                        + ((i + 1) * 10 + 1) + ',"level":1},{"text":"电源","id":' + ((i + 1) * 10 + 2) + ',"level":1},{"text":"环境","id":' + ((i + 1) * 10 + 3) 
+                        + ',"level":1},{"text":"灯光","id":' + ((i + 1) * 10 + 4) +
+                         ',"level":1,"nodes":[{"text":"门禁","id":543,"level":2},{"text":"水浸","id":345,"level":2}]}]';
+                    anodes.nodes = (JSON.parse(node));
+                    //var lnode=new Object();
+                    tree.push(anodes);
+                }*/
+            }else
+            for (var j = 0; j < data.length; j++) {
+					var anodes = new Object();
+					anodes.text = data[j].Value.Name;
+					anodes.id = data[j].Value.Id;
+                    anodes.ParentId=data[j].Value.ParentId;
+                    anodes.NodeId=data[j].Value.NodeId;//----
+                    anodes.Catalog = data[j].Value.Catalog;
+                    anodes.Address=data[j].Value.Address//----
+                    anodes.Group=data[j].Value.Group;//----
+                    anodes.Serial=data[j].Value.Serial;//----
+                    anodes.Location=data[j].Value.Location;//----
+					anodes.Config = data[j].Value.Config;
+					anodes.Time = data[j].Value.Time;
+					anodes.level = level;
+					if (data[j].Value.hasOwnProperty("NodeId")) {
+						anodes.NodeId = data[j].Value.NodeId;
+					}
+					var icon = 'glyphicon glyphicon-user';
+					switch (data[j].Value.Name) {
+						case "机房监控":
+							icon = 'glyphicon glyphicon-inbox';//
+							break;
+						case "门禁":
+							icon = 'glyphicon glyphicon-lock';//
+							break;
+						case "灯光":
+							icon = 'glyphicon glyphicon-cog';
+							break;
+						case "红外":
+							icon = 'glyphicon glyphicon-signal';
+							break;
+						case "动力":
+							icon = 'glyphicon glyphicon-retweet';
+							break;
+						case "环境":
+							icon = "glyphicon glyphicon-leaf";//
+							break;
+						case "水浸":
+							icon = "glyphicon glyphicon-tint";//
+					}
+					if (level == 0) {
+						icon = "glyphicon glyphicon-home";
+					}
+					anodes.icon = icon;
+					//var chi_len = data[j].Children.length;
+					if (data[j].Children&&data[j].Children.length != 0) {
+						anodes.nodes = [];
+						anodes.nodes = buildnode(data[j].Children, level + 1)
+					}
+					tree.push(anodes);
+				}
+            return tree;
+        }
+		function clickNode(event, data) {
+			if (lastSelectedNodeId && lastSelectTime) {
+				var time = new Date().getTime();
+				var t = time - lastSelectTime;
+				if (lastSelectedNodeId == data.nodeId && t < 300) {
+					//customBusiness(data);
+					if(sessionStorage.pageindex==8){
+						$("#iframe_main")[0].contentWindow.clickStartRealPlay();
+					}
+				}
+			}
+			lastSelectedNodeId = data.nodeId;
+			lastSelectTime = new Date().getTime();
+		}
+		//自定义业务方法
+		function customBusiness(data){
+			alert("双击获得节点名字： "+data.text,2000);
+		}
+		
 	</script>
 </body>
 </html>

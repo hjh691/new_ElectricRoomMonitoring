@@ -21,91 +21,93 @@
         </div>
     </div>
     <script>
-        //(function(){
-        var data=JSON.parse(JSON.stringify(parent.infotreedata));//parent.infotreedata;//
-    //var data=data1;
-    updatapcnav(1);
-    /*var isfree="true",maps=[];//,num=0
-    if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。//停止定时刷新
-        if(typeof(w1) == "undefined") {
-            w1 = new Worker("delay_worker.js");
-        }
-		ab=0;
-        w1.onmessage = function(event) {
-            //document.getElementById("result").innerHTML = event.data;
-			ab++
-			//if(num<parent.infotreedata[0].children.length||parent.infotreedata[0].level!=1){
-				if(ab==1){
-                getNode(parent.infotreedata);
-                ab=0;
+        
+        function initinfototal(){
+            var data=JSON.parse(JSON.stringify(parent.infotreedata));//parent.infotreedata;//
+            //var data=data1;
+            updatapcnav(1);
+            /*var isfree="true",maps=[];//,num=0
+            if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。//停止定时刷新
+                if(typeof(w1) == "undefined") {
+                    w1 = new Worker("delay_worker.js");
                 }
-			//}
-        };
-    } else {
-        //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
-        //var t1 = window.setInterval("getrealdatabynodeid(-1);",30000);
-    }*/
-    var asensors=JSON.parse(localStorage.getItem("allsensors"));
-    //var s=JSON.stringify(parent.allsensors);
-    var a=JSON.parse(JSON.stringify(parent.infotreedata))
-    updatainfotree1(a);//使用总node和总sensors进行汇总。
-    var myChar=echarts.init(document.getElementById("main")); 
-    var option = {
-        tooltip: {
-            show:true,
-            trigger: 'item',
-            triggerOn: 'mousemove'
-        },
-        title : {
-            show:false,
-            text: '信息总览'
-        },
-        toolbox: {
-            show : true,
-            feature : {
-                mark : {show: true},
-                dataView : {show: true, readOnly: false},
-                restore : {show: true},
-                saveAsImage : {show: true}
-            }
-        },
-        series : [
-            {
-                type: 'tree',
-                name: 'tree1',
-                top: '5%',
-                left: '7%',
-                bottom: '2%',
-                right: '10%',
-                orient: 'horizontal', 
-                symbolSize: 7,
-                label: {
-                    normal: {
-                        position: 'left',
-                        verticalAlign: 'middle',
-                        align: 'right',
-                        fontSize:20,
-                        offset:[0,15],
-                        formatter: " {b} \n{c}",
-                    },
+                ab=0;
+                w1.onmessage = function(event) {
+                    //document.getElementById("result").innerHTML = event.data;
+                    ab++
+                    //if(num<parent.infotreedata[0].children.length||parent.infotreedata[0].level!=1){
+                        if(ab==1){
+                        getNode(parent.infotreedata);
+                        ab=0;
+                        }
+                    //}
+                };
+            } else {
+                //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
+                //var t1 = window.setInterval("getrealdatabynodeid(-1);",30000);
+            }*/
+            asensors=JSON.parse(localStorage.getItem("allsensors"));
+            //var s=JSON.stringify(parent.allsensors);
+            var a=JSON.parse(JSON.stringify(parent.infotreedata))
+            updatainfotree1(a);//使用总node和总sensors进行汇总。
+            var myChar=echarts.init(document.getElementById("main")); 
+            var option = {
+                tooltip: {
+                    show:true,
+                    trigger: 'item',
+                    triggerOn: 'mousemove'
                 },
-                leaves: {
-                    label: {
-                        normal: {
-                            position: 'right',
-                            verticalAlign: 'middle',
-                            align: 'left'
-                        },
-                        formatter: "{name}:{value}",
+                title : {
+                    show:false,
+                    text: '信息总览'
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
                     }
                 },
-                initialTreeDepth:4,
-                expandAndCollapse: true,
-                data:a,//data,//
-            }
-        ]
-    } ;
-    myChar.setOption(option);     
+                series : [
+                    {
+                        type: 'tree',
+                        name: 'tree1',
+                        top: '5%',
+                        left: '7%',
+                        bottom: '2%',
+                        right: '10%',
+                        orient: 'horizontal', 
+                        symbolSize: 7,
+                        label: {
+                            normal: {
+                                position: 'left',
+                                verticalAlign: 'middle',
+                                align: 'right',
+                                fontSize:20,
+                                offset:[0,15],
+                                formatter: " {b} \n{c}",
+                            },
+                        },
+                        leaves: {
+                            label: {
+                                normal: {
+                                    position: 'right',
+                                    verticalAlign: 'middle',
+                                    align: 'left'
+                                },
+                                formatter: "{name}:{value}",
+                            }
+                        },
+                        initialTreeDepth:4,
+                        expandAndCollapse: true,
+                        data:a,//data,//
+                    }
+                ]
+            } ;
+            myChar.setOption(option);
+        }     
         //})();
     /**function getNode(atree){//解读节点属性，当为第二级时，获取其标签数据进行分类统计
         for(var i=0;i<atree.length;i++){
@@ -298,7 +300,11 @@
 			} 
 			return (maps.sort(compare));
 		}
-	}*/
+    }*/
+    $(function(){
+        var asensors;
+        initinfototal();
+        });
     </script>
 </body>
 </html>
