@@ -68,7 +68,7 @@ function initpage() {
             }
         };
     } else {
-        //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
+        //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";student rent tent bent cent accident teacher percent quart study
         var t1 = window.setInterval("getrealdatabynodeid(-1);", 60000);
     }
     appendalldisplaytype("display_type");/**/

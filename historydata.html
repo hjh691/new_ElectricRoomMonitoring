@@ -230,9 +230,9 @@
 			if(sessionStorage.SensorName==undefined){
 				sessionStorage.SensorName="";
 			}
-			if(sessionStorage.timeindex==4){
-				queryhistorydata(0);
-			}
+			//if(sessionStorage.timeindex==4){
+				decodedatas();//queryhistorydata(0);
+			//}
 		}
 		function inittreeview(anodes) {
 			var tree=$('#tree_chi')
@@ -304,6 +304,7 @@
 			for(var i=document.getElementById("display_type").childElementCount;i>0;i--)
 			    document.getElementById("display_type").removeChild(document.getElementById("display_type").childNodes[i]);
 			if(element_id>=0){
+				if(sensors)
 				for(var k=0;k<sensors.length;k++){
 					if(sensors[k].Value.Id==element_id){
 						scatalog=sensors[k].Value.Catalog;//读取对应的Catalog项
@@ -458,16 +459,16 @@
 					layer.alert("请指定截至时间",info_showtime);
 					return;
 				}
-				if((sessionStorage.SensorId==sel.value)&&(sessionStorage.kssj==kssj)&&(sessionStorage.jssj==jssj)&&(!isfirst)
-					&&(sessionStorage.typecatalog==catalog)&&(sessionStorage.typename==dname)){
-					layer.alert("查询条件与上一次相同，请重新选择!",info_showtime)
-					return;
-				}
+				//if((sessionStorage.SensorId==sel.value)&&(sessionStorage.kssj==kssj)&&(sessionStorage.jssj==jssj)&&(!isfirst)
+				//	&&(sessionStorage.typecatalog==catalog)&&(sessionStorage.typename==dname)){
+					//layer.alert("查询条件与上一次相同，请重新选择!",info_showtime)
+				//	return;
+				//}
 				sessionStorage.kssj = kssj;
 				sessionStorage.jssj = jssj;
 			}
 			//sessionStorage.SensorId = sel.value;
-			sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
+			//sessionStorage.SensorName = sel.options[sel.selectedIndex].text;
 			sessionStorage.typename=dname;
 			sessionStorage.typecatalog=catalog;
 			//xs=sensors[sel.selectedIndex].Value.Factor;
@@ -806,7 +807,7 @@
 					color: ['#FFFF00', '#FF0000','#00ff00'],//
 					backgroundColor: '#d0d0d0',
 					title : {
-								text : document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+' 变化趋势图  ',
+								text : sessionStorage.SensorName+' 变化趋势图  ',
 								x:"center",
 								subtext:jiange+"   "+sessionStorage.kssj+"——"+sessionStorage.jssj,
 								subtextStyle:{
@@ -1006,5 +1007,6 @@
 </body>
 </html>
 <!--添加在改变标签后自动刷新所对应的配置项内容以及动态添加的配置项的点击响应，时段选取与查询的对应关系，所选节点变化所定义的标签树的更新功能，查询和导出按钮位置
-
+	标签标题名称（包括告警查询页面）
+	切换节点 页面图形、数据不能及时更新，二级菜单树总是有时自动选择某个菜单的问题，
 -->

@@ -149,9 +149,10 @@
 		var ch1,ch2,ch3,ch4;
 		var cname,catalog;
 		var isfound=false;
-		updatapcnav(7);
+		var selectText="";
 		inithistorychart();
 		function inithistorychart() {
+			updatapcnav(7);
 			//return;
 			sessionStorage.pageindex = 4;
 			ch1=document.getElementById("chart1");
@@ -212,8 +213,12 @@
 		}
 		//添加显示控制选项
 		function appenddisplaytype(anodeid){
-			//if(anodeid)
-			//	return;
+			selectText="";
+			if(sessionStorage.selectText){
+				sel_str=sessionStorage.selectText.split(";");
+			}else{
+				sel_str=[];
+			}
 			var temp=document.getElementById("display_type");
 			allconfigs=JSON.parse(localStorage.Configs);
     		if(allconfigs){
@@ -228,6 +233,12 @@
 						}
 						if(isfound){
 							isfound=false;
+							for(var j=0;j<sel_str.length;j++){
+								if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
+									temp.children[i].children[0].checked=true;
+									break;
+								}
+							}
 							continue;
 						}//0721 edit/**/
 						var li=document.createElement("li");
@@ -240,6 +251,13 @@
 						ainput.className="check_box";
 						var spn=document.createElement("span");
 						spn.innerHTML=s_des[p].Desc;
+						for(var j=0;j<sel_str.length;j++){
+							if(sel_str[j]==s_des[p].Desc){
+								ainput.setAttribute("checked",true);
+								break;
+							}
+
+						}
 						lab.appendChild(ainput);
 						lab.appendChild(spn);
 						//lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
@@ -254,6 +272,18 @@
 				for(var i=temp.childNodes.length;i>0;i--)
 				temp.removeChild(temp.childNodes[i-1]);
 			}
+			for(var i=0;i<temp.children.length;i++){
+				if(temp.children[i].children[0].children[0].checked==true){
+					selectText=selectText+temp.children[i].children[0].children[1].innerHTML+";";
+				}
+			}
+			if(selectText.charAt(selectText.length - 1)==";"){
+				//去除末尾分号
+				selectText=selectText.substring(0,selectText.length - 1);
+				//selectVal=selectVal.substring(0,selectVal.length - 1);
+			}
+			document.getElementById("select_text").value=selectText;
+			showchartview(sel_str);
 		}
 		/*$(function () {//
 			$(".check_box").click(function(){
@@ -388,7 +418,7 @@
 			}
 		}
 	//动态添加的元素注册添加点击事件
-	$(document).on("click",".check_box",function(event){
+	$(document).on("click",".check_box",function (event){
 		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
 		//获取多选列表的所有选项内容。
 		//勾选的项
@@ -397,7 +427,7 @@
 		//var $selectValDom=$(this).parent().parent().parent("ul").siblings(".select_val");
 		//是否有选择项了
 		var isSelected=$selectTextDom[0].getAttribute("data-is-select");
-		var selectText="";//文本值，用于显示
+		//文本值，用于显示
 		//var selectVal=$selectValDom.val();//实际值，会提交到后台的
 		var selected_text=$(this).siblings("span").text();//当次勾选的文本值
 		var selected_val=$(this).val();//当次勾选的实际值
@@ -428,6 +458,7 @@
 			//selectVal=selected_val;
 		}
 		$selectTextDom.val(selectText);
+		sessionStorage.selectText=selectText;
 		//$selectValDom.val(selectVal);
 		if(selectText==""){
 			$selectTextDom.text("请选择");
@@ -436,7 +467,11 @@
 		}else{
 			$selectTextDom[0].setAttribute("data-is-select","true");
 			sel_str=selectText.split(";")
-			switch(sel_str.length){
+			showchartview(sel_str);
+		}
+	})
+	function showchartview(asel_str) {
+		switch(asel_str.length){
 			case 1:
 				ch1.className="col-xs-11 col-sm-11 displaytype1";
 				ch2.setAttribute("style","display:none");
@@ -468,10 +503,11 @@
 				ch4.setAttribute("style","display:block");
 				break;
 			}
-		}
-	})
+	  }
 	</script>
 </body>
 </html>
 <!--对比配置项根据标签进行动态添加以及去除重复项功能，页面根据对比项目自动进行动态调整显示图形视窗的功能，
-	编写树形菜单的双击响应程序（采用选中与释放之间的时间作为标准进行判断，小于一定时间视为双击，视频预览添加通道双击打开再次双击关闭功能 -->
+	编写树形菜单的双击响应程序（采用选中与释放之间的时间作为标准进行判断，小于一定时间视为双击，视频预览添加通道双击打开再次双击关闭功能
+	添加显示控制配置项的页面记忆功能，在节点不变的情况下，切换页面时记忆上次的选择项并显示响应的图表视图。	
+-->

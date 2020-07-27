@@ -191,14 +191,15 @@
 	var dname="",catalog="";
 	var allcatalog;
 	var isfound=false;
-	updatapcnav(8);
+	
 	$(function () {
 		initwarnlog();		
 	});
 	
 	//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
 	function initwarnlog() {
-	var parentid=-100,parentname="";
+		updatapcnav(8);
+		var parentid=-100,parentname="";
 	var maps=[];
 	sessionStorage.pageindex = 5;
 	var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
@@ -260,9 +261,9 @@
 	$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
 	seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
 	appenddisplaytype(sessionStorage.SensorId);
-	if(sessionStorage.timeindex==4){
-		querywarnlog();
-	}
+	//if(sessionStorage.timeindex==4){
+	decodedatas();	//querywarnlog();
+	//}
 	if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。di strict/county  city  province can may must need/can't must not need't
 		if(typeof(w1) == "undefined") {
 			w1 = new Worker("delay_worker.js");
@@ -509,12 +510,12 @@
 		catalog=getcatalog(dname);
 	}
 	function decodedatas(obj_data){
-		objS = document.getElementById("jcdd");
+		/*objS = document.getElementById("jcdd");
 		var name;
 		var sift=false;
 		if(objS.options.length>0){
 			name=objS.options[objS.selectedIndex].innerText;
-		}
+		}*/
 		var type_str=[];
 		var count = 0;
 		var count_l=[];
@@ -591,10 +592,10 @@
 						var tr=document.createElement("tr");
 						tr.setAttribute("onclick","tableclick(this)");
 						var td_did=document.createElement("td");
-						td_did.innerHTML=objS.options[objS.selectedIndex].value;
+						td_did.innerHTML=sessionStorage.SensorId;//objS.options[objS.selectedIndex].value;
 						td_did.setAttribute("style","display:none");
 						var td_dname=document.createElement("td");
-						td_dname.innerHTML=name;
+						td_dname.innerHTML=sessionStorage.SensorName;//name;
 						var td_dtime=document.createElement("td");
 						var time=obj_data[i].Time;//(ttime-oneday*(2*i+5));
 						td_dtime.innerHTML=time;//dateToString(new Date(time),2);
@@ -944,4 +945,5 @@
 <!--告警类型项目的添加为空时提示，历史状态页添加信息统计显示项 bootstap的组件内容类定义，对代码进行简化
 	添加标签目录树，标签目录树的根据节点自动更新，配置项根据标签自动更新，时段与查询的对应，动态按钮组的响应过程，导出到excel按钮位置
 	点击时段选择跳出提示框，更换标签时，告警事件选项重复加载，采用二次树形菜单来选择标签项，标签选择项调整，原隐藏。
+	本周：云平台web前端程序页面样式和功能进行了修改和补充。下周：对web前端的功能进行测试和完善
 -->

@@ -1257,8 +1257,8 @@ function querywarnlog(num) {
 		layer.alert("请选择要查询的测量点名称",info_showtime);
 		return;
 	}
-	sessionStorage.SensorId = sel.value;//document.getElementById("jcdd")
-	sessionStorage.SensorName = sel.options[document.getElementById("jcdd").selectedIndex].text;
+	//sessionStorage.SensorId = sel.value;//document.getElementById("jcdd")
+	//sessionStorage.SensorName = sel.options[document.getElementById("jcdd").selectedIndex].text;
 	if(sessionStorage.timeindex==4){
 		var kssj = document.getElementById("kssj_warning").value;
 		if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
@@ -1825,7 +1825,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 			color: ['#ff8c00', '#FF0000','#00ff00',"#9400D3","#00BFFF","#4B0082","#20B2AA","#0000CD"," #FF4500 "],//
 			backgroundColor: '#dcdcdc',
 			title : {
-						text : atitle+' 变化趋势比对  ',
+						text : atitle+": "+' 变化趋势比对  ',//标题 标签名称+项目名称；
 						x:"center",
 						subtext:jiange+"   "+kssj+"——"+jssj,
 						subtextStyle:{

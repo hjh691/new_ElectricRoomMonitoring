@@ -211,7 +211,15 @@
 				}
 				window.setInterval("resetContent()", 200);
 				refreshwindow();
-				//initIndex();
+				initIndex();
+				sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
+				sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
+				sessionStorage.cxsj = getCurrentDate(2);
+				if (sessionStorage.islogin) {
+					getNodes();
+				} else {
+					inittreeview();
+				}
 				$(".tab a:last").tab("show");
 			}
 		);
@@ -285,7 +293,7 @@
 					content.style.height = mheight-30 + "px";
 				}
 			}
-			initIndex();//窗口尺寸变化时是否重画所有内容。
+			//initIndex();//窗口尺寸变化时是否重画所有内容。
 		}
 		window.onresize = window.onscroll = refreshwindow;//  
 		function resetContent() {
@@ -309,23 +317,25 @@
 			document.getElementById('company_info').href = jfjk_base_config.company_url;
 			document.getElementById("company_name").innerHTML=jfjk_base_config.company;
 			document.getElementById("copyright_time").innerHTML=jfjk_base_config.ver_id+"/  "+jfjk_base_config.date;
-			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
-			sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
-			sessionStorage.cxsj = getCurrentDate(2);
+			//sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
+			//sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
+			//sessionStorage.cxsj = getCurrentDate(2);
 			//sessionStorage.pageindex = 1;
 			//getgraphics();
 			//document.getElementById("iframe_main").src = 'page1.html';
-			if (sessionStorage.islogin) {
-				getNodes();
-			} else {
-				inittreeview();
-			}
+			
 			if (sessionStorage.framepage == "") {
 				document.getElementById("iframe_main").src = "infototal.html";
+				sessionStorage.framepage=document.getElementById("iframe_main").src;
 				sessionStorage.pageindex = 0;
 			} else {
 				document.getElementById("iframe_main").src = sessionStorage.framepage;
 			}
+			/*if (sessionStorage.islogin) {
+				getNodes();
+			} else {
+				inittreeview();
+			}*/
 		}
 		//开启告警声音
 		function showdailog(){
@@ -387,6 +397,7 @@
 					$("#tree").treeview('collapseAll')//,nodeid);//关闭展开
 					sessionStorage.name = data.nodeId;
 					localStorage.setItem("sensor_tree",null);
+					sessionStorage.selectText="";
 					if(data.Catalog=="视频监控"){
 						sessionStorage.nodetype=0;//全局变量，用于存储节点类型，来区分要显示的内容（导航栏标题，iframe对应的html页，历史数据变化趋势的取值等）
 						maps = [];
@@ -540,7 +551,6 @@
 							infotreeobj.value = 0;
 						}
 						infotreedata.push(infotreeobj);
-						
 					}
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 						p_node = getThe_level_nodeid(data, i);
@@ -612,7 +622,7 @@
 			}
 			$("#tree").treeview('expandNode', [firstNode.nodeId, { levels: 1, silent: true }]);
 			//$('#tree').treeview('expandNode', [ tree[0].id, { levels: 2, silent: true } ]);
-			$('#tree').treeview('selectNode', [firstNode, { silent: true }]);
+			//$('#tree').treeview('selectNode', [firstNode, { silent: true }]);
 			//$("#tree").treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
 			//获取指定node的sensors
 			//GetSensorsByNode(sessionStorage.nodeid);
@@ -632,11 +642,11 @@
 			}
 			infotreedata.push(infotreeobj);
 			maps = [];
-			localStorage.setItem("sensors", null);
-			localStorage.setItem("sensor_tree",null);
-			if(!firstNode.hasOwnProperty("nodes"))
-			GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
-			GetBinariesByType("NodeGraphic", infotreeobj.id);
+			//localStorage.setItem("sensors", null);
+			//localStorage.setItem("sensor_tree",null);
+			//if(!firstNode.hasOwnProperty("nodes"))
+			//GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
+			//GetBinariesByType("NodeGraphic", infotreeobj.id);
 			if(firstNode.Catalog=="视频监控"){
 				sessionStorage.nodetype=0;
 				updatanav(sessionStorage.nodetype);
@@ -670,7 +680,8 @@
 				document.getElementById("li_realstate").style.display="none";
 				document.getElementById("li_historystate").style.display="none";
 				document.getElementById("li_preview").style.display="inline";
-				if(sessionStorage.pageindex!=0&&sessionStorage.pageindex!=1&&sessionStorage.pageindex!=6&&sessionStorage.pageindex!=7){
+				if(sessionStorage.pageindex!=0&&sessionStorage.pageindex!=1&&sessionStorage.pageindex!=6&&sessionStorage.pageindex!=7
+					&&sessionStorage.pageindex!=100&&sessionStorage.pageindex!=200&&sessionStorage.pageindex!=300){
 					sessionStorage.pageindex=8;
 				}
 				break;
@@ -686,9 +697,9 @@
 					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)){
 						sessionStorage.pageindex=2;
 					}
-					if(sessionStorage.pageindex==11){
-						sessionStorage.pageindex=3;
-					}
+					//if(sessionStorage.pageindex==11){
+					//	sessionStorage.pageindex=3;
+					//}
 				break;
 				case 2://20200304 add 机房监控下的导航栏的显示内容
 					var li=document.getElementById("li_realdata");
@@ -702,9 +713,9 @@
 					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==2)){
 						sessionStorage.pageindex=10;
 					}
-					if(sessionStorage.pageindex==3){
-						sessionStorage.pageindex=11;
-					}
+					//if(sessionStorage.pageindex==3){
+					//	sessionStorage.pageindex=11;
+					//}
 				break;
 			}
 		}
@@ -712,35 +723,7 @@
 			if(sessionStorage.pageindex!=7){
 				updatapcnav(10);
 				document.getElementById("iframe_main").src="systeminfo.html";
-			}/*
-			switch(pid){
-				case 0:
-					document.getElementById("iframe_main").src="systeminfo.html";
-					break;
-				case 1:
-					document.getElementById("iframe_main").src="airconditioning.html";
-					break;
-				case 2:
-					document.getElementById("iframe_main").src="http://192.168.10.164"
-					break;
-				case 3:
-					document.getElementById("iframe_main").src = "flooding.html";
-					break;
-				case 4:
-					document.getElementById("iframe_main").src = "smokedetector.html";
-					break;
-				case 5:
-					document.getElementById("iframe_main").src="video.html";
-					break;
-				case 11:
-					var amenu=document.getElementById("leftmenu");
-					if(amenu.style.display=="block"){
-						amenu.style.display="none";
-					}else{
-						amenu.style.display="block";
-					};
-					break;
-			}*/
+			}
 		}
 		function getThe_level_nodeid(anode, alevel) {
 			while (anode.level > alevel) {
@@ -952,7 +935,7 @@
 				document.getElementById("iframe_main").src="video.html";
 			}
 		}
-		//获取指定节点的图形列表  //Fresh strawberries tastes good
+		//获取指定节点的一次图形列表  //Fresh strawberries tastes good
 		function GetBinariesByType(atype, anodeid) {
 			//var url = jfjk_base_config.baseurl + "/GetBinariesByType?type=" + atype + "&typeid=" + anodeid;//GetSensorsByNode?nodeId
 			var url = jfjk_base_config.baseurl + "/GetNodeGraphicsByNode?nodeId="+ anodeid;
@@ -1020,6 +1003,7 @@
 			//}
 		}
 		function GetSensorsByNode(anodeid) {
+			sessionStorage.jfjk_nodeid=0;
 			var url = jfjk_base_config.baseurl + "GetSensorsByNode?nodeId=" + anodeid;
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
@@ -1037,9 +1021,12 @@
 						sessionStorage.errortime++;
 						isfree = "true";
 						localStorage.setItem("sensors", null);
-						localStorage.setItem("sensor_tree", null);
 						localStorage.setItem("Configs",null);
 						tree2=false;
+						localStorage.setItem("sensor_tree",null);
+						var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+						var treenode=buildnode_level2(treeseneors,0);
+						inittreeview_level2(treenode);
 						refreshiframe();
 						if(sessionStorage.errortime>3){
 							sessionStorage.islogin=false;
@@ -1077,6 +1064,9 @@
 								} else {
 									tree2=false;
 									localStorage.setItem("sensor_tree",null);
+									var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+									var treenode=buildnode_level2(treeseneors,0);
+									inittreeview_level2(treenode);
 									localStorage.setItem("sensors", null);
 									if(!jQuery.isEmptyObject(result.Configs)){//20200428 add
 										var configs=new Object();
@@ -1090,6 +1080,10 @@
 								}
 							} else {
 								tree2=false;
+								localStorage.setItem("sensor_tree",null);
+								var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+								var treenode=buildnode_level2(treeseneors,0);
+								inittreeview_level2(treenode);
 								localStorage.setItem("sensors", null);
 								localStorage.setItem("Configs",null);
 								layer.alert(data.Error,info_showtime);
@@ -1120,12 +1114,10 @@
 					if(frame.src.indexOf("/drawmap.html")<=0){
 						frame.src = "drawmap.html";
 					}else{		
-					//getrealdatabynodeid(-1);
 						$("#iframe_main")[0].contentWindow.initpage();
 					}
 					break;
 				case '2':
-					////getrealdatabynodeid(-1);
 					if(frame.src.indexOf("/newrealdata.html")>0){
 						$("#iframe_main")[0].contentWindow.initrealdata();
 					}else{
@@ -1138,15 +1130,20 @@
 					}else{
 						frame.src = "historydata.html";
 					}
-					//$("#iframe_main")[0].contentWindow.initpage();
 					break;
 				case '4':
-					//frame.src = "chart.html";
-					$("#iframe_main")[0].contentWindow.inithistorychart();
+					if(frame.src.indexOf("chart.html")<=0){
+						frame.src = "chart.html";
+					}else{
+						$("#iframe_main")[0].contentWindow.inithistorychart();
+					}
 					break;
 				case '5':
-					//frame.src = "warnlog.html";
-					$("#iframe_main")[0].contentWindow.initwarnlog();
+					if(frame.src.indexOf("/warnlog.html")<=0){
+						frame.src = "warnlog.html";
+					}else{
+						$("#iframe_main")[0].contentWindow.initwarnlog();
+					}
 					break;
 				case "6":
 					if(frame.src.indexOf("/device.html")>0){
@@ -1154,12 +1151,11 @@
 					}else{
 						frame.src = "device.html";
 					}
-					//frame.src="device.html";
 					break;
-				case "7":
+				//case "7":
 					//frame.src="systeminfo.html";
-					$("#iframe_main")[0].contentWindow.initsysteminfo();
-					break;
+					//$("#iframe_main")[0].contentWindow.initsysteminfo();
+					//break;
 				case "8":
 					frame.src="video.html";
 					break;
@@ -1172,15 +1168,15 @@
 				case "11":
 					frame.src="historystate.html";
 					break;
-				case "100":
-					frame.src="Help.html";
-					break;
-				case "200":
-					frame.src="app_download.html";
-					break;
-				case "300":
-					frame.src="ContactUs.html";
-					break;//添加注释....... 
+				//case "100":
+					//frame.src="Help.html";
+					//break;
+				//case "200":
+					//frame.src="app_download.html";
+					//break;
+				//case "300":
+					//frame.src="ContactUs.html";
+					//break;//添加注释....... 
 			}
 		}
 		function GetSensors() {
@@ -1610,13 +1606,7 @@
                     //catalog=getcatalog(dname);
                     //queryhistorydata();//0710
                     //对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO Something。student teacher study studies 
-                    ////if(data.text=="门禁"){
-                    //    document.getElementById("tree_chi").style.height="50%";
-                    //    document.getElementById("tree1").style.display="block";
-                    //}else{
-                    //    document.getElementById("tree_chi").style.height="100%";
-                    //    document.getElementById("tree1").style.display="none";
-					//}
+                    
 					clickNode(event, data)
 				},
 				onNodeUnselected : function(event,data){
@@ -1747,4 +1737,9 @@
 <!--1 sessionStorage.nodetype 节点类型，控制页面显示响应的内容和操作，原来导航栏的更新参数为直接的数值，采用此变量后自动变成字符串型，
   其他公司模拟网址： Acrelcloud-6000安全用电管理平台体验地址：http://cloud.acrel.cn/    用户名：acrel  密码：123456
   视频监控页添加至视频监控网址的跳转按钮
+  0724: 调整在节点切换时（标签数据跟新后的页面刷新机制，由重新加载改为重新初始化内容，避免页面的闪烁），
+  修改同一导航按钮点在选中状态多次点按多次重新加载页面的而造成的闪烁问题 修改各个子页面的初始化流程并添加初始化函数用于在主页面调用，
+  解决主页面调用子页面方法和变量总是提示失败（不存在）的问题。
+  告警信息查询、趋势对比页面标签二级子菜单不显示或不更新问题、实时数据页面不能从视频预览跳回到实时数据
+  在视窗变化时保持页面数据不变（原来是全部复位）。
 -->
