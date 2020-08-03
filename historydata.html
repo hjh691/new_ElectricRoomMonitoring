@@ -846,10 +846,6 @@
 							}
 						}
 					},
-					dataZoom: {
-						show: true,
-						start: 0
-					},
 					legend: {
 						data: lengenddata,
 						orient:"horizontal",//"vertical",
@@ -882,6 +878,31 @@
 						min:minval,
 						max:maxval,
 					}],/**/
+					dataZoom: [{
+						type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+						xAxisIndex: 0,
+						show: true,
+						start: 0,
+						end:60,
+					},
+					{   // 这个dataZoom组件，也控制x轴。
+						type: 'inside', // 这个 dataZoom 组件是 inside 型 dataZoom 组件
+						start: 0,      // 左边在 10% 的位置。
+						end: 60,       // 右边在 60% 的位置。physics geographic accident wage rage advantage manage language cage police a policeman
+					},
+					/*{//官网示例正常，此处总是报错，数据位数控制时报非定义函数错误。
+						type: 'slider',
+						yAxisIndex: 0,
+						start: 80,
+						end: 100
+					},
+					{
+						type: 'inside',
+						yAxisIndex: 0,
+						start: 80,
+						end: 100
+					}*/
+					],
 					series: [{
 						name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
 						type: 'line',
@@ -910,6 +931,9 @@
 				};/**/
 				myChart.hideLoading();
 				myChart.setOption(option);
+				myChart.on('click',function(params){
+					if(params.name==""){}
+				});
 				myChart.resize;
 			}
 			function jisuan(a1,a2){
@@ -1009,4 +1033,5 @@
 <!--添加在改变标签后自动刷新所对应的配置项内容以及动态添加的配置项的点击响应，时段选取与查询的对应关系，所选节点变化所定义的标签树的更新功能，查询和导出按钮位置
 	标签标题名称（包括告警查询页面）
 	切换节点 页面图形、数据不能及时更新，二级菜单树总是有时自动选择某个菜单的问题，
+	0727关于图表和数据列表的标签名称（单一和复合）与告警信息查询页的同步问题，
 -->

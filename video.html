@@ -436,7 +436,8 @@
                 dp=undefined;
                 dparray[a]=dp;
                 isstop=true;
-                return;
+                if(sessionStorage.sel_id==sel_id)
+                  return;
             }
             var radio=document.getElementsByName("checks");
             if (typeof(sessionStorage.sel_id) =="undefined"){

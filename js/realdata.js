@@ -37,6 +37,8 @@ var tab_head;
 var backgroudcolor='#999';
 //var obj_realdata;
 var datas = [];
+var alertconfig=[10,20,30,40];
+var alertcount=[10,20,30,40];
 initrealdata();
 function initrealdata(){
     datas = [];
@@ -45,7 +47,7 @@ function initrealdata(){
         var value = 0;//(Math.random() * 100).toFixed(2) - 0;
         datas.push(JSON.parse('{"name":"","value":' + value + '}'));
         var value = 0;//(Math.random() * 100).toFixed(2) - 0;
-        datas.push(JSON.parse('{"name":"","value":' + value + '}'));
+        datas.push(JSON.parse('{"name":"","value":' + value + '}'));//砸死 大堤砸掉
     }
     updatachart(chart_type);
     initseries(datas);
@@ -63,12 +65,12 @@ function initpage() {
         w1.onmessage = function (event) {
             i++
             if (i % 60 == 0) {
-                //getrealdatabynodeid(-1);
+                //getrealdatabynodeid(-1);rage
                 decoderealdata();
             }
         };
     } else {
-        //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";student rent tent bent cent accident teacher percent quart study
+        //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
         var t1 = window.setInterval("getrealdatabynodeid(-1);", 60000);
     }
     appendalldisplaytype("display_type");/**/
@@ -128,7 +130,7 @@ function btn_refresh_click(obj){
 function refresh_tabhead(sel){
     count=0;
     if(sel){
-        tab_head=document.getElementById("tab_head");
+        //tab_head=document.getElementById("tab_head");
         for (var j = tab_head.rows.length - 1; j >= 0; j--) {
             tab_head.removeChild(tab_head.rows[j]);
         }
@@ -190,7 +192,7 @@ function refresh_tabhead(sel){
         th_tr.appendChild(th_th);
         tab_head.appendChild(th_tr);
     }else{
-        var tab_head=document.getElementById("tab_head");
+        //var tab_head=document.getElementById("tab_head");
         for (var j = tab_head.rows.length - 1; j >= 0; j--) {
             tab_head.removeChild(tab_head.rows[j]);
         }
@@ -259,7 +261,7 @@ function refresh_tabhead(sel){
         th_tr.appendChild(th_th);
         tab_head.appendChild(th_tr);
     }
-    document.getElementById("realtable").width=150*(count+5)+"px";
+    //document.getElementById("realtable").width=150*(count+5)+"px";// 设定数据列表的总宽度
 }
 //var t_pt=0;
 //表格排序使用插件
@@ -270,6 +272,7 @@ function stopWorker() {
     w1.terminate();
     w1 = undefined;
 };
+//根据数据列值获取Catalog。
 function getCatalog(index){
     var  catalogsel = $('[name="options"]');
     typename=catalogsel[index].value;
@@ -319,7 +322,7 @@ function decoderealdata(obj_realdata) {
             for (var j=0;j<obj_realdata.length;j++) {
                 dname=obj_realdata[j].Name;
                 grouptype=obj_realdata[j].Catalog;
-                if(obj_realdata[j].SensorId==sid){//是否为新的标签项
+                if(obj_realdata[j].SensorId==sid){//是否为新的标签项,相同标签的数据默认连续
                     isnew=false;
                 }else{ 
                     sid=obj_realdata[j].SensorId;
@@ -346,7 +349,7 @@ function decoderealdata(obj_realdata) {
                             atd.setAttribute("width","150px");
                             atr.appendChild(atd);
                         }
-                        atr.cells[0].innerHTML=sid;
+                        atr.cells[0].innerHTML=sid;//标签id
                         atr.cells[0].style.cssText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
                         atr.cells[2].innerHTML=obj_data.Time;//第二列添加测量时间
@@ -362,7 +365,7 @@ function decoderealdata(obj_realdata) {
                         atr.cells[tab_head.rows[0].cells.length-2].style.cssText="display:none";
                         atr.cells[tab_head.rows[0].cells.length-1].innerHTML=obj_data.Message;
                         atr.cells[tab_head.rows[0].cells.length-1].style.cssText="display:none";
-                        for(var k=0;k<v_sel.length;k++){//添加到指定列
+                        for(var k=0;k<v_sel.length;k++){//添加到指定列,不同配置项添加到不同的列，由显示控制项控制显示与否
                             if(v_sel[k].value==dname){
                                 atr.cells[k+3].innerHTML=(obj_data.Value*1).toFixed(Number_of_decimal);
                             }
@@ -581,7 +584,7 @@ function decoderealdata(obj_realdata) {
                 }
             }//else{	//$table.rows[0].ondblclick();	//}
         } else {
-            layer.alert("没有符合条件的数据", info_showtime);
+            layer.alert("没有符合条件的数据",info_showtime);
         }
     } else {
         layer.alert("没有符合条件的数据", info_showtime);
@@ -899,6 +902,10 @@ function refreshData() {
     myChart4.setOption(option4);
     option1.series[0].data[0].value= 54.321;//maxOfRealdata.toFixed(Number_of_decimal);
     myChart1.setOption(option1);
+    for(var i=0;i<4;i++){
+        option3.series[0].data[i].value=alertcount[i];
+    }
+    mychart3.setOption(option3);
 }
 function decodedatas(obj_chartdata) {
     //maxval=0;
@@ -1348,7 +1355,7 @@ function initecharts(){
     myChart1.setOption(option1);
     option3 = {
         backgroundColor: backgroudcolor,
-        color: ['#3398DB'],
+        color:['#090','#055','#f70','#b00','#095','#f0f','#444'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {            // 坐标轴指示器，坐标轴触发有效
@@ -1367,10 +1374,10 @@ function initecharts(){
                 color: "#FFF",
             },
         },
-        xAxis: [
+        /*xAxis: [
             {
                 type: 'category',
-                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                data: ['正常', '预警', '一级', '二级', '告警'],
                 axisTick: {
                     alignWithLabel: true
                 }
@@ -1380,24 +1387,47 @@ function initecharts(){
             {
                 type: 'value'
             }
-        ],
+        ],*/
         series: [
             {
-                name: '直接访问',
-                type: 'bar',
-                barWidth: '60%',
-                data: [10, 52, 200, 334, 390, 330, 220]
+                name: '占比统计',
+                type: 'pie',
+                radius: ['30%', '60%'],
+                avoidLabelOverlap: false,
+                label: {
+                    show: true,
+                    position: 'out',
+                    color:"#fff"
+                },
+                //barWidth: '60%',
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '20',
+                        fontWeight: 'bold'
+                    }
+                },
+                labelLine: {
+                    show: true
+                },
+                data: [{value:310,name:'正常'}, {value:52,name:'预警'},{value:20,name:'一级告警'} ,
+                    {value:34,name:'二级告警'}]//,,{value:90,name:'告警'}
+                    //{value:30,name:'故障'},{value: 20,name: '停运'}]
             }
         ]
     };
     mychart3.setOption(option3);
 }
 function jisuanyichangbili(avalue){
-    if(avalue>a1){
-        alert1++;
-    }else if(avalue>a2){
-        alert2++;
-    }else if(avalue>a3){
-        alert3++;
+    if(avalue>alertconfig[3]){
+        alertcount[3]++;
+    }else if(avalue>alertconfig[2]){
+        alertcount[2]++;
+    }else if(avalue>alertconfig[1]){
+        alertcount[1]++;
+    }else if(avalue>alertconfig[0]){
+        alertcount[0]++;
+    }else{
+        normal++;
     }
 }

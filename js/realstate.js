@@ -1,5 +1,7 @@
 var obj_realdata;
-var isfitst=true;
+var isfirst=true;
+var temp=0;
+var pt = [0,0,0,0,0,0,0,0];
 initpage();
 $(function (){$("[data-toggle='popover']").popover();});
 $(".tab a:last").tab("show");
@@ -42,7 +44,7 @@ function decoderealdata(){
     }
     var sensors = JSON.parse(localStorage.getItem("sensors"));
     var obj_data = new Object();
-    var pt = [0,0,0,0,0,0,0,0];
+    
     //var kssj = getCurrentDate(1) + " 00:00:00";
     //var jssj = getCurrentDate(2);
     var grouptype,bondinginfo;
@@ -232,6 +234,42 @@ function decoderealdata(){
             }
         }
     }
+    //一些部分模拟测试动态标签页的显示和隐藏用，实际使用时需要针对数据进行修改 temperature
+    if(isfirst){
+        pt[(temp%8)]=1;
+    }else{
+        pt[8-(temp%8)]=0;
+    }
+    temp++;
+    var tappanes=$('.tab-pane');
+    var tablabels=$('.tab-label');
+    var z_count=0;
+    for(var i=0;i<8;i++){
+        if(pt[i]>0){
+            tappanes[i].style.display="";
+            tablabels[i].style.display="";
+            //tablabels[i].classList.add("in");
+            //tablabels[i].classList.add("active");
+            //tappanes[i].classList.add("in");
+            //tappanes[i].classList.add("active");
+            z_count++;
+        }else{
+            tappanes[i].style.display="none";
+            tablabels[i].style.display="none";
+        }
+        tablabels[i].classList.remove("in");
+        tablabels[i].classList.remove("active");
+        tappanes[i].classList.remove("in");
+        tappanes[i].classList.remove("active");
+    }
+    $('.tab-pane').eq(z_count-1).addClass("in");//定义最后的页为当前页面和标签
+    tablabels[z_count-1].classList.add("active");
+    tappanes[z_count-1].classList.add("in");
+    tappanes[z_count-1].classList.add("active");
+    if(z_count>=8)
+        isfirst=false
+    else if(z_count<=1)
+        isfirst=true;/**/
 }
 function setactive(aid){
     var lis=$("#nav").find("li");//获取所有tab菜单项
@@ -259,7 +297,7 @@ function initpage() {
         var i = 0;
         w1.onmessage = function (event) {
             i++
-            if (i % 60 == 0) {
+            if (i % 10 == 0) {
                 //getrealdatabynodeid(-1);
                 decoderealdata();
             }
@@ -319,6 +357,8 @@ function stopWorker() {//停止自动刷新数据
     w1 = undefined;
 };
 /**1. duiecharttubiaopeizhicanshujinxingyouhua,xianshixiaoguogenmeiguanheli
+ * 编写页面标签随数据动态变化的实现方法。lazy 
+ * 动力监测和空调参数页面超出显示范围，调整，并按bootstrap的网络系统进行调整和布置。
  * 
  * 
  * 
@@ -326,9 +366,7 @@ function stopWorker() {//停止自动刷新数据
  * 
  * 
  * 
- * 
- * 
- * 
+ * 0727-0731 对web程序功能进行调试，对发现的问题进行了修改和完善，同时对页面和交互操作进行了友好性改进。下周还是进行调试和完善
  * 
  * 
 */

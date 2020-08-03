@@ -2,6 +2,7 @@ var token = "1234567";//后台http认证码
 sessionStorage.errortime=0;
 sessionStorage.dataId = 0;
 sessionStorage.sensors=[];
+
 //sessionStorage.timeindex=0;
 var maps=[];
 var str_speech = "告警";//告警信息
@@ -2637,6 +2638,7 @@ function initcontactus() {  //used by electricroommonitor
 }
 function initsysteminfo(){//used by electricroommonitor
 	sessionStorage.pageindex=7;//20200214
+	$("#maxname1").height(parent.window.windowHeight-120);
 	document.getElementById('p1').innerHTML = jfjk_base_config.app_name;
 	document.getElementById('p2').innerHTML = jfjk_base_config.ver_id
 	document.getElementById('p3').innerHTML = jfjk_base_config.date;
@@ -2871,6 +2873,7 @@ function updatapcnav(obj){
 		window.parent.document.getElementById("tree_chi").style.display="none";
 		window.parent.document.getElementById('tree').style.height='100%';
 	}
+	sessionStorage.framepage=window.parent.document.getElementById('iframe_main').src;
 }
 var sorter=false;
 //数据表排序插件
@@ -2883,7 +2886,7 @@ var sorter=false;
 				if(tableId=="realtable"){
 					if(Idx>=3){
 						catalog=getCatalog(Idx-3);
-						title_index=Idx;
+						title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值
 						isfirst=true;//更改排序项的同时更改显示项，重新获取数据刷新图表；
 						btn_refresh_click();//刷新图表
 					}

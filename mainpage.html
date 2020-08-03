@@ -17,7 +17,8 @@
 	<script type="text/javascript" src="js/function.js"></script>
 </head>
 <body >
-	<!--onload="initIndex()""showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>onresize="resizeFresh()"-->
+	<!--<div id="container" onmousemove="div_mousemove();"  style="background:rgba(250,0,0,0);width:100%;height:100%;position:absolute;"></div>
+	onload="initIndex()""showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>onresize="resizeFresh()"-->
 	<div class="header" id="header" >
 		<div class="topbar" id="topbar">
 			<div id="app_name"><i></i></div>
@@ -35,12 +36,12 @@
 					href="javascript:void(0)" style="color:white;">[登录]</a></span>
 			<input id="nav11" type="button" class="topbar-bigbutton" value="联系我们"
 				style="background:url(res/home.jpg) no-repeat center top;"
-				onclick="showcontactus()"/>
+				onclick="showcontactus()"/><!--pageindex:300-->
 			<input id="nav12" type="button" class="topbar-bigbutton" value="APP下载"
-				style="background:url(res/chilun.jpg) no-repeat center top;" onclick="showdownload()"/>
+				style="background:url(res/chilun.jpg) no-repeat center top;" onclick="showdownload()"/><!--pageindex:200-->
 			<!--<input type="button"  class="topbar-bigbutton" value="数据浏览" style="background:url(res/sanse.jpg) no-repeat center top;margin-top:10px;"></input>-->
 			<input id="nav13" type="button" class="topbar-bigbutton" value="操作指南"
-				style="background:url(res/bar.jpg) no-repeat center top;" onclick="showhelp()"/>
+				style="background:url(res/bar.jpg) no-repeat center top;" onclick="showhelp()"/><!--pageindex:100-->
 		</div>
 		<hr style="display:none" />
 	</div>
@@ -61,26 +62,27 @@
 			<div class="navigation" >
 				<div class="row-navigation ">
 					<ul class="pc-nav navbar-right" style="margin-right: 0;border: solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;height: 40px;">
-						<li><a id="nav1" href="javascript:void(0)" onclick="inittotalpage()" >信息总览</a></li>
-						<li><a id="nav2" href="javascript:void(0)" onclick="initdrawing()" title="显示系统状态图">状态图</a></li>
-						<li id="li_realdata"><a id="nav3" href="javascript:void(0)" onclick="initrealdata()" title="实时数据列表">实时数据</a></li>
-						<li id="li_realstate" style="display: none;"><a id="nav14" href="javascript:void(0)" onclick="initrealstate()" title="动环实时状态">实时状态</a></li>
-						<li id="li_preview" style="display: none;"><a id="nav4" href="javascript:void(0)" onclick="showpreview()" title="视频实时预览">实时预览</a></li>
-						<li id="li_historydata"><a id="nav5" href="javascript:void(0)" onclick="loadstations_historydata()" title="历史数据变化趋势">历史数据</a></li>
-						<li id="li_historystate" style="display: none;"><a id="nav15" href="javascript:void(0)" onclick="inithistorystate()" title="历史数据变化趋势">历史数据</a></li>
-						<li id="li_replay" style="display: none;"><a id="nav6" href="javascript:void(0)" >视频回放</a></li>
-						<li id="li_historychart"><a id="nav7" href="javascript:void(0)" onclick="loadstations_chart()" title="多点变化趋势比较">趋势对比</a></li>
-						<li id="li_warnlog" ><a id="nav8" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警信息查询">告警信息</a></li>
-						<li id="li_warnlog" style="display: none;"><a id="nav16" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警查询">告警信息</a></li>
-						<li><a id="nav9" href="javascript:void(0)" onclick="showdevice()" title="所有设备信息列表">设备信息</a></li>
-						<li><a id="nav10" href="javascript:void(0)" onclick="showpage(0)" >系统信息</a></li>
+						<li><a id="nav1" href="javascript:void(0)" onclick="inittotalpage()" >信息总览</a></li><!--pageindex:0-->
+						<li><a id="nav2" href="javascript:void(0)" onclick="initdrawing()" title="显示系统状态图">状态图</a></li><!--pageindex:1-->
+						<li id="li_realdata"><a id="nav3" href="javascript:void(0)" onclick="initrealdata()" title="实时数据列表">实时数据</a></li><!--pageindex:2-->
+						<li id="li_realstate" style="display: none;"><a id="nav14" href="javascript:void(0)" onclick="initrealstate()" title="动环实时状态">实时状态</a></li><!--pageindex:10-->
+						<li id="li_preview" style="display: none;"><a id="nav4" href="javascript:void(0)" onclick="showpreview()" title="视频实时预览">实时预览</a></li><!--pageindex:8-->
+						<li id="li_historydata"><a id="nav5" href="javascript:void(0)" onclick="loadstations_historydata()" title="历史数据变化趋势">历史数据</a></li><!--pageindex:3-->
+						<li id="li_historystate" style="display: none;"><a id="nav15" href="javascript:void(0)" onclick="inithistorystate()" title="历史数据变化趋势">历史数据</a></li><!--pageindex:11-->
+						<li id="li_replay" style="display: none;"><a id="nav6" href="javascript:void(0)" >视频回放</a></li><!--pageindex:9-->
+						<li id="li_historychart"><a id="nav7" href="javascript:void(0)" onclick="loadstations_chart()" title="多点变化趋势比较">趋势对比</a></li><!--pageindex:4-->
+						<li id="li_warnlog" ><a id="nav8" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警信息查询">告警信息</a></li><!--pageindex:5-->
+						<li id="li_warnlog" style="display: none;"><a id="nav16" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警查询">告警信息</a></li><!--pageindex:0-->
+						<li><a id="nav9" href="javascript:void(0)" onclick="showdevice()" title="所有设备信息列表">设备信息</a></li><!--pageindex:6-->
+						<li><a id="nav10" href="javascript:void(0)" onclick="showpage(0)" >系统信息</a></li><!--pageindex:7-->
 						<li id="clickaudio" style="float:right;font-size:16px;display: none;"><a href="javascript:void(0)" style="color: red;" onclick="showdailog()">开启告警声音</a></li>
 					</ul>
 				</div>
 			</div>
 			</nav>
-			<div class="mainarea" id="mainarea">
-				<iframe name="iframe_main" id="iframe_main" allowtransparency="true" allowfullscreen="true" style="width:100%;height:98%;" frameborder="0">
+			<!--<div id="temp1-1" onmousemove="mouseMove;" style="background:rgba(250,0,0,0);width:100%;height:94%;position:absolute;"></div>style="z-index:-1"-->
+			<div class="mainarea" id="mainarea" >
+				<iframe name="iframe_main" id="iframe_main" onmousemove="mouseMove;" allowtransparency="true" allowfullscreen="true" style="width:100%;height:98%;" frameborder="0">
 				</iframe>
 				
 				<table id="warningtable" style="display:none">
@@ -103,8 +105,8 @@
 	<!--底部公司版权 -->
 	<div>
 		<div class="navigation" id="footer" style="height:30px;float:bottom;bottom:0px;left:0px;right:0px;">	
-			<div class="pc-footer" >
-				<ul class="pc-footer" align="center" style="margin:0 150px;">
+			<div class="pc-footer" ><!---->
+				<ul class="pc-footer" align="center" style="margin:0 0;">
 					<li ><a id="company_info" href="" target="_blank" style="color:white;"><img id="company_log" src="" width="20px" height="20px" ><lab id="company_name"></lab></a></li>
 					<li style="color:white;" >Copyright<lab id="copyright_time"></lab></li>
 				</ul>
@@ -135,6 +137,7 @@
 		</div>
 	</div>
 	<script>
+		var dindowHeight;
 		var infotreedata = [], maps = [];
 		var mnodes=[];
 		var infotreeobj = new Object();
@@ -143,6 +146,8 @@
 		var nodes = null, nodeid = -1;
 		sessionStorage.txid=-1;//20200228 初始化一次图形id
 		sessionStorage.nodetype=1;
+		//sessionStorage.framepage="";
+		//sessionStorage.name="";
 		var multiselect=false;
 		var tree2=false;
 		//最后一次触发节点Id
@@ -211,7 +216,7 @@
 				}
 				window.setInterval("resetContent()", 200);
 				refreshwindow();
-				initIndex();
+				//initIndex();
 				sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
 				sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
 				sessionStorage.cxsj = getCurrentDate(2);
@@ -234,10 +239,11 @@
 			}
 		}
 		function refreshwindow() {//重画窗口，规定 尺寸,尤其是浮动窗口的位置
-			sessionStorage.framepage = document.getElementById("iframe_main").src;
-			if(sessionStorage.framepage.indexOf("video.html")>=0){
-				return;
-			}
+			if(!sessionStorage.framepage)
+				sessionStorage.framepage = document.getElementById("iframe_main").src;
+			//if(sessionStorage.framepage.indexOf("video.html")>=0){
+			//	return;
+			//}
 			//var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
 			//var fdheight =50;// document.getElementById("KeFuDiv").offsetHeight;
 			//var fdwidth =500;// document.getElementById("KeFuDiv").offsetWidth;
@@ -293,7 +299,8 @@
 					content.style.height = mheight-30 + "px";
 				}
 			}
-			//initIndex();//窗口尺寸变化时是否重画所有内容。
+			dindowHeight=height;
+			initIndex();//窗口尺寸变化时是否重画所有内容。
 		}
 		window.onresize = window.onscroll = refreshwindow;//  
 		function resetContent() {
@@ -394,7 +401,7 @@
 				//},
 				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
 					//var selectnode=$("#tree").treeview('getSelected');
-					$("#tree").treeview('collapseAll')//,nodeid);//关闭展开
+					//$("#tree").treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
 					sessionStorage.name = data.nodeId;
 					localStorage.setItem("sensor_tree",null);
 					sessionStorage.selectText="";
@@ -419,8 +426,8 @@
 							localStorage.setItem("sensors", null);
 							sessionStorage.nodeId = data.id;
 							if(!data.hasOwnProperty("nodes"))
+							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);//将GetBinariesByType与GetSensorsByNode顺序颠倒，以便执行refreshiframe
 							GetSensorsByNode(data.id);
-							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
 							sessionStorage.t_p = 0;
 							nodeid = data.nodeId;
 						}
@@ -442,14 +449,13 @@
 						} else {
 							infotreeobj.value = 0;
 						}
-						
 						infotreedata.push(infotreeobj);
 						if (data.nodeId != nodeid && data.level <= 2) {
 							localStorage.setItem("sensors", null);
 							sessionStorage.nodeId = data.id;
 							if(!data.hasOwnProperty("nodes"))
-							GetSensorsByNode(data.id);
 							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
+							GetSensorsByNode(data.id);
 							sessionStorage.t_p = 0;
 							nodeid = data.nodeId;
 						}
@@ -463,8 +469,8 @@
 							sessionStorage.nodeId = data.id;
 							sessionStorage.nodeId = p_node.id;
 							if(!data.hasOwnProperty("nodes"))
-							GetSensorsByNode(sessionStorage.nodeId);
 							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
+							GetSensorsByNode(sessionStorage.nodeId);
 							nodeid = data.nodeId;
 						}
 						maps = [];
@@ -480,24 +486,8 @@
 							infotreeobj.value = data.nodes.length;
 							var arr_node = buildsensor1(data.nodes);
 							infotreeobj.value = arr_node.length;
-							/*var sumnode = sumseneor(arr_node);
-							for (var j in sumnode) {
-								var ch1 = new Object();
-								ch1.name = j;
-								ch1.value = sumnode[j];
-								infotreeobj.children.push(ch1);
-							}*/
 							infotreeobj.children = decode(data.nodes);
 						} else {
-							/*var temp = new Object();
-							var leaf_name = data.Catalog;
-							if (leaf_name == "null" || leaf_name == undefined || leaf_name.trim() == "") {
-								leaf_name = "未定义"
-							}
-							temp.name = leaf_name;
-							temp.value = 1;
-							infotreeobj.value = 1;
-							infotreeobj.children.push(temp);*/
 							infotreeobj.value = 0;
 						}
 						infotreedata.push(infotreeobj);
@@ -513,8 +503,8 @@
 							sessionStorage.nodeId = data.id;
 							sessionStorage.nodeId = p_node.id;
 							//if(!data.hasOwnProperty("nodes"))
-							GetSensorsByNode(sessionStorage.nodeId);
 							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
+							GetSensorsByNode(sessionStorage.nodeId);
 							nodeid = data.nodeId;
 						}
 						maps = [];
@@ -530,24 +520,8 @@
 							infotreeobj.value = data.nodes.length;
 							var arr_node = buildsensor1(data.nodes);
 							infotreeobj.value = arr_node.length;
-							/*var sumnode = sumseneor(arr_node);
-							for (var j in sumnode) {
-								var ch1 = new Object();
-								ch1.name = j;
-								ch1.value = sumnode[j];
-								infotreeobj.children.push(ch1);
-							}*/
 							infotreeobj.children = decode(data.nodes);
 						} else {
-							/*var temp = new Object();
-							var leaf_name = data.Catalog;
-							if (leaf_name == "null" || leaf_name == undefined || leaf_name.trim() == "") {
-								leaf_name = "未定义"
-							}
-							temp.name = leaf_name;
-							temp.value = 1;
-							infotreeobj.value = 1;
-							infotreeobj.children.push(temp);*/
 							infotreeobj.value = 0;
 						}
 						infotreedata.push(infotreeobj);
@@ -611,7 +585,7 @@
 			//if (firstNode[0].id != sessionStorage.nodeid) {
 			//	nodeid = mnodes[0].id; sessionStorage.nodeid = firstNode[0].id;
 			//} else {
-			//保存nodeid，用于获取指定node的sensors。
+			//保存nodeid，用于获取指定node的sensors。//lazy cozy crazy easy busy dizzy fantasy 
 			//	nodeid = firstNode[0].nodeId;
 			//}
 			var firstNode = $("#tree").treeview("getNode", sessionStorage.name);
@@ -623,7 +597,7 @@
 			$("#tree").treeview('expandNode', [firstNode.nodeId, { levels: 1, silent: true }]);
 			//$('#tree').treeview('expandNode', [ tree[0].id, { levels: 2, silent: true } ]);
 			//$('#tree').treeview('selectNode', [firstNode, { silent: true }]);
-			//$("#tree").treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
+			$("#tree").treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
 			//获取指定node的sensors
 			//GetSensorsByNode(sessionStorage.nodeid);
 			infotreedata = [];
@@ -713,9 +687,9 @@
 					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==2)){
 						sessionStorage.pageindex=10;
 					}
-					//if(sessionStorage.pageindex==3){
-					//	sessionStorage.pageindex=11;
-					//}
+					if(sessionStorage.pageindex==4){
+						sessionStorage.pageindex=3;
+					}
 				break;
 			}
 		}
@@ -723,6 +697,7 @@
 			if(sessionStorage.pageindex!=7){
 				updatapcnav(10);
 				document.getElementById("iframe_main").src="systeminfo.html";
+				sessionStorage.pageindex=7;
 			}
 		}
 		function getThe_level_nodeid(anode, alevel) {
@@ -979,6 +954,7 @@
 									//var binaries=buildbinaries(data.Result.Binaries);//(JSON.parse(localStorage.getItem("sensors")));
 									localStorage.setItem("binaries", JSON.stringify(obj_Binaries));
 									//localStorage.binaries=obj_Binaries;
+									
 									//refreshiframe();
 								} else {
 									localStorage.setItem("binaries", null);
@@ -994,6 +970,9 @@
 						}
 					}
 				});
+				if(sessionStorage.pageindex==1){
+					refreshiframe();
+				}
 			} else {
 				Alert("用户未登录，您无权完成此次操作", info_showtime);
 				//inittreeview(null,0);
@@ -1003,7 +982,7 @@
 			//}
 		}
 		function GetSensorsByNode(anodeid) {
-			sessionStorage.jfjk_nodeid=0;
+			//sessionStorage.jfjk_nodeid=0;
 			var url = jfjk_base_config.baseurl + "GetSensorsByNode?nodeId=" + anodeid;
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
@@ -1152,10 +1131,13 @@
 						frame.src = "device.html";
 					}
 					break;
-				//case "7":
-					//frame.src="systeminfo.html";
-					//$("#iframe_main")[0].contentWindow.initsysteminfo();
-					//break;
+				case "7":
+					if(frame.src.indexOf("systeminfo.html")>0){
+						$("#iframe_main")[0].contentWindow.initsysteminfo();
+					}else{
+						frame.src="systeminfo.html";
+					}
+					break;
 				case "8":
 					frame.src="video.html";
 					break;
@@ -1178,6 +1160,7 @@
 					//frame.src="ContactUs.html";
 					//break;//添加注释....... 
 			}
+			sessionStorage.framepage=frame.src;
 		}
 		function GetSensors() {
 			var url = jfjk_base_config.baseurl + "/GetSensors";
@@ -1569,7 +1552,7 @@
 				anodes=buildnode_level2(treeseneors,0);
 			}
 			$('#tree_chi').treeview({
-				data: anodes,    // 数据源  qirenyoutian yiqingyingxiang  zhuangxiubushun  yijianbutongyi  haizixuexiburangrenfangxin 
+				data: anodes,    // 数据源
 				showCheckbox: false,   //是否显示复选框
 				highlightSelected: true,    //是否高亮选中
 				nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
@@ -1584,7 +1567,7 @@
 				onhoverColor: "#3075a5", //光标停在节点上激活的默认背景色      String
 				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
 					//var selectnode=$("#tree_chi").treeview('getSelected');
-					$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 
+					//$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 
 					//sessionStorage.jfjk_nodeid = data.nodeId;
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 						p_node = getThe_level_nodeid(data, i);
@@ -1605,8 +1588,7 @@
 					}
                     //catalog=getcatalog(dname);
                     //queryhistorydata();//0710
-                    //对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO Something。student teacher study studies 
-                    
+                    //对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO 
 					clickNode(event, data)
 				},
 				onNodeUnselected : function(event,data){
@@ -1629,7 +1611,7 @@
 				//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
 				$('#tree_chi').treeview('selectNode', [currentNode, { silent: true }]);
 				sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
-				//$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
+				$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
 				/**/
 			}
             function getThe_level_nodeid(anode, alevel) {
@@ -1703,7 +1685,7 @@
 						icon = "glyphicon glyphicon-home";
 					}
 					anodes.icon = icon;
-					//var chi_len = data[j].Children.length;
+					//var chi_len = data[j].Children.length; lazy cozy(cosy) crazy easy busy dizzy fantasy
 					if (data[j].Children&&data[j].Children.length != 0) {
 						anodes.nodes = [];
 						anodes.nodes = buildnode(data[j].Children, level + 1)
@@ -1731,6 +1713,45 @@
 			alert("双击获得节点名字： "+data.text,2000);
 		}
 		
+		function mouseMove(ev) 
+		{ 
+			//containerdiv = document.getElementById("temp1-1");       
+			//containerdiv.style.display = "none";
+			Ev= ev || window.event; 
+			var mousePos = mouseCoords(ev); 
+			
+			if(mousePos.x<=0){
+				var leftlist=document.getElementById("leftmenu");
+				//var mainarea=document.getElementById("mainarea");
+				//var allscreen=document.getElementById("alscreen");
+				leftlist.style.display="block";
+				//mainarea.style.width="84%";
+				//allscreen.innerHTML="全屏";
+			}
+			if((mousePos.x>(winWidth*0.15-1))){
+				var leftlist=document.getElementById("leftmenu");
+				leftlist.style.display="none";
+			}
+			//alert("onmousemove",500);
+			//containerdiv.style.display = "block";
+		} 
+		function mouseCoords(ev){ 
+			if(ev.pageX || ev.pageY){ 
+			return {x:ev.pageX, y:ev.pageY}; 
+			} 
+			return{ 
+				x:ev.clientX + document.body.scrollLeft - document.body.clientLeft, 
+				y:ev.clientY + document.body.scrollTop - document.body.clientTop 
+			}; 
+		} 
+	
+	//document.onmousemove=mouseMove; lazy cosy frenzy easy busy crazy cozy dizzy fantasy geographic
+	// tent rent cent accident bent quarter percent seed weed succeed need bleed speed 
+	//document.children.onmousemove=mouseMove;
+	/*var iframe= document.getElementById('iframe_main');
+	iframe.onload = function() {
+		iframe.contentDocument.onmousemove = mouseMove;
+	}*/
 	</script>
 </body>
 </html>
@@ -1741,5 +1762,8 @@
   修改同一导航按钮点在选中状态多次点按多次重新加载页面的而造成的闪烁问题 修改各个子页面的初始化流程并添加初始化函数用于在主页面调用，
   解决主页面调用子页面方法和变量总是提示失败（不存在）的问题。
   告警信息查询、趋势对比页面标签二级子菜单不显示或不更新问题、实时数据页面不能从视频预览跳回到实时数据
-  在视窗变化时保持页面数据不变（原来是全部复位）。
+  0727 在视窗变化时保持页面数据不变（原来是全部复位）。
+  在趋势对比页面将节点切换到机房监控将跳转到历史数据查询页面（机房监控暂时没有趋势对比项）。自动隐藏左侧菜单
+  一次图不能随节点进行刷新的问题（没制项refreshifrane，颠倒get数据的顺序，在后边的get数据函数中制项refreshiframe。
+  
 -->

@@ -15,14 +15,14 @@
     <progress id="p1" style="width:100%;height:5px;display: none; " >您的浏览器不支持progress元素</progress>
     <div>
         <h2>信息总览</h2>
-        <div align="center" style="height:700px;">
+        <div align="center" style="min-height:400;">
         <div class="main" id="main" style="width:90%;height:100%;">
         </div>
         </div>
     </div>
     <script>
         function initinfototal(){
-            var data=JSON.parse(JSON.stringify(parent.infotreedata));//parent.infotreedata;//
+            //var data=JSON.parse(JSON.stringify(parent.infotreedata));//parent.infotreedata;//
             //var data=data1;
             updatapcnav(1);
             /*var isfree="true",maps=[];//,num=0
@@ -49,6 +49,7 @@
             //var s=JSON.stringify(parent.allsensors);
             var a=JSON.parse(JSON.stringify(parent.infotreedata))
             updatainfotree1(a);//使用总node和总sensors进行汇总。
+            $("#main").height(parent.window.dindowHeight-120);
             var myChar=echarts.init(document.getElementById("main")); 
             var option = {
                 tooltip: {
@@ -106,7 +107,16 @@
                 ]
             } ;
             myChar.setOption(option);
-        }     
+            myChar.on('click',function (params){
+                if(params.data.hasOwnProperty("level") ){
+                    var nodes=parent.window.$("#tree").treeview("getUnselected");
+                    for(var i=0;i<nodes.length;i++)
+                    if(nodes[i].id==params.data.id)
+                        parent.window.$("#tree").treeview("selectNode",nodes[i].nodeId);
+                }
+            });
+        }
+       
         //})();
     /**function getNode(atree){//解读节点属性，当为第二级时，获取其标签数据进行分类统计
         for(var i=0;i<atree.length;i++){
@@ -118,7 +128,7 @@
                     isfree="false";
                 }
             }
-            /*if(i==atree.length-1){
+            /*if(i==atree.length-1){  wage
                     iscomplete=true;
                 }*/
     /*        if((atree[i].hasOwnProperty("children"))&&(atree[i].children.length>0)){
@@ -307,3 +317,6 @@
     </script>
 </body>
 </html>
+<!--
+    添加图形点击事件，转换为节点的选中事件（点击记得目录），视窗刷新时图形区域的高度设置随主窗口尺寸自动调整
+-->

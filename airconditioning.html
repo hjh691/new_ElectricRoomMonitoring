@@ -3,8 +3,9 @@
     <head>
         <meta charset="utf-8"/>
         <title>精密空调状态</title>
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
         <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
-        
+        <script src="js/bootstrap.js"></script>
         <style>
             li{
                 list-style-type: none;
@@ -27,14 +28,14 @@
                 color:white;
                 border-radius: 5px;
             }
-            .normal{
+            .normal_air{
                 background-color:rgba(4, 105, 4, 0.993);
                 border:solid white 0px;
                 border-radius: 15px;
                 text-align:  center;
                 width:100px;
             }
-            .unnormal{
+            .unnormal_air{
                 background-color:rgba(204, 6, 6, 0.993);
                 border:solid white 0px;
                 border-radius: 15px;
@@ -52,55 +53,82 @@
     <body>
         <div class="main" align="center">
             <h2 align="center">精密空调实时参数状态</h2>
-            <table style="background-color: gray;color:white;border-radius: 5px;">
-                <tr>
-                    <td class="ac" >
-                        <p style="margin-top:10px;text-align:center" onclick="air_reset()">现场温湿度</p>
+            <div class="container" style="background-color: gray;color:white;border-radius: 5px;width:1050px;margin-top:10px">
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-xs-4 ac" style="text-align: center;">
+                        <p style="text-align:center;font-size: 20px;margin-top:10px;" onclick="air_reset()">现场温湿度</p>
                         <table align="center">
-                            <tr style="width:300px;margin-top:30px;">
-                                <td >
-                                    <li style="list-style-image: url(res/t1.jpg);margin-left: 10px;"></li>
-                                    <li id="tmp-value" style="margin-left: 50px;"> 40 ℃</li>
+                            <tr style="width:300px;margin-top:0px;">
+                                <td style="text-align: center;width:100px">
+                                    <li style="list-style-image: url(res/t1.jpg);margin:10px 0px"></li>
+                                    <li id="tmp-value" style="vertical-align:center;height: 20px;margin:5px 0px"> 40 ℃</li>
                                 </td>
-                                <td align="right">
+                                <td style="text-align: center;width:100px">
                                     <li></li>
-                                    <li>设定值：</li>
-                                    <li>上限：</li>
-                                    <li>下限：</li>
+                                    <li  class="lable_set">设定值：</li>
+                                    <li  class="lable_set">上限值：</li>
+                                    <li  class="lable_set">下限值：</li>
                                 </td>
-                                <td style="text-align:center" >
+                                <td style="text-align:center;width:100px" >
                                     <li></li>
-                                    <li  class="ac-ht" id="t_set" >36</li>
-                                    <li  class="ac-ht" id="t_top">59</li>
-                                    <li  class="ac-ht" id="t_bottom">20</li>
+                                    <li  class="ac-ht lable_set" id="t_set" >36</li>
+                                    <li  class="ac-ht lable_set" id="t_top">59</li>
+                                    <li  class="ac-ht lable_set" id="t_bottom">20</li>
                                 </td>
                             </tr>
-                            <tr style="width:300px;margin-top:10px;">
+                            <tr style="width:300px;margin-top:10px;background-color: gray;">
                                 <td>
-                                    <li style="list-style-image: url(res/s1.jpg);margin-left: 10px;"></li>
-                                    <li id="tmp-value" style="margin-left: 50px;"> 30 %</li>
+                                    <li style="list-style-image: url(res/s1.jpg);margin:0px 0px"></li>
+                                    <li id="swt-value" style="vertical-align:center;height: 20px;margin:5px 0px"> 30 %</li>
                                 </td>
-                                <td align="right">
+                                <td style="text-align: right;margin:5px 0px">
                                     <li></li>
-                                    <li>设定值：</li>
-                                    <li>上限：</li>
-                                    <li>下限：</li>
+                                    <li class="lable_set">设定值：</li>
+                                    <li class="lable_set">上限值：</li>
+                                    <li class="lable_set">下限值：</li>
                                 </td>
-                                <td style="text-align:center">
+                                <td style="text-align:left">
                                     <li></li>
-                                    <li  class="ac-ht" id="s_set">36</li>
-                                    <li  class="ac-ht" id="s_top">59</li>
-                                    <li  class="ac-ht" id="s_bottom">20</li>
+                                    <li  class="ac-ht lable_set" id="s_set">36</li>
+                                    <li  class="ac-ht lable_set" id="s_top">59</li>
+                                    <li  class="ac-ht lable_set" id="s_bottom">20</li>
                                 </td>
                             </tr>
                         </table>
-                    </td>
-                    <td class="ac" style="text-align:center" >
+                    </div>
+                    <div class="col-xs-4 ac" style="text-align:center;margin-top:10px;" align="center" >
                         <img src="res/ac.jpg" />
-                    </td>
-                    <td class="ac" >
-                        <p style="text-align:center" style="margin: 0px;">元件状态</p>
-                        <table style="text-align:center" style="width:100%;height:90%">
+                    </div>
+                    <div class="col-xs-4 ac" align="center">
+                        <p style="text-align:center;margin-top: 10px;font-size: 20px;">元件状态</p>
+                        <table style="text-align:center;">
+                            <td >
+                                <li class="lable_arow">1#加热器工作状态</li>
+                                <li class="lable_arow">2#加热器工作状态</li>
+                                <li class="lable_arow">加湿器工作状态：</li>
+                                <li class="lable_arow">抽湿器工作状态：</li>
+                                <li class="lable_arow">风机工作状态：</li>
+                            </td>
+                            <td >
+                                <li class="normal_air" id="jrq1">正常</li>
+                                <li class="unnormal_air" id="jrq2">异常</li>
+                                <li class="normal_air" id="jsq">正常</li>
+                                <li class="normal_air" id="csq">停止</li>
+                                <li class="normal_air" id="fj">正常</li>
+                            </td>
+                            <td >
+                                <li class="lable_set" id="setjrq1"><a href="Javascript:void(0)">设置</a></li>
+                                <li class="lable_set" id="setjrq2"><a href="Javascript:void(0)">设置</a></li>
+                                <li class="lable_set" id="setjsq"><a href="Javascript:void(0)">设置</a></li>
+                                <li class="lable_set" id="setcsq"><a href="Javascript:void(0)">设置</a></li>
+                                <li class="lable_set" id="setfj"><a href="Javascript:void(0)">设置</a></li>
+                            </td>
+                        </table>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:30px;">
+                    <div class="col-xs-4 ac" style="padding-top: 20px;;" >
+                        <table align="center" style="width:100%;height:90%;margin:10px 10px;">
                             <td>
                                 <li class="lable_arow">1#加热器工作状态</li>
                                 <li class="lable_arow">2#加热器工作状态</li>
@@ -109,25 +137,16 @@
                                 <li class="lable_arow">风机工作状态：</li>
                             </td>
                             <td>
-                                <li class="normal" id="jrq1">正常</li>
-                                <li class="normal" id="jrq2">正常</li>
-                                <li class="unnormal" id="jsq">异常</li>
-                                <li class="normal" id="csq">正常</li>
-                                <li class="normal" id="fj">正常</li>
-                            </td>
-                            <td>
-                                <li class="lable1" id="setjrq1"><a href="Javascript:void(0)">设置</a></li>
-                                <li class="lable1" id="setjrq2"><a href="Javascript:void(0)">设置</a></li>
-                                <li class="lable1" id="setjsq"><a href="Javascript:void(0)">设置</a></li>
-                                <li class="lable1" id="setcsq"><a href="Javascript:void(0)">设置</a></li>
-                                <li class="lable1" id="setfj"><a href="Javascript:void(0)">设置</a></li>
+                                <li class="normal_air" id="state1">正常</li>
+                                <li class="normal_air" id="state2">正常</li>
+                                <li class="normal_air" id="state3">正常</li>
+                                <li class="unnormal_air" id="state4">异常</li>
+                                <li class="normal_air" id="state5">正常</li>
                             </td>
                         </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="ac" >
-                        <table align="center" style="width:100%;height:90%">
+                    </div>
+                    <div class="col-xs-4 ac" style="padding-top: 20px;;">
+                        <table align="center" style="width:100%;height:90%;margin:10px 10px;">
                             <td>
                                 <li class="lable_arow">1#加热器工作状态</li>
                                 <li class="lable_arow">2#加热器工作状态</li>
@@ -136,16 +155,16 @@
                                 <li class="lable_arow">风机工作状态：</li>
                             </td>
                             <td>
-                                <li class="normal" id="state1">正常</li>
-                                <li class="normal" id="state2">正常</li>
-                                <li class="normal" id="state3">正常</li>
-                                <li class="normal" id="state4">正常</li>
-                                <li class="normal" id="state5">正常</li>
+                                <li class="normal_air" id="state6">正常</li>
+                                <li class="normal_air" id="state7">正常</li>
+                                <li class="normal_air" id="state8">正常</li>
+                                <li class="normal_air" id="state9">正常</li>
+                                <li class="normal_air" id="state10">正常</li>
                             </td>
                         </table>
-                    </td>
-                    <td class="ac">
-                        <table align="center" style="width:100%;height:90%">
+                    </div>
+                    <div class="col-xs-4 ac" style="padding-top: 20px;;">
+                        <table align="center" style="width:100%;height:90%;margin:10px 10px;">
                             <td>
                                 <li class="lable_arow">1#加热器工作状态</li>
                                 <li class="lable_arow">2#加热器工作状态</li>
@@ -154,34 +173,17 @@
                                 <li class="lable_arow">风机工作状态：</li>
                             </td>
                             <td>
-                                <li class="normal" id="state6">正常</li>
-                                <li class="normal" id="state7">正常</li>
-                                <li class="normal" id="state8">正常</li>
-                                <li class="normal" id="state9">正常</li>
-                                <li class="normal" id="state10">正常</li>
+                                <li class="normal_air" id="state11">正常</li>
+                                <li class="normal_air" id="state12">正常</li>
+                                <li class="normal_air" id="state13">正常</li>
+                                <li class="normal_air" id="state14">正常</li>
+                                <li class="normal_air" id="state15">正常</li>
                             </td>
                         </table>
-                    </td>
-                    <td class="ac" >
-                        <table align="center" style="width:100%;height:90%">
-                            <td>
-                                <li class="lable_arow">1#加热器工作状态</li>
-                                <li class="lable_arow">2#加热器工作状态</li>
-                                <li class="lable_arow">加湿器工作状态：</li>
-                                <li class="lable_arow">抽湿器工作状态：</li>
-                                <li class="lable_arow">风机工作状态：</li>
-                            </td>
-                            <td>
-                                <li class="normal" id="state11">正常</li>
-                                <li class="normal" id="state12">正常</li>
-                                <li class="normal" id="state13">正常</li>
-                                <li class="normal" id="state14">正常</li>
-                                <li class="normal" id="state15">正常</li>
-                            </td>
-                        </table>
-                    </td>
-                </tr>
-            </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <script>
             function initpage(){
