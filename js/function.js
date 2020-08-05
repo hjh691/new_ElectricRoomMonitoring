@@ -1237,7 +1237,7 @@ function gethistorydata(sensorid,catalog,name,kssj, jssj,aparent) {
 								//	decodedatas(null);
 								//}
 							} else {
-								layer.alert("没有符合条件的记录",1000);
+								layer.alert("没有符合条件的记录",info_showtime);
 								decodedatas(null);
 							}
 						} else {
@@ -2091,7 +2091,6 @@ function GetBinary(binariesid) {
 												if(window.parent.allsensors[g._shape.Binding]){
 													var sid=window.parent.allsensors[g._shape.Binding].id;
 													if (obj_rd.hasOwnProperty(sid)) {
-				
 														obj_data = (obj_rd)[sid];////
 														g._shape.Text =(obj_data[0].Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
 														if(obj_data[0].Message){
@@ -2100,14 +2099,13 @@ function GetBinary(binariesid) {
 															g._shape.isError=false;
 														}
 													}
+												}
 											}
 										}
-									}
 										obj.push(JSON.stringify(g));
 									}
 								});
-							
-							sessionStorage.contents = JSON.stringify(obj);
+							sessionStorage.contents = JSON.stringify(obj);//seed weed feed deed bleed 
 							try {
 								drawmap(JSON.parse(sessionStorage.contents));
 							} catch(err) {
@@ -2639,6 +2637,7 @@ function initcontactus() {  //used by electricroommonitor
 function initsysteminfo(){//used by electricroommonitor
 	sessionStorage.pageindex=7;//20200214
 	$("#maxname1").height(parent.window.windowHeight-120);
+	updatapcnav(10);
 	document.getElementById('p1').innerHTML = jfjk_base_config.app_name;
 	document.getElementById('p2').innerHTML = jfjk_base_config.ver_id
 	document.getElementById('p3').innerHTML = jfjk_base_config.date;

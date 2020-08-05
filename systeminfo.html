@@ -2,31 +2,174 @@
 <html>
     <head>
         <meta charset="utf-8"/>
-        <!--<link rel="stylesheet" href="css/bootstrap.min.css" />
-        <link rel="stylesheet" href="css/electricroommonitoring.css"/>-->
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <!--<link rel="stylesheet" href="css/electricroommonitoring.css"/>-->
         <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
         <script  type="text/javascript" src="js/layer/layer.js"></script>
+        <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	    <script type="text/javascript" src="js/bootstrap.js"></script>
         <script  type="text/javascript" src="js/config.js"></script>
         <script  type="text/javascript" src="js/function.js"></script>
+
         <title>系统信息</title>
+        <style>
+            .container{
+                width: 100%;
+                margin-left: 5px;
+                margin-right: 5px;
+            }
+            .row{
+                margin-top: 5px;
+            }
+            .system-set{
+                text-align: left;
+                font-size:18px;
+            }
+            button{
+                margin-left: 10px;
+            }
+            input{
+                font-size: 16px;
+            }
+        </style>
     </head>
     <body onload="initsysteminfo()">
-        <div id="maxname1" style="width:100%;height:100%">
-            <div align="center" style="margin: 50px">
-                <img src="res/logo.png"/>
-                <table>
-                <tr>
-                <td style="color:#0000b0;font-size:20px">  </td>
-                <td style="font-size:20px">
-
-                <P id="p1"></p>
-                <p id="p2"></p>
-                <p id="p3"></p>
-                <p id="p4"></p>
-                <p id="p5"></p>
-                </td>
-                </tr>
-                </table>
+        <div class="container" id="maxname1" >
+            <div class="row">
+                <div class="col-xs-3" style="text-align: right;font-size:18px;">
+                    <label></label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4 " >
+                    
+                    <img src="res/jka_100.png"  />
+                    <div style="color:#0000b0;font-size:16px;">
+                        <!--<P id="p1"></p>display:none-->
+                        <p id="p2"></p>
+                        <p id="p3"></p>
+                        <p id="p4"></p>
+                        <p id="p5"></p>
+                    </div>
+                </div>
             </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set" >
+                    <label>系统名称</label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4 " >
+                    <input type="text" style="width:75%;" id="sysname"/><button onclick="save(0)">保存更改</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set" >
+                    <label>公司名称</label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4 " >
+                    <input type="text" style="width:75%;" id="companyname"/><button onclick="save(1)">保存更改</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set" >
+                    <label>公司网站</label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4 " >
+                    <input type="text" style="width:75%;" id="companyurl"/><button onclick="save(2)">保存更改</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set">
+                    <label>小数保留位数</label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4 " >
+                    <input type="text" style="width:75%;" id="decimalnum" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="save(3)">保存更改</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set">
+                    <label>提示框显示时长(毫秒)</label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4 " >
+                    <input type="text" style="width:75%;" id="delaytime" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="save(4)">保存更改</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set">
+                    <label>左侧菜单自动隐藏</label>
+                </div>
+                <div class="col-xs-4 col-sm-6 col-md-4 " align="right" >
+                    <img id="switch01" src="" style="height:30px;vertical-align: middle;margin-right: 10%;" onclick="save(5)"/>
+                </div>
+            </div>
+        </div>
+        <script >
+            initsysinfo();
+            function initsysinfo(){
+                if(localStorage.systemName)//软件名称（页面显示的系统名称）
+                    $("#sysname").val(localStorage.systemName)
+                else
+                    $("#sysname").val(jfjk_base_config.app_name);
+                if(localStorage.companyName)//系统显示的公司名称（页脚)
+                    $("#companyname").val(localStorage.companyName)
+                else
+                    $("#companyname").val(jfjk_base_config.company);
+                if(localStorage.companyUrl)//公司关联网站
+                    $("#companyurl").val(localStorage.companyUrl)
+                else
+                    $("#companyurl").val(jfjk_base_config.company_url);
+                if(localStorage.decimalNum)//显示的小数点后的小数位数
+                    $("#decimalnum").val(localStorage.decimalNum)
+                else
+                    $("#decimalnum").val(Number_of_decimal);
+                if(localStorage.delayTime)//信息提示框显示延时时间（毫秒）
+                    $("#delaytime").val(localStorage.delayTime)
+                else
+                    $("#delaytime").val(info_showtime);//
+                if(localStorage.showLeftMenu&&localStorage.showLeftMenu=="true")
+                    $("#switch01")[0].src="res/on.png"
+                else
+                    $("#switch01")[0].src="res/off.png";
+            }
+            function save(oder){
+                switch(oder*1){
+                    case 0:
+                        localStorage.systemName=$("#sysname").val();
+                        document.getElementById('p1').innerHTML = localStorage.systemName;
+                        parent.window.document.getElementById('app_name').innerHTML ='<i>' +(localStorage.systemName)+"</i>";
+                        break;
+                    case 1:
+                        localStorage.companyName=$("#companyname").val();
+                        parent.window.document.getElementById('company_name').innerHTML =(localStorage.companyName);
+                        break;
+                    case 2:
+                        localStorage.companyUrl=$("#companyurl").val();
+                        jfjk_base_config.company_url=localStorage.companyUrl;
+                        parent.window.document.getElementById('company_info').href=jfjk_base_config.company_url;
+                        break;
+                    case 3:
+                        localStorage.decimalNum=$("#decimalnum").val();
+                        Number_of_decimal=localStorage.decimalNum;
+                        break;
+                    case 4:
+                        localStorage.delayTime=$("#delaytime").val();
+                        info_showtime=localStorage.delayTime;
+                        break;
+                    case 5:
+                        var swithbutton=$("#switch01")
+                        if(swithbutton[0].src.indexOf("/on.png")>0){
+                            swithbutton[0].src="res/off.png";
+                            localStorage.showLeftMenu=false;
+                            parent.window.showLeftMenu(false);
+                        }else{
+                            swithbutton[0].src="res/on.png";
+                            parent.window.showLeftMenu(true);
+                            localStorage.showLeftMenu=true;
+                        }
+                        break;
+                }
+            }
+        </script>
     </body>
 </html>
+<!--seed weed feed deed bleed need speed succeed shop hop drop pop cop mop 
+    编辑页面布局，添加显示参数的自定义配置选项（系统软件名称，公司名称，公司网站、小数位数、信息框默认显示时长等），系统信息导航栏的状态指示刷新丢失问题。
+    输入框限制输入数字的方法 oninput = "value=value.replace(/[^\d]/g,'')" 
+-->

@@ -55,7 +55,18 @@ jfjk_base_config.bg_src="res/bj011.jpg"
  info_showtime=1500;
  color_table_cur="#adf7b8";//85e494
  color_table_even="#87CEFA";
- /**
+////判断是否由设置的值，没有则取默认值，有则取配置值替代默认值；浏览器清除数据后配置值也被清除；
+ if(localStorage.systemName)
+    jfjk_base_config.app_name=localStorage.systemName;
+if(localStorage.companyName)
+    jfjk_base_config.company=localStorage.companyName;
+if(localStorage.companyUrl)
+    jfjk_base_config.company_url=localStorage.companyUrl;
+if(localStorage.decimalNum)
+    Number_of_decimal=localStorage.decimalNum*1;
+if(localStorage.delayTime)
+    info_showtime=localStorage.delayTime*1;
+ /**un business
   * 
   * 
   * 

@@ -74,7 +74,7 @@
 						<li id="li_warnlog" ><a id="nav8" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警信息查询">告警信息</a></li><!--pageindex:5-->
 						<li id="li_warnlog" style="display: none;"><a id="nav16" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警查询">告警信息</a></li><!--pageindex:0-->
 						<li><a id="nav9" href="javascript:void(0)" onclick="showdevice()" title="所有设备信息列表">设备信息</a></li><!--pageindex:6-->
-						<li><a id="nav10" href="javascript:void(0)" onclick="showpage(0)" >系统信息</a></li><!--pageindex:7-->
+						<li><a id="nav10" href="javascript:void(0)" onclick="showpage(0)" >系统设置</a></li><!--pageindex:7-->
 						<li id="clickaudio" style="float:right;font-size:16px;display: none;"><a href="javascript:void(0)" style="color: red;" onclick="showdailog()">开启告警声音</a></li>
 					</ul>
 				</div>
@@ -320,6 +320,9 @@
 		function initIndex() {
 			showusername();
 			document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
+			if(localStorage.log_src){
+				jfjk_base_config.log_src=localStorage.log_src;
+			}
 			document.getElementById('company_log').src = jfjk_base_config.log_src;
 			document.getElementById('company_info').href = jfjk_base_config.company_url;
 			document.getElementById("company_name").innerHTML=jfjk_base_config.company;
@@ -343,6 +346,9 @@
 			} else {
 				inittreeview();
 			}*/
+			if(localStorage.showLeftMenu&&localStorage.showLeftMenu=="true")
+				showLeftMenu(localStorage.showLeftMenu)	
+			else showLeftMenu(false);
 		}
 		//开启告警声音
 		function showdailog(){
@@ -694,11 +700,11 @@
 			}
 		}
 		function showpage(pid){//调试用显示不同的页面，正常只有0值。
-			if(sessionStorage.pageindex!=7){
+			//if(sessionStorage.pageindex!=7){
 				updatapcnav(10);
 				document.getElementById("iframe_main").src="systeminfo.html";
 				sessionStorage.pageindex=7;
-			}
+			//}
 		}
 		function getThe_level_nodeid(anode, alevel) {
 			while (anode.level > alevel) {
@@ -1744,14 +1750,28 @@
 				y:ev.clientY + document.body.scrollTop - document.body.clientTop 
 			}; 
 		} 
-	
-	//document.onmousemove=mouseMove; lazy cosy frenzy easy busy crazy cozy dizzy fantasy geographic
-	// tent rent cent accident bent quarter percent seed weed succeed need bleed speed 
-	//document.children.onmousemove=mouseMove;
-	/*var iframe= document.getElementById('iframe_main');
-	iframe.onload = function() {
-		iframe.contentDocument.onmousemove = mouseMove;
-	}*/
+	function showLeftMenu(aswitch){
+		if(aswitch){
+			document.getElementById("leftmenu").style.display="none";
+			document.onmousemove=mouseMove; //lazy cosy frenzy easy busy crazy cozy dizzy fantasy geographic
+			// tent rent cent accident bent quarter percent seed weed succeed need bleed speed feed 
+			//document.children.onmousemove=mouseMove;
+			var iframe= document.getElementById('iframe_main');
+			iframe.onload = function() {
+				iframe.contentDocument.onmousemove =mouseMove;
+			}/**/
+		}else{
+			document.getElementById("leftmenu").style.display="block";
+			document.onmousemove='';//mouseMove; //lazy cosy frenzy easy busy crazy cozy dizzy fantasy geographic
+			// tent rent cent accident bent quarter percent seed weed succeed need bleed speed feed 
+			//document.children.onmousemove=mouseMove;
+			var iframe= document.getElementById('iframe_main');
+			iframe.onload = function() {
+				iframe.contentDocument.onmousemove =''; //mouseMove;
+			}
+		}
+		$('#iframe_main').attr('src', $('#iframe_main').attr('src'));
+	}
 	</script>
 </body>
 </html>
@@ -1765,5 +1785,6 @@
   0727 在视窗变化时保持页面数据不变（原来是全部复位）。
   在趋势对比页面将节点切换到机房监控将跳转到历史数据查询页面（机房监控暂时没有趋势对比项）。自动隐藏左侧菜单
   一次图不能随节点进行刷新的问题（没制项refreshifrane，颠倒get数据的顺序，在后边的get数据函数中制项refreshiframe。
-  
+  系统信息页面的更新和加载（自动刷新，页面记忆）页脚的超范围滚动条（高度设置）
+  左侧树形菜单根据配置项（localStorage.showLeftMenu)决定是否自动隐藏（鼠标离开菜单区域隐藏，鼠标到达左侧边缘显示）
 -->

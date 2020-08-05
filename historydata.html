@@ -883,12 +883,12 @@
 						xAxisIndex: 0,
 						show: true,
 						start: 0,
-						end:60,
+						end:100,
 					},
 					{   // 这个dataZoom组件，也控制x轴。
-						type: 'inside', // 这个 dataZoom 组件是 inside 型 dataZoom 组件
+						type: 'inside', // 这个 dataZoom 组件是 inside 型 dataZoom 组件  
 						start: 0,      // 左边在 10% 的位置。
-						end: 60,       // 右边在 60% 的位置。physics geographic accident wage rage advantage manage language cage police a policeman
+						end: 100,       // 右边在 60% 的位置。 
 					},
 					/*{//官网示例正常，此处总是报错，数据位数控制时报非定义函数错误。
 						type: 'slider',
@@ -939,7 +939,7 @@
 			function jisuan(a1,a2){
 				for (var i = 1; i <obj_data.length; i++) {
 					if(parseInt(obj_data[i].Time.substr(a1,a2))==temp){
-						
+					
 						if(parseFloat(obj_data[i].Value)>maxvalue){
 							maxvalue=parseFloat(obj_data[i].Value);
 							maxtime=obj_data[i].Time;
@@ -1020,7 +1020,7 @@
 					}
 				}
 			}
-		}
+		}//
 		function gradeChange() {
 			$("#historydata-tbody tr").empty();
 			var objS = document.getElementById("jcdd");
