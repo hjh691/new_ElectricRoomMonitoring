@@ -93,12 +93,13 @@
 				<a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
 					<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">display:none
 				</select>-->
-				<input class="button" type="button" id="chaxun" value="对比" onclick="oneChoice()"
+				<!--<input class="button" type="button" id="chaxun" value="对比" onclick="oneChoice()"
 					style="font-size:16px;height: 30px;line-height: 30px;margin-left: 10px;"></input>
-				<!--<input class="button" type="button" id="allcheck" value="取消选择" onclick="allChoice()"
+				<input class="button" type="button" id="allcheck" value="取消选择" onclick="allChoice()"
 					style="font-size:16px;width:100px;height: 30px;line-height: 30px;"></input>-->
+				<button class="selected" id="chaxun" value="对比" onclick="oneChoice()">对比</button>
 					<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('compratetable')">
-						<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
+						<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
 			</span>
 			<form  id="jcdd" style="background-color: #dcdcdc;height: 500px;overflow: auto;font-size:16px;display:none;">
 				<p><input type="checkbox" value="0" οnclick="allChoice()" id="allCheck" name="checks"/>全选 </p>
@@ -153,6 +154,7 @@
 		inithistorychart();
 		function inithistorychart() {
 			updatapcnav(7);
+			sessionStorage.framepage="chart.html";
 			//return;
 			sessionStorage.pageindex = 4;
 			ch1=document.getElementById("chart1");

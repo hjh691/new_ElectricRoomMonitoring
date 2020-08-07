@@ -56,6 +56,7 @@ function initrealdata(){
 }
 function initpage() {
     updatapcnav(3);
+    sessionStorage.framepage="newrealdata.html";
     tab_head=document.getElementById("tab_head");
     if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
         if (typeof (w1) == "undefined") {

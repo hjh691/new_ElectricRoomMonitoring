@@ -28,7 +28,7 @@ function smoking_reset(eId){
 }/**
 */
 //创建信息的遥控状态行（变化、名称、指示状态、运行状态、复位按钮、更多按钮。
-/**travel trip tour journey outing voyage what who which when how where how long how many how much how far whose why whom 
+/**
 */
 function createline(id,name,state){
     var filename="'res/on.png'";

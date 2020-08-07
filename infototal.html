@@ -107,14 +107,14 @@
                 ]
             } ;
             myChar.setOption(option);
-            myChar.on('click',function (params){
+            myChar.on('click',function (params){//图表点击事件
                 if(params.data.hasOwnProperty("level") ){
                     var nodes=parent.window.$("#tree").treeview("getUnselected");
                     for(var i=0;i<nodes.length;i++)
                     if(nodes[i].id==params.data.id)
                         parent.window.$("#tree").treeview("selectNode",nodes[i].nodeId);
                 }
-            });
+            });/**/
         }
        
         //})();

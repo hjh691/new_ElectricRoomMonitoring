@@ -272,9 +272,9 @@
 	.table-lable{
 		color:#0000b0;
 		font-size:20px;
-		line-height:50px;
-		margin-left:20px;
-
+		/*line-height:50px;
+		margin-left:20px;*/
+		text-align: right;
 	}
 	.leftmenu{
 		position:relative;
@@ -359,8 +359,15 @@
 	}
 	.charttab-head{
 		display: inline;
-	}.selected {
+	}
+	.selected {
 		background-color: cornflowerblue;
+		width: 50px;
+		color:white;
+		border-radius: 6px;
+		height: 35px;
+		line-height: 35px;
+		border: solid #222 0px;
 	}
 	/*.tab-content {
 		border: solid cornflowerblue 1px;
@@ -434,8 +441,8 @@
 	.condition{
 		/*font-size: 14px;
 		margin: 5px;*/
-		height: 30px;
-		line-height: 30px;
+		height: 35px;
+		line-height: 35px;
 	}
 	.btn{
 		height:30px

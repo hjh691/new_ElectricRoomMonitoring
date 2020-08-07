@@ -49,6 +49,8 @@ jfjk_base_config.bg_src="res/bj011.jpg"
  mcol=4;
  //保留小数位数
  Number_of_decimal=2;
+ //树形目录等级数：
+ Levels_of_treeview=3
  //告警统计标识
  warning_sign_low="越下限";
  warning_sign_hight="越上限";

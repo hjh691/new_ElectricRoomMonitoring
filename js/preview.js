@@ -2,7 +2,9 @@
 // 全局保存当前选中窗口
 var g_iWndIndex = 0; 
 $(function(){
-    // 检查插件是否安装
+	updatapcnav(4);
+	sessionStorage.framepage="preview.html";
+	// 检查插件是否安装
     if(WebVideoCtrl.I_CheckPluginInstall()==-1){
         layer.alert("您还未安装过插件，请先安装视频插件webvideoctrl");
         return;

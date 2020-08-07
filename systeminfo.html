@@ -10,7 +10,6 @@
 	    <script type="text/javascript" src="js/bootstrap.js"></script>
         <script  type="text/javascript" src="js/config.js"></script>
         <script  type="text/javascript" src="js/function.js"></script>
-
         <title>系统信息</title>
         <style>
             .container{
@@ -23,7 +22,7 @@
             }
             .system-set{
                 text-align: left;
-                font-size:18px;
+                font-size:14px;
             }
             button{
                 margin-left: 10px;
@@ -31,26 +30,35 @@
             input{
                 font-size: 16px;
             }
+            .selected {
+                background-color: cornflowerblue;
+                width: 50px;
+                color:white;
+                border-radius: 6px;
+                height: 35px;
+                line-height: 35px;
+                border: solid #222 0px;
+            }
         </style>
     </head>
     <body onload="initsysteminfo()">
         <div class="container" id="maxname1" >
+            <button class="selected" onclick="javascript:history.go(-1)" style="float:right;margin-right:20px;">返回</button>
             <div class="row">
                 <div class="col-xs-3" style="text-align: right;font-size:18px;">
                     <label></label>
                 </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    
+                <div class="col-xs-12 col-sm-6 col-md-4 " align="center">
                     <img src="res/jka_100.png"  />
-                    <div style="color:#0000b0;font-size:16px;">
-                        <!--<P id="p1"></p>display:none-->
+                    <div style="color:#0000b0;font-size:16px;display:none">
+                        <P id="p1"></p><!---->
                         <p id="p2"></p>
                         <p id="p3"></p>
                         <p id="p4"></p>
                         <p id="p5"></p>
                     </div>
                 </div>
-            </div>
+            </div><br>
             <div class="row">
                 <div class="col-xs-4 col-md-3 system-set" >
                     <label>系统名称</label>
@@ -80,7 +88,7 @@
                     <label>小数保留位数</label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="decimalnum" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="save(3)">保存更改</button>
+                    <input type="text" style="width:75%;" id="decimalnum" maxlength="1" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="save(3)">保存更改</button>
                 </div>
             </div>
             <div class="row">
@@ -88,7 +96,7 @@
                     <label>提示框显示时长(毫秒)</label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="delaytime" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="save(4)">保存更改</button>
+                    <input type="text" style="width:75%;" id="delaytime" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="save(4)">保存更改</button>
                 </div>
             </div>
             <div class="row">
@@ -99,10 +107,18 @@
                     <img id="switch01" src="" style="height:30px;vertical-align: middle;margin-right: 10%;" onclick="save(5)"/>
                 </div>
             </div>
+            <!--<div class="row">
+                <div class="col-xs-4 col-md-3 system-set"> 
+                    <label>图片文件</label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4 " >
+                    <input type="files" style="width:75%;" id="" /><button onclick="save(4)">保存更改</button>
+                </div>
+            </div>-->
         </div>
         <script >
             initsysinfo();
-            function initsysinfo(){
+            function initsysinfo(){//页面参数和状态初始化
                 if(localStorage.systemName)//软件名称（页面显示的系统名称）
                     $("#sysname").val(localStorage.systemName)
                 else
@@ -169,7 +185,8 @@
         </script>
     </body>
 </html>
-<!--seed weed feed deed bleed need speed succeed shop hop drop pop cop mop 
+<!--
     编辑页面布局，添加显示参数的自定义配置选项（系统软件名称，公司名称，公司网站、小数位数、信息框默认显示时长等），系统信息导航栏的状态指示刷新丢失问题。
     输入框限制输入数字的方法 oninput = "value=value.replace(/[^\d]/g,'')" 
+    左侧菜单隐藏控制,页面初始化（状态，内容等）
 -->

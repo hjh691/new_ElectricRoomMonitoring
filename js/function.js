@@ -430,6 +430,7 @@ function showusername() {
 }
 //用户属性页面
 function loaduserprofile(){
+	sessionStorage.pageindex=20;
 	document.getElementById("iframe_main").src="userprofile.html";
 }
 //跳转到历史数据  used by electricroommonitor
@@ -2592,6 +2593,8 @@ function madecode(str) {
 //初始化客户端下载页面，根据字符串生成二维码   used by electricroommonitor 
 function initmakecode() {
 	updatapcnav(12);
+	sessionStorage.framepage="app_download.html";
+	sessionStorage.pageindex=200;
 	var str = toUtf8(this.location.href.substr(0, this.location.href.lastIndexOf('/')) + jfjk_base_config.app_path_name); // "/res/SubstationTemperature.apk");
 	//$("#a_code")[0].href = jfjk_base_config.strurl;
 	$("#a_code")[0].innerHTML = jfjk_base_config.serverurl;
@@ -2625,6 +2628,7 @@ function initrealwarning() {
 }
 function initcontactus() {  //used by electricroommonitor 
 	updatapcnav(11);
+	sessionStorage.framepage="ContactUs.html";
 	document.getElementById('p1').innerHTML = jfjk_base_config.part1;
 	document.getElementById('p2').innerHTML = jfjk_base_config.part2;
 	document.getElementById('p3').innerHTML = jfjk_base_config.part3;
@@ -2638,7 +2642,8 @@ function initsysteminfo(){//used by electricroommonitor
 	sessionStorage.pageindex=7;//20200214
 	$("#maxname1").height(parent.window.windowHeight-120);
 	updatapcnav(10);
-	document.getElementById('p1').innerHTML = jfjk_base_config.app_name;
+	sessionStorage.framepage="systeminfo.html";
+	//document.getElementById('p1').innerHTML = jfjk_base_config.app_name;
 	document.getElementById('p2').innerHTML = jfjk_base_config.ver_id
 	document.getElementById('p3').innerHTML = jfjk_base_config.date;
 	document.getElementById("p4").innerHTML = jfjk_base_config.copyright;

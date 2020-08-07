@@ -2,92 +2,98 @@
 <html>
 <head>
 	<meta charset="utf-8"/>
-	<!--<link rel="stylesheet" href="css/electricroommonitoring.css"/>-->
+	<link rel="stylesheet" href="css/electricroommonitoring.css"/><!---->
 	<title>用户信息</title>
-	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
+	<style>
+		.container{
+			width: 99%;
+			margin-left: 5px;
+			margin-right: 5px;
+		}
+		.row{
+			margin-top: 10px;
+		}
+	</style>
 </head>
 <body onload="GetUserProfile()">
 	<div style="width:100%;height:100%;">
-		<h2 align="center" style="color:blue;">用户详细信息</h2>
-		<form id="form_deviceinfo">
-			<table id="userprofile-format"align="center">
-			<span>
-			<tr>
-			<td class="table-lable"> 用户编号:</td>
-			<td><input id="up-yhbh" type="text" readonly="readonly" style="width:150px;" value=""></input>
-			</span>
-			</td>
-			</tr>
-			<tr>
-			<td class="table-lable"> 用户名称:</td>
-			<td class="table-lable" >
-				<input id="up-yhmc" type="text" readonly="readonly" style="width:150px;"value="" ></input>
-			<!--<select id="sblx" style="font-size:20px">
-					<option value="llj">流量计</option>
-					<option value="cwj">温度测量</option>
-					<option value="ylcgq">压力传感器</option>
-					<option value="wdcgq">温度传感器</option>
-				</select>-->
-			</td>
-			</tr>
-			<span>
-			<tr>
-			<td class="table-lable"> 登录密码:</td>
-			<td>	<input id="up-yhmm" type="password"  style="width:150px" value=""></input><span id="txt_editpassword" ><a href="javascript:showeditpassword()" style="color:red;font-size:12px;margin-left:10px">修改密码</a></span>
-			</td>
-			</tr>
-			</span>
-			<span>
-			<tr >
-			<td class="table-lable"id="up-editpassword" style="display: none;">新密码:</td>
-			<td>	<input id="up-yhmmqr" type="password" style="width:150px;display: none;" value=""></input><span id="txt_postpassword" style="display: none;"><a href="javascript:postpassword()" style="color:red;font-size:12px;margin-left:10px;">提交修改</a></span>
-			</td>
-			</tr>
-			</span>
-			<span>
-			<tr>
-			<td class="table-lable"> 用户权限:</td>
-			<td><input id="up-yhqx" type="text" style="width:150px" value=""></input>
-			</td>
-			</tr>
-			</span>
-			<span>
-				<tr>
-				<td class="table-lable"> 联系电话:</td>
-				<td><input id="up-tel" type="text" style="width:150px" value=""></input>
-				</td>
-				</tr>
-			</span>
-			<span>
-				<tr>
-				<td class="table-lable"> 电子信箱:</td>
-				<td><input id="up-email" type="text" style="width:150px" value=""></input>
-				</td>
-				</tr>
-				</span>
-			<tr>
-			<td class="table-lable"> 详细说明:</td>
-			<td>
-				<input type="text" id="up-yhsm" type="text" style="width:150px;" value="">
-				</input>
-			</td>
-			</tr>
-			<tr style="height:30px">
-			</tr>
-			<tr>
-			<td class="table-lable">
-				<input type="button" id="info_ok" onclick="infook()" style="margin-left:10px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);" value="确定"/></td>
-			<td class="table-lable">	<input type="button" name="reset" id="reset" style="margin-left:10px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);" onclick="javascript:history.go(-1)" value="取消"/>
+		<!--<h2 style="text-align: center;color:blue;" >用户详细信息</h2>-->
+		<div align="center" style="margin-bottom: 20px;">
+			<img src="res/caisetouxiang.png" style="width: 100px;"/>
+		</div>
+		<div id="form_deviceinfo">
+			<div class="container" id="userprofile-format"><!--align="center"-->
+			<div class="row">
+				<div class="col-xs-6 table-lable"> 用户编号:</div>
+				<div class="col-xs-6"><input id="up-yhbh" type="text" readonly="readonly" style="width:150px;" value=""></input>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6 table-lable"> 用户名称:</div>
+				<div class="col-xs-6" >
+					<input id="up-yhmc" type="text" readonly="readonly" style="width:150px;"value="" ></input>
+				<!--<select id="sblx" style="font-size:20px">
+						<option value="llj">流量计</option>
+						<option value="cwj">温度测量</option>
+						<option value="ylcgq">压力传感器</option>
+						<option value="wdcgq">温度传感器</option>
+					</select>-->
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6 table-lable"> 登录密码:</div>
+				<div class="col-xs-6">	<input id="up-yhmm" type="password"  style="width:150px" value=""></input><span id="txt_editpassword" ><span>
+					<a href="javascript:showeditpassword()" style="color:red;font-size:12px;margin-left:10px"><button>修改密码</button></a></span>
+				</div>
+			</div>
+			<div class="row" >
+				<div class="col-xs-6 table-lable"id="up-editpassword" style="display: none;">新密码:</div>
+				<div class="col-xs-6">	<input id="up-yhmmqr" type="password" style="width:150px;display: none;" value=""></input><span id="txt_postpassword" style="display: none;">
+					<a href="javascript:postpassword()" style="color:red;font-size:12px;margin-left:10px;"><button>提交修改</button></a></span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6 table-lable"> 用户权限:</div>
+				<div class="col-xs-6"><input id="up-yhqx" type="text" style="width:150px" value=""></input>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6 table-lable"> 联系电话:</div>
+				<div class="col-xs-6" ><input id="up-tel" type="text" style="width:150px" value=""></input>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6 table-lable"> 电子信箱:</div>
+				<div class="col-xs-6 "><input id="up-email" type="text" style="width:150px" value=""></input>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6 table-lable"> 详细说明:</div>
+				<div class="col-xs-6" >
+					<input type="text" id="up-yhsm" type="text" style="width:150px;" value="">
+					</input>
+				</div>
+			</div>
+			<div class="row" style="height:30px">
+			</div>
+			<div class="row">
+			<div class="col-xs-6 table-lable">
+				<input type="button" id="info_ok" onclick="infook()" style="width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);font-size: 16px;" value="提交修改"/></div>
+			<div class="col-xs-6 ">	<input type="button" name="reset" id="reset" style="margin-left:20px;width:100px;height:30px;color:#0000de;background-image:url(res/jianbian_orange.jpg);font-size: 16px;" onclick="javascript:history.go(-1)" value="取消"/>
 			<!-- background: -webkit-gradient(linear, left top, left bottom, from(#D2691E), color-stop(1, #ffffff), to(rgb(0,0,0)));display:none-->
-			</td>
-			</tr>
-			</table>
-		</form>
+			</div>
+			</div>
+			</div>
+		</div>
 	</div>
 	<script>
+		updatapcnav(20);
 		function infook(){
 			var userinfo=new Object();
 			userinfo.Id=document.getElementById("up-yhbh").value;

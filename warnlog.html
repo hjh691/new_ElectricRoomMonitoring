@@ -115,10 +115,10 @@
 				<input class="button"type="button" id="chaxun"style="width:100px;font-size:16px;height: 30px;line-height: 30px;display:none" value="查询全站" onclick="querywarnlog(1)" ></input></b>
 				</span>
 				<span>
-					<input class="button" type="button" id="chaxun" value="查询" onclick="querywarnlog()" 
-				style="font-size:16px;height: 30px;line-height: 30px;" ></input>
+					<button class="selected" id="chaxun"  onclick="querywarnlog()" 
+				style="font-size:16px;" >查询</button>
 				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="exporttoexcel('warnlogtable')">
-					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
+					<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
 				</span>
 			</div>
 		</div>
@@ -199,6 +199,7 @@
 	//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
 	function initwarnlog() {
 		updatapcnav(8);
+		sessionStorage.framepage="warnlog.html";
 		var parentid=-100,parentname="";
 	var maps=[];
 	sessionStorage.pageindex = 5;

@@ -27,7 +27,7 @@
 				<img src="res/gif_head_48x48.gif" width="20px" height="20px">
 			</span>
 			<!--end No.2-->
-			<span id="yhname" style="position:relative;float:left;left:50px;color:white;font-size:12px;">
+			<span id="yhname" style="position:relative;float:left;left:50px;color:white;font-size:12px;"><!--pageindex:20-->
 				<!--No.1登录用户名显示/未登录-->
 				未登录
 			</span>
@@ -52,7 +52,6 @@
 		<div class="leftmenu" id="leftmenu">
 			<div class="tree " id="tree" >
 			</div>
-			
 			<div class="tree1 " id="tree_chi" >
 			</div>
 		</div>
@@ -244,7 +243,7 @@
 			//if(sessionStorage.framepage.indexOf("video.html")>=0){
 			//	return;
 			//}
-			//var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
+			//var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body; physics
 			//var fdheight =50;// document.getElementById("KeFuDiv").offsetHeight;
 			//var fdwidth =500;// document.getElementById("KeFuDiv").offsetWidth;
 			var main = document.getElementById("chuangti");
@@ -421,14 +420,14 @@
 						infotreeobj.children = [];
 						infotreeobj.level = data.level;
 						//infotreeobj.isload="false";
-						if ((data.hasOwnProperty("nodes")) && (data.nodes.length > 0) && (data.level < 2)) {
+						if ((data.hasOwnProperty("nodes")) && (data.nodes.length > 0) && (data.level < (Levels_of_treeview-1))) {
 							infotreeobj.value = data.nodes.length;
 							infotreeobj.children = decode(data.nodes);
 						} else {
 							infotreeobj.value = 0;
 						}
 						infotreedata.push(infotreeobj);
-						if (data.nodeId != nodeid && data.level <= 2) {
+						if (data.nodeId != nodeid && data.level <= Levels_of_treeview-1) {
 							localStorage.setItem("sensors", null);
 							sessionStorage.nodeId = data.id;
 							if(!data.hasOwnProperty("nodes"))
@@ -449,14 +448,14 @@
 						infotreeobj.children = [];
 						infotreeobj.level = data.level;
 						//infotreeobj.isload="false";
-						if ((data.hasOwnProperty("nodes")) && (data.nodes.length > 0) && (data.level < 2)) {
+						if ((data.hasOwnProperty("nodes")) && (data.nodes.length > 0) && (data.level < (Levels_of_treeview-1))) {
 							infotreeobj.value = data.nodes.length;
 							infotreeobj.children = decode(data.nodes);
 						} else {
 							infotreeobj.value = 0;
 						}
 						infotreedata.push(infotreeobj);
-						if (data.nodeId != nodeid && data.level <= 2) {
+						if (data.nodeId != nodeid && data.level <= (Levels_of_treeview-1)) {
 							localStorage.setItem("sensors", null);
 							sessionStorage.nodeId = data.id;
 							if(!data.hasOwnProperty("nodes"))
@@ -469,11 +468,11 @@
 						updatanav(sessionStorage.nodetype);
 					} else if(data.Catalog=="机房监控"){//20200304
 						sessionStorage.nodetype=2;
-						var p_node = getThe_level_nodeid(data, 2);
-						if (data.nodeId != nodeid && data.level <= 2) {
+						//var p_node = getThe_level_nodeid(data,(Levels_of_treeview-1));
+						if (data.nodeId != nodeid && data.level <= (Levels_of_treeview-1)) {
 							localStorage.setItem("sensors", null);
 							sessionStorage.nodeId = data.id;
-							sessionStorage.nodeId = p_node.id;
+							//sessionStorage.nodeId = p_node.id;
 							if(!data.hasOwnProperty("nodes"))
 							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
 							GetSensorsByNode(sessionStorage.nodeId);
@@ -503,11 +502,11 @@
 						updatanav(sessionStorage.nodetype);
 						//updatanav(sessionStorage.nodetype);
 						//sessionStorage.SensorId = data.id;
-						var p_node = getThe_level_nodeid(data, 2);
-						if (data.nodeId != nodeid && data.level <= 2) {
+						//var p_node = getThe_level_nodeid(data, (Levels_of_treeview-1));
+						if (data.nodeId != nodeid && data.level <= (Levels_of_treeview-1)) {
 							localStorage.setItem("sensors", null);
 							sessionStorage.nodeId = data.id;
-							sessionStorage.nodeId = p_node.id;
+							//sessionStorage.nodeId = p_node.id;
 							//if(!data.hasOwnProperty("nodes"))
 							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
 							GetSensorsByNode(sessionStorage.nodeId);
@@ -533,7 +532,7 @@
 						infotreedata.push(infotreeobj);
 					}
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
-						p_node = getThe_level_nodeid(data, i);
+						var p_node = getThe_level_nodeid(data, i);
 						$("#tree").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 					}
 					$("#tree").treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
@@ -650,7 +649,7 @@
 					document.getElementById("li_warnlog").style.display="inline"
 					document.getElementById("li_historychart").style.display="inline";
 					document.getElementById("li_preview").style.display="none";
-					sessionStorage.pageindex=0;
+					sessionStorage.pageindex=0;//显示信息总览页，有待协商
 					break;
 				case 0:
 				document.getElementById("li_realdata").style.display="none"
@@ -1522,6 +1521,7 @@
 				}
 			}
 		}
+		//获取标签+系统+站名的全称。
 		function getsysname(anodes,aid){
 			var sys_name;
 			for(var i in anodes) {
@@ -1539,7 +1539,7 @@
 			}
 			return sys_name;
 		}
-		/*function refreshData(){
+		/*function refreshData(){age ent zy(sy) eed op 
 		}*/
 		function updatanodetree() {
 			if (typeof(allsensors) != "undefined" && allsensors != null) {
@@ -1576,7 +1576,7 @@
 					//$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 
 					//sessionStorage.jfjk_nodeid = data.nodeId;
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
-						p_node = getThe_level_nodeid(data, i);
+						var p_node = getThe_level_nodeid(data, i);
 						$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 					}
                     $("#tree_chi").treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
@@ -1608,6 +1608,9 @@
 					sessionStorage.jfjk_nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
 				}
 				var currentNode = $("#tree_chi").treeview("getNode", sessionStorage.jfjk_nodeid);
+				
+				if(!currentNode.hasOwnProperty("NodeId"))
+					currentNode = $("#tree_chi").treeview("getNode", 0);
 				$("#tree_chi").treeview('expandNode', [currentNode, { levels: 2, silent: true }]);//展开第一个节点
 				for (var i = 0; i < currentNode.level; i++) {//逐级展开所选节点的父节点。
 					var p_node = getThe_level_nodeid(currentNode, i);
@@ -1625,7 +1628,7 @@
                     anode = ($("#tree_chi").treeview("getParent", anode))
                 }
                 return anode;
-            }
+            }/**/
         }
 		function buildnode_level2(data, level) {
 			var tree = [];
@@ -1691,7 +1694,7 @@
 						icon = "glyphicon glyphicon-home";
 					}
 					anodes.icon = icon;
-					//var chi_len = data[j].Children.length; lazy cozy(cosy) crazy easy busy dizzy fantasy
+					//var chi_len = data[j].Children.length; 
 					if (data[j].Children&&data[j].Children.length != 0) {
 						anodes.nodes = [];
 						anodes.nodes = buildnode(data[j].Children, level + 1)
@@ -1714,7 +1717,7 @@
 			lastSelectedNodeId = data.nodeId;
 			lastSelectTime = new Date().getTime();
 		}
-		//自定义业务方法
+		//自定义业务方法  
 		function customBusiness(data){
 			alert("双击获得节点名字： "+data.text,2000);
 		}
@@ -1753,8 +1756,7 @@
 	function showLeftMenu(aswitch){
 		if(aswitch){
 			document.getElementById("leftmenu").style.display="none";
-			document.onmousemove=mouseMove; //lazy cosy frenzy easy busy crazy cozy dizzy fantasy geographic
-			// tent rent cent accident bent quarter percent seed weed succeed need bleed speed feed 
+			document.onmousemove=mouseMove; //
 			//document.children.onmousemove=mouseMove;
 			var iframe= document.getElementById('iframe_main');
 			iframe.onload = function() {
@@ -1762,8 +1764,7 @@
 			}/**/
 		}else{
 			document.getElementById("leftmenu").style.display="block";
-			document.onmousemove='';//mouseMove; //lazy cosy frenzy easy busy crazy cozy dizzy fantasy geographic
-			// tent rent cent accident bent quarter percent seed weed succeed need bleed speed feed 
+			document.onmousemove='';//mouseMove; 
 			//document.children.onmousemove=mouseMove;
 			var iframe= document.getElementById('iframe_main');
 			iframe.onload = function() {
@@ -1786,5 +1787,9 @@
   在趋势对比页面将节点切换到机房监控将跳转到历史数据查询页面（机房监控暂时没有趋势对比项）。自动隐藏左侧菜单
   一次图不能随节点进行刷新的问题（没制项refreshifrane，颠倒get数据的顺序，在后边的get数据函数中制项refreshiframe。
   系统信息页面的更新和加载（自动刷新，页面记忆）页脚的超范围滚动条（高度设置）
-  左侧树形菜单根据配置项（localStorage.showLeftMenu)决定是否自动隐藏（鼠标离开菜单区域隐藏，鼠标到达左侧边缘显示）
+  0805左侧树形菜单根据配置项（localStorage.showLeftMenu)决定是否自动隐藏（鼠标离开菜单区域隐藏，鼠标到达左侧边缘显示）
+  由于节点编号超出范围造成信息总览游戏节点的图形不能正常显示的问题。
+  用户信息页面在浏览器刷新时被不能记忆的问题。调整用户信息页面的布局和格式（修改密码按钮）添加头像，三种浏览器测试后台定时器计时问题，极速浏览器在非活动页时减缓。
+  360 google chrome tsBrowser
+  设备信息、系统设置、联系我们、app下载、操作说明等页面添加返回按钮和回退功能，统一按钮验收，解决个功能页面在返回功能后页面刷新不能被系统记忆的问题。修图4
 -->

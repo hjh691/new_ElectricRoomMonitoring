@@ -56,7 +56,7 @@
 	</style>
 </head>
 <body >
-	<div>
+	<div><button class="selected" onclick="javascript:history.go(-1)" style="float:right;margin-right:20px;">返回</button>
 		<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
 			<h3 >设备信息</h3>
         </div>
@@ -67,7 +67,7 @@
                 <li style="width:50px;margin-right:0px"><b>记录数：</b></li>
                 <li id="count_val"style="width:50px;margin-right:0px"> </li>
 				<li style="width:100px;margin-right:0px"><a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('devicetable')">
-					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a>
+					<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
 				</li>
             </ul>
         </div>
@@ -100,7 +100,7 @@
 				
 			<!--<th style="width:18px;border:0px solid black;"></th>-->
 			</tr>
-			<tbody id='device-tbody' style="width:1140px;height:600px; overflow:auto;">
+			<tbody id='device-tbody' style="width:1140px;height:550px; overflow:auto;">
 			</tbody>
 		</table>
 	</div>
@@ -123,6 +123,7 @@
 		});*/
         function initdevice(){
 			updatapcnav(9);
+			sessionStorage.framepage="device.html";
 			var parentid=-100,parentname="";
 			tbody=document.getElementById("device-tbody");
 			deleterows(tbody);
