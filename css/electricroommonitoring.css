@@ -283,7 +283,7 @@
 		height:98%;/*height:700px;*/
 		border-style:solid;
 		border-width:1px 1px 1px 1px;
-		border-color:#eeb0b0;
+		border-color:rgba(8, 177, 106, 0.5);/*#705e5e;*/
 		overflow:auto;
 		min-width:100px;
 		/*background-color: rgba(0, 101, 105, 1); #eee0e0;*/
@@ -294,7 +294,7 @@
 		overflow:auto;
 		border-style:solid;
 		border-width:1px 1px 1px 1px;
-		border-color:#eeb0b0;
+		border-color:rgba(8, 177, 106, 0.5);/*#eeb0b0;*/
 		background-color: rgba(0, 101, 105, 1);
 	}
 	.tree1{
@@ -303,7 +303,7 @@
 		overflow:auto;
 		border-style:solid;
 		border-width:1px 1px 1px 1px;
-		border-color:#eeb0b0;
+		border-color:rgba(8, 177, 106, 0.5);/*#eeb0b0;*/
 		background-color: rgba(0, 101, 105, 1);
 	}
 	/* KeFuDiv */
@@ -361,7 +361,7 @@
 		display: inline;
 	}
 	.selected {
-		background-color: cornflowerblue;
+		background-color: rgba(0, 101, 105, 1);
 		width: 50px;
 		color:white;
 		border-radius: 6px;
@@ -454,15 +454,30 @@
 	/**控制显示区域*/
 	.displaytype1{
 		background-color: #dcdcdc; 
-		height:650px;
+		height:600px;
 		margin: 10px;
 		margin-left: 20px; 
 	}
 	.displaytype2{
 		background-color: #dcdcdc; 
-		height:300px;
+		height:280px;
 		margin: 10px;
 		margin-left: 20px; 
 	}
-	
+	.btn-primary{
+		background-color: rgba(0, 101, 105, 1);
+		border-color: rgba(8, 177, 106, 0.5);
+	}
+	.btn-primary.active{
+		background-color: rgb(14, 150, 93);
+	}
+	.btn-primary.active.focus,
+	.btn-primary.active:focus,
+	.btn-primary.active:hover,
+	.btn-primary:active.focus,
+	.btn-primary:active:focus,
+	.btn-primary:active:hover
+	{
+		background-color: rgb(14, 150, 93);
+	}
 	

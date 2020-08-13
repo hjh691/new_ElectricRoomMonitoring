@@ -125,15 +125,18 @@
 				timeout: 10000,
 				error: function(XMLHttpRequest, textStatus, errorThrown) {
 					layer.alert('用户信息修改操作失败,请稍后重试！',info_showtime);
+					showstateinfo("用户信息修改操作失败");
 				},
 				success: function(data, status) {
 					if (status == "success") {
 						if (data.Error == null) {
 							layer.alert("用户信息修改成功，请用新密码登录",info_showtime);//不添加时长参数不能自行关闭
+							showstateinfo("用户信息修改成功")；
 							window.location.href = "javascript:void(0)";
 							return;
 						} else {
 							layer.alert(data.Error,info_showtime);
+							showstateinfo(data.Error);
 						}
 					}
 				}

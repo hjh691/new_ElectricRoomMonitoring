@@ -14,7 +14,7 @@
 	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
 	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
-	<script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
+	<!--<script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>-->
 	<script  type="text/javascript" src="js/function.js"></script>
 	<style>
 	th,td{
@@ -235,13 +235,13 @@
 				sessionStorage.SensorName="";
 			}
 			//if(sessionStorage.timeindex==4){
-				decodedatas();//queryhistorydata(0);
+				queryhistorydata(0);//decodedatas();
 			//}
 		}
 		function inittreeview(anodes) {
 			var tree=$('#tree_chi')
 			tree.treeview({
-				data: anodes,    // 数据源  qirenyoutian yiqingyingxiang  zhuangxiubushun  yijianbutongyi  haizixuexiburangrenfangxin 
+				data: anodes,    // 数据源 
 				showCheckbox: false,   //是否显示复选框
 				highlightSelected: true,    //是否高亮选中
 				nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
@@ -450,17 +450,20 @@
 			var sel=document.getElementById("jcdd");
 			if(sel.options.length<=0){
 				layer.alert("请选择要查询的测量点名称",info_showtime);
+				showstateinfo("请选择要查询的测量点名称");
 				return;
 			}
 			if(sessionStorage.timeindex==4){
 				var kssj = document.getElementById("kssj_history").value;
 				if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
 					layer.alert("请指定开始时间",info_showtime);
+					showstateinfo("请指定开始时间");
 					return;
 				}
 				var jssj = document.getElementById("jssj_history").value;
 				if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
 					layer.alert("请指定截至时间",info_showtime);
+					showstateinfo("请指定截止时间");
 					return;
 				}
 				//if((sessionStorage.SensorId==sel.value)&&(sessionStorage.kssj==kssj)&&(sessionStorage.jssj==jssj)&&(!isfirst)
@@ -738,8 +741,8 @@
 				avgvalue=(avgvalue/ct);
 				var tr = document.createElement('tr');
 				tr.setAttribute("onclick","tableclick(this)");
-				//var tdname = document.createElement('td');//father mother brother sister grandma grandpa parent cousin uncle auntle
-				//tdname.setAttribute('class', 'seneorname');//white black red blue green brown yellow gray orange pink//
+				//var tdname = document.createElement('td');//
+				//tdname.setAttribute('class', 'seneorname');//
 				var tdtime = document.createElement('td');
 				tdtime.className='time';
 				var tdhourvalue=document.createElement('td');

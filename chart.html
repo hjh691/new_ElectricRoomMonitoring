@@ -68,27 +68,27 @@
 		</div>-->
 		<div style="text-align:left;padding-left: 10px;">
 			<span><label class="title-right">类别分组：</label></span>
-			<span class="dropup" style="position: relative;" >
+			<span class="dropdown" style="position: relative;" >
 			<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
 				<span class="select_text" data-is-select="false">Dro pup</span>
 				<span class="caret"></span>
 			</button>-->
 			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
-				<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;"></input>
+				<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;">
+				<a  class="btn  btn-default" href = "#" style="margin-left:-40px;"><i class= "caret">
+                </i></a></input>
 			</label>
 			<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="display_type">
 				<!--<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
 				<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li>为了方便演示，type设置text了，实际中可以设置成hidden -->
-			</ul> <b style="font-size: 50%;color:red;margin-left:10px;">*选项类别不能大于4个</b>
+			</ul><b style="font-size: 50%;color:red;margin-left:30px;">*选项类别不能大于4个</b>
 			</span>
 		</div>
 		<div  style="text-align:left;padding-left: 10px;">
 			<span><label class="title-right" >时间选择：</label></span>
 			<span>
 			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" id="cxsj" 
-				style="width:130px;font-size:16px;height: 30px;border-radius: 5px;"></input>
-			
-			
+				style="width:130px;font-size:16px;height: 30px;border-radius: 5px;margin-right: 20px;"></input>
 			<!--<label class="title-right">计量点名称：</label>
 				<a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
 					<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">display:none
@@ -98,7 +98,7 @@
 				<input class="button" type="button" id="allcheck" value="取消选择" onclick="allChoice()"
 					style="font-size:16px;width:100px;height: 30px;line-height: 30px;"></input>-->
 				<button class="selected" id="chaxun" value="对比" onclick="oneChoice()">对比</button>
-					<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('compratetable')">
+					<a href="javascript:void(0)" style="margin-left:10px;" onclick="exporttoexcel('compratetable')">
 						<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
 			</span>
 			<form  id="jcdd" style="background-color: #dcdcdc;height: 500px;overflow: auto;font-size:16px;display:none;">
@@ -121,8 +121,7 @@
 						</div>
 					</div>
 				</div>
-				<!--<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" id="fine" style="text-align: left; margin-left: 0;margin-right: 0;display:none">
-					
+				<!--<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" id="fine" style="text-align: left; margin-left: 0;margin-right: 0;display:none">	
 				</div>-->
 			</div>
 		</div>
@@ -136,7 +135,7 @@
 					<th>数值</th>	
 					<th>备注</th>
 				</tr>
-				<tbody id='comprate-tbody' style="width:1020px;height:600px; overflow:auto;">
+				<tbody id='comprate-tbody' style="height:600px; overflow:auto;">
 				</tbody>
 			</table>
 		</div>
@@ -211,7 +210,7 @@
 			}
 			appenddisplaytype();
 			//setSelectOption("jcdd", sessionStorage.SensorId);
-			//querychartvalue();
+			oneChoice();
 		}
 		//添加显示控制选项
 		function appenddisplaytype(anodeid){
@@ -258,7 +257,6 @@
 								ainput.setAttribute("checked",true);
 								break;
 							}
-
 						}
 						lab.appendChild(ainput);
 						lab.appendChild(spn);
@@ -270,19 +268,23 @@
 						//document.getElementById("table_title").appendChild(title_th);
 					}
 				}
+				for(var i=0;i<temp.children.length;i++){
+					if(temp.children[i].children[0].children[0].checked==true){
+						selectText=selectText+temp.children[i].children[0].children[1].innerHTML+";";
+					}
+				}
+				if(selectText.charAt(selectText.length - 1)==";"){
+					//去除末尾分号
+					selectText=selectText.substring(0,selectText.length - 1);
+					//selectVal=selectVal.substring(0,selectVal.length - 1);
+				}
+				if(selectText==""){
+					selectText="请选择类别分组项"
+				}
 			}else{
 				for(var i=temp.childNodes.length;i>0;i--)
 				temp.removeChild(temp.childNodes[i-1]);
-			}
-			for(var i=0;i<temp.children.length;i++){
-				if(temp.children[i].children[0].children[0].checked==true){
-					selectText=selectText+temp.children[i].children[0].children[1].innerHTML+";";
-				}
-			}
-			if(selectText.charAt(selectText.length - 1)==";"){
-				//去除末尾分号
-				selectText=selectText.substring(0,selectText.length - 1);
-				//selectVal=selectVal.substring(0,selectVal.length - 1);
+				selectText="没有可选项";
 			}
 			document.getElementById("select_text").value=selectText;
 			showchartview(sel_str);
@@ -306,6 +308,7 @@
 			if(c>6){
 				obj.checked=false;
 				alert("对比测量点不能大于6个!",info_showtime);
+				showstateinfo("对比测量点不能大于6个");
 			}
 		}
 		function refreshsensorslist() {
@@ -358,12 +361,14 @@
 				}else{
 					if(allobj.length>0){//是否有显示内容配置项
 						layer.alert("请选择要显示的内容!",info_showtime);
+						showstateinfo("选择要显示的内容");
 					}else{//没有配置项，传递空串，返回所有//20200520 add this function,need Verification; 
 						gethistorybysensors(check_val,"","",1,"");
 					}
 				}
 			}else{
 				layer.alert("请选择要对比的测量点名称!",info_showtime);
+				showstateinfo("请选择要对比的测量点名称!");
 			}
 		}
 		function gethistorybysensors(arr_sensors,acatalog,aname,apt,atitle){
@@ -387,8 +392,10 @@
 						//myChart.hideLoading();
 						if (errorThrown == "Unauthorized") {
 							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败',info_showtime);
+							showstateinfo(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
 						} else {
 							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败',info_showtime);
+							showstateinfo(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
 						}
 						if(sessionStorage.errortime>3){
 							sessionStorage.islogin=false;
@@ -403,20 +410,24 @@
 							sessionStorage.islogin = true;
 							if (data.Error == null) {
 								if (!jQuery.isEmptyObject(data.Result.Datas)) {
+									showstateinfo("");
 									decodedatas( data.Result.Datas,apt,atitle);
 								} else {
 									layer.alert("没有符合条件的 "+atitle+" 记录",info_showtime);
+									showstateinfo("没有符合条件的 "+atitle+" 记录");
 									decodedatas([],apt,atitle);//
 								}
 							} else {
 								decodedatas([],apt,atitle);//
 								layer.alert(data.Error,info_showtime);
+								showstateinfo(data.Error);
 							}
 						}
 					}
 				});
 			} else {
 				Alert("用户未登录，您无权完成此次操作", info_showtime);
+				showstateinfo("用户未登录，你无权完成此次操作");
 			}
 		}
 	//动态添加的元素注册添加点击事件
@@ -437,7 +448,7 @@
 		if(isSelected=="true"){
 			selectText=$selectTextDom.val();
 		}
-		if(selectText!=""){
+		if(selectText!=""&&selectText!="请选择类别分组项"&&selectText!="没有可选项"){
 			if(selectText.indexOf(selected_text)>=0){//判断是否已经勾选过
 				selectText=selectText.replace(selected_text,"").replace(";;",";");//替换掉
 				//selectVal=selectVal.replace(selected_val,"").replace(",,",",");//替换掉
@@ -463,7 +474,7 @@
 		sessionStorage.selectText=selectText;
 		//$selectValDom.val(selectVal);
 		if(selectText==""){
-			$selectTextDom.text("请选择");
+			$selectTextDom.val("请选择类别分组项");
 			$selectTextDom[0].setAttribute("data-is-select","false");
 			sel_str.length=0;
 		}else{
@@ -511,5 +522,6 @@
 </html>
 <!--对比配置项根据标签进行动态添加以及去除重复项功能，页面根据对比项目自动进行动态调整显示图形视窗的功能，
 	编写树形菜单的双击响应程序（采用选中与释放之间的时间作为标准进行判断，小于一定时间视为双击，视频预览添加通道双击打开再次双击关闭功能
-	0727添加显示控制配置项的页面记忆功能，在节点不变的情况下，切换页面时记忆上次的选择项并显示响应的图表视图。	
+	0727添加显示控制配置项的页面记忆功能，在节点不变的情况下，切换页面时记忆上次的选择项并显示响应的图表视图。
+	按钮样式	
 -->

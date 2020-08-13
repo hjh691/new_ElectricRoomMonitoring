@@ -105,10 +105,11 @@
 	<div>
 		<div class="navigation" id="footer" style="height:30px;float:bottom;bottom:0px;left:0px;right:0px;">	
 			<div class="pc-footer" ><!---->
-				<ul class="pc-footer" align="center" style="margin:0 0;">
-					<li ><a id="company_info" href="" target="_blank" style="color:white;"><img id="company_log" src="" width="20px" height="20px" ><lab id="company_name"></lab></a></li>
-					<li style="color:white;" >Copyright<lab id="copyright_time"></lab></li>
-				</ul>
+					<label id="state_info" style="float:left;margin-left: 30px;color:rgb(240, 236, 9);"></label>
+					<ul  align="center" style="margin:0 0;">
+						<li ><a id="company_info" href="" target="_blank" style="color:white;"><img id="company_log" src="" width="20px" height="20px" ><lab id="company_name"></lab></a></li>
+						<li style="color:white;" >Copyright<lab id="copyright_time"></lab></li>
+					</ul>
 			</div>
 		</div><!--<li ><a href="#" style="margin-left:500px" >实时告警窗口</a></li>display: none;-->
 		<!--告警信息悬浮窗style="display:none"-->
@@ -203,7 +204,10 @@
 					i = 0;
 					w.onmessage = function (event) {//接收定时器返回的消息
 						//document.getElementById("result").innerHTML = event.data;
-						i++
+						i++;
+						var stime=new Date(getCurrentDate(2)).getTime();
+						var etime=new Date(getCurrentDate(1)+" 18:00:00").getTime();
+						showstateinfo((etime-stime)/1000);
 						if (i % 60 == 0) {
 							//sendbeat();
 							getrealdatabynodeid(-1);
@@ -354,6 +358,7 @@
 			var sound=document.getElementById("clickaudio");
 			sound.style.display="none";
 			Alert("告警声音已开启",500);
+			showstateinfo("告警声音开启");
 		}
 		//初始化目录树
 		function inittreeview(anodes) {
@@ -769,6 +774,7 @@
 					error: function (jqXHR, textStatus, errorThrown) {
 						inittreeview();
 						layer.alert('获取系统目录列表数据失败',info_showtime);
+						showstateinfo("获取系统目录列表数据失败");
 						sessionStorage.errortime++;
 						if(sessionStorage.errortime<3){
 							//getNodes();//video.html mainpage.html function.js userprofile 
@@ -794,6 +800,7 @@
 								GetSensors();//将标签挂接到节点树。
 							} else {
 								layer.alert(data.Error,info_showtime);
+								showstateinfo(data.Error);
 								sessionStorage.islogin = ture;
 							}
 						}
@@ -801,6 +808,7 @@
 				});
 			} else {
 				Alert("用户未登录，您无权完成此次操作", info_showtime);
+				show("用户未登录，你无权完成此次操作");
 				inittreeview(null, 0);
 			}
 		}
@@ -969,6 +977,7 @@
 							} else {
 								localStorage.setItem("binaries", null);
 								layer.alert(data.Error,info_showtime);
+								showstateinfo(data.Error)
 								sessionStorage.islogin = true;
 								//refreshiframe();
 							}
@@ -980,6 +989,7 @@
 				}
 			} else {
 				Alert("用户未登录，您无权完成此次操作", info_showtime);
+				showstateinfo("用户未登录,你无权完成此次操作");
 				//inittreeview(null,0);
 			}
 			//if(atype==0){
@@ -1071,6 +1081,8 @@
 								localStorage.setItem("sensors", null);
 								localStorage.setItem("Configs",null);
 								layer.alert(data.Error,info_showtime);
+								showstateinfo(data.Error);
+								showstateinfo(data.Error);
 								sessionStorage.islogin = true;
 								refreshiframe();
 							}
@@ -1079,6 +1091,7 @@
 				});
 			} else {
 				Alert("用户未登录，您无权完成此次操作", info_showtime);
+				showstateinfo("用户未登录，你无权完成此次操作");
 				tree2=false;
 				inittreeview(null, 0);
 			}
@@ -1219,6 +1232,7 @@
 							} else {
 								localStorage.setItem("allsensors", null);
 								layer.alert(data.Error,info_showtime);
+								showstateinfo(data.Error);
 								sessionStorage.islogin = ture;
 							}
 						}
@@ -1226,6 +1240,7 @@
 				});
 			} else {
 				Alert("用户未登录，您无权完成此次操作", info_showtime);
+				showstateinfo("用户未登录，您无权完成此次操作");
 				inittreeview(null, 0);
 			}
 		}
@@ -1539,7 +1554,7 @@
 			}
 			return sys_name;
 		}
-		/*function refreshData(){age ent zy(sy) eed op 
+		/*function refreshData(){
 		}*/
 		function updatanodetree() {
 			if (typeof(allsensors) != "undefined" && allsensors != null) {
@@ -1591,6 +1606,8 @@
 					if(sensorarray.length>6){
 						$("#tree_chi").treeview("unselectNode",[data.nodeId]);
 						alert("对比测量点不能大于6个!",info_showtime);
+						showstateinfo("对比测量点不能大于6个");
+						//showstateinfo("对比测量点不能大于6个");
 					}
                     //catalog=getcatalog(dname);
                     //queryhistorydata();//0710
@@ -1745,6 +1762,7 @@
 			//containerdiv.style.display = "block";
 		} 
 		function mouseCoords(ev){ 
+			//showstateinfo(ev.x+" - "+ev.y);
 			if(ev.pageX || ev.pageY){ 
 			return {x:ev.pageX, y:ev.pageY}; 
 			} 
@@ -1752,6 +1770,7 @@
 				x:ev.clientX + document.body.scrollLeft - document.body.clientLeft, 
 				y:ev.clientY + document.body.scrollTop - document.body.clientTop 
 			}; 
+			
 		} 
 	function showLeftMenu(aswitch){
 		if(aswitch){
@@ -1792,4 +1811,5 @@
   用户信息页面在浏览器刷新时被不能记忆的问题。调整用户信息页面的布局和格式（修改密码按钮）添加头像，三种浏览器测试后台定时器计时问题，极速浏览器在非活动页时减缓。
   360 google chrome tsBrowser
   设备信息、系统设置、联系我们、app下载、操作说明等页面添加返回按钮和回退功能，统一按钮验收，解决个功能页面在返回功能后页面刷新不能被系统记忆的问题。修图4
+  底部添加信息提示内容。修改代码添加信息提示语句；解决窗口尺寸变化时页面内容不能自动显示的问题。更换导出到excel按钮图标。
 -->

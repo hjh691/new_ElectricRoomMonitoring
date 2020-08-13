@@ -11,7 +11,7 @@
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
 	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
-	<script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
+	<!--<script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>-->
 	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
 	<!--<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>-->
 	<script  type="text/javascript" src="js/function.js"></script>
@@ -87,13 +87,16 @@
 				<label class="btn btn-primary active" id="type_other"><input type="radio" class="catalog" name="options" value="">其他</label><!---->
 			</span>
 			<span><label>事件类型：</label></span>
-			<span class="dropup" style="position: relative;">
+			<span class="dropdown" style="position: relative;">
 			<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
 				<span class="select_text" data-is-select="false">Dro pup</span>
 				<span class="caret"></span>
 			</button>-->
 			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
-				<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;"></input>
+				<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;">
+				<a  class="btn  btn-default" href = "#" style="margin-left:-40px;"><i class= "caret">
+                </i></a>
+				</input>
 			</label>
 			<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="event_type">
 				<!-- 为了方便演示，type设置text了，实际中可以设置成hidden<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
@@ -117,7 +120,7 @@
 				<span>
 					<button class="selected" id="chaxun"  onclick="querywarnlog()" 
 				style="font-size:16px;" >查询</button>
-				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;" onclick="exporttoexcel('warnlogtable')">
+				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:20px;" onclick="exporttoexcel('warnlogtable')">
 					<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
 				</span>
 			</div>
@@ -191,6 +194,8 @@
 	var dname="",catalog="";
 	var allcatalog;
 	var isfound=false;
+	var selectText="";
+	var sel_str=[];
 	
 	$(function () {
 		initwarnlog();		
@@ -263,17 +268,15 @@
 	seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
 	appenddisplaytype(sessionStorage.SensorId);
 	//if(sessionStorage.timeindex==4){
-	decodedatas();	//querywarnlog();
-	//}
-	if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。di strict/county  city  province can may must need/can't must not need't
+	querywarnlog();//decodedatas();
+	//}	
+	if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
 		if(typeof(w1) == "undefined") {
 			w1 = new Worker("delay_worker.js");
 		}
 		var i=0;
 		w1.onmessage = function(event) {
-			//document.getElementById("result").innerHTML = event.data; an ce en 
-			//pic  ture  dis ad  ab  un  ch ar ing are ire our dr tr st ee ea ear tion ay age 
-			//sh tch er ent ant oo ed ck gr ty ly pr or im in ai ph qu ex student ew ell all 
+			//document.getElementById("result").innerHTML = event.data;
 			i++
 			if(i%60==0){
 				if(sessionStorage.timeindex==5)
@@ -352,22 +355,7 @@
 	function buildnode(data, level) {
 		var tree = [];
 		if (data == null || typeof(data) == "undefined") {
-			/*for (i = 0; i < 0; i++) {
-				var anodes = new Object();
-				anodes.text = "门禁" + (2 - i);
-				anodes.id = i;
-				anodes.Catalog="门禁";
-				anodes.nodes = [];
-				anodes.icon = "url(res/lock.png)";fature
-				anodes.level=0;
-				var node = '[{"text":"动环","id":' + ((i + 1) * 10) +',"icon":"glyphicon glyphicon-user","Catalog":"UPS","level":1},{"text":"水浸","id":' 
-					+ ((i + 1) * 10 + 1) + ',"level":1},{"text":"电源","id":' + ((i + 1) * 10 + 2) + ',"level":1},{"text":"环境","id":' + ((i + 1) * 10 + 3) 
-					+ ',"level":1},{"text":"灯光","id":' + ((i + 1) * 10 + 4) +
-						',"level":1,"nodes":[{"text":"门禁","id":543,"level":2},{"text":"水浸","id":345,"level":2}]}]';
-				anodes.nodes = (JSON.parse(node));
-				//var lnode=new Object();
-				tree.push(anodes);
-			}*/
+			
 		}else
 		for (var j = 0; j < data.length; j++) {
 				var anodes = new Object();
@@ -428,6 +416,19 @@
 			document.getElementById("display_type").removeChild(document.getElementById("display_type").childNodes[i-1]);
 		//for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
 		//	document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
+		selectText="";
+		if(sessionStorage.eventTypeSelected){
+			sel_str=sessionStorage.eventTypeSelected.split(";");
+		}else{
+			sel_str=[];
+		}
+		var lis=$("#display_type label")
+		for(var i=0;i<lis.length;i++){
+			lis[i].classList.remove("active");
+		}
+		if(!sessionStorage.warnlogname){
+			lis[0].classList.add("active");
+		}
 		if(asensorid>=0&&sensors){
 			for(var k=0;k<sensors.length;k++){
 				if(sensors[k].Value.Id==asensorid){
@@ -438,19 +439,25 @@
 			if((configs)&&(configs.hasOwnProperty(allcatalog))){//检查配置中是否有catalog项
 				var s_des=configs[allcatalog]//如果有，读取其所有配置项
 				for(var p in s_des){
-					 lab=document.createElement("label");
-					/*if(p==0){
+					lab=document.createElement("label");
+					/*if(p==0){史薛贾王
 						name=s_des[p].Name;
 						catalog=s_des[p].Catalog;
 						lab.className="btn btn-primary active"
 					}else{}*/
-					lab.className="btn btn-primary";
 					
+					if(s_des[p].Name==sessionStorage.warnlogname){
+						lab.className="btn btn-primary active"
+						dname=sessionStorage.warnlogname;
+						catalog=getcatalog(dname);
+					}else{
+						lab.className="btn btn-primary";
+					}
 					lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" onclick=displaytype(this) >'+s_des[p].Desc;
 					var other=document.getElementById("type_other");
 					document.getElementById("display_type").insertBefore(lab,other);//类别
 					
-					if(s_des[p].Catalog=="event"&&s_des[p].Name=="event"){//告警、事件类型 age language
+					if(s_des[p].Catalog=="event"&&s_des[p].Name=="event"){//告警、事件类型 
 						var config=new Object()
 						config=JSON.parse(s_des[p].Config);
 						if(config){
@@ -463,6 +470,12 @@
 								}
 								if(isfound){
 									isfound=false;
+									for(var j=0;j<sel_str.length;j++){
+										if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
+											temp.children[i].children[0].checked=true;
+											break;
+										}
+									}
 									continue;
 								}//0721 edit
 								var li=document.createElement("li");
@@ -479,8 +492,21 @@
 								lab.appendChild(spn);
 								//lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
 								li.appendChild(lab);
-								document.getElementById("event_type").appendChild(li);
+								temp.appendChild(li);
 							}
+						}
+						for(var i=0;i<temp.children.length;i++){
+							if(temp.children[i].children[0].children[0].checked==true){
+								selectText=selectText+temp.children[i].children[0].children[1].innerHTML+";";
+							}
+						}
+						if(selectText.charAt(selectText.length - 1)==";"){
+							//去除末尾分号
+							selectText=selectText.substring(0,selectText.length - 1);
+							//selectVal=selectVal.substring(0,selectVal.length - 1);
+						}
+						if(selectText==""){
+							selectText="请选择告警事件，不选为全部告警"
 						}
 					}
 				}
@@ -488,30 +514,34 @@
 				for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
 					document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
 				var li=document.createElement("li");
-				li.text="没有可选项";
-				document.getElementById("event_type").text="没有可选项";
+				//li.text="没有可选项";
+				//document.getElementById("event_type").text="没有可选项";
+				selectText="没有告警事件选项"
 			}
 		}else{
-				for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
-					document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
-				var li=document.createElement("li");
-				li.text="没有可选项";
-				document.getElementById("event_type").text="没有可选项";
-			}
+			for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
+				document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
+			var li=document.createElement("li");
+			//li.text="没有可选项";
+			//document.getElementById("event_type").text="没有可选项";
+			selectText="没有告警事件选项";
+		}
+		$("#select_text").val(selectText);
 		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。
 		$(".btn").click(function(){
-		$(this).button('toggle');
-		dname= $(".catalog:checked").val();
-		catalog=getcatalog(dname);
-		//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
-	});
+			$(this).button('toggle');
+			dname= $(".catalog:checked").val();
+			sessionStorage.warnlogname=dname;
+			catalog=getcatalog(dname);
+			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+		});
 	}
 	function displaytype(obj){
 		dname= obj.value;
 		catalog=getcatalog(dname);
 	}
 	function decodedatas(obj_data){
-		/*objS = document.getElementById("jcdd");
+		/*objS = document.getElementById("jcdd");//
 		var name;
 		var sift=false;
 		if(objS.options.length>0){
@@ -528,15 +558,17 @@
 			document.getElementById("tj_kssj").innerHTML=sessionStorage.kssj;
 			document.getElementById("tj_zzsj").innerHTML=sessionStorage.jssj;
 			if(obj_data&&obj_data.length>0){
-				var warning_type=document.getElementById("select_text").value;
-				if(warning_type.length>0){
-					type_str=warning_type.split(";");
-					sift=true;
-				}else{
-					warning_type="越上限;越下限";
-					type_str=warning_type.split(";");
-					sift=false;
+				var warning_type=sessionStorage.eventTypeSelected;//document.getElementById("select_text").value;
+				if(!warning_type){
+					warning_type="";
 				}
+				type_str=warning_type.split(";");
+					//sift=true;
+				//}else{
+					//warning_type="越上限;越下限";
+					//type_str=warning_type.split(";");
+					//sift=false;
+				//}
 				var tr_arr=[],td_arr=[];
 				for(var j=0;j<=type_str.length;j++){
 					count_l[j]=0;
@@ -556,9 +588,6 @@
 					$table.appendChild(window.eval("tr"+j));
 					//console.log(window.eval("tr"+j));
 				}
-				/**
-				 * think about can't wait to do heard a lot  about him on silk roat learning language true 
-				**/
 				/*var tr1=document.createElement("tr");
 				tr1.setAttribute("id","tr1");
 				var td_first=document.createElement("td");
@@ -604,14 +633,18 @@
 						var value=obj_data[i].Value;//(Math.random() * 10) - 0;
 						td_dadr.innerHTML=(value*1).toFixed(Number_of_decimal);
 						var td_dtype=document.createElement("td");
-						td_dtype.innerHTML=obj_data[i].Message;//"数值越限";/**/放松警惕保持警戒盯住了
+						td_dtype.innerHTML=obj_data[i].Message;//"数值越限";/**/
 						tr.appendChild(td_did);
 						tr.appendChild(td_dname);
 						tr.appendChild(td_dtime);
 						tr.appendChild(td_dadr);
 						tr.appendChild(td_dtype);
+						if(warning_type==""){
+							$table.appendChild(tr);
+							count++;
+						}else
 						for(var j=0;j<type_str.length;j++){
-							if(obj_data[i].Message.indexOf(type_str[j])!=-1){
+							if(type_str[j]!=""&&obj_data[i].Message.indexOf(type_str[j])!=-1){
 								$table.insertBefore(tr,window.eval("tr"+(j+1)));
 								count_l[j]=count_l[j]+1;
 								count++;
@@ -623,14 +656,15 @@
 								$table.appendChild(tr);
 							}*/
 						}
-						if ((j>=type_str.length)&&(!sift)){//20200403
+						/*if ((j>=type_str.length)){//20200403&&(!sift)
 							$table.appendChild(tr);
 							count++;
-						}
+						}*/
 					}
 				}
 				if(!count){
 					layer.alert("沒有符合条件的数据",info_showtime);
+					showstateinfo("没有符合条件的数据");
 					document.getElementById("count_val").innerHTML="";
 					document.getElementById("count_first").innerHTML="";
 					document.getElementById("count_third").innerHTML="";
@@ -641,6 +675,7 @@
 					document.getElementById("count_first").innerHTML=0;
 					document.getElementById("count_third").innerHTML=0;
 				}else{
+					showstateinfo("");
 					for(var i=0;i<type_str.length;i++){
 						if(count_l[i]==0){
 							//document.getElementById(window.eval("'td"+i+"'")).style.display="none";
@@ -692,12 +727,12 @@
 			w1.terminate();
 			w1 = undefined;
 		};
+	//显示实时告警信息
 	function showrealworning(){
 		//document.getElementById("jcdd").disabled=true;
 		var sift=false;
 		count_l=[0,0];//count_h=0;
-		var timedefine=document.getElementById("timedefine");
-		timedefine.style.display="none";
+		var timedefine=document.getElementById("timedefine");//取得主程序实时数据列表元素内容。
 		var warningtab = window.parent.document.getElementById("realwarningdata-tbody");
 		var trs = warningtab.getElementsByTagName("tr");
 		document.getElementById("tj_kssj").innerHTML="";
@@ -714,7 +749,8 @@
 		}
 		if(trs.length>0){
 			/**
-			 * 在表格中定义一些关键节点（行），采用insertbifore命令时的参考节点。
+			 * 在表格中定义一些关键节点（行），采用insertbifore命令时的参考节点。// 
+			 * 岗位、流程、项目、公司、自己、下属 提示人品，提高产品，诚信务实、
 			 * 用于对表格中的数据进行分类插入，并作为分类显示的标题。tr1,tr2...
 			 * **/
 			 var warning_type=document.getElementById("select_text").value;
@@ -754,7 +790,7 @@
 					count_h++;
 				}*/
 				for(var j=0;j<type_str.length;j++){
-					if(trs[i].cells[4].innerText==type_str[j]){
+					if(trs[i].cells[4].innerText.indexOf(type_str[j])>=0){
 						var tr=document.createElement("tr");
 						tr=$(trs[i].outerHTML)[0];
 						tr.setAttribute("onclick","tableclick(this)");
@@ -780,7 +816,8 @@
 			var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));//20200403
 			$table.removeChild(dtr);//去掉最后一行（插入参考行）
 		}else{
-			layer.alert("当前没有告警!",info_showtime)
+			layer.alert("当前没有告警!",info_showtime);
+			showstateinfo("当前没有告警信息");
 		}
 		document.getElementById("count_first").innerHTML=count_l[0];
 		document.getElementById("count_third").innerHTML=count_l[1];
@@ -881,9 +918,7 @@
 			if((i>=begin && i<=end) )//显示begin<=x<=end的记录
 				$(this).show();
 		});*/
-
 		}
-
 		$(document).on("click",".check_box",function(event){
 		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
 		//勾选的项
@@ -900,7 +935,7 @@
 		if(isSelected=="true"){
 			selectText=$selectTextDom.val();
 		}
-		if(selectText!=""){
+		if(selectText!=""&&selectText!="没有告警事件选项"&&selectText!="请选择告警事件，不选为全部告警"){
 			if(selectText.indexOf(selected_text)>=0){//判断是否已经勾选过
 				selectText=selectText.replace(selected_text,"").replace(";;",";");//替换掉
 				//selectVal=selectVal.replace(selected_val,"").replace(",,",",");//替换掉
@@ -923,9 +958,10 @@
 			//selectVal=selected_val;
 		}
 		$selectTextDom.val(selectText);
+		sessionStorage.eventTypeSelected=selectText;
 		//$selectValDom.val(selectVal);
 		if(selectText==""){
-			$selectTextDom.text("请选择");
+			$selectTextDom.val("请选择告警事件，不选为全部告警");
 			$selectTextDom[0].setAttribute("data-is-select","false");
 		}else{
 			$selectTextDom[0].setAttribute("data-is-select","true");
@@ -946,5 +982,6 @@
 <!--告警类型项目的添加为空时提示，历史状态页添加信息统计显示项 bootstap的组件内容类定义，对代码进行简化
 	添加标签目录树，标签目录树的根据节点自动更新，配置项根据标签自动更新，时段与查询的对应，动态按钮组的响应过程，导出到excel按钮位置
 	点击时段选择跳出提示框，更换标签时，告警事件选项重复加载，采用二次树形菜单来选择标签项，标签选择项调整，原隐藏。
-	本周：云平台web前端程序页面样式和功能进行了修改和补充。下周：对web前端的功能进行测试和完善
+	按钮样式（选中、颜色）选项记忆和获取共以及显示内容。下载页结构调整，去除多余关联文件。按钮组样式
+
 -->

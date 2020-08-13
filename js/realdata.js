@@ -333,7 +333,7 @@ function decoderealdata(obj_realdata) {
                 for (var i = 0; i < sensors.length; i++) {//是否在需要显示的标签列表中
                     if(obj_realdata[j].SensorId==sensors[i].id){
                         //sid = sensors[i].id + "";
-                        type_td = sensors[i].Value.Catalog;
+                        type_td = sensors[i].Value.Catalog;//
                         sname = sensors[i].Value.Name;
                         isfind=true;
                         break;
@@ -584,11 +584,14 @@ function decoderealdata(obj_realdata) {
                     gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
                 }
             }//else{	//$table.rows[0].ondblclick();	//}
+            showstateinfo("");
         } else {
             layer.alert("没有符合条件的数据",info_showtime);
+            showstateinfo("没有符合条件的数据");
         }
     } else {
         layer.alert("没有符合条件的数据", info_showtime);
+        showstateinfo("没有符合条件的数据");
     }
     //$table.rows[t_pt].scrollIntoView();
     //refreshData();
@@ -1092,7 +1095,7 @@ function initchart2() {
                     show: true,
                     type: ['line']
                 },
-                //, 'bar', 'stack', 'tiled' 腿脚膝胳膊肘胸腔腹肚肝胆脾胃肾膀胱肠脑脸肤腕臂膀肥膘肱肢肿胀胚胎股肛腚跨肩腾滕胶脂肪肮脏服腱脖腰腌臜胺胞胖bb
+                //, 'bar', 'stack', 'tiled' 
                 restore: {
                     show: true
                 },
