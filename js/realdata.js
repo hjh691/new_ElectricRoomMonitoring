@@ -355,7 +355,7 @@ function decoderealdata(obj_realdata) {
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
                         atr.cells[2].innerHTML=obj_data.Time;//第二列添加测量时间
                         // 取过去24小时时间，用于调取历史记录
-                        var ckssj=new Date((obj_data.Time));//.replace(/-/g,"/"));
+                        var ckssj=new Date((obj_data.Time.replace(/-/g,"/")));//.replace(/-/g,"/"));
                         var yesterdayend=ckssj-(1000*60*60*24);
                         //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
                         kssj = dateToString(new Date(yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
@@ -493,7 +493,7 @@ function decoderealdata(obj_realdata) {
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
                         atr.cells[2].innerHTML=obj_data.Time;//第二列添加测量时间
                         // 取过去24小时时间，用于调取历史记录
-                        var ckssj=new Date((obj_data.Time));//.replace(/-/g,"/"));
+                        var ckssj=new Date((obj_data.Time.replace(/-/g,"/")));//.replace(/-/g,"/"));
                         var yesterdayend=ckssj-(1000*60*60*24);
                         //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
                         kssj = dateToString(new Date(yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
@@ -1067,7 +1067,7 @@ function decodedatas(obj_chartdata) {
 }
 function initchart2() {
     var option2 = {
-        color: ['#FFFF00', '#FF0000'],//,'#00ff00'
+        color: ['#FFFF00', '#FF0000'],//,'#00ff00' complain mountain 
         backgroundColor: backgroudcolor,
         title: {
             text: '当天变化趋势图',

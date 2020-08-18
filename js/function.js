@@ -1285,12 +1285,12 @@ function gethistorydata(sensorid,catalog,name,kssj, jssj,aparent) {
 }
 //告警信息查询按钮  used by electricroommonitor
 function querywarnlog(num) {
-	var sel=document.getElementById("jcdd");
+	/*var sel=document.getElementById("jcdd");
 	if(sel.options.length<=0){
 		layer.alert("请选择要查询的测量点名称",info_showtime);
 		showstateinfo("请选择要查询的测量点名称");
 		return;
-	}
+	}*/
 	//sessionStorage.SensorId = sel.value;//document.getElementById("jcdd")
 	//sessionStorage.SensorName = sel.options[document.getElementById("jcdd").selectedIndex].text;
 	if(sessionStorage.timeindex==4){
@@ -1907,10 +1907,15 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 					}
 				}
 			},
-			dataZoom: {
+			dataZoom: [{
 				show: true,
 				start: 0
 			},
+			{   // 这个dataZoom组件，也控制x轴。
+				type: 'inside', // 这个 dataZoom 组件是 inside 型 dataZoom 组件  
+				start: 0,      // 左边在 10% 的位置。
+				end: 100,       // 右边在 60% 的位置。 
+			},],
 			legend: {//图例
 				data: lengenddata,
 				orient:"vertical",//"horizontal",
@@ -2660,6 +2665,7 @@ function initsysteminfo(){//used by electricroommonitor
 	document.getElementById("p4").innerHTML = jfjk_base_config.copyright;
 	//document.getElementById('add').innerHTML = jfjk_base_config.company;
 }
+//一下为新增函数
 //获取实时数据  used by electricroommonitor mainpage.html realdata.html
 function getrealdatabynodeid(nodeid){
 	if (typeof(nodeid)!="undefined"&&nodeid!==null) {
@@ -2755,7 +2761,7 @@ function sleep(numberMillis) {
 		return;
 	} 
 }
-//将类型文字化
+//将类型文字化 used by ele
 function getname(key){
 	if(key)
 		key=key.toLowerCase();
@@ -2947,7 +2953,7 @@ var sorter=false;
         }
     });      
 })(jQuery);
-//导出表格到Excel。
+//导出表格到Excel。使用.js插件。
 function exporttoexcel(tabid){
 	$("#"+tabid).table2excel({
 		exclude  : ".noExl",                                       //过滤位置的 css 类名

@@ -74,14 +74,14 @@
 				<span class="caret"></span>
 			</button>-->
 			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
-				<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;">
+				<input id="select_text" class="select_text " data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;">
 				<a  class="btn  btn-default" href = "#" style="margin-left:-40px;"><i class= "caret">
                 </i></a></input>
 			</label>
 			<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="display_type">
 				<!--<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
 				<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li>为了方便演示，type设置text了，实际中可以设置成hidden -->
-			</ul><b style="font-size: 50%;color:red;margin-left:30px;">*选项类别不能大于4个</b>
+			</ul><b style="font-size: 80%;color:red;margin-left:30px;">*选项类别不能大于4个</b>
 			</span>
 		</div>
 		<div  style="text-align:left;padding-left: 10px;">
@@ -169,7 +169,7 @@
 			}
 			sensors=JSON.parse(localStorage.getItem("sensors"));
 			configs=JSON.parse(localStorage.Configs);
-			if (sensors != null) {
+			/*if (sensors != null) {
 				for (var i = 0; i < sensors.length; i++) {
 					if ((sensors[i].Value.ParentId != "-1") && (sensors[i].Value.ParentId != parentid)) {
 						parentid = sensors[i].Value.ParentId;
@@ -182,7 +182,7 @@
 					}
 					var map = new Object();
 					map.value = sensors[i].id;
-					map.name = parentname + sensors[i].Value.Name;
+					map.name = parentname + sensors[i].Value.Name;  manage foreign language forest
 					maps.push(map);
 				}
 				var compare = function (obj1, obj2) {
@@ -207,7 +207,7 @@
 					p.appendChild(lab);
 					sel_sensor.appendChild(p);
 				}
-			}
+			}*/
 			appenddisplaytype();
 			//setSelectOption("jcdd", sessionStorage.SensorId);
 			oneChoice();

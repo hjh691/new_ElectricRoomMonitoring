@@ -21,21 +21,24 @@
         border:1px solid black;
         text-align:center;
         line-height:center;
-        
+        width:150px;
         height:30px;
 	}
 	th
 	{
 		border:0px solid black;
 	}
-	/*table tbody {width:150px;
-		display: block;
+	/*table {
+		/*设置相邻单元格的边框间的距离*/
+	/*	border-spacing: 0;
+		/*表格设置合并边框模型*/
+	/*	border-collapse: collapse;
+		text-align: center;
 	}
-	table thead,
-	tbody tr {
-		display: table;
-		table-layout: fixed;
-	}*/
+	关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
+	table tbody {
+		display:block ;
+	}
 	span{
 		margin-left:10px;
 	}
@@ -50,7 +53,7 @@
 	</style>
 </head>
 <body >
-	<div class="container" style="height:740px;">
+	<div class="container" style="height:100%;">
 		
 		<div class="row" style="height:100%;">
 		<!--<div class="col-xs-4 col-md-3 col-lg-2" style="border: rgb(90, 89, 89) solid 0px;height: 100%;display: none;">
@@ -188,7 +191,7 @@
 			}
 			sensors=JSON.parse(localStorage.getItem("sensors"));
 			configs=JSON.parse(localStorage.Configs);
-			if(sensors!=null){
+			/*if(sensors!=null){
 				for(var i=0;i<sensors.length;i++){
 					if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
 						parentid=sensors[i].Value.ParentId;
@@ -224,7 +227,7 @@
 					sel_sensor.appendChild(op);
 				}
 			}
-			setSelectOption("jcdd", sessionStorage.SensorId);
+			setSelectOption("jcdd", sessionStorage.SensorId);*/
 			appenddisplaytype(sessionStorage.SensorId);
 			if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")||(sessionStorage.timeindex>4)){
 				sessionStorage.timeindex=0;
@@ -237,6 +240,8 @@
 			//if(sessionStorage.timeindex==4){
 				queryhistorydata(0);//decodedatas();
 			//}
+			$("#main").height(parent.window.windowHeight-250);
+			$("#list").height(parent.window.windowHeight-250);
 		}
 		function inittreeview(anodes) {
 			var tree=$('#tree_chi')
@@ -447,12 +452,12 @@
 					}
 				}
 			}
-			var sel=document.getElementById("jcdd");
+			/*var sel=document.getElementById("jcdd");
 			if(sel.options.length<=0){
 				layer.alert("请选择要查询的测量点名称",info_showtime);
 				showstateinfo("请选择要查询的测量点名称");
 				return;
-			}
+			}*/
 			if(sessionStorage.timeindex==4){
 				var kssj = document.getElementById("kssj_history").value;
 				if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
@@ -492,8 +497,9 @@
 		function decodedatas(obj_data){
 			var count = 0;
 			var maxvalue=0,minvalue=0,avgvalue=0,ps=0,ct=1,maxval=0,minval=0,hourvalue=0;
-			var stime=new Date(sessionStorage.kssj).getTime();
-			var etime=new Date(sessionStorage.jssj).getTime();
+			//var stime=new Date(sessionStorage.kssj).getTime();
+			var stime=new Date(Date.parse(sessionStorage.kssj.replace(/-/g,"/"))).getTime();
+			var etime=new Date(Date.parse(sessionStorage.jssj.replace(/-/g,"/"))).getTime();
 			var maxtime="",mintime="";
 			var senconds=etime-stime;
 			var pa = [],pb = [],pc = [];

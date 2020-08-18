@@ -62,8 +62,8 @@
 	}
 	</style>
 </head>
-<body >
-	<div class="container" style="height:740px;">
+<body style="height: 100%;">
+	<div class="container" style="height:100%;">
 	<div class="row" style="height:100%;">
 	<!--<div class="col-xs-4 col-md-3 col-lg-2" style="border: rgb(90, 89, 89) solid 0px;height: 100%;display:none">
 		<div><label style="font-size:16px">设备(标签)列表:</label></div>
@@ -93,7 +93,7 @@
 				<span class="caret"></span>
 			</button>-->
 			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
-				<input id="select_text" class="select_text " data-is-select="false" style="line-height: 25px;color:black;border-radius: 5px;">
+				<input id="select_text" class="select_text " data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;">
 				<a  class="btn  btn-default" href = "#" style="margin-left:-40px;"><i class= "caret">
                 </i></a>
 				</input>
@@ -157,10 +157,10 @@
 					<td>告警内容</td>
 					<!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>-->
 				</tr>
-				<tbody id='warnlogdata-tbody' style="width:820px;height:520px; overflow:auto;">
+				<tbody id='warnlogdata-tbody' style="width:820px;height:100%; overflow:auto;">
 				</tbody>
 			</table>
-			<div style="text-align: center;margin:6px;font-size: 18px;">
+			<div style="text-align: center;margin:6px;font-size: 18px;float:bottom;">
 				<a id="btn0"></a>
 				<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
 				<a id="sjzl"></a>&nbsp;
@@ -213,15 +213,15 @@
 	//inittreeview(treenode);
 	document.getElementById("kssj_warning").value = sessionStorage.kssj;
 	document.getElementById("jssj_warning").value = sessionStorage.jssj;
-	var sel_sensor=document.getElementById("jcdd");
+	/*var sel_sensor=document.getElementById("jcdd");
 	for (var i = 0; i < sel_sensor.length; i++) {
 		sel_sensor.removeChild(sel_sensor.options[0]);
 		sel_sensor.remove(0);
 		sel_sensor.options[0] = null;
-	}
+	}*/
 	sensors=JSON.parse(localStorage.getItem("sensors"));
 	configs=JSON.parse(localStorage.getItem("Configs"));
-	if(sensors!=null){
+	/*if(sensors!=null){
 		for(var i=0;i<sensors.length;i++){
 			if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
 				parentid=sensors[i].Value.ParentId;
@@ -257,7 +257,7 @@
 		}
 	}
 	setSelectOption("jcdd", sessionStorage.SensorId);
-	sessionStorage.SensorId = sel_sensor.value;
+	sessionStorage.SensorId = sel_sensor.value;*/
 	if(sessionStorage.SensorId=="")
 		sessionStorage.SensorId=-1;
 	//GetSensorsByStation();
@@ -286,7 +286,7 @@
 	} else {
 		var t1 = window.setInterval("getrealdatabynodeid(-1);",60000);
 	}
-	
+	$("#warnlogdata-tbody").height(parent.window.windowHeight-320);
 }
 	function inittreeview(anodes) {
 		$('#tree_chi').treeview({
@@ -749,8 +749,7 @@
 		}
 		if(trs.length>0){
 			/**
-			 * 在表格中定义一些关键节点（行），采用insertbifore命令时的参考节点。// 
-			 * 岗位、流程、项目、公司、自己、下属 提示人品，提高产品，诚信务实、
+			 * 在表格中定义一些关键节点（行），采用insertbifore命令时的参考节点。//
 			 * 用于对表格中的数据进行分类插入，并作为分类显示的标题。tr1,tr2...
 			 * **/
 			 var warning_type=document.getElementById("select_text").value;

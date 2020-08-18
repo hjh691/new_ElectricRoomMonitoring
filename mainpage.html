@@ -104,7 +104,7 @@
 	<!--底部公司版权 -->
 	<div>
 		<div class="navigation" id="footer" style="height:30px;float:bottom;bottom:0px;left:0px;right:0px;">	
-			<div class="pc-footer" ><!---->
+			<div class="pc-footer" align="center"><!---->
 					<label id="state_info" style="float:left;margin-left: 30px;color:rgb(240, 236, 9);"></label>
 					<ul  align="center" style="margin:0 0;">
 						<li ><a id="company_info" href="" target="_blank" style="color:white;"><img id="company_log" src="" width="20px" height="20px" ><lab id="company_name"></lab></a></li>
@@ -137,7 +137,7 @@
 		</div>
 	</div>
 	<script>
-		var dindowHeight;
+		var windowHeight;
 		var infotreedata = [], maps = [];
 		var mnodes=[];
 		var infotreeobj = new Object();
@@ -205,8 +205,8 @@
 					w.onmessage = function (event) {//接收定时器返回的消息
 						//document.getElementById("result").innerHTML = event.data;
 						i++;
-						var stime=new Date(getCurrentDate(2)).getTime();
-						var etime=new Date(getCurrentDate(1)+" 18:00:00").getTime();
+						var stime=new Date(getCurrentDate(2).replace(/-/,"/")).getTime();
+						var etime=new Date(getCurrentDate(1).replace(/-/,"/")+" 18:00:00").getTime();
 						showstateinfo((etime-stime)/1000);
 						if (i % 60 == 0) {
 							//sendbeat();
@@ -302,7 +302,7 @@
 					content.style.height = mheight-30 + "px";
 				}
 			}
-			dindowHeight=height;
+			windowHeight=height;
 			initIndex();//窗口尺寸变化时是否重画所有内容。
 		}
 		window.onresize = window.onscroll = refreshwindow;//  
@@ -1812,4 +1812,6 @@
   360 google chrome tsBrowser
   设备信息、系统设置、联系我们、app下载、操作说明等页面添加返回按钮和回退功能，统一按钮验收，解决个功能页面在返回功能后页面刷新不能被系统记忆的问题。修图4
   底部添加信息提示内容。修改代码添加信息提示语句；解决窗口尺寸变化时页面内容不能自动显示的问题。更换导出到excel按钮图标。
+  index.html 背景图按比例充满视窗口功能，调整历史数据、告警信息主显示区随视窗大小自动调节的共并进行调试。学习企业文化
+  ie浏览器对时间格式的不兼容问题以及对表格样式的不兼容。Android 实时数据页面有其他页面跳转到实时数据页面系统退出的问题（存在为加载项）；数组字符串排序算法函数。
 -->
