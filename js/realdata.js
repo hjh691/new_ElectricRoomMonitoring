@@ -945,8 +945,13 @@ function decodedatas(obj_chartdata) {
     }
     maxvalue = (maxval * 1).toFixed(Number_of_decimal);
     minvalue = (minval * 1).toFixed(Number_of_decimal);
-    maxval = (maxval * 1 + (maxval - minval) * 0.2).toFixed(Number_of_decimal);
-    minval = (minval * 1 - (maxval - minval) * 0.2).toFixed(Number_of_decimal);
+    if(maxval==minval){
+        maxval=maxval*1.5;
+        minval=minval/2;
+    }else{
+        maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
+        minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
+    }
     var lengenddata = [];
     lengenddata.push("当天峰值");
     lengenddata.push("实时值");

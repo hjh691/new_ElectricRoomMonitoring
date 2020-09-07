@@ -116,7 +116,7 @@ function initlogin() {
 	}
 }
 //判断用户名和密码输入是否符合语法  used by electricroommonitor 
-function LoginOrder(name, ps) {
+function LoginOrder(name, ps,flag) {
 	var url = jfjk_base_config.baseurl + "Login?name=" + name + "&pass=" + ps;
 	url = encodeURI(url);
 	$.ajax({
@@ -146,7 +146,7 @@ function LoginOrder(name, ps) {
 					sessionStorage.token = data.Result.Token;
 					sessionStorage.username = name;
 					sessionStorage.islogin = true;
-					if (sessionStorage.errortime == 0) {
+					if (sessionStorage.errortime == 0&&flag==0) {
 						window.location.href = "mainpage.html";
 					} else {
 						sessionStorage.errortime = 0;
@@ -178,7 +178,7 @@ function login() {
 				//layer.alert(sname);
 				sessionStorage.username = sname;
 				sessionStorage.password = sps;
-				LoginOrder(sname, sps);
+				LoginOrder(sname, sps,0);
 			}
 		}
 	}
@@ -216,10 +216,12 @@ function logout() {
 					islogin = true;
 					if (data.Error == null) {
 						sessionStorage.username = "未登录";
+						sessionStorage.sps="";
 						sessionStorage.islogin = false;
 						window.location.href = "index.html";
 					} else {
 						sessionStorage.username = "未登录";
+						sessionStorage.sps="";
 						sessionStorage.islogin = false;
 						window.location.href = "index.html";
 					}
@@ -424,7 +426,7 @@ function sendbeat() {
 		Alert("与服务器连接失败", info_showtime);
 		showstateinfo("与服务器连接失败");
 		sessionStorage.errortime=0;
-		LoginOrder(sessionStorage.username, sessionStorage.password);
+		LoginOrder(sessionStorage.username, sessionStorage.password,1);
 	}
 }
 /*//index页面初始化
@@ -1240,6 +1242,7 @@ function gethistorydata(sensorid,catalog,name,kssj, jssj,aparent) {
 					if (errorThrown == "Unauthorized") {
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败',info_showtime);
 						showstateinfo(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
+						LoginOrder(sessionStorage.username,sessionStorage.password,1);
 					} else {
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败',info_showtime);
 						showstateinfo(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
@@ -1671,7 +1674,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 	//var etime=new Date(jssj).getTime();
 	//var senconds=etime-stime;
 	var pa = [],pb = [],pc = [];
-	var maxvalue=0,minvalue=0,maxval=0,minval=0;//avgvalue=0,ps=0,count=1,
+	var maxvalue=-1,minvalue=-1,maxval=-1,minval=-1;//avgvalue=0,ps=0,count=1,
 	var lengenddata = [];
 	var obj_chartdata=[];
 	var seriess=[];
@@ -1695,10 +1698,16 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 				obj_chartdata=obj_chartdatas;//[sensorid];
 				if(obj_chartdata){
 					pb= new Array();
+					if(isNaN(parseFloat(obj_chartdata[0].Value))){
+						obj_chartdata[0].Value=-1;
+					}
 					maxvalue=minvalue=parseFloat(obj_chartdata[0].Value);
 					for (var j = 0; j <obj_chartdata.length; j++) {
 						if(obj_chartdata[j].SensorId==sensorid){
 							pb.push([strtodatetime(obj_chartdata[j].Time), obj_chartdata[j].Value, j]);
+							if(isNaN(parseFloat(obj_chartdata[j].Value))){
+								obj_chartdata[j].Value=-1;
+							}
 							if(parseFloat(obj_chartdata[j].Value)>maxvalue){
 								maxvalue=parseFloat(obj_chartdata[j].Value);
 							}
@@ -2106,6 +2115,7 @@ function GetBinary(binariesid) {
 					if (errorThrown == "Unauthorized") {
 						Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取指定编号的图形操作失败',info_showtime);
 						showstateinfo(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取指定编号的图形操作失败');
+						LoginOrder(sessionStorage.username,sessionStorage.password,1);
 					} else {
 						Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取指定编号的图形操作失败',info_showtime);
 						showstateinfo(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取指定编号的图形操作失败');
@@ -2665,7 +2675,7 @@ function initsysteminfo(){//used by electricroommonitor
 	document.getElementById("p4").innerHTML = jfjk_base_config.copyright;
 	//document.getElementById('add').innerHTML = jfjk_base_config.company;
 }
-//一下为新增函数
+//以下为新增函数
 //获取实时数据  used by electricroommonitor mainpage.html realdata.html
 function getrealdatabynodeid(nodeid){
 	if (typeof(nodeid)!="undefined"&&nodeid!==null) {
@@ -2694,15 +2704,13 @@ function getrealdatabynodeid(nodeid){
 						};
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败',info_showtime);
 						showstateinfo(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取站实时数据操作失败');
-						//sessionStorage.islogin = "false"
+						sessionStorage.islogin = false;
+						LoginOrder(sessionStorage.username,sessionStorage.password,1);
 					} else {
 						layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败',info_showtime);
 						showstateinfo(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取站实时数据操作失败');
 					}
-					if(sessionStorage.errortime<3){
-						//continue;
-						//getrealdatabynodeid(nodeid)
-					}else{
+					if(sessionStorage.errortime>=3){
 						sessionStorage.islogin=false;
 						//sessionStorage.errortime=0;
 						//getrealdatabynodeid(nodeid)
@@ -2744,6 +2752,8 @@ function getrealdatabynodeid(nodeid){
 		} else {
 			layer.alert("与服务器连接失败",info_showtime);
 			showstateinfo("与服务器连接失败");
+			sessionStorage.islogin=false;
+			//LoginOrder(sessionStorage.username,sessionStorage.password,1);
 			//sessionStorage.errortime=0;
 			//break;
 			//window.location.href="index.html";

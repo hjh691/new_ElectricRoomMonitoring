@@ -496,7 +496,7 @@
 		}
 		function decodedatas(obj_data){
 			var count = 0;
-			var maxvalue=0,minvalue=0,avgvalue=0,ps=0,ct=1,maxval=0,minval=0,hourvalue=0;
+			var maxvalue=-1,minvalue=-1,avgvalue=-1,ps=0,ct=1,maxval=-1,minval=-1,hourvalue=-1;
 			//var stime=new Date(sessionStorage.kssj).getTime();
 			var stime=new Date(Date.parse(sessionStorage.kssj.replace(/-/g,"/"))).getTime();
 			var etime=new Date(Date.parse(sessionStorage.jssj.replace(/-/g,"/"))).getTime();
@@ -557,6 +557,10 @@
 			}else /**/if(Math.ceil(senconds/1000/60)<=1440){
 				step=false;
 				jiange="按小时统计";
+				var temp=parseFloat(obj_data[0].Value);
+				if(isNaN(temp)){
+					obj_data[0].Value=-1;
+				}
 				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].Value);
 				maxval=minval=maxvalue;
 				hourvalue=obj_data[0].Value;
@@ -670,12 +674,15 @@
 				tr.appendChild(tdmintime);
 				var tbody = document.getElementById('historydata-tbody');
 				tbody.appendChild(tr);
-				pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
-				pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
-				pc.push([strtodatetime(strtime+":00"),minvalue , ps])
+				pa.push([strtodatetime(strtime+":00"), maxvalue, ps]);
+				pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps]);
+				pc.push([strtodatetime(strtime+":00"),minvalue , ps]);
 			}else{
 				step=false;
 				jiange="按日统计";
+				if(isNan(parseFloat(obj_data[0].Value))){
+					obj_data[0].Value=-1
+				}
 				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].Value);
 				maxval=minval=maxvalue;
 				hourvalue=obj_data[0].Value;
@@ -805,8 +812,13 @@
 			lengenddata.push("最大值");
 			lengenddata.push("平均值");
 			lengenddata.push("最小值");
-			maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
-			minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
+			if(maxval==minval){
+				maxval=maxval*1.5;
+				minval=minval/2;
+			}else{
+				maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
+				minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
+			}
 			drawchart();
 			function drawchart() {
 				//var myChart = echarts.init(document.getElementById('main'));
@@ -945,8 +957,10 @@
 			}
 			function jisuan(a1,a2){
 				for (var i = 1; i <obj_data.length; i++) {
+					if(isNaN(parseFloat(obj_data[i].Value))){
+						obj_data[i].Value=-1;
+					}
 					if(parseInt(obj_data[i].Time.substr(a1,a2))==temp){
-					
 						if(parseFloat(obj_data[i].Value)>maxvalue){
 							maxvalue=parseFloat(obj_data[i].Value);
 							maxtime=obj_data[i].Time;
@@ -1038,4 +1052,5 @@
 	标签标题名称（包括告警查询页面）
 	切换节点 页面图形、数据不能及时更新，二级菜单树总是有时自动选择某个菜单的问题，
 	0727关于图表和数据列表的标签名称（单一和复合）与告警信息查询页的同步问题，
+	0827 对返回数据中一些非数值类型的处理，如果为非数字则按-1来赋值。如果发生其他容错，则忽略。设置在最大值、最小值相同时的图形边界最大值和最小值设置处理；
 -->

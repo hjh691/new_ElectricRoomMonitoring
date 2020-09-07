@@ -393,6 +393,7 @@
 						if (errorThrown == "Unauthorized") {
 							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败',info_showtime);
 							showstateinfo(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
+							LoginOrder(sessionStorage.username,sessionStorage.password,1)
 						} else {
 							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败',info_showtime);
 							showstateinfo(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
@@ -430,7 +431,12 @@
 				showstateinfo("用户未登录，你无权完成此次操作");
 			}
 		}
-	//动态添加的元素注册添加点击事件
+	//动态添加的元素注册添加点击事件//工业建筑：楼板：1.5h 1.0h 0.75 0.5h/n 防火墙：3.0h;甲、乙类厂房，甲乙丙类仓库防火墙4.0h 承重外墙/柱：3.0 2.5h 2.0h 0.5h/n
+	//梁2.0h 1.5h 1.0h 0.5h 楼梯间以及前室的墙、电梯井的墙：2.0h 2.0h 1.5h 0.5h/n 疏散走道两侧墙:1.0h 1.0h 0.5h 0.25h 非承重外墙和房间隔墙：0.75h 0.5h 0.5h/n 0.25h
+	//屋顶承重构件：1.5h 1.0h 0,75h 0.5h/n 疏散楼梯：1.5h 1.0h 0.75h 可燃 吊顶：0.25h 0.25h/n 0.15/n
+	//民用建筑：楼板：1.5h 1.0h 0.5h 可燃。防火墙：3.0h  柱、承重外墙：3.0h 2.5h 2.0h 0.5h/n 梁：2.0h 1.5h 1.0h 0.5h/n 非承重墙：1.0h 1.0h 0.5h 可燃 
+	//楼梯间、前室、电梯井的墙：2.0h 2.0h 1.5h 0.5h/n 疏散走道两侧墙：1.0h 1.0h 0.5h/n 0.5h/n 疏散楼梯:1.5h 1.0h 0.5h 可燃 隔墙：0.75h 0.5h 0.5h/n 0.25h/n
+	//屋顶承重构件：1.5h 1.0h 0.5h 可燃 吊顶：0.25h 0.25h/n 0.15h/n 可燃。
 	$(document).on("click",".check_box",function (event){
 		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
 		//获取多选列表的所有选项内容。
