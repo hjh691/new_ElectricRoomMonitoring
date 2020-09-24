@@ -62,12 +62,10 @@
 					//document.getElementById("result").innerHTML = event.data;
 					i++
 					if(i%10==0){
-						//getrealdatabynodeid(-1);
 						refresh();
 					}
 				};
 			} else {
-				//document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
 				var t1 = window.setInterval("refresh();",10000);
 			}
 			});
@@ -84,8 +82,8 @@
 			if(binaries!=null){
 				for(var i=0;i<binaries.length;i++){
 					var op=document.createElement("option");
-					op.setAttribute("value",binaries[i].Id);
-					op.innerHTML=binaries[i].Name;
+					op.setAttribute("value",binaries[i].id);
+					op.innerHTML=binaries[i].name;
 					sel_sensor.appendChild(op);
 				}
 			}else{
@@ -105,8 +103,8 @@
 				GetBinary();
 				j++;
 			 },false);
-			 j=0;*/
-			//queryhistorydata();
+			 j=0;*/               //
+			//queryhistorydata(); 
 			GetBinary(BinariesId);
 		}
 	function setSelectOption_txlb(objid, sensor) {

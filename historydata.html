@@ -315,33 +315,40 @@
 			if(element_id>=0){
 				if(sensors)
 				for(var k=0;k<sensors.length;k++){
-					if(sensors[k].Value.Id==element_id){
-						scatalog=sensors[k].Value.Catalog;//读取对应的Catalog项
+					if(sensors[k].Value.id==element_id){
+						scatalog=sensors[k].Value.type;//catalog;//读取对应的Catalog项
 						break;
 					}
 				}
-				if((configs)&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
-					var s_des=configs[scatalog]//如果有，读取其所有配置项
-					for(var p in s_des){
-						var lab=document.createElement("label");
-						if(p==0){
-							dname=s_des[p].Name;
-							catalog=s_des[p].Catalog;
-							lab.className="btn btn-primary active"
-						}else{
-							lab.className="btn btn-primary";
+				if(configs){
+					for(var i=0;i<configs.length;i++){
+						if((configs[i].name==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
+							var s_des=configs[i].details;//如果有，读取其所有配置项
+							for(var p in s_des){
+								var lab=document.createElement("label");
+								if(p==0){
+									dname=s_des[p].name;//Name
+									catalog=s_des[p].folder;//Catalog; //not type
+									lab.className="btn btn-primary active"
+								}else{
+									lab.className="btn btn-primary";
+								}
+								/*var ainput=document.createElement("input");
+								ainput.className="catalog";
+								ainput.setAttribute("type","radio");
+								ainput.setAttribute("name","radios");
+								ainput.setAttribute("value",s_des[p].Name);
+								ainput.innerHTML=s_des[p].Desc;
+								lab.appendChild(ainput);*/
+								lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].name+'" >'+s_des[p].desc;
+								//lab.innerHTML=s_des[p].Desc;
+								document.getElementById("display_type").appendChild(lab);
+							}
+							break;
 						}
-						/*var ainput=document.createElement("input");
-						ainput.className="catalog";
-						ainput.setAttribute("type","radio");
-						ainput.setAttribute("name","radios");
-						ainput.setAttribute("value",s_des[p].Name);
-						ainput.innerHTML=s_des[p].Desc;
-						lab.appendChild(ainput);*/
-						lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
-						//lab.innerHTML=s_des[p].Desc;
-						document.getElementById("display_type").appendChild(lab);
 					}
+				}else{
+
 				}
 			}
 			$(".btn").click(function(){//用于动态加载的元素的点击响应。
@@ -448,7 +455,7 @@
 			if(sensors){//
 				for(var i=0;i<sensors.length;i++){
 					if(sensors[i].id==sessionStorage.SensorId){
-						type=sensors[i].Value.Catalog;
+						type=sensors[i].Value.type; //Catalog
 					}
 				}
 			}
@@ -536,11 +543,11 @@
 					var tdvalue3=document.createElement("td");
 					tdvalue3.className="value3";// setAttribute("class",'value3');
 					tdname.innerHTML=sessionStorage.SensorName;
-					tdvalue1.innerHTML = obj_data[i].Value;
+					tdvalue1.innerHTML = obj_data[i].value;
 					//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
-					tdtime.innerHTML = obj_data[i].Time; //jsonObject[i].color;
-					tdvalue2.innerHTML = obj_data[i].Value;
-					tdvalue3.innerHTML= obj_data[i].Value;
+					tdtime.innerHTML = obj_data[i].time; //jsonObject[i].color;
+					tdvalue2.innerHTML = obj_data[i].value;
+					tdvalue3.innerHTML= obj_data[i].value;
 					//tr.appendChild(tdname);
 					tr.appendChild(tdtime);
 					tr.appendChild(tdvalue1);
@@ -548,24 +555,24 @@
 					tr.appendChild(tdvalue3);
 					var tbody = document.getElementById('historydata-tbody');
 					tbody.appendChild(tr);
-					pa.push([strtodatetime(strtime+":00"), obj_data[i].Value, ps]);
-					pb.push([strtodatetime(strtime+":00"), obj_data[i].Value, ps]);
-					pc.push([strtodatetime(strtime+":00"),obj_data[i].Value , ps]);
+					pa.push([strtodatetime(strtime+":00"), obj_data[i].value, ps]);
+					pb.push([strtodatetime(strtime+":00"), obj_data[i].value, ps]);
+					pc.push([strtodatetime(strtime+":00"),obj_data[i].value , ps]);
 					ps++;
 				}
 				//ps=obj_data.length;
 			}else /**/if(Math.ceil(senconds/1000/60)<=1440){
 				step=false;
 				jiange="按小时统计";
-				var temp=parseFloat(obj_data[0].Value);
+				var temp=parseFloat(obj_data[0].value);
 				if(isNaN(temp)){
-					obj_data[0].Value=-1;
+					obj_data[0].value=-1;
 				}
-				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].Value);
+				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
 				maxval=minval=maxvalue;
-				hourvalue=obj_data[0].Value;
-				maxtime=mintime=obj_data[0].Time;
-				var strtime=obj_data[0].Time.substr(0,13);
+				hourvalue=obj_data[0].value;
+				maxtime=mintime=obj_data[0].time;
+				var strtime=obj_data[0].time.substr(0,13);
 				var temp=parseInt(strtime.substr(11));
 				jisuan(11,13);
 				/*for (var i = 1; i <obj_data.length; i++) {
@@ -680,14 +687,15 @@
 			}else{
 				step=false;
 				jiange="按日统计";
-				if(isNan(parseFloat(obj_data[0].Value))){
-					obj_data[0].Value=-1
+				var temp=parseFloat(obj_data[0].value);
+				if(isNaN(temp)){
+					obj_data[0].value=-1
 				}
-				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].Value);
+				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
 				maxval=minval=maxvalue;
-				hourvalue=obj_data[0].Value;
-				maxtime=mintime=obj_data[0].Time;
-				var strtime=obj_data[0].Time.substr(0,10);
+				hourvalue=obj_data[0].value;
+				maxtime=mintime=obj_data[0].time;
+				var strtime=obj_data[0].time.substr(0,10);
 				var temp=parseInt(strtime.substr(8));
 				jisuan(8,10);//参数是区日期时间格式串的起始和结束位置的由零算起的索引值。2020-04-16 14:50:10，
 				/*for (var i = 1; i <obj_data.length; i++) {
@@ -957,25 +965,25 @@
 			}
 			function jisuan(a1,a2){
 				for (var i = 1; i <obj_data.length; i++) {
-					if(isNaN(parseFloat(obj_data[i].Value))){
-						obj_data[i].Value=-1;
+					if(isNaN(parseFloat(obj_data[i].value))){
+						obj_data[i].value=-1;
 					}
-					if(parseInt(obj_data[i].Time.substr(a1,a2))==temp){
-						if(parseFloat(obj_data[i].Value)>maxvalue){
-							maxvalue=parseFloat(obj_data[i].Value);
-							maxtime=obj_data[i].Time;
+					if(parseInt(obj_data[i].time.substr(a1,a2))==temp){
+						if(parseFloat(obj_data[i].value)>maxvalue){
+							maxvalue=parseFloat(obj_data[i].value);
+							maxtime=obj_data[i].time;
 						}
-						if(parseFloat(obj_data[i].Value)<minvalue){
-							minvalue=parseFloat(obj_data[i].Value);
-							mintime=obj_data[i].Time;
+						if(parseFloat(obj_data[i].value)<minvalue){
+							minvalue=parseFloat(obj_data[i].value);
+							mintime=obj_data[i].time;
 						}
-						if(parseFloat(obj_data[i].Value)>maxval){
-							maxval=parseFloat(obj_data[i].Value);
+						/*if(parseFloat(obj_data[i].value)>maxval){
+							maxval=parseFloat(obj_data[i].value);
 						}
-						if(parseFloat(obj_data[i].Value)<minval){
-							minval=parseFloat(obj_data[i].Value);
-						}
-						avgvalue=(parseFloat(avgvalue)+parseFloat(obj_data[i].Value));
+						if(parseFloat(obj_data[i].value)<minval){
+							minval=parseFloat(obj_data[i].value);
+						}*/
+						avgvalue=(parseFloat(avgvalue)+parseFloat(obj_data[i].value));
 						ct++;
 					}else{
 						avgvalue=(avgvalue/ct);
@@ -1028,14 +1036,16 @@
 						pa.push([strtodatetime(strtime+":00"), maxvalue, ps]);
 						pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps]);
 						pc.push([strtodatetime(strtime+":00"),minvalue , ps]);
-						maxvalue=minvalue=avgvalue=parseFloat(obj_data[i].Value);
-						hourvalue=obj_data[i].Value;
-						maxtime=mintime=obj_data[i].Time;
-						strtime=obj_data[i].Time.substr(0,a2);
+						maxvalue=minvalue=avgvalue=parseFloat(obj_data[i].value);
+						hourvalue=obj_data[i].value;
+						maxtime=mintime=obj_data[i].time;
+						strtime=obj_data[i].time.substr(0,a2);
 						temp=parseInt(strtime.substr(a1));
 						ps++;
 						ct=1;
 					}
+					maxval=maxval>maxvalue?maxval:maxvalue;//20200910 append 
+					minval=minval<minvalue?minval:minvalue;
 				}
 			}
 		}//

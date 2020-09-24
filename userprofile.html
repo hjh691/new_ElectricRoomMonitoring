@@ -96,12 +96,12 @@
 		updatapcnav(20);
 		function infook(){
 			var userinfo=new Object();
-			userinfo.Id=document.getElementById("up-yhbh").value;
-			userinfo.Name=document.getElementById("up-yhmc").value;
-			userinfo.Roles=document.getElementById("up-yhqx").value;
-			userinfo.Tele=document.getElementById("up-tel").value;
-			userinfo.Email=document.getElementById("up-email").value;
-			userinfo.Display=document.getElementById("up-yhsm").value;
+			userinfo.id=document.getElementById("up-yhbh").value*1;
+			userinfo.name=document.getElementById("up-yhmc").value;
+			userinfo.roles=document.getElementById("up-yhqx").value;
+			userinfo.tele=document.getElementById("up-tel").value;
+			userinfo.email=document.getElementById("up-email").value;
+			userinfo.display=document.getElementById("up-yhsm").value;
 			if (confirm("你确定提交吗？")) {  
 				postuserinfo(userinfo);
 			}  
@@ -113,9 +113,10 @@
 		function postuserinfo(arruserinfo){
 			var url = jfjk_base_config.baseurl + "UpdateProfile";
 			url = encodeURI(url);
+			var stra=JSON.stringify(arruserinfo);
 			$.ajax({
 				beforeSend: function(request) {
-					request.setRequestHeader("_token", sessionStorage.token);
+					request.setRequestHeader("Authorization", sessionStorage.token);
 				},
 				url: url,
 				type: 'POST',
@@ -131,7 +132,7 @@
 					if (status == "success") {
 						if (data.Error == null) {
 							layer.alert("用户信息修改成功，请用新密码登录",info_showtime);//不添加时长参数不能自行关闭
-							showstateinfo("用户信息修改成功")；
+							showstateinfo("用户信息修改成功");
 							window.location.href = "javascript:void(0)";
 							return;
 						} else {

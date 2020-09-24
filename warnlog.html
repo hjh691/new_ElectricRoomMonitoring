@@ -84,7 +84,7 @@
 			</span>
 			<span><label>类别分组：</label></span>
 			<span id="display_type" class="btn-group" data-toggle="buttons">
-				<label class="btn btn-primary active" id="type_other"><input type="radio" class="catalog" name="options" value="">其他</label><!---->
+				<label class="btn btn-primary active" id="type_other"><input type="radio" class="catalog" name="options" value="">全部</label><!---->
 			</span>
 			<span><label>事件类型：</label></span>
 			<span class="dropdown" style="position: relative;">
@@ -208,8 +208,8 @@
 		var parentid=-100,parentname="";
 	var maps=[];
 	sessionStorage.pageindex = 5;
-	var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
-	var treenode=buildnode(treeseneors,0);
+	//var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+	//var treenode=buildnode(treeseneors,0);
 	//inittreeview(treenode);
 	document.getElementById("kssj_warning").value = sessionStorage.kssj;
 	document.getElementById("jssj_warning").value = sessionStorage.jssj;
@@ -431,84 +431,89 @@
 		}
 		if(asensorid>=0&&sensors){
 			for(var k=0;k<sensors.length;k++){
-				if(sensors[k].Value.Id==asensorid){
-					allcatalog=sensors[k].Value.Catalog;//读取对应的Catalog项
+				if(sensors[k].Value.id==asensorid){
+					allcatalog=sensors[k].Value.type;//Catalog;//读取对应的Catalog项
 					break;
 				}
 			}
-			if((configs)&&(configs.hasOwnProperty(allcatalog))){//检查配置中是否有catalog项
-				var s_des=configs[allcatalog]//如果有，读取其所有配置项
-				for(var p in s_des){
-					lab=document.createElement("label");
-					/*if(p==0){史薛贾王
-						name=s_des[p].Name;
-						catalog=s_des[p].Catalog;
-						lab.className="btn btn-primary active"
-					}else{}*/
-					
-					if(s_des[p].Name==sessionStorage.warnlogname){
-						lab.className="btn btn-primary active"
-						dname=sessionStorage.warnlogname;
-						catalog=getcatalog(dname);
-					}else{
-						lab.className="btn btn-primary";
-					}
-					lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" onclick=displaytype(this) >'+s_des[p].Desc;
-					var other=document.getElementById("type_other");
-					document.getElementById("display_type").insertBefore(lab,other);//类别
-					
-					if(s_des[p].Catalog=="event"&&s_des[p].Name=="event"){//告警、事件类型 
-						var config=new Object()
-						config=JSON.parse(s_des[p].Config);
-						if(config){
-							for(var c in config){
-								for(var i=0;i<temp.children.length;i++){//0721 edit 判断是否存在配置项，如果存在则跳过继续，不存在则添加;
-									if((temp.children[i].children[0].children[0].value==c)&&(temp.children[i].children[0].children[1].innerText==config[c])){
-										isfound=true;
-										break;
+			if((configs)){//检查配置中是否有catalog项
+				for(var i=0;i<configs.length;i++){
+					if((configs[i].name==allcatalog)){
+						var s_des=configs[i].details//如果有，读取其所有配置项
+						for(var p in s_des){
+							lab=document.createElement("label");
+							/*if(p==0){史薛贾王
+								name=s_des[p].Name;
+								catalog=s_des[p].Catalog;
+								lab.className="btn btn-primary active"
+							}else{}*/
+							
+							if(s_des[p].name==sessionStorage.warnlogname){
+								lab.className="btn btn-primary active"
+								dname=sessionStorage.warnlogname;
+								catalog=getcatalog(dname);
+							}else{
+								lab.className="btn btn-primary";
+							}
+							lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].name+'" onclick=displaytype(this) >'+s_des[p].desc;
+							var other=document.getElementById("type_other");
+							document.getElementById("display_type").insertBefore(lab,other);//类别
+							
+							if(s_des[p].folder=="event"&&s_des[p].name=="event"){//告警、事件类型 
+								var config=new Object()
+								config=(s_des[p].config);//JSON.parse
+								if(config){
+									for(var c in config){
+										for(var i=0;i<temp.children.length;i++){//0721 edit 判断是否存在配置项，如果存在则跳过继续，不存在则添加;
+											if((temp.children[i].children[0].children[0].value==c)&&(temp.children[i].children[0].children[1].innerText==config[c])){
+												isfound=true;
+												break;
+											}
+										}
+										if(isfound){
+											isfound=false;
+											for(var j=0;j<sel_str.length;j++){
+												if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
+													temp.children[i].children[0].checked=true;
+													break;
+												}
+											}
+											continue;
+										}//0721 edit
+										var li=document.createElement("li");
+										var lab=document.createElement("label");
+										//lab.setAttribute("style","margin-left:20px")
+										var ainput=document.createElement("input");
+										ainput.setAttribute("type","checkbox");
+										ainput.setAttribute("name","checkbox");
+										ainput.setAttribute("value",c);
+										ainput.className="check_box";
+										var spn=document.createElement("span");
+										spn.innerHTML=config[c];
+										lab.appendChild(ainput);
+										lab.appendChild(spn);
+										//lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
+										li.appendChild(lab);
+										temp.appendChild(li);
 									}
 								}
-								if(isfound){
-									isfound=false;
-									for(var j=0;j<sel_str.length;j++){
-										if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
-											temp.children[i].children[0].checked=true;
-											break;
-										}
+								for(var i=0;i<temp.children.length;i++){
+									if(temp.children[i].children[0].children[0].checked==true){
+										selectText=selectText+temp.children[i].children[0].children[1].innerHTML+";";
 									}
-									continue;
-								}//0721 edit
-								var li=document.createElement("li");
-								var lab=document.createElement("label");
-								//lab.setAttribute("style","margin-left:20px")
-								var ainput=document.createElement("input");
-								ainput.setAttribute("type","checkbox");
-								ainput.setAttribute("name","checkbox");
-								ainput.setAttribute("value",c);
-								ainput.className="check_box";
-								var spn=document.createElement("span");
-								spn.innerHTML=config[c];
-								lab.appendChild(ainput);
-								lab.appendChild(spn);
-								//lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
-								li.appendChild(lab);
-								temp.appendChild(li);
+								}
+								if(selectText.charAt(selectText.length - 1)==";"){
+									//去除末尾分号
+									selectText=selectText.substring(0,selectText.length - 1);
+									//selectVal=selectVal.substring(0,selectVal.length - 1);
+								}
+								if(selectText==""){
+									selectText="请选择告警事件，不选为全部告警"
+								}
 							}
-						}
-						for(var i=0;i<temp.children.length;i++){
-							if(temp.children[i].children[0].children[0].checked==true){
-								selectText=selectText+temp.children[i].children[0].children[1].innerHTML+";";
-							}
-						}
-						if(selectText.charAt(selectText.length - 1)==";"){
-							//去除末尾分号
-							selectText=selectText.substring(0,selectText.length - 1);
-							//selectVal=selectVal.substring(0,selectVal.length - 1);
-						}
-						if(selectText==""){
-							selectText="请选择告警事件，不选为全部告警"
 						}
 					}
+					break;
 				}
 			}else{
 				for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
@@ -618,7 +623,7 @@
 				tr3.appendChild(td_third);
 				$table.appendChild(tr3);*/
 				for (var i = 0; i <obj_data.length; i++) {
-					if(obj_data[i].Message){
+					if(obj_data[i].message){
 						var tr=document.createElement("tr");
 						tr.setAttribute("onclick","tableclick(this)");
 						var td_did=document.createElement("td");
@@ -627,13 +632,13 @@
 						var td_dname=document.createElement("td");
 						td_dname.innerHTML=sessionStorage.SensorName;//name;
 						var td_dtime=document.createElement("td");
-						var time=obj_data[i].Time;//(ttime-oneday*(2*i+5));
+						var time=obj_data[i].time;//(ttime-oneday*(2*i+5));
 						td_dtime.innerHTML=time;//dateToString(new Date(time),2);
 						var td_dadr=document.createElement("td");
-						var value=obj_data[i].Value;//(Math.random() * 10) - 0;
+						var value=obj_data[i].value;//(Math.random() * 10) - 0;
 						td_dadr.innerHTML=(value*1).toFixed(Number_of_decimal);
 						var td_dtype=document.createElement("td");
-						td_dtype.innerHTML=obj_data[i].Message;//"数值越限";/**/
+						td_dtype.innerHTML=obj_data[i].message;//"数值越限";/**/
 						tr.appendChild(td_did);
 						tr.appendChild(td_dname);
 						tr.appendChild(td_dtime);
@@ -644,11 +649,11 @@
 							count++;
 						}else
 						for(var j=0;j<type_str.length;j++){
-							if(type_str[j]!=""&&obj_data[i].Message.indexOf(type_str[j])!=-1){
+							if(type_str[j]!=""&&obj_data[i].message.indexOf(type_str[j])!=-1){
 								$table.insertBefore(tr,window.eval("tr"+(j+1)));
 								count_l[j]=count_l[j]+1;
 								count++;
-								break;
+								//break;
 							}/*else if(obj_data[i].Message==warning_sign_hight){
 								$table.insertBefore(tr,tr1);
 								count_h++;
@@ -813,7 +818,7 @@
 				}
 			}
 			var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));//20200403
-			$table.removeChild(dtr);//去掉最后一行（插入参考行）
+			$table.removeChild(dtr);//去掉最后一行（插入的参考行）
 		}else{
 			layer.alert("当前没有告警!",info_showtime);
 			showstateinfo("当前没有告警信息");

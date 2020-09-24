@@ -3,7 +3,7 @@
 var jfjk_base_config={};
 // 1. 后台服务器地址：用引号括起来默认："http://localhost";"http://192.168.1.10";"http://www.bdjka.com"等。
 
- jfjk_base_config.baseurl="http://192.168.10.250:20000/_api/";//调试时的局域网地址。
+ jfjk_base_config.baseurl="http://192.168.10.67:8020/";//调试时的局域网地址。
  //jfjk_base_config.baseurl="http://localhost:20000/_api";//与服务器同机时实际运行时采用此地址，如果不是部署在同一台电脑中，则为服务器的实际地址,下同
  jfjk_base_config.speechurl="http://192.168.10.250:20000/_speech/";//"http://192.168.10.67:88/_speech/";
  //服务器地址
@@ -68,6 +68,7 @@ if(localStorage.decimalNum)
     Number_of_decimal=localStorage.decimalNum*1;
 if(localStorage.delayTime)
     info_showtime=localStorage.delayTime*1;
+localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
  /**un business
   * 
   * 

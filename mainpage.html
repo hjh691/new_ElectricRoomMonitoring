@@ -147,7 +147,7 @@
 		sessionStorage.txid=-1;//20200228 初始化一次图形id
 		sessionStorage.nodetype=1;
 		//sessionStorage.framepage="";
-		//sessionStorage.name="";
+		//sessionStorage.selNodeId="";
 		var multiselect=false;
 		var tree2=false;
 		//最后一次触发节点Id
@@ -208,10 +208,14 @@
 						var stime=new Date(getCurrentDate(2).replace(/-/,"/")).getTime();
 						var etime=new Date(getCurrentDate(1).replace(/-/,"/")+" 18:00:00").getTime();
 						showstateinfo((etime-stime)/1000);
+						
 						if (i % 60 == 0) {
 							//sendbeat();
 							getrealdatabynodeid(-1);
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
+						}
+						if(i % 1800==0){
+							RefreshToken();
 						}
 					};
 				} else {
@@ -410,9 +414,9 @@
 				//	console.log("id = "+data.id);
 				//},
 				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
-					//var selectnode=$("#tree").treeview('getSelected');
-					//$("#tree").treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
-					sessionStorage.name = data.nodeId;
+					var selectnode=$("#tree").treeview('getSelected');
+					$("#tree").treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
+					sessionStorage.selNodeId = data.nodeId;
 					localStorage.setItem("sensor_tree",null);
 					sessionStorage.selectText="";
 					if(data.Catalog=="视频监控"){
@@ -588,17 +592,17 @@
 				*/
 			});
 			$("#tree").treeview('collapseAll');//关闭展开
-			if (sessionStorage.name == "" || sessionStorage.name == null) {
-				sessionStorage.name = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
+			if (sessionStorage.selNodeId == "" || sessionStorage.selNodeId == null) {
+				sessionStorage.selNodeId = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
 			}
-			//var firstNode = $("#tree").treeview('search', [sessionStorage.name + "", { ignoreCase: false, exactMatch: false }]);//得到第一个节点//在页面尺寸变化时保持选项不变
+			//var firstNode = $("#tree").treeview('search', [sessionStorage.selNodeId + "", { ignoreCase: false, exactMatch: false }]);//得到第一个节点//在页面尺寸变化时保持选项不变
 			//if (firstNode[0].id != sessionStorage.nodeid) {
 			//	nodeid = mnodes[0].id; sessionStorage.nodeid = firstNode[0].id;
 			//} else {
 			//保存nodeid，用于获取指定node的sensors。//lazy cozy crazy easy busy dizzy fantasy 
 			//	nodeid = firstNode[0].nodeId;
 			//}
-			var firstNode = $("#tree").treeview("getNode", sessionStorage.name);
+			var firstNode = $("#tree").treeview("getNode", sessionStorage.selNodeId);
 			$("#tree").treeview('expandNode', [firstNode, { levels: 2, silent: true }]);//展开第一个节点
 			for (var i = 0; i < firstNode.level; i++) {//逐级展开所选节点的父节点。
 				var p_node = getThe_level_nodeid(firstNode, i);
@@ -657,18 +661,18 @@
 					sessionStorage.pageindex=0;//显示信息总览页，有待协商
 					break;
 				case 0:
-				document.getElementById("li_realdata").style.display="none"
-				document.getElementById("li_historydata").style.display="none";
-				document.getElementById("li_warnlog").style.display="none"
-				document.getElementById("li_historychart").style.display="none";
-				document.getElementById("li_realstate").style.display="none";
-				document.getElementById("li_historystate").style.display="none";
-				document.getElementById("li_preview").style.display="inline";
-				if(sessionStorage.pageindex!=0&&sessionStorage.pageindex!=1&&sessionStorage.pageindex!=6&&sessionStorage.pageindex!=7
-					&&sessionStorage.pageindex!=100&&sessionStorage.pageindex!=200&&sessionStorage.pageindex!=300){
-					sessionStorage.pageindex=8;
-				}
-				break;
+					document.getElementById("li_realdata").style.display="none"
+					document.getElementById("li_historydata").style.display="none";
+					document.getElementById("li_warnlog").style.display="none"
+					document.getElementById("li_historychart").style.display="none";
+					document.getElementById("li_realstate").style.display="none";
+					document.getElementById("li_historystate").style.display="none";
+					document.getElementById("li_preview").style.display="inline";
+					if(sessionStorage.pageindex!=0&&sessionStorage.pageindex!=1&&sessionStorage.pageindex!=6&&sessionStorage.pageindex!=7
+						&&sessionStorage.pageindex!=100&&sessionStorage.pageindex!=200&&sessionStorage.pageindex!=300){
+						sessionStorage.pageindex=8;
+					}
+					break;
 				case 1:
 					document.getElementById("li_realdata").style.display="inline";
 					document.getElementById("li_realdata").style.disabled="inline";
@@ -760,12 +764,12 @@
 			return infotree;
 		}
 		function getNodes() {
-			var url = jfjk_base_config.baseurl + "/GetNodes";
+			var url = jfjk_base_config.baseurl + "GetNodes";
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
 				$.ajax({
 					beforeSend: function (request) {
-						request.setRequestHeader("_token", sessionStorage.token);
+						request.setRequestHeader("Authorization", sessionStorage.token);
 					},
 					url: url,
 					type: 'GET',
@@ -773,7 +777,11 @@
 					timeout: 10000,
 					error: function (jqXHR, textStatus, errorThrown) {
 						inittreeview();
-						layer.alert('获取系统目录列表数据失败',info_showtime);
+						if (errorThrown == "Unauthorized") {
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取系统目录列表数据失败',info_showtime);
+						} else {
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取实时数据操作失败',info_showtime);
+						}
 						showstateinfo("获取系统目录列表数据失败");
 						sessionStorage.errortime++;
 						if(sessionStorage.errortime<3){
@@ -790,11 +798,11 @@
 							if (data.Error == null) {
 								var obj_nodes = [];
 								//var result = data.Result;
-								if (!jQuery.isEmptyObject(data.Result)) {//用data.Result替换result.Nodes
-									obj_nodes = data.Result;
-								} else {
-									obj_nodes = null;
-								}
+								//if (!jQuery.isEmptyObject(data.Result)) {//用data.Result替换result.Nodes
+									obj_nodes = data;//.Result;
+								//} else {
+								//	obj_nodes = null;
+								//}
 								nodes = buildnode(obj_nodes, 0);
 								inittreeview(nodes);
 								GetSensors();//将标签挂接到节点树。
@@ -815,33 +823,34 @@
 		function buildnode(data, level) {
 			var tree = [];
 			if (data == null || typeof(data) == "undefined") {
-				for (i = 0; i < 3; i++) {
+				//*for (i = 0; i <1; i++) {
 					var anodes = new Object();
-					anodes.text = "变电站" + (2 - i);
+					anodes.text = "没有节点" ;
 					anodes.id = i;
-					anodes.Catalog="变电站";
+					anodes.Catalog="";
 					anodes.nodes = [];
 					anodes.icon = "url(res/lock.png)";
-					var node = '[{"text":"测温","id":' + ((i + 1) * 10) + ',"icon":"glyphicon glyphicon-user","Catalog":"测温"},{"text":"局部放电","id":' + ((i + 1) * 10 + 1) + '},{"text":"弧光保护","id":' + ((i + 1) * 10 + 2) + '},{"text":"视频监控","id":' + ((i + 1) * 10 + 3) + '},{"text":"机房监控","id":' + ((i + 1) * 10 + 4) + ',"nodes":[{"text":"门禁","id":543},{"text":"水浸","id":345}]}]';
-					anodes.nodes = (JSON.parse(node));
+					//var node = '[{"text":"测温","id":' + ((i + 1) * 10) + ',"icon":"glyphicon glyphicon-user","Catalog":"测温"},{"text":"局部放电","id":' + ((i + 1) * 10 + 1) + '},{"text":"弧光保护","id":' + ((i + 1) * 10 + 2) + '},{"text":"视频监控","id":' + ((i + 1) * 10 + 3) + '},{"text":"机房监控","id":' + ((i + 1) * 10 + 4) + ',"nodes":[{"text":"门禁","id":543},{"text":"水浸","id":345}]}]';
+					//anodes.nodes = (JSON.parse(node));
 					//var lnode=new Object();
 					tree.push(anodes);
-				}
+				//}*/
+				alert("该用户没有复合条件的节点数据,<br>请使用提取用户名称登录",info_showtime);
 			} else {
 				for (var j = 0; j < data.length; j++) {
 					var anodes = new Object();
-					anodes.text = data[j].Value.Name;
-					anodes.id = data[j].Value.Id;
-					anodes.ParentId=data[j].Value.ParentId;
-					anodes.Catalog = data[j].Value.Catalog;
-					anodes.Config = data[j].Value.Config;
-					anodes.Time = data[j].Value.Time;
+					anodes.text = data[j].value.name;
+					anodes.id = data[j].value.id;
+					anodes.ParentId=data[j].value.parentId;
+					anodes.Catalog = data[j].value.type;
+					anodes.Config = data[j].value.config;
+					anodes.Time = data[j].value.time;
 					anodes.level = level;
-					if (data[j].Value.hasOwnProperty("NodeId")) {
-						anodes.NodeId = data[j].Value.NodeId;
+					if (data[j].value.hasOwnProperty("nodeId")) {
+						anodes.NodeId = data[j].value.nodeId;
 					}
 					var icon = 'glyphicon glyphicon-user';
-					switch (data[j].Value.Name) {
+					switch (data[j].value.name) {
 						case "视频监控":
 							icon = "glyphicon glyphicon-facetime-video";//
 							break;
@@ -883,9 +892,9 @@
 					}
 					anodes.icon = icon;
 					//var chi_len = data[j].Children.length;
-					if (data[j].Children&&data[j].Children.length != 0) {
+					if (data[j].children&&data[j].children.length != 0) {
 						anodes.nodes = [];
-						anodes.nodes = buildnode(data[j].Children, level + 1)
+						anodes.nodes = buildnode(data[j].children, level + 1)
 					}
 					tree.push(anodes);
 				}
@@ -926,7 +935,7 @@
 		//获取指定节点的一次图形列表  //Fresh strawberries tastes good
 		function GetBinariesByType(atype, anodeid) {
 			//var url = jfjk_base_config.baseurl + "/GetBinariesByType?type=" + atype + "&typeid=" + anodeid;//GetSensorsByNode?nodeId
-			var url = jfjk_base_config.baseurl + "/GetNodeGraphicsByNode?nodeId="+ anodeid;
+			var url = jfjk_base_config.baseurl + "GetNodeGraphicsByNode?nodeId="+ anodeid;
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
 				//if((aparent==undefined)||(aparent!=1)){
@@ -934,7 +943,7 @@
 				//}
 				$.ajax({
 					beforeSend: function (request) {
-						request.setRequestHeader("_token", sessionStorage.token);
+						request.setRequestHeader("Authorization", sessionStorage.token);
 					},
 					url: url,
 					type: 'GET',
@@ -944,6 +953,11 @@
 						//inittreeview();
 						ajaxLoadingHidden();
 						//layer.alert('获取系统列表数据失败');
+						if (errorThrown == "Unauthorized") {
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取图形数据操作失败',info_showtime);
+						} else {
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取图形数据操作失败',info_showtime);
+						}
 						sessionStorage.errortime++;
 						//isfree="true";
 						if(sessionStorage.errortime>3){
@@ -961,9 +975,9 @@
 								var obj_Binaries = [];
 								//var result = data.Result;
 								//if (!jQuery.isEmptyObject(result.Binaries)) {//20200427 修改
-								if(!jQuery.isEmptyObject(data.Result)){
+								if(!jQuery.isEmptyObject(data)){//.Result
 									//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
-									obj_Binaries = data.Result;
+									obj_Binaries = data;//.Result;
 									//var binaries=buildbinaries(data.Result.Binaries);//(JSON.parse(localStorage.getItem("sensors")));
 									localStorage.setItem("binaries", JSON.stringify(obj_Binaries));
 									//localStorage.binaries=obj_Binaries;
@@ -1003,15 +1017,13 @@
 			if (sessionStorage.islogin == "true") {
 				$.ajax({
 					beforeSend: function (request) {
-						request.setRequestHeader("_token", sessionStorage.token);
+						request.setRequestHeader("Authorization", sessionStorage.token);
 					},
 					url: url,
 					type: 'GET',
 					dataType: 'json',
 					timeout: 10000,
 					error: function (jqXHR, textStatus, errorThrown) {
-						//inittreeview();
-						//layer.alert('获取系统列表数据失败');
 						sessionStorage.errortime++;
 						isfree = "true";
 						localStorage.setItem("sensors", null);
@@ -1022,6 +1034,11 @@
 						var treenode=buildnode_level2(treeseneors,0);
 						inittreeview_level2(treenode);
 						refreshiframe();
+						if (errorThrown == "Unauthorized") {
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取标签信息失败',info_showtime);
+						} else {
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取标签信息失败',info_showtime);
+						}
 						if(sessionStorage.errortime>3){
 							sessionStorage.islogin=false;
 							sessionStorage.errortime=0;
@@ -1032,27 +1049,34 @@
 						if (status == "success") {
 							sessionStorage.errortime = 0;
 							isfree = "true";
-							if (data.Error == null) {
+							//if (data.Error == null) {
 								var obj_sensors = [];
-								var result = data.Result;
-								if (!jQuery.isEmptyObject(result.Sensors)) {
-									localStorage.setItem("sensor_tree",JSON.stringify(data.Result.Sensors));
+								var result = data;//.Result;
+								if (!jQuery.isEmptyObject(result.sensors)) {
+									localStorage.setItem("sensor_tree",JSON.stringify(result.sensors));
 									var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
 									var treenode=buildnode_level2(treeseneors,0);
 									inittreeview_level2(treenode);
 									tree2=true;
 									maps = [];
-									var sensors = buildsensor(data.Result.Sensors);//(JSON.parse(localStorage.getItem("sensors")));
+									var sensors = buildsensor(result.sensors);//(JSON.parse(localStorage.getItem("sensors")));
 									localStorage.setItem("sensors", JSON.stringify(sensors));
 									//var sensors=(JSON.parse(localStorage.getItem("sensors")));
 									//var localsensors=buildsensor(data.Result.Sensors);
 									//updatainfotree(infotreedata, anodeid,sensors.length,sensors);
-									if(!jQuery.isEmptyObject(result.Configs)){//20200428 add
+									if(!jQuery.isEmptyObject(result.typeConfigs)){//20200428 add
 										var configs=new Object();
-										configs=data.Result.Configs;
+										configs=result.typeConfigs;
 										localStorage.setItem("Configs",JSON.stringify(configs));
 									}else{
 										localStorage.setItem("Configs",null);
+									}
+									if(!jQuery.isEmptyObject(result.configs)){//20200428 add
+										var config=new Object();
+										config=result.configs;
+										localStorage.setItem("Config",JSON.stringify(config));
+									}else{
+										localStorage.setItem("Config",null);
 									}
 									refreshiframe();
 								} else {
@@ -1062,9 +1086,9 @@
 									var treenode=buildnode_level2(treeseneors,0);
 									inittreeview_level2(treenode);
 									localStorage.setItem("sensors", null);
-									if(!jQuery.isEmptyObject(result.Configs)){//20200428 add
+									if(!jQuery.isEmptyObject(result.typeConfigs)){//20200428 add
 										var configs=new Object();
-										configs=data.Result.Configs;
+										configs=result.typeConfigs;
 										localStorage.setItem("Configs",JSON.stringify(configs));
 									}else{
 										localStorage.setItem("Configs",null);
@@ -1072,8 +1096,8 @@
 									sessionStorage.islogin = true;
 									refreshiframe();
 								}
-							} else {
-								tree2=false;
+							//} else {
+								/*tree2=false;
 								localStorage.setItem("sensor_tree",null);
 								var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
 								var treenode=buildnode_level2(treeseneors,0);
@@ -1084,8 +1108,8 @@
 								showstateinfo(data.Error);
 								showstateinfo(data.Error);
 								sessionStorage.islogin = true;
-								refreshiframe();
-							}
+								refreshiframe();*/
+							//}
 						}
 					}
 				});
@@ -1181,12 +1205,12 @@
 			sessionStorage.framepage=frame.src;
 		}
 		function GetSensors() {
-			var url = jfjk_base_config.baseurl + "/GetSensors";
+			var url = jfjk_base_config.baseurl + "GetSensors";
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
 				$.ajax({
 					beforeSend: function (request) {
-						request.setRequestHeader("_token", sessionStorage.token);
+						request.setRequestHeader("Authorization", sessionStorage.token);
 					},
 					url: url,
 					type: 'GET',
@@ -1197,6 +1221,11 @@
 						//layer.alert('获取系统列表数据失败');
 						sessionStorage.errortime++;
 						isfree = "true";
+						if (errorThrown == "Unauthorized") {
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取标签信息操作失败',info_showtime);
+						} else {
+							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取标签信息操作失败',info_showtime);
+						}
 						if(sessionStorage.errortime>3){
 							sessionStorage.islogin=false;
 							sessionStorage.errortime=0;
@@ -1207,34 +1236,41 @@
 						if (status == "success") {
 							sessionStorage.errortime = 0;
 							isfree = "true";
-							if (data.Error == null) {
+							//if (data.Error == null) {
 								var obj_sensors = [];
-								var result = data.Result;
-								if (!jQuery.isEmptyObject(result.Sensors)) {
+								var result = data;//.Result;
+								if (!jQuery.isEmptyObject(result.sensors)) {
 									//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
 									//sensorsnode=buildnode(data.Result.Sensors,0);//(JSON.parse(localStorage.getItem("sensors")));
 									maps=[];
 									allsensors = [];
-									buildsensor2(allsensors, data.Result.Sensors, "");
-									localStorage.setItem("allsensors",JSON.stringify(buildsensor(data.Result.Sensors)));
+									buildsensor2(allsensors, result.sensors, "");
+									localStorage.setItem("allsensors",JSON.stringify(buildsensor(result.sensors)));
 									//var sensors=(JSON.parse(localStorage.getItem("sensors")));
 									//var localsensors=buildsensor(data.Result.Sensors);
 									//updatanodetree();
-									if(!jQuery.isEmptyObject(result.Configs)){//20200428 add
+									if(!jQuery.isEmptyObject(result.typeConfigs)){//20200428 add
 										var configs=new Object();
-										configs=data.Result.Configs;
+										configs=result.typeConfigs;
 										localStorage.setItem("allConfigs",JSON.stringify(configs));
+									}
+									if(!jQuery.isEmptyObject(result.configs)){//20200428 add
+										var config=new Object();
+										config=result.configs;
+										localStorage.setItem("Config",JSON.stringify(config));
+									}else{
+										localStorage.setItem("Config",null);
 									}
 								} else {
 									allsensors = null;
 									//localStorage.setItem("allsensors",null);
 								}
-							} else {
-								localStorage.setItem("allsensors", null);
-								layer.alert(data.Error,info_showtime);
-								showstateinfo(data.Error);
-								sessionStorage.islogin = ture;
-							}
+							//} else {
+							//	localStorage.setItem("allsensors", null);
+							//	layer.alert(data.Error,info_showtime);
+							//	showstateinfo(data.Error);
+							//	sessionStorage.islogin = ture;
+							//}
 						}
 					}
 				});
@@ -1266,7 +1302,7 @@
 				var map1 = new Object();
 				for (var i = 0; i < asensors.length; i++) {
 					if ((asensors[i] != null)) {
-						var key = asensors[i].Catalog;//Group;
+						var key = asensors[i].type;//Group;
 						if (key == null || key == '' || key.trim() == '') {//空、空字符、空格都按空对待，提示未分组。
 							key = "未分组";
 						}
@@ -1286,9 +1322,9 @@
 					var anodes = new Object();
 					anodes.name = aSensors[j].text;
 					anodes.id = aSensors[j].id;
-					anodes.Catalog = aSensors[j].Catalog;
-					anodes.Config = aSensors[j].Config;
-					anodes.Time = aSensors[j].Time;
+					anodes.Catalog = aSensors[j].type;
+					anodes.Config = aSensors[j].config;
+					anodes.Time = aSensors[j].time;
 					maps.push(anodes);
 					if ((aSensors[j].hasOwnProperty("nodes") && (aSensors[j].nodes.length > 0))) {
 						buildsensor1(aSensors[j].nodes);
@@ -1312,20 +1348,20 @@
 			if ((typeof(aSensors) != "undefined") && (aSensors != null)) {
 				for (var i = 0; i < aSensors.length; i++) {
 					var s = aSensors[i];
-					if (s != null && !jQuery.isEmptyObject(s.Value)) {
-						var v = s.Value
+					if (s != null && !jQuery.isEmptyObject(s.value)) {
+						var v = s.value
 						var map = new Object();
-						map.id = v.Id;
+						map.id = v.id;
 						map.Value = v;
 						var key = $.trim(parentkey);
-						if (v.Address && $.trim(v.Address) != "") {
-							key = key ? key + "_" + v.Address : v.Address;
+						if (v.address && $.trim(v.address) != "") {
+							key = key ? key + "_" + v.address : v.address;
 						}
-						if ((!jQuery.isEmptyObject(s.Children))) {
-							buildsensor2(obj, s.Children, key);
+						if ((!jQuery.isEmptyObject(s.children))) {
+							buildsensor2(obj, s.children, key);
 						}
-						if (v.Catalog && $.trim(v.Catalog) != "") {
-							key = key ? key + "_" + v.Catalog : v.Catalog;
+						if (v.type && $.trim(v.type) != "") {
+							key = key ? key + "_" + v.type : v.type;
 						}
 						obj[key.toLowerCase()] = map;
 					}
@@ -1335,19 +1371,19 @@
 		function buildsensor(aSensors) {
 			if ((typeof(aSensors) != "undefined") && (aSensors != null)) {
 				for (var i = 0; i < aSensors.length; i++) {
-					if ((aSensors[i] != null) && (!jQuery.isEmptyObject(aSensors[i].Value))) {
+					if ((aSensors[i] != null) && (!jQuery.isEmptyObject(aSensors[i].value))) {
 						var map = new Object();
-						map.id = aSensors[i].Value.Id;
-						map.Value = aSensors[i].Value;
+						map.id = aSensors[i].value.id;
+						map.Value = aSensors[i].value;
 						maps.push(map);
 					}
-					if ((aSensors[i] != null) && (!jQuery.isEmptyObject(aSensors[i].Children))) {
-						buildsensor(aSensors[i].Children);
+					if ((aSensors[i] != null) && (!jQuery.isEmptyObject(aSensors[i].children))) {
+						buildsensor(aSensors[i].children);
 					}
 				}
 				var compare = function (obj1, obj2) {
-					var val1 = obj1.Value.Name;
-					var val2 = obj2.Value.Name;
+					var val1 = obj1.Value.name;
+					var val2 = obj2.Value.name;
 					if (val1 < val2) {
 						return -1;
 					} else if (val1 > val2) {
@@ -1393,8 +1429,6 @@
 					var obj = []
 					if(graphic){
 						graphic.forEach(function(g) {
-							//67: "{"_type":"Monitor","_shape":{"Binding":"23_009_tmp","StrokeColor":"#FFFFFFFF","StrokeThinkness":3.0,"StartPoint":"628,266","
-							//EndPoint":"673.672,281.24","Text":"--------","FontFamily":"Microsoft YaHei UI","FontStyle":"Normal","FontWeight":"Normal","FontStretch":"Normal","FontSize":12.0,"TextSpace":0.1,"Vertical":false},"_matrix":"1,0,0,1,-285,-54"}"
 							if ($.trim(g).length > 0) {
 								g = JSON.parse(g);
 								if (g && g._shape && g._shape.Binding && g._shape.Text) {
@@ -1402,8 +1436,8 @@
 										var sid=allsensors[g._shape.Binding].id;
 										if ((obj_realdata)&&(obj_realdata.hasOwnProperty(sid))) {
 											obj_data = (obj_realdata)[sid];////
-											g._shape.Text =(obj_data.Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
-											if(obj_data.Message){
+											g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
+											if(obj_data.message){
 												g._shape.IsError=true;
 											}else{
 												g._shape.isError=false;
@@ -1420,12 +1454,12 @@
 				var sensors=JSON.parse(localStorage.getItem("allsensors"));
 				for (var i = 0; i < sensors.length; i++) {
 					var sid = sensors[i].id + "";
-					var nid=sensors[i].Value.NodeId;
-					if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
-						parentid=sensors[i].Value.ParentId;
+					var nid=sensors[i].Value.nodeId;
+					if((sensors[i].Value.parentId!="-1")&&(sensors[i].Value.parentId!=parentid)){
+						parentid=sensors[i].Value.parentId;
 						for(var j=0;j<sensors.length;j++){
 							if(sensors[j].id==parentid){
-								parentname=sensors[j].Value.Name+"_";
+								parentname=sensors[j].Value.name+"_";
 								break;
 							}
 						}
@@ -1436,14 +1470,14 @@
 						var trs = tbody.getElementsByTagName("tr");
 						for(var k=0;k<rows.length;k++){
 							if(rows[k].cells[0].outerText==(sid+"")){
-								var msg = obj_data.Message;
+								var msg = obj_data.message;
 								if (msg == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == ""){
 									tbody.deleteRow(k);
 									break;
 								}else{
-									if(rows[k].cells[3].outerText==(obj_data.Value *1).toFixed(Number_of_decimal)){
-										rows[k].cells[2].innerHTML=obj_data.Time;
-										rows[k].cells[3].innerHTML=(obj_data.Value *1).toFixed(Number_of_decimal);
+									if(rows[k].cells[3].outerText==(obj_data.value *1).toFixed(Number_of_decimal)){
+										rows[k].cells[2].innerHTML=obj_data.time;
+										rows[k].cells[3].innerHTML=(obj_data.value *1).toFixed(Number_of_decimal);
 										break;
 									}else{
 										tbody.deleteRow(k);
@@ -1453,7 +1487,7 @@
 								} 
 							}
 						}
-						var msg = obj_data.Message;
+						var msg = obj_data.message;
 						if (msg == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == "") {
 							continue;
 						}
@@ -1479,12 +1513,12 @@
 			//refreshData();
 			function showgaojing(){
 				var alert_sys_name=getsysname(mnodes,nid);//站和子系统名称
-				alerttime = obj_data.Time.substr(11);
+				alerttime = obj_data.time.substr(11);
 				alertinfo = msg;
-				alertvalue = parseFloat(obj_data.Value).toFixed(Number_of_decimal);
-				sname =parentname+ sensors[i].Value.Name;
+				alertvalue = parseFloat(obj_data.value).toFixed(Number_of_decimal);
+				sname =parentname+ sensors[i].Value.name;
 				var xs = 1;//sensors[i].Value.Factor;  数据结构修改，value为已经乘过系数的数值，svalue为未乘以系统的原始值 
-				var type_td = getname(sensors[i].Value.Catalog);
+				var type_td = getname(sensors[i].Value.type);//Catalog
 				//添加数据列表项
 				var tr = document.createElement('tr');
 				tr.setAttribute("onlclick","tableclick(this)");
@@ -1502,8 +1536,8 @@
 				tdid.style.cssText="display:none";
 				tdtype.innerHTML = type_td;
 				tdtype.style.cssText = "display:none";
-				tdtime.innerHTML = obj_data.Time; //jsonObject[i].color;
-				tdvalue.innerHTML = (obj_data.Value * xs).toFixed(Number_of_decimal);
+				tdtime.innerHTML = obj_data.time; //jsonObject[i].color;
+				tdvalue.innerHTML = (obj_data.value * xs).toFixed(Number_of_decimal);
 				//tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);
 				//tdhistory.setAttribute('backgroundColor', '#ffffff');
 				//tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
@@ -1650,42 +1684,26 @@
 		function buildnode_level2(data, level) {
 			var tree = [];
             if (data == null || typeof(data) == "undefined") {
-                /*for (i = 0; i < 3; i++) {
-                    var anodes = new Object();
-                    anodes.text = "门禁" + (2 - i);
-                    anodes.id = i;
-                    anodes.Catalog="门禁";
-                    anodes.nodes = [];
-                    anodes.icon = "url(res/lock.png)";
-                    anodes.level=0;
-                    var node = '[{"text":"动环","id":' + ((i + 1) * 10) +',"icon":"glyphicon glyphicon-user","Catalog":"UPS","level":1},{"text":"水浸","id":' 
-                        + ((i + 1) * 10 + 1) + ',"level":1},{"text":"电源","id":' + ((i + 1) * 10 + 2) + ',"level":1},{"text":"环境","id":' + ((i + 1) * 10 + 3) 
-                        + ',"level":1},{"text":"灯光","id":' + ((i + 1) * 10 + 4) +
-                         ',"level":1,"nodes":[{"text":"门禁","id":543,"level":2},{"text":"水浸","id":345,"level":2}]}]';
-                    anodes.nodes = (JSON.parse(node));
-                    //var lnode=new Object();
-                    tree.push(anodes);
-                }*/
             }else
             for (var j = 0; j < data.length; j++) {
 					var anodes = new Object();
-					anodes.text = data[j].Value.Name;
-					anodes.id = data[j].Value.Id;
-                    anodes.ParentId=data[j].Value.ParentId;
-                    anodes.NodeId=data[j].Value.NodeId;//----
-                    anodes.Catalog = data[j].Value.Catalog;
-                    anodes.Address=data[j].Value.Address//----
-                    anodes.Group=data[j].Value.Group;//----
-                    anodes.Serial=data[j].Value.Serial;//----
-                    anodes.Location=data[j].Value.Location;//----
-					anodes.Config = data[j].Value.Config;
-					anodes.Time = data[j].Value.Time;
+					anodes.text = data[j].value.name;
+					anodes.id = data[j].value.id;
+                    anodes.ParentId=data[j].value.parentId;
+                    anodes.NodeId=data[j].value.nodeId;//----
+                    anodes.Catalog = data[j].value.type;//Catalog;
+                    anodes.Address=data[j].value.address//----
+                    //anodes.Group=data[j].value.group;//----
+                    anodes.Serial=data[j].value.serial;//----
+                    anodes.Location=data[j].value.location;//----
+					anodes.Config = data[j].value.config;
+					anodes.Time = data[j].value.time;
 					anodes.level = level;
-					if (data[j].Value.hasOwnProperty("NodeId")) {
-						anodes.NodeId = data[j].Value.NodeId;
+					if (data[j].value.hasOwnProperty("nodeId")) {
+						anodes.NodeId = data[j].value.nodeId;
 					}
 					var icon = 'glyphicon glyphicon-user';
-					switch (data[j].Value.Name) {
+					switch (data[j].value.name) {
 						case "机房监控":
 							icon = 'glyphicon glyphicon-inbox';//
 							break;
@@ -1712,9 +1730,9 @@
 					}
 					anodes.icon = icon;
 					//var chi_len = data[j].Children.length; 
-					if (data[j].Children&&data[j].Children.length != 0) {
+					if (data[j].children&&data[j].children.length != 0) {
 						anodes.nodes = [];
-						anodes.nodes = buildnode(data[j].Children, level + 1)
+						anodes.nodes = buildnode(data[j].children, level + 1)
 					}
 					tree.push(anodes);
 				}

@@ -135,27 +135,27 @@
 					//}
                     var td_did=document.createElement("td");
 					td_did.innerHTML=sensors[i].id;
-					if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
-						parentid=sensors[i].Value.ParentId;
+					if((sensors[i].Value.parentId!="-1")&&(sensors[i].Value.parentId!=parentid)){
+						parentid=sensors[i].Value.parentId;
 						for(var j=0;j<sensors.length;j++){
 							if(sensors[j].id==parentid){
-								parentname=sensors[j].Value.Name+"_";
+								parentname=sensors[j].Value.name+"_";
 								break;
 							}
 						}
 					}
                     var td_dname=document.createElement("td");
-                    td_dname.innerHTML=parentname+sensors[i].Value.Name;
+                    td_dname.innerHTML=parentname+sensors[i].Value.name;
                     var td_dtime=document.createElement("td");
-                    td_dtime.innerHTML=sensors[i].Value.Time;
+                    td_dtime.innerHTML=sensors[i].Value.time;
                     var td_dadr=document.createElement("td");
-                    td_dadr.innerHTML=sensors[i].Value.Address;
+                    td_dadr.innerHTML=sensors[i].Value.address;
                     var td_dtype=document.createElement("td");
-					td_dtype.innerHTML=getname(sensors[i].Value.Catalog);
+					td_dtype.innerHTML=getname(sensors[i].Value.type);
 					var td_group=document.createElement("td");
-					td_group.innerHTML=sensors[i].Value.Group;
+					td_group.innerHTML='';//sensors[i].Value.Group;
 					var td_serial= document.createElement("td");
-					td_serial.innerHTML=sensors[i].Value.Serial;
+					td_serial.innerHTML=sensors[i].Value.serial;
                     tr.appendChild(td_did);
                     tr.appendChild(td_dname);
                     tr.appendChild(td_dtime);

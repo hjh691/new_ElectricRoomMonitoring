@@ -71,7 +71,6 @@ function initpage() {
             }
         };
     } else {
-        //document.getElementById("result").innerHTML = "抱歉，你的浏览器不支持 Web Workers...";
         var t1 = window.setInterval("getrealdatabynodeid(-1);", 60000);
     }
     appendalldisplaytype("display_type");/**/
@@ -90,35 +89,37 @@ function appendalldisplaytype(){
         document.getElementById("display_type").removeChild(document.getElementById("display_type").childNodes[i-1]);
     allconfigs=JSON.parse(localStorage.Configs);
     if(allconfigs){//检查配置中是否有catalog项
-        for(var ac in allconfigs){//如果有，读取其所有配置项
-            var s_des=allconfigs[ac];
-            for(var p in s_des){
-                var lab=document.createElement("label");
-                lab.setAttribute("style","margin-left:20px")
-                var ainput=document.createElement("input");
-                ainput.setAttribute("type","checkbox");
-                ainput.setAttribute("name","options");
-                ainput.setAttribute("value",s_des[p].Name);
-                ainput.className="btn";
-                //ainput.setAttribute('onclick','checkboxclick("'+s_des[p].Name+'")')
-                ainput.innerText=s_des[p].Desc;
-                ainput.className="catalog";
-                var spn=document.createElement("span");
-                spn.innerHTML=s_des[p].Desc;
-                if(p==0){
-                    name=s_des[p].Name;
-                    catalog=s_des[p].Catalog;
-                    ainput.checked=true;
-                    lab.className=""
-                }else{
-                    lab.className="";
+        //for(var i=0;i<allconfigs.length;i++){
+            for(var ac in allconfigs){//如果有，读取其所有配置项
+                var s_des=allconfigs[ac].details;
+                for(var p in s_des){
+                    var lab=document.createElement("label");
+                    lab.setAttribute("style","margin-left:20px")
+                    var ainput=document.createElement("input");
+                    ainput.setAttribute("type","checkbox");
+                    ainput.setAttribute("name","options");
+                    ainput.setAttribute("value",s_des[p].name);
+                    ainput.className="btn";
+                    //ainput.setAttribute('onclick','checkboxclick("'+s_des[p].Name+'")')
+                    ainput.innerText=s_des[p].desc;
+                    ainput.className="catalog";
+                    var spn=document.createElement("span");
+                    spn.innerHTML=s_des[p].desc;
+                    if(p==0){
+                        name=s_des[p].name;
+                        catalog=s_des[p].type;//Catalog;
+                        ainput.checked=true;
+                        lab.className=""
+                    }else{
+                        lab.className="";
+                    }
+                    lab.appendChild(ainput);
+                    lab.appendChild(spn);
+                    //lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
+                    document.getElementById("display_type").appendChild(lab);
                 }
-                lab.appendChild(ainput);
-                lab.appendChild(spn);
-                //lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
-                document.getElementById("display_type").appendChild(lab);
             }
-        }
+        //}
         $.sortTable.sort('realtable',3);
     }
 }
@@ -225,7 +226,7 @@ function refresh_tabhead(sel){
         var tdname="";
         if(obj_realdata){
             for(var i=0;i<obj_realdata.length;i++){
-                if(tdname==obj_realdata[i].Name){
+                if(tdname==obj_realdata[i].name){
                     continue;
                 }else{
                     var thd=document.createElement("td");
@@ -236,7 +237,7 @@ function refresh_tabhead(sel){
                     thd.appendChild(aa);
                     thd.setAttribute("width","150px");
                     tdname=obj_realdata[i].name;
-                    thd.innerHTML=obj_realdata[i].Name;
+                    thd.innerHTML=obj_realdata[i].name;
                     th_tr.appendChild(thd);
                     count++
                 }
@@ -282,15 +283,26 @@ function getCatalog(index){
     refreshData();
     if(allconfigs){
         for(var q in allconfigs){
-            for(var l in allconfigs[q]){
-                if(allconfigs[q][l].Name==typename){
-                    if(allconfigs[q][l].Config){
-                        config=allconfigs[q][l].Config; //20200518 获取配置项参数
-                        chart_unit=config.Unit;
-                        chart_max=config.Top;
-                        chart_min=config.Bot;
-                    }
-                    return allconfigs[q][l].Catalog;
+            for(var l in allconfigs[q].details){
+                if(allconfigs[q].details[l].name==typename){
+                    var configname=allconfigs[q].name;
+                    var jo_config=JSON.parse(localStorage.Config);
+                    for(var c in jo_config)
+                        if(jo_config[c].name.toLowerCase()==configname.toLowerCase()){
+                            if(!jQuery.isEmptyObject(jo_config[c].details)){
+                                var d_config=jo_config[c].details; //20200918 获取配置项参数 由allconfigs（typeconfigs）的details里的name找到typename，然后取其
+                                for(var i in d_config){            //name,由name到configs里查找name，找到后从其details里提取config，然后从config中提取所需的配置数值。
+                                    if((d_config[i].name==typename)&&((d_config[i].config))){
+                                        chart_unit=d_config[i].config.Unit;
+                                        chart_max=d_config[i].config.Top;
+                                        chart_min=d_config[i].config.Bot;
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    return allconfigs[q].details[l].folder;
                 }
             }
         }
@@ -321,20 +333,20 @@ function decoderealdata(obj_realdata) {
         var title_len=tab_head.rows[0].cells.length;
         if(v_sel){//有显示控制选择项时进行如下操作.
             for (var j=0;j<obj_realdata.length;j++) {
-                dname=obj_realdata[j].Name;
-                grouptype=obj_realdata[j].Catalog;
-                if(obj_realdata[j].SensorId==sid){//是否为新的标签项,相同标签的数据默认连续
+                dname=obj_realdata[j].name;
+                grouptype=obj_realdata[j].type;//Catalog;
+                if(obj_realdata[j].sensorId==sid){//是否为新的标签项,相同标签的数据默认连续
                     isnew=false;
                 }else{ 
-                    sid=obj_realdata[j].SensorId;
+                    sid=obj_realdata[j].sensorId;
                     isnew=true;
                 }
                 if (sensors&&isnew)
                 for (var i = 0; i < sensors.length; i++) {//是否在需要显示的标签列表中
-                    if(obj_realdata[j].SensorId==sensors[i].id){
+                    if(obj_realdata[j].sensorId==sensors[i].id){
                         //sid = sensors[i].id + "";
-                        type_td = sensors[i].Value.Catalog;//
-                        sname = sensors[i].Value.Name;
+                        type_td = sensors[i].Value.type;//Catalog;//
+                        sname = sensors[i].Value.name;
                         isfind=true;
                         break;
                     }
@@ -353,22 +365,22 @@ function decoderealdata(obj_realdata) {
                         atr.cells[0].innerHTML=sid;//标签id
                         atr.cells[0].style.cssText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
-                        atr.cells[2].innerHTML=obj_data.Time;//第二列添加测量时间
+                        atr.cells[2].innerHTML=obj_data.time;//第二列添加测量时间
                         // 取过去24小时时间，用于调取历史记录
-                        var ckssj=new Date((obj_data.Time.replace(/-/g,"/")));//.replace(/-/g,"/"));
+                        var ckssj=new Date((obj_data.time.replace(/-/g,"/")));//.replace(/-/g,"/"));
                         var yesterdayend=ckssj-(1000*60*60*24);
                         //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
                         kssj = dateToString(new Date(yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-                        jssj = obj_data.Time;
+                        jssj = obj_data.time;
                         //atr.cells[tab_head.rows[0].cells.length-4].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
                         //atr.cells[tab_head.rows[0].cells.length-3].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
-                        atr.cells[tab_head.rows[0].cells.length-2].innerHTML=obj_data.Name;
+                        atr.cells[tab_head.rows[0].cells.length-2].innerHTML=obj_data.name;
                         atr.cells[tab_head.rows[0].cells.length-2].style.cssText="display:none";
-                        atr.cells[tab_head.rows[0].cells.length-1].innerHTML=obj_data.Message;
+                        atr.cells[tab_head.rows[0].cells.length-1].innerHTML=obj_data.message;
                         atr.cells[tab_head.rows[0].cells.length-1].style.cssText="display:none";
                         for(var k=0;k<v_sel.length;k++){//添加到指定列,不同配置项添加到不同的列，由显示控制项控制显示与否
                             if(v_sel[k].value==dname){
-                                atr.cells[k+3].innerHTML=(obj_data.Value*1).toFixed(Number_of_decimal);
+                                atr.cells[k+3].innerHTML=(obj_data.value*1).toFixed(Number_of_decimal);
                             }
                             if(!v_sel[k].checked){
                                 atr.cells[k+3].style.cssText = "display:none";
@@ -378,13 +390,13 @@ function decoderealdata(obj_realdata) {
                         pt++;
                     }else{//不是新标签
                         for(var l=0;l<$table.rows.length;l++){
-                            if($table.rows[l].cells[0].innerHTML==obj_data.SensorId){
+                            if($table.rows[l].cells[0].innerHTML==obj_data.sensorId){
                                 for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
                                     if(v_sel[k].value==dname){
-                                        $table.rows[l].cells[k+3].innerHTML=(obj_data.Value*1).toFixed(Number_of_decimal);
+                                        $table.rows[l].cells[k+3].innerHTML=(obj_data.value*1).toFixed(Number_of_decimal);
                                         isbreak=true;
-                                        if($table.rows[l].cells[1].innerHTML<obj_data.Time){//更新最新时间
-                                            $table.rows[l].cells[1].innerHTML=obj_data.Time;
+                                        if($table.rows[l].cells[1].innerHTML<obj_data.time){//更新最新时间
+                                            $table.rows[l].cells[1].innerHTML=obj_data.time;
                                         }
                                         break;
                                     }
@@ -441,10 +453,6 @@ function decoderealdata(obj_realdata) {
                     tr.appendChild(tdtype);//不显示
                     tr.appendChild(tdmessage);//不显示 告警信息
                     var cl = "#000";
-                    //隔行显示不同的颜色
-                    //if (pt % 2 == 1) {
-                    //	cl="#16b9c9";
-                    //}
                     if (mes) {
                         cl = "#f20";
                     }
@@ -460,20 +468,20 @@ function decoderealdata(obj_realdata) {
             }
         }else{//如果没有显示控制项（分组配置项） 20200509 编写，还需测试完善。
             for (var j=0;j<obj_realdata.length;j++) {
-                dname=obj_realdata[j].Name;
-                grouptype=obj_realdata[j].Catalog;
+                dname=obj_realdata[j].name;
+                grouptype=obj_realdata[j].type;//Catalog;
                 if(obj_realdata[j].SensorId==sid){//是否为新的标签项
                     isnew=false;
                 }else{ 
-                    sid=obj_realdata[j].SensorId;
+                    sid=obj_realdata[j].sensorId;
                     isnew=true;
                 }
                 if (sensors&&isnew)
                 for (var i = 0; i < sensors.length; i++) {//是否在需要显示的标签列表中
-                    if(obj_realdata[j].SensorId==sensors[i].id){
+                    if(obj_realdata[j].sensorId==sensors[i].id){
                         //sid = sensors[i].id + "";
-                        type_td = sensors[i].Value.Catalog;
-                        sname = sensors[i].Value.Name;
+                        type_td = sensors[i].Value.tyoe;//Catalog;
+                        sname = sensors[i].Value.name;
                         isfind=true;
                         break;
                     }
@@ -491,31 +499,31 @@ function decoderealdata(obj_realdata) {
                         atr.cells[0].innerHTML=sid;
                         atr.cells[0].style.cssText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
-                        atr.cells[2].innerHTML=obj_data.Time;//第二列添加测量时间
+                        atr.cells[2].innerHTML=obj_data.time;//第二列添加测量时间
                         // 取过去24小时时间，用于调取历史记录
                         var ckssj=new Date((obj_data.Time.replace(/-/g,"/")));//.replace(/-/g,"/"));
                         var yesterdayend=ckssj-(1000*60*60*24);
                         //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
                         kssj = dateToString(new Date(yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-                        jssj = obj_data.Time;
+                        jssj = obj_data.time;
                         //atr.cells[length-2].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
                         //atr.cells[length-1].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
                         for(var k in tab_head.rows[0].cells){//添加到指定列。
-                            if(obj_data.Name==tab_head.rows[0].cells[k].innerHTML){
-                                atr.cells[k].innerHTML=obj_data.Value.toFixed(Number_of_decimal);
+                            if(obj_data.name==tab_head.rows[0].cells[k].innerHTML){
+                                atr.cells[k].innerHTML=obj_data.value.toFixed(Number_of_decimal);
                                 break;
                             }
                         }
-                        atr.cells[tab_head.rows[0].cells.length-2].innerHTML=obj_data.Name;
+                        atr.cells[tab_head.rows[0].cells.length-2].innerHTML=obj_data.name;
                         atr.cells[tab_head.rows[0].cells.length-2].style.cssText="display:none";
-                        atr.cells[tab_head.rows[0].cells.length-1].innerHTML=obj_data.Message;
+                        atr.cells[tab_head.rows[0].cells.length-1].innerHTML=obj_data.message;
                         atr.cells[tab_head.rows[0].cells.length-1].style.cssText="display:none";
                         $table.appendChild(atr);
                     }else{//不是新标签
                         for(var l=0;l<$table.rows.length;l++){//定位到指定行
-                            if($table.rows[l].cells[0].innerHTML==obj_data.SensorId){
+                            if($table.rows[l].cells[0].innerHTML==obj_data.sensorId){
                                 for(var k in tab_head.rows[0].cells){
-                                    if(obj_data.Name==tab_head.rows[0].cells[k].innerHTML){//添加到指定列
+                                    if(obj_data.name==tab_head.rows[0].cells[k].innerHTML){//添加到指定列
                                         atr.cells[k].innerHTML=obj_data.Value.toFixed(Number_of_decimal);
                                         break;
                                     }

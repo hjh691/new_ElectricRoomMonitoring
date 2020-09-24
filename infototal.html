@@ -221,7 +221,7 @@
             var sensors=[];
                 for(var i=0;i<asensors.length;i++){
                     if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
-                        if(asensors[i].Value.NodeId==tnodeid){
+                        if(asensors[i].Value.nodeId==tnodeid){
                             sensors.push(asensors.slice(i,i+1));
                         }
                     }
@@ -269,7 +269,7 @@
 			var map1=new Object();
 			for(var i=0;i<asensors.length;i++){
 				if((asensors[i][0]!=null)&&(!jQuery.isEmptyObject(asensors[i][0].Value))){
-                    var key=asensors[i][0].Value.Catalog;//Group;
+                    var key=asensors[i][0].Value.type;//Group;
                     //if(key){
                         key=getname(key);
                     //}

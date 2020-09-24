@@ -453,60 +453,86 @@
             }
             sessionStorage.streamtype=document.getElementById("streamtype").value;
             if (typeof(sel_id) !=="undefined") {
-                sessionStorage.videourl = jfjk_base_config.baseurl + "GetFlv?sensorId="+sel_id+"&type=0&channel="+sessionStorage.streamtype+"&_token="+sessionStorage.token;
-                url = encodeURI(sessionStorage.videourl); //url='../mp401.flv';
-                //url=
-               /* if (typeof player !== "undefined"&&player!=null) {
-                    if (player != null) {
-                        player.unload();
-                        player.detachMediaElement();
-                        player.destroy();
-                        player = null;
-                    }
+                var url = jfjk_base_config.baseurl + "GetFlvToken?sensorId=" + sel_id+"&type=0&channel="+sessionStorage.streamtype;
+                url = encodeURI(url)
+                if (sessionStorage.islogin == "true") {
+                    var t=$.ajax({
+                        beforeSend: function(request) {
+                            request.setRequestHeader("Authorization", sessionStorage.token);
+                        },
+                        url: url,
+                        type: 'GET',
+                        dataType: 'json',
+                        timeout: 10000,
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            if (errorThrown == "Unauthorized") {
+                                layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取视频token失败',info_showtime);
+                            } else {
+                                layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取视频token失败',info_showtime);
+                            }
+                        },
+                        success: function(data, status) {
+                            var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
+                            if (status == "success")
+                            if (data){//.Error == null) {
+                                sessionStorage.videourl = jfjk_base_config.baseurl + "GetFlv?token="+data.token;//data即为获取到的token编码。
+                                url = encodeURI(sessionStorage.videourl); //url='../mp401.flv';
+                                 /*//url=
+                                if (typeof player !== "undefined"&&player!=null) {
+                                    if (player != null) {
+                                        player.unload();
+                                        player.detachMediaElement();
+                                        player.destroy();
+                                        player = null;
+                                    }
+                                }
+                                player = flvjs.createPlayer({
+                                    type: 'flv',
+                                    url: url,//'../mp401.flv',
+                                });
+                                player.attachMediaElement(element);
+                                player.load();
+                                player.play();/////////////////////*/
+                                dparray[a] = new DPlayer({
+                                    container: document.getElementById(va_id),
+                                    autoplay: true,//自动播放
+                                    theme: '#FADFA3',
+                                    loop: false,//循环播放
+                                    lang: 'zh-cn',
+                                    screenshot: true,//截屏
+                                    hotkey: false,
+                                    preload: 'auto',//预加载
+                                    //logo: 'logo.png',
+                                    volume: 0.7,
+                                    mutex: false, //多个视频同时播放
+                                    video: {
+                                        url: url,//
+                                        type: 'flv',
+                                    },
+                                });
+                                dp=dparray[a];
+                                dp.on('play',function(){
+                                    //console.log("预览成功");
+                                    showOPInfo("开始预览成功")
+                                });
+                                dp.on("error" ,function(){
+                                    showOPInfo("视频预览错误");//播放
+                                    if(!isstop){
+                                        clickStartRealPlay();//解决视频加载失败或播放过程中出现错误而预览停止的问题
+                                    }
+                                });
+                                dp.on("pause",function(){
+                                    showOPInfo("暂停预览");
+                                    if(!isstop)
+                                        dp.play();//解决浏览器最小化或被遮挡后视频预览将暂停的问题。
+                                });
+                                dp.on("screenshot",function(){
+                                    showOPInfo("截屏");
+                                });
+                            }
+                        }
+                    });
                 }
-                player = flvjs.createPlayer({
-                    type: 'flv',
-                    url: url,//'../mp401.flv',
-                });
-                player.attachMediaElement(element);
-                player.load();
-                player.play();*/
-                dparray[a] = new DPlayer({
-                    container: document.getElementById(va_id),
-                    autoplay: true,//自动播放
-                    theme: '#FADFA3',
-                    loop: false,//循环播放
-                    lang: 'zh-cn',
-                    screenshot: true,//截屏
-                    hotkey: false,
-                    preload: 'auto',//预加载
-                    //logo: 'logo.png',
-                    volume: 0.7,
-                    mutex: false, //多个视频同时播放
-                    video: {
-                        url: url,//
-                        type: 'flv',
-                    },
-                });
-                dp=dparray[a];
-                dp.on('play',function(){
-                    //console.log("预览成功");
-                    showOPInfo("开始预览成功")
-                });
-                dp.on("error" ,function(){
-                    showOPInfo("视频预览错误");//播放
-                    if(!isstop){
-                        clickStartRealPlay();//解决视频加载失败或播放过程中出现错误而预览停止的问题
-                    }
-                });
-                dp.on("pause",function(){
-                    showOPInfo("暂停预览");
-                    if(!isstop)
-                        dp.play();//解决浏览器最小化或被遮挡后视频预览将暂停的问题。
-                });
-                dp.on("screenshot",function(){
-                    showOPInfo("截屏");
-                });
                 isstop=false;
             }else{
                 layer.alert("请选择要预览的通道",info_showtime);
