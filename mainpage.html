@@ -763,7 +763,7 @@
 			}
 			return infotree;
 		}
-		function getNodes() {
+		/*function getNodes() {
 			var url = jfjk_base_config.baseurl + "GetNodes";
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
@@ -816,9 +816,18 @@
 				});
 			} else {
 				Alert("用户未登录，您无权完成此次操作", info_showtime);
-				show("用户未登录，你无权完成此次操作");
+				showstateinfo("用户未登录，你无权完成此次操作");
 				inittreeview(null, 0);
 			}
+		}*/
+		function getNodes(){
+			sendorder("GetNodes",function(getnodes){
+				if(getnodes!=null){
+					nodes=buildnode(getnodes,0);
+					inittreeview(nodes);
+					GetSensors();
+				}
+			});
 		}
 		function buildnode(data, level) {
 			var tree = [];
@@ -933,7 +942,7 @@
 			}
 		}
 		//获取指定节点的一次图形列表  //Fresh strawberries tastes good
-		function GetBinariesByType(atype, anodeid) {
+		/*function GetBinariesByType(atype, anodeid) {
 			//var url = jfjk_base_config.baseurl + "/GetBinariesByType?type=" + atype + "&typeid=" + anodeid;//GetSensorsByNode?nodeId
 			var url = jfjk_base_config.baseurl + "GetNodeGraphicsByNode?nodeId="+ anodeid;
 			url = encodeURI(url);
@@ -1009,8 +1018,19 @@
 			//if(atype==0){
 			//refreshiframe();
 			//}
+		}*/
+		function GetBinariesByType(atype, anodeid){
+			sendorder("GetNodeGraphicsByNode?nodeId="+ anodeid,function(data){
+				if(!jQuery.isEmptyObject(data)){//.Result
+					obj_Binaries = data;//.Result;
+					localStorage.setItem("binaries", JSON.stringify(obj_Binaries));
+				} else {
+					localStorage.setItem("binaries", null);
+					sessionStorage.islogin = true;
+				}
+			});
 		}
-		function GetSensorsByNode(anodeid) {
+		/*function GetSensorsByNode(anodeid) {
 			//sessionStorage.jfjk_nodeid=0;
 			var url = jfjk_base_config.baseurl + "GetSensorsByNode?nodeId=" + anodeid;
 			url = encodeURI(url);
@@ -1108,7 +1128,7 @@
 								showstateinfo(data.Error);
 								showstateinfo(data.Error);
 								sessionStorage.islogin = true;
-								refreshiframe();*/
+								refreshiframe();/* *****
 							//}
 						}
 					}
@@ -1120,6 +1140,51 @@
 				inittreeview(null, 0);
 			}
 			//refreshiframe();
+		}*/
+		function GetSensorsByNode(anodeid){//20200928 add
+			sendorder("GetSensorsByNode?nodeId="+ anodeid,function(result){
+				if (!jQuery.isEmptyObject(result.sensors)) {
+					localStorage.setItem("sensor_tree",JSON.stringify(result.sensors));
+					var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+					var treenode=buildnode_level2(treeseneors,0);
+					inittreeview_level2(treenode);
+					tree2=true;
+					maps = [];
+					var sensors = buildsensor(result.sensors);//(JSON.parse(localStorage.getItem("sensors")));
+					localStorage.setItem("sensors", JSON.stringify(sensors));
+					if(!jQuery.isEmptyObject(result.typeConfigs)){
+						var configs=new Object();
+						configs=result.typeConfigs;
+						localStorage.setItem("Configs",JSON.stringify(configs));
+					}else{
+						localStorage.setItem("Configs",null);
+					}
+					if(!jQuery.isEmptyObject(result.configs)){
+						var config=new Object();
+						config=result.configs;
+						localStorage.setItem("Config",JSON.stringify(config));
+					}else{
+						localStorage.setItem("Config",null);
+					}
+					
+				} else {
+					tree2=false;
+					localStorage.setItem("sensor_tree",null);
+					var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+					var treenode=buildnode_level2(treeseneors,0);
+					inittreeview_level2(treenode);
+					localStorage.setItem("sensors", null);
+					if(!jQuery.isEmptyObject(result.typeConfigs)){
+						var configs=new Object();
+						configs=result.typeConfigs;
+						localStorage.setItem("Configs",JSON.stringify(configs));
+					}else{
+						localStorage.setItem("Configs",null);
+					}
+					sessionStorage.islogin = true;
+				}
+				refreshiframe();
+			})
 		}
 		function refreshiframe() {
 			var frame=document.getElementById("iframe_main");
@@ -1204,7 +1269,7 @@
 			}
 			sessionStorage.framepage=frame.src;
 		}
-		function GetSensors() {
+		/*function GetSensors() {
 			var url = jfjk_base_config.baseurl + "GetSensors";
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
@@ -1279,6 +1344,36 @@
 				showstateinfo("用户未登录，您无权完成此次操作");
 				inittreeview(null, 0);
 			}
+		}*/
+		function GetSensors(){
+			sendorder("GetSensors",function(result){
+				if (!jQuery.isEmptyObject(result.sensors)) {
+					//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
+					//sensorsnode=buildnode(data.Result.Sensors,0);//(JSON.parse(localStorage.getItem("sensors")));
+					maps=[];
+					allsensors = [];
+					buildsensor2(allsensors, result.sensors, "");
+					localStorage.setItem("allsensors",JSON.stringify(buildsensor(result.sensors)));
+					//var sensors=(JSON.parse(localStorage.getItem("sensors")));
+					//var localsensors=buildsensor(data.Result.Sensors);
+					//updatanodetree();
+					if(!jQuery.isEmptyObject(result.typeConfigs)){//20200428 add
+						var configs=new Object();
+						configs=result.typeConfigs;
+						localStorage.setItem("allConfigs",JSON.stringify(configs));
+					}
+					if(!jQuery.isEmptyObject(result.configs)){//20200428 add
+						var config=new Object();
+						config=result.configs;
+						localStorage.setItem("Config",JSON.stringify(config));
+					}else{
+						localStorage.setItem("Config",null);
+					}
+				}else {
+					allsensors = null;
+					//localStorage.setItem("allsensors",null);
+				}
+			});
 		}
 		function updatainfotree(treedata, tnodeid, tsensors) {//,tvalue
 			if (treedata != null && treedata != undefined) {
@@ -1427,7 +1522,7 @@
 				if(sessionStorage.contents){
 					var graphic = JSON.parse(sessionStorage.contents);
 					var obj = []
-					if(graphic){
+					if(graphic){//刷新一次侧图形中的绑定数值
 						graphic.forEach(function(g) {
 							if ($.trim(g).length > 0) {
 								g = JSON.parse(g);
@@ -1634,7 +1729,7 @@
                     sessionStorage.jfjk_nodeid=data.nodeId;
 					sessionStorage.SensorId=data.id;
 					sessionStorage.sel_id=data.id;
-					$("#iframe_main")[0].contentWindow.appenddisplaytype(data.id);//0710
+					$("#iframe_main")[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
 					sessionStorage. SensorName=data.text;
 					var sensorarray=$("#tree_chi").treeview("getSelected");
 					if(sensorarray.length>6){
@@ -1832,4 +1927,11 @@
   底部添加信息提示内容。修改代码添加信息提示语句；解决窗口尺寸变化时页面内容不能自动显示的问题。更换导出到excel按钮图标。
   index.html 背景图按比例充满视窗口功能，调整历史数据、告警信息主显示区随视窗大小自动调节的共并进行调试。学习企业文化
   ie浏览器对时间格式的不兼容问题以及对表格样式的不兼容。Android 实时数据页面有其他页面跳转到实时数据页面系统退出的问题（存在为加载项）；数组字符串排序算法函数。
+
+  
+  一侧图形为空时图形不变化的问题（新改动的函数对错误提示判断项不全面）
+  添加sendpostorder函数用于HTTP的post通信功能。实时数据、用户信息修改、密码修改、获取图形列表、获取指定图形信息、获取历史数据等代码的优化。
+  设备分类名称由标签配置表类检索确定；
+  
+  登录过程的错误提示信息区分；数据交换过程中的不同错误提示信息的区分显示；系统设置的是否隐藏左侧菜单栏图标总是off问题（config文件初始化为false）；
 -->

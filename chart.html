@@ -364,7 +364,7 @@
 				showstateinfo("请选择要对比的测量点名称!");
 			}
 		}
-		function gethistorybysensors(arr_sensors,folder,aname,apt,atitle){
+		/*function gethistorybysensors(arr_sensors,folder,aname,apt,atitle){
 			var url = jfjk_base_config.baseurl + "GetHistoriesBySensors?folder="+folder+"&name="+aname+"&from="+kssj+"&to="+jssj;
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
@@ -423,6 +423,24 @@
 				Alert("用户未登录，您无权完成此次操作", info_showtime);
 				showstateinfo("用户未登录，你无权完成此次操作");
 			}
+		}*/
+		function gethistorybysensors(arr_sensors,folder,aname,apt,atitle){
+			sendpostorder("GetHistoriesBySensors?folder="+folder+"&name="+aname+"&from="+kssj+"&to="+jssj,arr_sensors,function(data){
+				if (data!= null) {//Result.
+					if (!jQuery.isEmptyObject(data.datas)) {
+						showstateinfo("");
+						decodedatas( data.datas,apt,atitle);
+					} else {
+						layer.alert("没有符合条件的 "+atitle+" 记录",info_showtime);
+						showstateinfo("没有符合条件的 "+atitle+" 记录");
+						decodedatas([],apt,atitle);//
+					}
+				} else {
+					decodedatas([],apt,atitle);//
+					layer.alert(data.Error,info_showtime);
+					showstateinfo(data.Error);
+				}
+			})
 		}
 	//动态添加的元素注册添加点击事件//
 	$(document).on("click",".check_box",function (event){

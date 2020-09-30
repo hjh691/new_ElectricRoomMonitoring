@@ -68,7 +68,7 @@ if(localStorage.decimalNum)
     Number_of_decimal=localStorage.decimalNum*1;
 if(localStorage.delayTime)
     info_showtime=localStorage.delayTime*1;
-localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
+//localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
  /**un business
   * 
   * 

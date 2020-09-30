@@ -759,7 +759,7 @@ function initseries(data) {
                     offsetCenter: [0, '80%'],
                     formatter: ' {value}  \n\n' + '时间: ' + happentime,//+chart_unit,
                     textStyle: {
-                        fontSize: 20,
+                        fontSize: 20, 
                         color: '#F8F43C'
                     }
                 },
