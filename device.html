@@ -2,11 +2,13 @@
 <html>
 <head>
 	<meta charset="utf-8"/>
-	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />-->
+	<link rel="stylesheet" href="css/bootstrap.min.css" /><!---->
 	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
 	<title>告警信息</title>
+	
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<script src="js/bootstrap.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
 	<!--<script  type="text/javascript" src="js/radialIndicator.js"></script>
@@ -52,6 +54,23 @@
 	span{
 		margin-left:10px;
 	}
+	.fudongdiv{/*浮动窗体样式，显示详细信息*/
+		position:absolute;
+		/*height:200px;*/
+		width:350px;
+		background: rgb(238, 196, 196);
+		color:#000;
+		font-size:16px;
+		/*text-align: center;*/
+		cursor: pointer;
+		border-radius: 5px;
+		vertical-align:center;
+		overflow:hidden;
+		left: 35%;
+		top:35%;
+		display: none;
+		min-height: 100px;
+	}
 	</style>
 </head>
 <body >
@@ -94,13 +113,49 @@
 				<th onclick="$.sortTable.sort('devicetable',2)">安装时间</th>
 				<th onclick="$.sortTable.sort('devicetable',3)">地址</th>
 				<th onclick="$.sortTable.sort('devicetable',4)">类型</th>
-				<th onclick="$.sortTable.sort('devicetable',5)">分组</th>
-				<th onclick="$.sortTable.sort('devicetable',6)">序列号</th>	
-			<!--<th style="width:18px;border:0px solid black;"></th>-->
+				<th onclick="$.sortTable.sort('devicetable',6)">配置信息</th>
+			<!--<th style="width:18px;border:0px solid black;"></th><th style="width:17px;display:none"></th>
+				<th onclick="$.sortTable.sort('devicetable',5)">分组</th>	-->
 			</tr>
-			<tbody id='device-tbody' style="width:1140px;height:550px; overflow:auto;">
+			<tbody id='device-tbody' style="width:990px;height:550px; overflow:auto;">
 			</tbody>
 		</table>
+		<div class="fudongdiv" id="config_fudong" onmousedown="hideself(this) ">
+            <div>
+				<!--<h3 id="bind_name">1#</h3><br>
+				<div id="details" align="center">
+					<div id="bind_addr">安装地址：1#房间</div>计时器缓慢进行
+					<div id="bind_view">绑定信息：3#视频</div>
+				</div>-->
+            </div>
+		</div>
+		<!-- <button class="btn btn-primary btn-lg " data-toggle="modal" data-target="#myModal">开始演示模态框</button>
+		模态框（Modal） -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog"><!---->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" 
+							data-dismiss="modal" aria-hidden="true">
+							&times;           </button>
+						<h4 class="modal-title" id="bind_name">
+							模态框（Modal）标题            </h4>
+					</div>
+					<div class="modal-body">
+						<!--<h3 id="bind_name">1#</h3><br> --> 
+						<div id="details" align="center">
+							<!--<div id="bind_addr">安装地址：1#房间</div>
+							<div id="bind_view">绑定信息：3#视频</div>-->
+						</div>       
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" 
+							data-dismiss="modal">关闭            </button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal -->
+		</div>
 	</div>
 	<div id="indicatorContainer"></div>
     </div>
@@ -114,7 +169,8 @@
         var begin;
         var end;
         var count;
-        var tbody;
+		var tbody;
+		var sensors;
 		initdevice();
 		/*$(function() {
 			$('table').tablesort().data('tablesort');
@@ -130,9 +186,6 @@
 				for(var i=0;i<sensors.length;i++){
 					var tr=document.createElement("tr");
 					tr.setAttribute("onclick","tableclick(this)");
-                    //if (i % 2 == 0) {
-					//	tr.setAttribute('style', "background-color:#16b9c9");
-					//}
                     var td_did=document.createElement("td");
 					td_did.innerHTML=sensors[i].id;
 					if((sensors[i].Value.parentId!="-1")&&(sensors[i].Value.parentId!=parentid)){
@@ -152,16 +205,20 @@
                     td_dadr.innerHTML=sensors[i].Value.address;
                     var td_dtype=document.createElement("td");
 					td_dtype.innerHTML=getname(sensors[i].Value.type);
-					var td_group=document.createElement("td");
-					td_group.innerHTML='';//sensors[i].Value.Group;
+					//var td_group=document.createElement("td");
+					//td_group.innerHTML='';//sensors[i].Value.Group;
 					var td_serial= document.createElement("td");
-					td_serial.innerHTML=sensors[i].Value.serial;
+					td_serial.setAttribute('onclick', 'detailofsensor(this,"' + sensors[i].id + '")');
+                    td_serial.setAttribute('backgroundColor', '#ffffff');
+					td_serial.innerHTML = '<button data-toggle="modal" data-target="#myModal">>>></button>';//采用模态对话框形式
+					//td_serial.innerHTML='<button herf="javascript:void(0)">>>></button';//浮动窗口模式
+					//td_serial.innerHTML=sensors[i].Value.serial;
                     tr.appendChild(td_did);
                     tr.appendChild(td_dname);
                     tr.appendChild(td_dtime);
                     tr.appendChild(td_dadr);
 					tr.appendChild(td_dtype);
-					tr.appendChild(td_group);
+					//tr.appendChild(td_group);
 					tr.appendChild(td_serial);
                     tbody.appendChild(tr);
 				}
@@ -177,6 +234,71 @@
 		function tableclick(tr){
 			$(tr).siblings().css("background","");
 			$(tr).css("background","#85e494");//区分选中行
+		}
+		function detailofsensor(obj,eid){
+			//浮动窗口模式时使用
+			//document.getElementById("config_fudong").style.left=(obj.parentElement.parentElement.offsetParent.offsetLeft+obj.parentElement.parentElement.offsetWidth)-100+"px";
+			//document.getElementById("config_fudong").style.top=(obj.offsetTop -obj.parentElement.parentElement.scrollTop+obj.offsetParent.offsetTop)+"px";
+			//document.getElementById("config_fudong").style.display="block";
+			//模态框和浮动窗口公用
+			document.getElementById("bind_name").innerHTML="设备编号: "+ eid;
+			var detail=document.getElementById("details");
+			while(detail.hasChildNodes()) //当div下还存在子节点时 循环继续 卤
+			{ 
+				detail.removeChild(detail.firstChild); 
+			} 
+			if(sensors!=null){
+				for(var i=0;i<sensors.length;i++){
+					if(sensors[i].id==eid){
+						var config=sensors[i].Value.config;
+						break;
+					}
+				}
+				if(!config){
+					var configs=JSON.parse(localStorage.Config);
+					var typeconfigs=JSON.parse(localStorage.Configs);
+					var details,typeconfig;
+					config='wctm'
+					for(var k=0;k<typeconfigs.length;k++){
+						if(typeconfigs[k].name.toLowerCase()==config.toLowerCase()){
+							typeconfig=typeconfigs[k].details;
+							break;
+						}
+					}
+					for(var j=0;j<configs.length;j++){
+						//TODO 获取对应的配置项；然后获取配置的具体数据
+						if(configs[j].name.toLowerCase()==config.toLowerCase()){
+							details=configs[j].details;
+							break;
+						}
+					}
+					var str="";
+					for(var i=0;i<details.length;i++){
+						var keys=Object.keys(details[i].config);
+						for(var k=0;k<typeconfig.length;k++){
+							if(details[i].name.toLowerCase()==typeconfig[k].name.toLowerCase()){
+								for(var j=0;j<keys.length;j++){
+									var row=document.createElement("tr");
+									//row.setAttribute("style","width:200px;text-align:left");
+									var lableft=document.createElement("td");
+									lableft.setAttribute("style","width:150px;text-align:left");
+									lableft.innerHTML=typeconfig[k].config[keys[j]]+" : ";
+									row.appendChild(lableft);
+									var labright=document.createElement("td");
+									labright.setAttribute("style","width:150px;text-align:left");
+									labright.innerHTML=details[i].config[keys[j]]+"";
+									row.appendChild(labright);
+									document.getElementById("details").appendChild(row);
+								}
+							}
+						}
+					}
+				}
+				//$("#mymodal").modal("show");
+			}
+		}
+		function hideself(obj){
+			obj.style.display="none"
 		}
         function display(){   
 			//var tbody=$("#device-tbody");
@@ -268,3 +390,6 @@
 	}
     </script>
 </body>
+<!--
+	数据列表标题和数据体由于滚动条的原因不能对齐的问题，根据标签配置显示详细配置信息。
+-->

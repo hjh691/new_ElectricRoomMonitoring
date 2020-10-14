@@ -130,10 +130,10 @@ function LoginOrder(name, ps,flag) {
 		timeout: 10000,
 		error: function(data, status) {
 			if (status == "timeout") {
-				layer.alert("登录超时",info_showtime);
+				Alert("登录超时",info_showtime);
 				showstateinfo("登录超时");
 			} else if(data.hasOwnProperty("responseJSON")&&data.responseJSON==undefined){//0928修改，判断是否由此项
-				layer.alert("服务器连接失败，请稍后重试",info_showtime);
+				Alert("服务器连接失败，请稍后重试",info_showtime);
 				showstateinfo("服务器连接失败，请稍后重试");
 			}else {
 				layer.alert(data.responseText,info_showtime);
@@ -155,11 +155,13 @@ function LoginOrder(name, ps,flag) {
 						window.location.href = "mainpage.html";
 					} else {
 						localStorage.errirtune = 0;
+						showusername();
+						showstateinfo(localStorage.username+"用户重新登录成功!");
 					}
 				} else {
 					sessionStorage.islogin = false;
 					window.location.href = "index.html";
-					layer.alert("登录失败，" + data.Error + ",请确认输入信息正确，注意字母的大小写。",info_showtime);
+					Alert("登录失败，" + data.Error + ",请确认输入信息正确，注意字母的大小写。",info_showtime);
 					showstateinfo("登录失败");
 				}
 			}
@@ -211,16 +213,16 @@ function LoginOrder(name, ps,flag) {
 //刷新安全证书 used by electricroommonitor
 function RefreshToken(){
 	sendorder("RefreshToken?refreshToken=" + sessionStorage.refreshtoken,function(data){
-		if (data.Error == null) {
+		//if (data.Error == null) {
 			//sessionStorage.userinfo=JSON.stringify(data);
 			sessionStorage.token ="Bearer "+ data.accessToken;
 			sessionStorage.refreshtoken=data.refreshToken;
 			//localStorage.username = name;
 			sessionStorage.islogin = true;
-		}
+		//}
 	});
 }
-//用户登录  used by electricroommonitor
+//用户登录  used by electricroommonitor 
 function login() {
 	var islogin = false;
 	var sname = document.getElementById('username').value;
@@ -384,15 +386,17 @@ function init_var(){
 }*/
 function GetUserProfile() {
 	sendorder("GetProfile",function(data){
-		localStorage.errirtune = 0;
-		sessionStorage.islogin = true;
-		document.getElementById("up-yhbh").value = data.id;
-		document.getElementById("up-yhmc").value = data.name;
-		document.getElementById("up-yhmm").value = ""; //data.Result.UserPass;
-		document.getElementById("up-yhqx").value = data.roles;//UserLimit;
-		document.getElementById("up-tel").value = data.tele;//UserLimit;
-		document.getElementById("up-email").value = data.email;//UserLimit;
-		document.getElementById("up-yhsm").value = data.display;//Description;
+		//localStorage.errirtune = 0;
+		//sessionStorage.islogin = true;
+		if(data){
+			document.getElementById("up-yhbh").value = data.id;
+			document.getElementById("up-yhmc").value = data.name;
+			document.getElementById("up-yhmm").value = ""; //data.Result.UserPass;
+			document.getElementById("up-yhqx").value = data.roles;//UserLimit;
+			document.getElementById("up-tel").value = data.tele;//UserLimit;
+			document.getElementById("up-email").value = data.email;//UserLimit;
+			document.getElementById("up-yhsm").value = data.display;//Description;
+		}
 	});
 }
 //初始化page1的时间空间 used by electricroommonitor
@@ -486,7 +490,7 @@ function inithistorystate(){
 	}
 }
 //网络连接心跳包  no used concent
-function sendbeat() {
+/*function sendbeat() {
 	sessionStorage.jssj=getCurrentDate(2);
 	var url = jfjk_base_config.baseurl; //+"GetGraphic?graphicId="+stationID;
 	url = encodeURI(url);
@@ -520,13 +524,32 @@ function sendbeat() {
 					}
 				}
 			}
-		});/**/
+		});
 	} else {
 		sessionStorage.islogin = false;
 		Alert("与服务器连接失败", info_showtime);
 		showstateinfo("与服务器连接失败");
 		localStorage.errirtune=0;
 		LoginOrder(localStorage.username, sessionStorage.password,1);
+	}
+}/**/
+//used by elec
+function sendbeat(){
+	i++;
+	var stime=new Date(getCurrentDate(2).replace(/-/,"/")).getTime();
+	var etime=new Date(getCurrentDate(1).replace(/-/,"/")+" 17:30:00").getTime();
+	showstateinfo((etime-stime)/1000);
+	
+	if ((i % 60 == 0)&&(sessionStorage.islogin=="true")) {
+		//sendbeat();
+		getrealdatabynodeid(-1);
+		//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
+	}
+	if((i % 300==0)&&(sessionStorage.islogin=="false")){
+		LoginOrder(localStorage.username,sessionStorage.password,1);
+	}
+	if((i % 900==0)&&(sessionStorage.islogin=="true")){
+		RefreshToken();
 	}
 }
 /*//index页面初始化
@@ -1210,8 +1233,8 @@ function Alert(str, delay) {
 	if (typeof(delay) === "number") window.setTimeout("closewin(" + ranid + ")", delay);
 }
 //将系统的信息告警提示框直接转换成自定义提示框  
-window.alert = Alert;
-layer.alert=Alert;
+//window.alert = Alert;
+//layer.alert=Alert;
 //关闭指定id的提示框（窗口）。used by electricroommonitor
 function closewin(ranid) {
 	if(document.getElementById("alertbgDiv"+ranid)){//2020324
@@ -1292,9 +1315,11 @@ function closewin(ranid) {
 	}
 }*/
 function gethistorydata(sensorid,folder,name,kssj, jssj,aparent) {
-	if (sessionStorage.islogin == "true") {
+	//if (sessionStorage.islogin == "true") {
 		if (typeof(sensorid) != "undefined") {
 			sendorder("GetHistoriesBySensor?sensorId=" + sensorid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
+				if(!data)
+					return;
 				if (!jQuery.isEmptyObject(data.datas)) {//Result.Datas
 					decodedatas( data.datas);//[sensorid]
 				} else {
@@ -1304,7 +1329,7 @@ function gethistorydata(sensorid,folder,name,kssj, jssj,aparent) {
 				}
 			});
 		}
-	}
+	//}
 }
 //告警信息查询按钮  used by electricroommonitor
 function querywarnlog(num) {
@@ -2209,8 +2234,8 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 	sessionStorage.pageindex = 1;
 	if (typeof(binariesid) != "undefined") {
 		sendorder("GetNodeGraphics?id="+binariesid,function(data){
-			localStorage.errirtune = 0;
-			sessionStorage.islogin = true;
+			//localStorage.errirtune = 0;
+			//sessionStorage.islogin = true;
 			if(jQuery.isEmptyObject(data)){//.Result
 				//if (data.Result.Value == null) {
 				layer.alert("没有符合条件的记录",info_showtime);
@@ -2837,9 +2862,10 @@ function initsysteminfo(){//used by electricroommonitor
 function getrealdatabynodeid(nodeid){
 	if (typeof(nodeid)!="undefined"&&nodeid!==null) {
 		sendorder("GetRealsNew?dataId=" + nodeid,function(data){
-			localStorage.errirtune = 0;
-			sessionStorage.islogin = true;
+			//localStorage.errirtune = 0;
+			//sessionStorage.islogin = true;
 			value0=0;value1=0;sname="";
+				if(!data){return;}
 				if (jQuery.isEmptyObject(data.datas)) {
 					localStorage.setItem("realdata",null);
 					decoderealdata();
@@ -3172,18 +3198,21 @@ function sendorder(order,callback){
 			error: function (jqXHR, textStatus, errorThrown) {
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
-					layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
+					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
 				} else if(jqXHR.hasOwnProperty("responseJSON")&&jqXHR.responseJSON==undefined){//0928修改，判断是否由此项
-					layer.alert("服务器连接失败，请稍后重试",info_showtime);
+					Alert("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试");
 				}else {
-					layer.alert( ' 数据获取失败',info_showtime);
+					Alert( ' 数据获取失败',info_showtime);
 				}
 				sessionStorage.errortime++;
 				if(sessionStorage.errortime<3){
 					//getNodes();//video.html mainpage.html function.js userprofile 
 				}else{
 					sessionStorage.islogin=false;
+					sessionStorage.errortime=0;
+					//localStorage.username="未登录";
+					showusername();
 				}
 				callback(null);
 			},
@@ -3234,18 +3263,21 @@ function sendpostorder(order,datas,callback){
 			error: function (jqXHR, textStatus, errorThrown) {
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
-					layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
+					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
 				}else if(jqXHR.hasOwnProperty("responseJSON")&&jqXHR.responseJSON==undefined){//0928修改，判断是否由此项
-					layer.alert("服务器连接失败，请稍后重试",info_showtime);
+					Alert("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试");
 				} else {
-					layer.alert(' 数据获取失败',info_showtime);
+					Alert(' 数据获取失败',info_showtime);
 				}
 				sessionStorage.errortime++;
 				if(sessionStorage.errortime<3){
 					//getNodes();//video.html mainpage.html function.js userprofile 
 				}else{
 					sessionStorage.islogin=false;
+					sessionStorage.errortime=0;
+					//localStorage.username="未登录";
+					showusername();
 				}
 				callback(null);
 			},
@@ -3276,4 +3308,8 @@ function sendpostorder(order,datas,callback){
 }
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
+ * 
+ * 连接异常时的报错信息，历史数据和实时数据没有返回值时的异常处理，对多次异常时的处理过程,主页面的登录用户名称和登录状态显示内容。
+ * 系统网络连接的状态改变；系统没5-10分钟进行连接判断或重连，没15-30分钟进行一次安全验证码刷新操作，
+ * 
  */

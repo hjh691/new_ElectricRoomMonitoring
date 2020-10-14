@@ -205,16 +205,19 @@
 					w.onmessage = function (event) {//接收定时器返回的消息
 						//document.getElementById("result").innerHTML = event.data;
 						i++;
-						var stime=new Date(getCurrentDate(2).replace(/-/,"/")).getTime();
-						var etime=new Date(getCurrentDate(1).replace(/-/,"/")+" 18:00:00").getTime();
-						showstateinfo((etime-stime)/1000);
+						//var stime=new Date(getCurrentDate(2).replace(/-/,"/")).getTime();
+						//var etime=new Date(getCurrentDate(1).replace(/-/,"/")+" 17:30:00").getTime();
+						//showstateinfo((etime-stime)/1000);
 						
-						if (i % 60 == 0) {
+						if ((i % 60 == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
 							//sendbeat();
 							getrealdatabynodeid(-1);
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}
-						if(i % 1800==0){
+						if((i % 300==0)&&(sessionStorage.islogin=="false")){
+							LoginOrder(localStorage.username,sessionStorage.password,1);
+						}
+						if((i % 900==0)&&(sessionStorage.islogin=="true")){
 							RefreshToken();
 						}
 					};
@@ -914,6 +917,8 @@
 			if(sessionStorage.pageindex!=200){
 				document.getElementById("iframe_main").src = "app_download.html"
 				sessionStorage.pageindex=200;
+			}else{
+				document.getElementById("iframe_main").src="app_download.html";
 			}
 		}
 		function showhelp() {
@@ -921,23 +926,31 @@
 				updatapcnav(13);
 				document.getElementById("iframe_main").src = "help.html"
 				sessionStorage.pageindex=100;
+			}else{
+				document.getElementById("iframe_main").src="help.html";
 			}
 		}
 		function showcontactus() {
 			if(sessionStorage.pageindex!=300){
 				document.getElementById("iframe_main").src = "ContactUs.html"
 				sessionStorage.pageindex=300;
+			}else{
+				document.getElementById("iframe_main").src="ContactUs.html";
 			}
 		}
 		function showdevice(){
 			if(sessionStorage.pageindex!=6){
 				document.getElementById("iframe_main").src="device.html";
 				sessionStorage.pageindex=6;
+			}else{
+				document.getElementById("iframe_main").src="device.html";
 			}
 		}
 		function showpreview(){
 			if(sessionStorage.pageindex!=8){
 				sessionStorage.pageindex=8;
+				document.getElementById("iframe_main").src="video.html";
+			}else{
 				document.getElementById("iframe_main").src="video.html";
 			}
 		}
@@ -1166,7 +1179,6 @@
 					}else{
 						localStorage.setItem("Config",null);
 					}
-					
 				} else {
 					tree2=false;
 					localStorage.setItem("sensor_tree",null);
@@ -1181,7 +1193,13 @@
 					}else{
 						localStorage.setItem("Configs",null);
 					}
-					sessionStorage.islogin = true;
+					if(!jQuery.isEmptyObject(result.configs)){
+						var config=new Object();
+						config=result.configs;
+						localStorage.setItem("Config",JSON.stringify(config));
+					}else{
+						localStorage.setItem("Config",null);
+					}
 				}
 				refreshiframe();
 			})
@@ -1934,4 +1952,6 @@
   设备分类名称由标签配置表类检索确定；
   
   登录过程的错误提示信息区分；数据交换过程中的不同错误提示信息的区分显示；系统设置的是否隐藏左侧菜单栏图标总是off问题（config文件初始化为false）；
+
+  设备列表、app下载、联系我们等页面点击“返回（history（-1））”按钮后再次点击对应的菜单项（页面不刷新的问题）；
 -->
