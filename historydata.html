@@ -123,10 +123,10 @@
 						<table id="historytable" width="900px"  >
 							<caption id="his_caption" style="text-align:center;font-size:18px;"></caption>
 							<tr >
-								<th>测量点名称</th>
-								<th id="cld_name" colspan="2"></th>
-								<th>统计时间</th>
-								<th id="tongji_time" colspan="2"></th>
+								<th>测量点名称:</th>
+								<td id="cld_name" colspan="2" style="text-align: left;border:0px solid black;"></td>
+								<th>统计时间:</th>
+								<td id="tongji_time" colspan="2" style="text-align: left;border:0px solid black;"></td>
 							</tr>
 							<tr style="background-color: rgb(255,255,255);">
 								<!--<th>测量点编号</th>点名称 display: none; style="display: none;" -->
@@ -317,12 +317,14 @@
 				for(var k=0;k<sensors.length;k++){
 					if(sensors[k].Value.id==element_id){
 						scatalog=sensors[k].Value.type;//catalog;//读取对应的Catalog项
+						if(scatalog)
+							scatalog=scatalog.toLowerCase();
 						break;
 					}
 				}
 				if(configs){
 					for(var i=0;i<configs.length;i++){
-						if((configs[i].name==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
+						if((configs[i].name.toLowerCase()==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
 							var s_des=configs[i].details;//如果有，读取其所有配置项
 							for(var p in s_des){
 								var lab=document.createElement("label");
@@ -570,7 +572,7 @@
 				}
 				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
 				maxval=minval=maxvalue;
-				hourvalue=obj_data[0].value;
+				hourvalue=parseFloat(obj_data[0].value);
 				maxtime=mintime=obj_data[0].time;
 				var strtime=obj_data[0].time.substr(0,13);
 				var temp=parseInt(strtime.substr(11));
@@ -669,7 +671,7 @@
 				}
 				//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 				tdtime.innerHTML = strtime+":00"; //jsonObject[i].color;
-				tdhourvalue.innerHTML=hourvalue;
+				tdhourvalue.innerHTML=hourvalue.toFixed(Number_of_decimal);
 				tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
 				//tr.appendChild(tdname);
 				tr.appendChild(tdtime);
@@ -693,7 +695,7 @@
 				}
 				maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
 				maxval=minval=maxvalue;
-				hourvalue=obj_data[0].value;
+				hourvalue=parseFloat(obj_data[0].value);
 				maxtime=mintime=obj_data[0].time;
 				var strtime=obj_data[0].time.substr(0,10);
 				var temp=parseInt(strtime.substr(8));
@@ -792,7 +794,7 @@
 				}
 				//tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
 				tdtime.innerHTML = strtime; //jsonObject[i].color;
-				tdhourvalue.innerHTML=hourvalue;
+				tdhourvalue.innerHTML=hourvalue.toFixed(Number_of_decimal);
 				tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
 				//tr.appendChild(tdname);
 				tr.appendChild(tdtime);
@@ -1021,7 +1023,7 @@
 						if(a1==11){
 							tdtime.innerHTML = strtime+":00";//
 						}else{tdtime.innerHTML = strtime;}//+":00" //jsonObject[i].color;
-						tdhourvalue.innerHTML=hourvalue;
+						tdhourvalue.innerHTML=hourvalue.toFixed(Number_of_decimal);
 						tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
 						//tr.appendChild(tdname);
 						tr.appendChild(tdtime);
@@ -1037,7 +1039,7 @@
 						pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps]);
 						pc.push([strtodatetime(strtime+":00"),minvalue , ps]);
 						maxvalue=minvalue=avgvalue=parseFloat(obj_data[i].value);
-						hourvalue=obj_data[i].value;
+						hourvalue=parseFloat(obj_data[i].value);
 						maxtime=mintime=obj_data[i].time;
 						strtime=obj_data[i].time.substr(0,a2);
 						temp=parseInt(strtime.substr(a1));

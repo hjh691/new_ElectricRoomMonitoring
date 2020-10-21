@@ -69,6 +69,24 @@
                 <li class="tab-label" id="room"><a href="#tab_hum" data-toggle="tab"><i class="glyphicon glyphicon-leaf"></i> 环境</a></li>
                 <li class="tab-label" id="air"><a href="#tab_air" data-toggle="tab"><i class="glyphicon glyphicon-random"></i> 空调</a></li>
             </ul>
+            <div class="modal fade" id="guard_modal" tabindex="-1" role="dialog" aria-labelledby="modal_name" aria-hidden="true" align="center">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-head">
+                                    <buton class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</buton>
+                                    <h4 class="modal-title" id="modal_name">N#门</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="modal_details" align="center" style="background-color: rgb(150, 148, 148); color:white">
+            
+                                    </div>
+                                </div>
+                                <div class="modal-foot">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             <div class="tab-content" id='tab-content'>
                 <div class="tab-pane fade in active" align="center" id="tab_guard">
                     <img src="res/menjin.png" style="width:300px;height:150px;">
@@ -90,7 +108,7 @@
                             <td class="normal" id="sf_door1">关门</td>
                             <td class="lable" id="info_door1">正常关闭</td>
                             <td class="set"><img src="res/close.png" style="height:30px;vertical-align: middle;" onclick="guard_changestated(this,'door1')" title="点击进行状态控制"/></td>
-                            <td class="set"><button onclick="guard_other(this,'door1')">更多<b class="caret"></b></button></td>
+                            <td class="set"><button data-toggle="modal" data-target="#guard_modal" onclick="guard_modal_details(this,'door1')">更多<b class="caret"></b></button></td>
                         </tr>
                         <tr class="bg">
                             <td class="lable" id="door2">door2</td>
@@ -98,7 +116,7 @@
                             <td class="unnormal" id="sf_door2">告警</td>
                             <td class="lable" id="info_door2">长时间打开</td>
                             <td class="set" ><img src="res/open.png" style="height:30px;vertical-align: middle;" onclick="guard_changestated(this,'door2')" title="点击进行状态控制"/></td>
-                            <td class="set"><button onclick="guard_other(this,'door2')">更多<b class="caret"></b></button></td>
+                            <td class="set"><button data-toggle="modal" data-target="#guard_modal" onclick="guard_modal_details(this,'door2')">更多<b class="caret"></b></button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -109,6 +127,7 @@
                             <li id="guard_bind_view">绑定信息：3#视频</li>
                         </div>
                     </div>
+                    
                     <script type="text/javascript" src="js/guard.js"></script>
                     <!-- instrument piece pice -->
                 </div>
@@ -133,7 +152,7 @@
                             <td class="normal" id="sf_light1">点亮</td>
                             <td class="lable" id="info_light1">正常照明</td>
                             <td class="set"><img src="res/d9.png" style="height:30px;vertical-align: middle;" onclick="light_changestated(this,'light1')"/></td>
-                            <td class="set"><button onclick="light_other(this,'light1')">更多<b class="caret"></b></button></td>
+                            <td class="set"><button data-toggle="modal" data-target="#guard_modal"  onclick="light_modal_details(this,'light1')">更多<b class="caret"></b></button></td>
                         </tr>
                         <tr class="bg">
                             <td class="lable" id="light2">l002</td>
@@ -141,7 +160,7 @@
                             <td class="unenabled" id="sf_light2">关闭</td>
                             <td class="lable" id="info_light2">正常关闭</td>
                             <td class="set" ><img src="res/d3.png" style="height:30px;vertical-align: middle;" onclick="light_changestated(this,'light2')"/></td>
-                            <td class="set"><button onclick="light_other(this,'light2')">更多<b class="caret"></b></button></td>
+                            <td class="set"><button data-toggle="modal" data-target="#guard_modal"  onclick="light_modal_details(this,'light2')">更多<b class="caret"></b></button></td>
                         </tr><!--  -->
                         </tbody>
                     </table>
@@ -177,7 +196,7 @@
                         <td class="normal" id="sf_smoking-01">正常</td>
                         <td class="set"><img id="smoking_01" src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking-01')"/></td>
                         <td class="set"><button id="btn_rese_1t" onclick="smoking_reset('smoking-01')">设置/复位</button></td>
-                        <td class="set"><button id="btn_other_1" onclick="smoking_other(this,'smoking-01')">更多<b class="caret"></b></button></td>
+                        <td class="set"><button data-toggle="modal" data-target="#guard_modal"  id="btn_other_1" onclick="smoken_modal_details(this,'smoking-01')">更多<b class="caret"></b></button></td>
                         </tr>
                         <tr class="bg">
                             <td class="lable">smoking0102</td>
@@ -185,7 +204,7 @@
                             <td class="unnormal" id="sf_smoking0102">告警</td>
                             <td class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking0102')"/></td>
                             <td class="set"><button id="btn_reset_2"  onclick="smoking_reset('smoking0102')">设置/复位</button></td>
-                            <td class="set"><button id="btn_other_2" onclick="smoking_other(this,'smoking0102')">更多<b class="caret"></b></button></td>
+                            <td class="set"><button data-toggle="modal" data-target="#guard_modal"  id="btn_other_2" onclick="smoken_modal_details(this,'smoking0102')">更多<b class="caret"></b></button></td>
                         </tr>
                         </tbody>
                     </table>
@@ -220,7 +239,7 @@
                         <td class="normal" id="sf_flooding-01">正常</td>
                         <td class="set"><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="flooding_changestated(this,'flooding-01')"/></td>
                         <td class="set"><button onclick="flooding_reset('flooding-01')">设置/复位</button></td>
-                        <td class="set"><button onclick="flooding_other(this,'flooding-01')">更多<b class="caret"></b></button></td>
+                        <td class="set"><button data-toggle="modal" data-target="#guard_modal" onclick="flooding_modal_details(this,'flooding-01')">更多<b class="caret"></b></button></td>
                         </tr>
                         <tr class="bg">
                             <td class="lable" id="bh_2">flooding-01-02</td>
@@ -228,7 +247,7 @@
                             <td class="unnormal" id="sf_flooding-01-02">告警</td>
                             <td class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="flooding_changestated(this,'flooding-01-02')"/></td>
                             <td class="set"><button onclick="flooding_reset('flooding-01-02')">设置/复位</button></td>
-                            <td class="set"><button onclick="flooding_other(this,'flooding-01-02')">更多<b class="caret"></b></button></td>
+                            <td class="set"><button data-toggle="modal" data-target="#guard_modal" onclick="flooding_modal_details(this,'flooding-01-02')">更多<b class="caret"></b></button></td>
                         </tr>
                         </tbody>
                     </table>

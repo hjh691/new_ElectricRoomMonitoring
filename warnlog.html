@@ -138,10 +138,10 @@
 			<table id="warnlogtable" style="margin: auto;">
 				<caption id="war_caption" style="text-align: center;font-size:22px;color:black;">告警信息统计表</caption>
 				<tr>
-					<th>开始时间</th>
-					<th id="tj_kssj"></th>
-					<th>终止时间</th>
-					<th id="tj_zzsj"></th>
+					<th>开始时间:</th>
+					<td id="tj_kssj" style="text-align: left;border:0px solid black;"></td>
+					<th>终止时间:</th>
+					<td id="tj_zzsj" style="text-align: left;border:0px solid black;"></td>
 				</tr>
 				<tr style="display:none;">
 					<th>越上限</th>
@@ -433,12 +433,14 @@
 			for(var k=0;k<sensors.length;k++){
 				if(sensors[k].Value.id==asensorid){
 					allcatalog=sensors[k].Value.type;//Catalog;//读取对应的Catalog项
+					if(allcatalog)
+					allcatalog=allcatalog.toLowerCase();
 					break;
 				}
 			}
 			if((configs)){//检查配置中是否有catalog项
 				for(var i=0;i<configs.length;i++){
-					if((configs[i].name==allcatalog)){
+					if((configs[i].name.toLowerCase()==allcatalog)){
 						var s_des=configs[i].details//如果有，读取其所有配置项
 						for(var p in s_des){
 							lab=document.createElement("label");
@@ -820,7 +822,7 @@
 			var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));//20200403
 			$table.removeChild(dtr);//去掉最后一行（插入的参考行）
 		}else{
-			layer.alert("当前没有告警!",info_showtime);
+			Alert("当前没有告警!",info_showtime);
 			showstateinfo("当前没有告警信息");
 		}
 		document.getElementById("count_first").innerHTML=count_l[0];
@@ -987,5 +989,5 @@
 	添加标签目录树，标签目录树的根据节点自动更新，配置项根据标签自动更新，时段与查询的对应，动态按钮组的响应过程，导出到excel按钮位置
 	点击时段选择跳出提示框，更换标签时，告警事件选项重复加载，采用二次树形菜单来选择标签项，标签选择项调整，原隐藏。
 	按钮样式（选中、颜色）选项记忆和获取共以及显示内容。下载页结构调整，去除多余关联文件。按钮组样式
-
+	1019 类型名称的忽略大小写，
 -->

@@ -85,6 +85,15 @@
             </div>
             <div class="row">
                 <div class="col-xs-4 col-md-3 system-set">
+                    <label>登录页面背景图片</label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4 " >
+                    <input type="file" id="file" onchange="previewHandle(this)" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;"/> 
+                    <input type="text" style="width:75%;" id="bg_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="selectFile()">修改保存</button>
+                </div>
+            </div><!---->
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set">
                     <label>小数保留位数</label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
@@ -99,6 +108,7 @@
                     <input type="text" style="width:75%;" id="delaytime" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="save(4)">保存更改</button>
                 </div>
             </div>
+            
             <div class="row">
                 <div class="col-xs-4 col-md-3 system-set">
                     <label>左侧菜单自动隐藏</label>
@@ -143,6 +153,10 @@
                     $("#switch01")[0].src="res/on.png"
                 else
                     $("#switch01")[0].src="res/off.png";
+                if(localStorage.backgroudfilename)
+                    $("#bg_src").val(localStorage.backgroudfilename)
+                else
+                    $("#bg_src").val(jfjk_base_config.bg_src);
             }
             function save(oder){
                 switch(oder*1){
@@ -178,11 +192,56 @@
                             swithbutton[0].src="res/on.png";
                             localStorage.showLeftMenu=true;
                             parent.window.showLeftMenu(true);
-                            
                         }
+                        break;
+                    case 6:
+                        //localStorage.backfile=$('#bg_src').val();
                         break;
                 }
             }
+            function selectFile(){  
+                //触发 文件选择的click事件  
+                $("#file").trigger("click");  
+  
+            //其他code如 alert($("#file").attr("value"))  
+            }  
+              
+            /* 获取 文件的路径 ，用于测试*/  
+            function previewHandle(fileDOM) {
+            var file = fileDOM.files[0], // 获取文件
+                imageType = /^image\//,
+                reader = '';
+        
+            // 文件是否为图片
+            if (!imageType.test(file.type)) {
+                alert("请选择图片！");
+                return;
+            }
+            // 判断是否支持FileReader    
+            if (window.FileReader) {
+                reader = new FileReader();
+            }
+            // IE9及以下不支持FileReader
+            else {
+                alert("您的浏览器不支持图片预览功能，如需该功能请升级您的浏览器！");
+                return;
+            }
+            if(file.size>2000000){
+                alert("文件太大，请选择不答应2M的图形文件！");
+                return;
+            }
+            // 读取完成    
+            reader.onload = function (event) {
+                // 获取图片DOM
+                var img = document.getElementById("preview-img");
+                // 图片路径设置为读取的图片    
+                localStorage.backfile = event.target.result;
+                $('#bg_src').val(file.name);
+                localStorage.backgroudfilename=file.name;
+
+            };
+            reader.readAsDataURL(file);
+        }
         </script>
     </body>
 </html>
@@ -190,4 +249,5 @@
     编辑页面布局，添加显示参数的自定义配置选项（系统软件名称，公司名称，公司网站、小数位数、信息框默认显示时长等），系统信息导航栏的状态指示刷新丢失问题。
     输入框限制输入数字的方法 oninput = "value=value.replace(/[^\d]/g,'')" 
     左侧菜单隐藏控制,页面初始化（状态，内容等）
+    添加登录页面背景图片可以使用电脑本地文件进行设置和修改。实现读取本地图片文件作为资源的方式方法
 -->

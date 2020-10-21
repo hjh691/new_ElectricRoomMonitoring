@@ -68,7 +68,12 @@ function createline(id,name,state){
     ediv.appendChild(epset);
     var epother=document.createElement("td");
     epother.className="set";
-    epother.innerHTML="<button onclick=\"flooding_other(this,'"+id+"')\">更多<b class='caret'></b></button>";
+    //epother.innerHTML="<button onclick=\"flooding_other(this,'"+id+"')\">更多<b class='caret'></b></button>";
+    
+
+    epother.setAttribute('onclick', 'flooding_modal_details(this,"' + id + '")');
+    //epother.setAttribute('backgroundColor', '#ffffff');
+    epother.innerHTML = '<button data-toggle="modal" data-target="#guard_modal">更多<b class="caret"></b></button>';//采用模态对话框形式
     ediv.appendChild(epother);
     return ediv;
 }
@@ -80,6 +85,27 @@ function flooding_other(obj,eid){
     document.getElementById("flooding_bind_name").innerHTML= document.getElementById("name_"+eid).innerHTML;
     document.getElementById("flooding_bind_addr").innerHTML="1#控制柜";//运行时为实际安装地址
     document.getElementById("flooding_bind_view").innerHTML="abcefj";//详细信息
+}
+function flooding_modal_details(obj,eid){
+    document.getElementById("modal_name").innerHTML= document.getElementById("name_"+eid).innerHTML;
+    var detail=document.getElementById("modal_details");
+    while(detail.hasChildNodes()) //当div下还存在子节点时 循环继续 卤
+    { 
+        detail.removeChild(detail.firstChild); 
+    }
+    for(var j=0;j<5;j++){
+        var row=document.createElement("tr");
+        //row.setAttribute("style","width:200px;text-align:left");
+        var lableft=document.createElement("td");
+        lableft.setAttribute("style","width:150px;text-align:left");
+        lableft.innerHTML=[j]+" : ";
+        row.appendChild(lableft);
+        var labright=document.createElement("td");
+        labright.setAttribute("style","width:150px;text-align:left");
+        labright.innerHTML=[j]+"f";
+        row.appendChild(labright);
+        detail.appendChild(row);
+    } 
 }
 //关闭浮动信息框。
 function flooding_hideself(obj){

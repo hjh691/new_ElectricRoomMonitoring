@@ -284,7 +284,7 @@ function getCatalog(index){
     if(allconfigs){
         for(var q in allconfigs){
             for(var l in allconfigs[q].details){
-                if(allconfigs[q].details[l].name==typename){
+                if(allconfigs[q].details[l].name.toLowerCase()==typename.toLowerCase()){
                     var configname=allconfigs[q].name;
                     var jo_config=JSON.parse(localStorage.Config);
                     for(var c in jo_config)
@@ -292,7 +292,7 @@ function getCatalog(index){
                             if(!jQuery.isEmptyObject(jo_config[c].details)){
                                 var d_config=jo_config[c].details; //20200918 获取配置项参数 由allconfigs（typeconfigs）的details里的name找到typename，然后取其
                                 for(var i in d_config){            //name,由name到configs里查找name，找到后从其details里提取config，然后从config中提取所需的配置数值。
-                                    if((d_config[i].name==typename)&&((d_config[i].config))){
+                                    if((d_config[i].name.toLowerCase()==typename.toLowerCase())&&((d_config[i].config))){
                                         chart_unit=d_config[i].config.Unit;
                                         chart_max=d_config[i].config.Top;
                                         chart_min=d_config[i].config.Bot;

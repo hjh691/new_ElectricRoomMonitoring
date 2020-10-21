@@ -2,14 +2,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta charset="UTF-8">
-
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
-
 	<title>简要说明</title>
-
+	<style>
+		.selected {
+			background-color: rgba(0, 101, 105, 1);
+			width: 50px;
+			color:white;
+			border-radius: 6px;
+			height: 35px;
+			line-height: 35px;
+			border: solid #222 0px;
+		}
+	</style>
 </head>
 <body>
 	<div id="main"style="text-indent:2em">
+		<button class="selected" onclick="javascript:history.go(-1)" style="float:right;margin-right:20px;">返回</button>
 		<h1 align="center">智能变电站辅助系统综合监测云平台使用说明</h1>
 		<p >欢迎使用智能变电站辅助系统综合监测云平台，下面对系统的应用操作方法和注意事项进行简单时说明如下：</p>
 		<br>

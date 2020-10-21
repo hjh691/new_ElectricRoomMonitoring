@@ -299,8 +299,8 @@ function initpage() {
         w1.onmessage = function (event) {
             i++
             if (i % 10 == 0) {
-                //getrealdatabynodeid(-1);
-                decoderealdata();
+                getrealdatabynodeid(-1);
+                //decoderealdata();
             }
         };/**/
     } else {
@@ -360,14 +360,8 @@ function stopWorker() {//停止自动刷新数据
 /**1. duiecharttubiaopeizhicanshujinxingyouhua,xianshixiaoguogenmeiguanheli
  * 编写页面标签随数据动态变化的实现方法。lazy 
  * 动力监测和空调参数页面超出显示范围，调整，并按bootstrap的网络系统进行调整和布置。
- * 
- * 
- * 
- * 
- * 
- * 
- * 
  * 0727-0731 对web程序功能进行调试，对发现的问题进行了修改和完善，同时对页面和交互操作进行了友好性改进。下周还是进行调试和完善
- * 
+ * 机房监控关联信息显示改为模态信息框，编写各子页面对应的信息函数，采取各子页面使用同一个模态框各自更新信息的方法，简化代码；修改培训信息的比较方法，添加
+ * 忽略大小写进行比较，修改历史数据整点数据显示格式不统一的问题，
  * 
 */

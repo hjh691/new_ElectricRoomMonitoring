@@ -99,6 +99,11 @@ function rnd(n, m) {
 }
 //初始化登录页面： used by electricroommonitor 
 function initlogin() {
+	//localStorage.backfile="E:\ElectricRoomMonitoring\res";
+	//previewHandle(localStorage.backfile);
+	if((localStorage.backfile!=undefined)&&(localStorage.backfile!=null)&&(localStorage.backfile!="")){
+		jfjk_base_config.bg_src=localStorage.backfile;
+	}
 	//document.getElementById("login_pic").src = jfjk_base_config.login_src;
 	document.getElementById("company_name").innerHTML = jfjk_base_config.app_name;
 	document.getElementById("company_name").style="color:"+jfjk_base_config.appname_font_color;
@@ -114,6 +119,35 @@ function initlogin() {
 	else {
 	$("body").css("background-size","100% auto");
 	}
+	//localStorage.backfile="res/bj03.jpg";
+}
+function previewHandle(fileDOM) {
+    var file = fileDOM.files[0], // 获取文件
+        imageType = /^image\//,
+        reader = '';
+ 
+    // 文件是否为图片
+    if (!imageType.test(file.type)) {
+        alert("请选择图片！");
+        return;
+    }
+    // 判断是否支持FileReader    
+    if (window.FileReader) {
+        reader = new FileReader();
+    }
+    // IE9及以下不支持FileReader
+    else {
+        alert("您的浏览器不支持图片预览功能，如需该功能请升级您的浏览器！");
+        return;
+    }
+    // 读取完成    
+    reader.onload = function (event) {
+        // 获取图片DOM
+        var img = document.getElementById("preview-img");
+        // 图片路径设置为读取的图片    
+        jfjk_base_config.bg_src = event.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 //判断用户名和密码输入是否符合语法  used by electricroommonitor 
 function LoginOrder(name, ps,flag) {
@@ -130,10 +164,10 @@ function LoginOrder(name, ps,flag) {
 		timeout: 10000,
 		error: function(data, status) {
 			if (status == "timeout") {
-				Alert("登录超时",info_showtime);
+				alert("登录超时",info_showtime);
 				showstateinfo("登录超时");
 			} else if(data.hasOwnProperty("responseJSON")&&data.responseJSON==undefined){//0928修改，判断是否由此项
-				Alert("服务器连接失败，请稍后重试",info_showtime);
+				layer.alert("服务器连接失败，请稍后重试",info_showtime);
 				showstateinfo("服务器连接失败，请稍后重试");
 			}else {
 				layer.alert(data.responseText,info_showtime);
@@ -161,7 +195,7 @@ function LoginOrder(name, ps,flag) {
 				} else {
 					sessionStorage.islogin = false;
 					window.location.href = "index.html";
-					Alert("登录失败，" + data.Error + ",请确认输入信息正确，注意字母的大小写。",info_showtime);
+					alert("登录失败，" + data.Error + ",请确认输入信息正确，注意字母的大小写。",info_showtime);
 					showstateinfo("登录失败");
 				}
 			}
@@ -1739,8 +1773,8 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 			for(var i=0;i<check_val.length;i++){
 				var sensorid=check_val[i];
 				var series=new Object();
-				series.name=check_name[i]
-				lengenddata.push(check_name[i]);
+				series.name=check_name[i];//+"["+sensorid+"]"
+				lengenddata.push(check_name[i]);//+"["+sensorid+"]"
 				obj_chartdata=obj_chartdatas;//[sensorid];
 				if(obj_chartdata){
 					pb= new Array();
@@ -3115,7 +3149,7 @@ function getcatalog(aname){
 	if(configs){
 		for(var p in configs){
 			for(var l in configs[p].details){
-				if(configs[p].details[l].name==aname){
+				if(configs[p].details[l].name.toLowerCase()==aname.toLowerCase()){
 					acatalog=configs[p].details[l].folder;//;//Catalog;
 				}
 			}

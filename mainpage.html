@@ -851,7 +851,7 @@
 			} else {
 				for (var j = 0; j < data.length; j++) {
 					var anodes = new Object();
-					anodes.text = data[j].value.name;
+					anodes.text = data[j].value.name;//+"[Id:"+data[j].value.id+"]";
 					anodes.id = data[j].value.id;
 					anodes.ParentId=data[j].value.parentId;
 					anodes.Catalog = data[j].value.type;
@@ -862,7 +862,7 @@
 						anodes.NodeId = data[j].value.nodeId;
 					}
 					var icon = 'glyphicon glyphicon-user';
-					switch (data[j].value.name) {
+					switch (data[j].value.name.toLowerCase()) {
 						case "视频监控":
 							icon = "glyphicon glyphicon-facetime-video";//
 							break;
@@ -1800,7 +1800,7 @@
             }else
             for (var j = 0; j < data.length; j++) {
 					var anodes = new Object();
-					anodes.text = data[j].value.name;
+					anodes.text = data[j].value.name+"[Id:"+data[j].value.id+"]";//20201021
 					anodes.id = data[j].value.id;
                     anodes.ParentId=data[j].value.parentId;
                     anodes.NodeId=data[j].value.nodeId;//----
@@ -1816,7 +1816,7 @@
 						anodes.NodeId = data[j].value.nodeId;
 					}
 					var icon = 'glyphicon glyphicon-user';
-					switch (data[j].value.name) {
+					switch (data[j].value.name.toLowerCase()) {
 						case "机房监控":
 							icon = 'glyphicon glyphicon-inbox';//
 							break;
@@ -1845,10 +1845,21 @@
 					//var chi_len = data[j].Children.length; 
 					if (data[j].children&&data[j].children.length != 0) {
 						anodes.nodes = [];
-						anodes.nodes = buildnode(data[j].children, level + 1)
+						anodes.nodes = buildnode_level2(data[j].children, level + 1)
 					}
 					tree.push(anodes);
 				}
+			var compare = function (obj1, obj2) {
+				var val1 = obj1.text;
+				var val2 = obj2.text;
+				if (val1 < val2) {
+					return -1;
+				} else if (val1 > val2) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
             return tree;
         }
 		function clickNode(event, data) {
