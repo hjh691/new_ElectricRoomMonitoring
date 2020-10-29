@@ -540,7 +540,8 @@
 			dname= $(".catalog:checked").val();
 			sessionStorage.warnlogname=dname;
 			catalog=getcatalog(dname);
-			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+			//decodedatas(JSON.parse(localStorage.historydata));
 		});
 	}
 	function displaytype(obj){
@@ -626,6 +627,9 @@
 				$table.appendChild(tr3);*/
 				for (var i = 0; i <obj_data.length; i++) {
 					if(obj_data[i].message){
+						if((dname!="")&&(obj_data[i].name!=dname)){
+							continue;
+						}
 						var tr=document.createElement("tr");
 						tr.setAttribute("onclick","tableclick(this)");
 						var td_did=document.createElement("td");
@@ -655,7 +659,7 @@
 								$table.insertBefore(tr,window.eval("tr"+(j+1)));
 								count_l[j]=count_l[j]+1;
 								count++;
-								//break;
+								//break; 
 							}/*else if(obj_data[i].Message==warning_sign_hight){
 								$table.insertBefore(tr,tr1);
 								count_h++;
@@ -682,7 +686,7 @@
 					document.getElementById("count_first").innerHTML=0;
 					document.getElementById("count_third").innerHTML=0;
 				}else{
-					showstateinfo("");
+					//showstateinfo("");
 					for(var i=0;i<type_str.length;i++){
 						if(count_l[i]==0){
 							//document.getElementById(window.eval("'td"+i+"'")).style.display="none";
@@ -925,6 +929,7 @@
 				$(this).show();
 		});*/
 		}
+		
 		$(document).on("click",".check_box",function(event){
 		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
 		//勾选的项
@@ -976,6 +981,7 @@
 		switch(i_sel*1){
 			case 0:	case 1:	case 2:	case 3:	case 4:
 				//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+				decodedatas(JSON.parse(localStorage.historydata));
 				break;
 			case 5:
 				showrealworning();
@@ -990,4 +996,6 @@
 	点击时段选择跳出提示框，更换标签时，告警事件选项重复加载，采用二次树形菜单来选择标签项，标签选择项调整，原隐藏。
 	按钮样式（选中、颜色）选项记忆和获取共以及显示内容。下载页结构调整，去除多余关联文件。按钮组样式
 	1019 类型名称的忽略大小写，
+	选择实时告警时不能自动关闭时段选择控件的问题，实时数据页面导出图标和导出功能函数。
+	添加根据类别分组选择来对告警信息进行筛选的古城函数，
 -->

@@ -592,7 +592,7 @@ function decoderealdata(obj_realdata) {
                     gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
                 }
             }//else{	//$table.rows[0].ondblclick();	//}
-            showstateinfo("");
+            //showstateinfo("");
         } else {
             layer.alert("没有符合条件的数据",info_showtime);
             showstateinfo("没有符合条件的数据");

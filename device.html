@@ -254,17 +254,19 @@
 						break;
 					}
 				}
-				if(!config){
+				if(config){
 					var configs=JSON.parse(localStorage.Config);
 					var typeconfigs=JSON.parse(localStorage.Configs);
 					var details,typeconfig;
-					config='wctm'
+					//config='wctm'
+					if(typeconfigs)
 					for(var k=0;k<typeconfigs.length;k++){
 						if(typeconfigs[k].name.toLowerCase()==config.toLowerCase()){
 							typeconfig=typeconfigs[k].details;
 							break;
 						}
 					}
+					if(configs)
 					for(var j=0;j<configs.length;j++){
 						//TODO 获取对应的配置项；然后获取配置的具体数据
 						if(configs[j].name.toLowerCase()==config.toLowerCase()){

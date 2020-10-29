@@ -24,7 +24,7 @@
 			<div id="app_name"><i></i></div>
 			<span id="img_yonghu" >
 				<!--No.2登录用户名显示/未登录-->
-				<img src="res/gif_head_48x48.gif" width="20px" height="20px">
+				<img src="res/gif_head_48x48.gif" onclick="show3D()" width="20px" height="20px">
 			</span>
 			<!--end No.2-->
 			<span id="yhname" style="position:relative;float:left;left:50px;color:white;font-size:12px;"><!--pageindex:20-->
@@ -71,7 +71,7 @@
 						<li id="li_replay" style="display: none;"><a id="nav6" href="javascript:void(0)" >视频回放</a></li><!--pageindex:9-->
 						<li id="li_historychart"><a id="nav7" href="javascript:void(0)" onclick="loadstations_chart()" title="多点变化趋势比较">趋势对比</a></li><!--pageindex:4-->
 						<li id="li_warnlog" ><a id="nav8" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警信息查询">告警信息</a></li><!--pageindex:5-->
-						<li id="li_warnlog" style="display: none;"><a id="nav16" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警查询">告警信息</a></li><!--pageindex:0-->
+						<li id="li_stationwarnlog" style="display: none;"><a id="nav16" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警查询">告警信息</a></li><!--pageindex:16-->
 						<li><a id="nav9" href="javascript:void(0)" onclick="showdevice()" title="所有设备信息列表">设备信息</a></li><!--pageindex:6-->
 						<li><a id="nav10" href="javascript:void(0)" onclick="showpage(0)" >系统设置</a></li><!--pageindex:7-->
 						<li id="clickaudio" style="float:right;font-size:16px;display: none;"><a href="javascript:void(0)" style="color: red;" onclick="showdailog()">开启告警声音</a></li>
@@ -915,7 +915,7 @@
 		}
 		function showdownload() {
 			if(sessionStorage.pageindex!=200){
-				document.getElementById("iframe_main").src = "app_download.html"
+				document.getElementById("iframe_main").src = "app_download.html";
 				sessionStorage.pageindex=200;
 			}else{
 				document.getElementById("iframe_main").src="app_download.html";
@@ -924,7 +924,7 @@
 		function showhelp() {
 			if(sessionStorage.pageindex!=100){
 				updatapcnav(13);
-				document.getElementById("iframe_main").src = "help.html"
+				document.getElementById("iframe_main").src = "help.html";
 				sessionStorage.pageindex=100;
 			}else{
 				document.getElementById("iframe_main").src="help.html";
@@ -932,7 +932,7 @@
 		}
 		function showcontactus() {
 			if(sessionStorage.pageindex!=300){
-				document.getElementById("iframe_main").src = "ContactUs.html"
+				document.getElementById("iframe_main").src = "ContactUs.html";
 				sessionStorage.pageindex=300;
 			}else{
 				document.getElementById("iframe_main").src="ContactUs.html";
@@ -1933,6 +1933,9 @@
 			}
 		}
 		$('#iframe_main').attr('src', $('#iframe_main').attr('src'));
+	}
+	function show3D(){
+		document.getElementById('iframe_main').src="exp3.html"
 	}
 	</script>
 </body>

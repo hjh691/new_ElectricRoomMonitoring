@@ -154,8 +154,9 @@
 		var sel_sensor=document.getElementById("jcdd");
 		var type="",step=true;
 		var jssj=getCurrentDate(2);
-		var catalog="",dname="";
+		var catalog="",dname="",tname="";
 		var configs,scatalog;
+		var myChart;
 		$(function () {
 			initpage();			
 		});
@@ -181,7 +182,7 @@
 			var maps=[];
 			//var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
             //var treenode=buildnode(treeseneors,0);
-            //inittreeview(treenode);
+            //inittreeview(treenode);haoxiangshizhemohuishi conding you
 			document.getElementById("kssj_history").value = sessionStorage.kssj;
 			document.getElementById("jssj_history").value = sessionStorage.jssj;
 			for (var i = 0; i < sel_sensor.options.length; i++) {
@@ -242,6 +243,7 @@
 			//}
 			$("#main").height(parent.window.windowHeight-250);
 			$("#list").height(parent.window.windowHeight-250);
+			myChart = echarts.init(document.getElementById('main'));
 		}
 		function inittreeview(anodes) {
 			var tree=$('#tree_chi')
@@ -283,7 +285,7 @@
                     //}else{
                     //    document.getElementById("tree_chi").style.height="100%";
                     //    document.getElementById("tree1").style.display="none";
-                    //}
+					//} //yang@J
 				}
 			});
 			tree.treeview('collapseAll');//关闭展开
@@ -316,7 +318,7 @@
 				if(sensors)
 				for(var k=0;k<sensors.length;k++){
 					if(sensors[k].Value.id==element_id){
-						scatalog=sensors[k].Value.type;//catalog;//读取对应的Catalog项
+						scatalog=sensors[k].Value.type;//catalog;//读取对应的Catalog项1
 						if(scatalog)
 							scatalog=scatalog.toLowerCase();
 						break;
@@ -332,6 +334,7 @@
 									dname=s_des[p].name;//Name
 									catalog=s_des[p].folder;//Catalog; //not type
 									lab.className="btn btn-primary active"
+									tname=s_des[p].desc;//20201023
 								}else{
 									lab.className="btn btn-primary";
 								}
@@ -355,7 +358,9 @@
 			}
 			$(".btn").click(function(){//用于动态加载的元素的点击响应。
 				$(this).button('toggle');
-				dname= $(".catalog:checked").val();
+				var eobj=$(".catalog:checked")
+				dname= eobj.val();
+				tname= eobj[0].parentNode.innerText;
 				catalog=getcatalog(dname);
 				//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
 			});
@@ -513,7 +518,7 @@
 			var senconds=etime-stime;
 			var pa = [],pb = [],pc = [];
 			var jiange="";
-			var myChart = echarts.init(document.getElementById('main'));
+			
 			myChart.clear();
 			//$("#historydata-tbody tr").empty();
 			var tbl = document.getElementById('historydata-tbody');
@@ -836,7 +841,7 @@
 					color: ['#FFFF00', '#FF0000','#00ff00'],//
 					backgroundColor: '#d0d0d0',
 					title : {
-								text : sessionStorage.SensorName+' 变化趋势图  ',
+								text : sessionStorage.SensorName+":"+tname+'    变化趋势图  ',
 								x:"center",
 								subtext:jiange+"   "+sessionStorage.kssj+"——"+sessionStorage.jssj,
 								subtextStyle:{
@@ -1064,5 +1069,7 @@
 	标签标题名称（包括告警查询页面）
 	切换节点 页面图形、数据不能及时更新，二级菜单树总是有时自动选择某个菜单的问题，
 	0727关于图表和数据列表的标签名称（单一和复合）与告警信息查询页的同步问题，
-	0827 对返回数据中一些非数值类型的处理，如果为非数字则按-1来赋值。如果发生其他容错，则忽略。设置在最大值、最小值相同时的图形边界最大值和最小值设置处理；
+	0827 对返回数据中一些非数值类型的处理，如果为非数字则按-1来赋值。如果发生其他容错，则忽略。设置在最大值、最小值
+	相同时的图形边界最大值和最小值设置处理；
+	趋势图标题添加类别分组项的显示内容。
 -->
