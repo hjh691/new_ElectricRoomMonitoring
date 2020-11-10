@@ -6,7 +6,6 @@
         <!--<link rel="stylesheet" href="css/electricroommonitoring.css"/>-->
         <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
         <script  type="text/javascript" src="js/layer/layer.js"></script>
-        <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	    <script type="text/javascript" src="js/bootstrap.js"></script>
         <script  type="text/javascript" src="js/config.js"></script>
         <script  type="text/javascript" src="js/function.js"></script>
@@ -186,11 +185,11 @@
                         var swithbutton=$("#switch01")
                         if(swithbutton[0].src.indexOf("/on.png")>0){
                             swithbutton[0].src="res/off.png";
-                            localStorage.showLeftMenu=false;
+                            localStorage.showLeftMenu=false;//显示
                             parent.window.showLeftMenu(false);
                         }else{
                             swithbutton[0].src="res/on.png";
-                            localStorage.showLeftMenu=true;
+                            localStorage.showLeftMenu=true;//隐藏
                             parent.window.showLeftMenu(true);
                         }
                         break;

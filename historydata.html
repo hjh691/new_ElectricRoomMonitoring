@@ -20,7 +20,7 @@
 	th,td{
         border:1px solid black;
         text-align:center;
-        line-height:center;
+        /*line-height:center;*/
         width:150px;
         height:30px;
 	}
@@ -117,7 +117,7 @@
 				<div class="parent panel panel-default" style="text-align: center;">
 					<div class="charttab-head" id="tab-head" style="height: 40px">
 						<button id="change" class="selected" onclick="changetype();" 
-							style="width:100px;">数据列表</button>
+							style="width:100px;">>> 数据列表</button>
 					</div>
 					<div class="column" align="center" id="list" style="display: none;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;">
 						<table id="historytable" width="900px"  >
@@ -238,8 +238,9 @@
 			if(sessionStorage.SensorName==undefined){
 				sessionStorage.SensorName="";
 			}
-			//if(sessionStorage.timeindex==4){
-				queryhistorydata(0);//decodedatas();
+			//if(sessionStorage.timeindex==4){//
+											  
+				queryhistorydata(0);//decodedatas();//
 			//}
 			$("#main").height(parent.window.windowHeight-250);
 			$("#list").height(parent.window.windowHeight-250);
@@ -330,15 +331,28 @@
 							var s_des=configs[i].details;//如果有，读取其所有配置项
 							for(var p in s_des){
 								var lab=document.createElement("label");
-								if(p==0){
+								if(sessionStorage.datatype){
+									if(s_des[p].name==sessionStorage.datatype){//如果有原先的选择
+									//if(p==0){
+										dname=s_des[p].name;//Name
+										catalog=s_des[p].folder;//Catalog; //not type
+										lab.className="btn btn-primary active"
+										tname=s_des[p].desc;//20201023
+									}else{
+										lab.className="btn btn-primary";
+									}
+								}else{ //没有选择项，则默认为第一项
+									if(p==0){
 									dname=s_des[p].name;//Name
 									catalog=s_des[p].folder;//Catalog; //not type
 									lab.className="btn btn-primary active"
 									tname=s_des[p].desc;//20201023
-								}else{
-									lab.className="btn btn-primary";
+									}else{
+										lab.className="btn btn-primary";
+									}
 								}
-								/*var ainput=document.createElement("input");
+								/*var 
+								ainput=document.createElement("input");
 								ainput.className="catalog";
 								ainput.setAttribute("type","radio");
 								ainput.setAttribute("name","radios");
@@ -361,6 +375,7 @@
 				var eobj=$(".catalog:checked")
 				dname= eobj.val();
 				tname= eobj[0].parentNode.innerText;
+				sessionStorage.datatype=dname;//保存选择项的值，用于页面刷新时恢复当前数据。
 				catalog=getcatalog(dname);
 				//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
 			});
@@ -447,14 +462,14 @@
 		}
 		function changetype(){
 			var title=document.getElementById("change");
-			if(title.innerText=="数据列表"){
+			if(title.innerText==">> 数据列表"){
 				document.getElementById("list").style.display="";
 				document.getElementById("main").style.display="none";
-				title.innerText="趋势图";
-			}else if(title.innerText=="趋势图"){
+				title.innerText=">> 趋势图";
+			}else if(title.innerText==">> 趋势图"){
 				document.getElementById("list").style.display="none";
 				document.getElementById("main").style.display="";
-				title.innerText="数据列表";
+				title.innerText=">> 数据列表";
 			}
 		}
 		//查询历史记录

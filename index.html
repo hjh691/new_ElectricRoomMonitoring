@@ -7,6 +7,7 @@
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
+	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<!--<script  type="text/javascript" src="js/json2.js"></script>-->
 	<script  type="text/javascript" src="js/function.js"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css" /> 
@@ -61,10 +62,18 @@
 		color: #515151;
 		background: #d3d3d3;
 	}
+	.selected {
+		width: 150px;
+		color:white;
+		border-radius: 6px;
+		height: 35px;
+		line-height: 35px;
+		border: solid #222 0px;
+	}
 	</style>
 	<style>
 		#page {
-			/*height: 200px;
+			/*height: 200px;background-color: rgba(0, 101, 105, 1);
 			background: -webkit-linear-gradient(left top, red , blue);  Safari 5.1 - 6.0 */
 			/*background: -o-linear-gradient(bottom right, red, blue);  Opera 11.1 - 12.0 */
 			/*background: -moz-linear-gradient(bottom right, red, blue);  Firefox 3.6 - 15 */
@@ -82,6 +91,9 @@
 </head>
 <body id="main" onload="initlogin()" style="background: url(res/bj011.jpg);"><!--style="background-image:url(rec/zzpic12708.jpg)"-->
 	<div align="center" id="page" style="margin:0;padding:0;width:100%; font-size:20px;" >
+		<input type="file" id="file" onchange="previewHandle(this)" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;"/>
+		<input type="text" style="width:0;" id="bg_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"/>
+		<label class="selected" onclick="selectFile()" style="float:right;margin-right:20px;">背景设置</label>
 		<br>
 		<h1 id="company_name" ></h1>
 		<br><br>
@@ -92,7 +104,7 @@
 						<div style="color:#FFFFFF;">用户名<span class="glyphicon glyphicon-user" style="color:rgb(0,0,0);margin-left: 30px;"></span><input id="username"  type="text" name="username"  style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:20px;border-radius:8px;color:black"></input></div><br>
 						<div style="color:#FFFFFF;">密&nbsp;&nbsp; 码<span class="glyphicon glyphicon-lock" style="color: rgb(0, 0, 0);margin-left:30px;"></span><input id="password" type="password" name="password" style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:20px;border-radius:8px;color:black" onkeypress="return KeyUp()" autocomplete="new-password"></input></div>
 							<div style="display:none">
-								<a href="iframe_regist.html" target="main-frame" style="font-style:'bold';text-decoration:none;" ><b>注册新用户</b></a>
+								<a href="iframe_regist.html" target="main-frame" style="font-weight:bold;text-decoration:none;" ><b>注册新用户</b></a>
 								<div style="color:red;font-size:20px;display:inline;left:40px;position:relative" >
 									<a href="#"style="color:red; text-decoration:none;">忘记密码</a>
 								</div>
@@ -104,23 +116,64 @@
 					</form>
 				</td>
 			</tr>
-		<table>
+		</table>
 	</div>
 	<script>
 		window.onresize = function(){
-		var widthoftextarea = $(window).width();
-		//设置背景图大小按比例扩大
-		var width_screen = $(window).width();
-		var height_screen = $(window).height();
-		var wh = width_screen / height_screen;
-		var bgurl = 1.2;//背景图宽高比
-		if (bgurl > wh)
-		{
-		$("body").css("background-size","auto 100%");
+			var widthoftextarea = $(window).width();
+			//设置背景图大小按比例扩大
+			var width_screen = $(window).width();
+			var height_screen = $(window).height();
+			var wh = width_screen / height_screen;
+			var bgurl = 1.2;//背景图宽高比
+			if (bgurl > wh)
+			{
+			$("body").css("background-size","auto 100%");
+			}
+			else {
+			$("body").css("background-size","100% auto");
+			}
 		}
-		else {
-		$("body").css("background-size","100% auto");
+		function selectFile(){
+			//触发 文件选择的click事件
+			$("#file").trigger("click");
+			//其他code如 alert($("#file").attr("value"))
 		}
+		/* 获取 文件的路径 ，用于测试*/
+		function previewHandle(fileDOM) {
+			var file = fileDOM.files[0], // 获取文件
+					imageType = /^image\//,
+					reader = '';
+
+			// 文件是否为图片
+			if (!imageType.test(file.type)) {
+				alert("请选择图片！");
+				return;
+			}
+			// 判断是否支持FileReader
+			if (window.FileReader) {
+				reader = new FileReader();
+			}
+			// IE9及以下不支持FileReader
+			else {
+				alert("您的浏览器不支持图片预览功能，如需该功能请升级您的浏览器！");
+				return;
+			}
+			if(file.size>2000000){
+				alert("文件太大，请选择不答应2M的图形文件！");
+				return;
+			}
+			// 读取完成
+			reader.onload = function (event) {
+				// 获取图片DOM
+				var img = document.getElementById("preview-img");
+				// 图片路径设置为读取的图片
+				localStorage.backfile = event.target.result;
+				//$('#bg_src').val(file.name);
+				localStorage.backgroudfilename=file.name;
+				initlogin();
+			};
+			reader.readAsDataURL(file);
 		}
 	</script>
 </body>

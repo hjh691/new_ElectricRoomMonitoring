@@ -21,12 +21,13 @@
 	{
         border:1px solid black;
         text-align:center;
-        line-height:center;
+        /*line-height:center;*/
         width:200px;
         height:30px;
     }	
 	th{
-        border:0px solid black;
+		border:0px solid black;
+		font-size: 16px;
     }	
 	table {
 		/*设置相邻单元格的边框间的距离*/
@@ -94,8 +95,8 @@
 			</button>-->
 			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
 				<input id="select_text" class="select_text " data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;">
-				<a  class="btn  btn-default" href = "#" style="margin-left:-40px;"><i class= "caret">
-                </i></a>
+				<button style="width:30px;height:35px; margin-left: -35px;position: relative;z-index: 2;"><i class= "caret" >
+                </i></button>
 				</input>
 			</label>
 			<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="event_type">
@@ -115,7 +116,7 @@
 				起止时间
 				<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"></input>至
 				<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_warning" style="width:160px;font-size:16px;height: 30px;" ></input>
-				<input class="button"type="button" id="chaxun"style="width:100px;font-size:16px;height: 30px;line-height: 30px;display:none" value="查询全站" onclick="querywarnlog(1)" ></input></b>
+				<input class="button"type="button" id="chaxunall"style="width:100px;font-size:16px;height: 30px;line-height: 30px;display:none" value="查询全站" onclick="querywarnlog(1)" ></input></b>
 				</span>
 				<span>
 					<button class="selected" id="chaxun"  onclick="querywarnlog()" 
@@ -149,12 +150,12 @@
 					<th id="count_second">越下限</th>
 					<th id="count_third"></th>
 				</tr>
-				<tr >
+				<tr>
 					<td style="display: none;">测量点编号</td>
-					<td>测量点名称</td>
-					<td>告警时间</td>
-					<td>数值</td>	
-					<td>告警内容</td>
+					<th style="border:1px solid black;">测量点名称</th>
+					<th style="border:1px solid black;">告警时间</th>
+					<th style="border:1px solid black;">数值</th>	
+					<th style="border:1px solid black;">告警内容</th>
 					<!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>-->
 				</tr>
 				<tbody id='warnlogdata-tbody' style="width:820px;height:100%; overflow:auto;">
@@ -412,6 +413,8 @@
 	}
 	function appenddisplaytype(asensorid){
 		var temp=document.getElementById("event_type");
+		for(var i=temp.childElementCount;i>0;i--)
+			temp.removeChild(temp.children[i-1]);
 		for(var i=document.getElementById("display_type").childElementCount;i>1;i--)
 			document.getElementById("display_type").removeChild(document.getElementById("display_type").childNodes[i-1]);
 		//for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
@@ -474,12 +477,12 @@
 										}
 										if(isfound){
 											isfound=false;
-											for(var j=0;j<sel_str.length;j++){
+											/*for(var j=0;j<sel_str.length;j++){
 												if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
 													temp.children[i].children[0].checked=true;
 													break;
 												}
-											}
+											}*/
 											continue;
 										}//0721 edit
 										var li=document.createElement("li");
@@ -500,8 +503,16 @@
 									}
 								}
 								for(var i=0;i<temp.children.length;i++){
-									if(temp.children[i].children[0].children[0].checked==true){
+									for(var j=0;j<sel_str.length;j++){
+										if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
+											temp.children[i].children[0].checked=true;
+											//temp.children[i].children[0].children[0].checked=true;
+											break;
+										}
+									}
+									if(temp.children[i].children[0].checked==true){//.children[0]
 										selectText=selectText+temp.children[i].children[0].children[1].innerHTML+";";
+										temp.children[i].children[0].children[0].checked=true;
 									}
 								}
 								if(selectText.charAt(selectText.length - 1)==";"){
@@ -674,7 +685,7 @@
 					}
 				}
 				if(!count){
-					layer.alert("沒有符合条件的数据",info_showtime);
+					Alert("沒有符合条件的数据",info_showtime);
 					showstateinfo("没有符合条件的数据");
 					document.getElementById("count_val").innerHTML="";
 					document.getElementById("count_first").innerHTML="";
@@ -929,7 +940,7 @@
 				$(this).show();
 		});*/
 		}
-		
+		var selectText
 		$(document).on("click",".check_box",function(event){
 		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
 		//勾选的项
@@ -937,13 +948,13 @@
 		//勾选项的值
 		//var $selectValDom=$(this).parent().parent().parent("ul").siblings(".select_val");
 		//是否有选择项了
-		var isSelected=$selectTextDom[0].getAttribute("data-is-select");
-		var selectText="";//文本值，用于显示
+		var isSelected=!event.currentTarget.checked;// $selectTextDom[0].getAttribute("data-is-select");
+		//var selectText="";//文本值，用于显示
 		//var selectVal=$selectValDom.val();//实际值，会提交到后台的
 		var selected_text=$(this).siblings("span").text();//当次勾选的文本值
 		var selected_val=$(this).val();//当次勾选的实际值
 		//判断是否选择过
-		if(isSelected=="true"){
+		if(isSelected==true){
 			selectText=$selectTextDom.val();
 		}
 		if(selectText!=""&&selectText!="没有告警事件选项"&&selectText!="请选择告警事件，不选为全部告警"){

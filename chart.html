@@ -32,7 +32,7 @@
 		th,td{
 			border:1px solid black;
 			text-align:center;
-			line-height:center;
+			/*line-height:center;*/
 			width:200px;
 			height:30px;
 		}
@@ -75,8 +75,10 @@
 			</button>-->
 			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
 				<input id="select_text" class="select_text " data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;">
-				<a  class="btn  btn-default" href = "#" style="margin-left:-40px;"><i class= "caret">
-                </i></a></input>
+				<button  style="width:30px;height:35px;margin-left:-35px;position: relative;z-index: 2;"><i class= "caret">
+				</i></button></input>
+				<!--<a  class="btn  btn-default" href = "#" style="margin-left:-40px;"><i class= "caret">
+                </i></a>-->
 			</label>
 			<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="display_type">
 				<!--<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
@@ -100,6 +102,7 @@
 				<button class="selected" id="chaxun" value="对比" onclick="oneChoice()">对比</button>
 					<a href="javascript:void(0)" style="margin-left:10px;" onclick="exporttoexcel('compratetable')">
 						<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
+				<label id="sel-sensorname"></label>
 			</span>
 			<form  id="jcdd" style="background-color: #dcdcdc;height: 500px;overflow: auto;font-size:16px;display:none;">
 				<p><input type="checkbox" value="0" οnclick="allChoice()" id="allCheck" name="checks"/>全选 </p>
@@ -163,11 +166,20 @@
 			var parentid = -100, parentname = "";
 			var maps = [];
 			document.getElementById("cxsj").value = (sessionStorage.cxsj).substr(0,11);
-			var sel_sensor = document.getElementById("jcdd");
-			for (var i = sel_sensor.length-1; i >= 0; i--) {
-				sel_sensor.removeChild(sel_sensor.children[i]);
+			if(sessionStorage.comperator_sensors)
+			var sel_sensor =JSON.parse(sessionStorage.comperator_sensors);
+			var tree_obj=window.parent.$("#tree_chi");
+			var sensors=tree_obj.treeview("getUnselected");
+			if(sensors && sel_sensor)
+			for (var i = 0; i <sel_sensor.length; i++) {
+				for(var j=0;j<sensors.length;j++){
+					if(sel_sensor[i]==sensors[j].id){
+						tree_obj.treeview("selectNode",sensors[j].nodeId);
+						break;
+					}
+				}
 			}
-			//sensors=JSON.parse(localStorage.getItem("sensors"));
+			//sensors=JSON.parse(localStorage.getItem("sensors"));//qck:>300 151-300 51-150 <50 >10000 5001-10000 2001-5000 <=2000 2 3-5 6-15 >15 500,500-1000,1000-3000,>3000,400,250,100,
 			configs=JSON.parse(localStorage.Configs);
 			/*if (sensors != null) {
 				for (var i = 0; i < sensors.length; i++) {
@@ -185,13 +197,13 @@
 					map.name = parentname + sensors[i].Value.Name;  manage foreign language forest
 					maps.push(map);
 				}
-				var compare = function (obj1, obj2) {
+				var compare = function (obj1, obj2) {//zw20-12 zw32-12 zw43-12 
 					var val1 = obj1.name;
 					var val2 = obj2.name;
-					return val1.localeCompare(val2);
+					return val1.localeCompare(val2);//隧道：人/普通车/危化车 1500/4 500/p -/w  501-1500/3 500/3  1501-3000/2 501-1500/2 >3000/1 >1500/1
 				}
 				maps.sort(compare);
-				for (var k = 0; k < maps.length; k++) {//将标签添加到多选列表中
+				for (var k = 0; k < maps.length; k++) {//将标签添加到多选列表中 油：3-3*30  2-3*50 3-3*70  dan 50、30 
 					var p = document.createElement("p");
 					var lab=document.createElement("label");
 					var input=document.createElement("input");
@@ -269,6 +281,10 @@
 						//document.getElementById("table_title").appendChild(title_th);
 					}
 				}
+				if(sel_str.length==0){
+					temp.children[0].children[0].children[0].checked=true;
+					sel_str.push(temp.children[0].children[0].children[1].innerHTML);
+				}
 				for(var i=0;i<temp.children.length;i++){
 					if(temp.children[i].children[0].children[0].checked==true){
 						selectText=selectText+temp.children[i].children[0].children[1].innerHTML+";";
@@ -338,7 +354,9 @@
 					check_name.push(obj[k].text);
 				//}
 			}
+			sessionStorage.setItem("comperator_sensors", JSON.stringify(check_val));
 			if(check_val.length>0){
+				//sessionStorage.sensors
 				var allobj = $('[name="checkbox"]');
 				var pt=0;
 				if(sel_str.length>0){
@@ -438,8 +456,8 @@
 					}
 				} else {
 					decodedatas([],apt,atitle);//
-					layer.alert(data.Error,info_showtime);
-					showstateinfo(data.Error);
+					layer.alert("没有符合条件的 "+atitle+" 记录",info_showtime);
+					showstateinfo("没有符合条件的 "+atitle+" 记录");
 				}
 			})
 		}

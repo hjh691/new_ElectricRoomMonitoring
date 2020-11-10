@@ -15,6 +15,34 @@
 	<script type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	<script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
 	<script type="text/javascript" src="js/function.js"></script>
+	<style>
+		.aside {
+			height: 98%;
+			width: 15%;
+			position: relative;
+			float:left;
+			background:rgba(8, 177, 106, 0.3);/* #243747;*/
+			transition: width .5s;
+		}
+		.aside-hide {
+			height: 98%;
+			width: 20px;
+			position: relative;
+			float:left;	
+			background :rgba(8, 177, 106, 0.3);/* #243747;*/
+			transition: width .5s;
+		}
+		.butn {
+			border: 0;
+			background: rgba(8, 177, 106, 0);/* #243747;*/
+			color: #0f0f0f;
+			position: absolute;
+			top: 0;
+			right: 4px;/*border-radius: 5px;*/
+			height: 20px;
+			cursor: pointer;
+		}
+	</style>
 </head>
 <body >
 	<!--<div id="container" onmousemove="div_mousemove();"  style="background:rgba(250,0,0,0);width:100%;height:100%;position:absolute;"></div>
@@ -49,18 +77,22 @@
 	<!--  内容  -->
 	<div id="chuangti" >
 		<!--左侧站名列表 <h4 id="head_list_name" align="left"  >变电站:</h4> style="display: none;"-->
-		<div class="leftmenu" id="leftmenu">
-			<div class="tree " id="tree" >
+		<aside class="aside" id="aside">
+			<button class="butn" id="showaside" onclick="list()"><<</button>
+			<div class="leftmenu" id="leftmenu">
+				
+				<div class="tree " id="tree" >
+				</div>
+				<div class="tree1 " id="tree_chi" >
+				</div>
 			</div>
-			<div class="tree1 " id="tree_chi" >
-			</div>
-		</div>
+		</aside>
 		<div id="content" style="overflow: hidden;">
 			<!-- 导航栏 -->
 			<nav role="navigation" class="navbar-static-top"><!--class="navbar navbar-default navbar-fixed-top" role="navigation"border: solid rgba(0, 101, 105, 1) 1px;-->
 			<div class="navigation" >
 				<div class="row-navigation ">
-					<ul class="pc-nav navbar-right" style="margin-right: 0;border: solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;height: 40px;">
+					<ul class="pc-nav navbar-right" style="background-color: rgba(8, 177, 106, 0.2) ; margin-right: 0;border: solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;height: 40px;">
 						<li><a id="nav1" href="javascript:void(0)" onclick="inittotalpage()" >信息总览</a></li><!--pageindex:0-->
 						<li><a id="nav2" href="javascript:void(0)" onclick="initdrawing()" title="显示系统状态图">状态图</a></li><!--pageindex:1-->
 						<li id="li_realdata"><a id="nav3" href="javascript:void(0)" onclick="initrealdata()" title="实时数据列表">实时数据</a></li><!--pageindex:2-->
@@ -108,7 +140,7 @@
 					<label id="state_info" style="float:left;margin-left: 30px;color:rgb(240, 236, 9);"></label>
 					<ul  align="center" style="margin:0 0;">
 						<li ><a id="company_info" href="" target="_blank" style="color:white;"><img id="company_log" src="" width="20px" height="20px" ><lab id="company_name"></lab></a></li>
-						<li style="color:white;" >Copyright<lab id="copyright_time"></lab></li>
+						<li style="color:white;" >Copyright: <lab id="copyright_time"></lab></li>
 					</ul>
 			</div>
 		</div><!--<li ><a href="#" style="margin-left:500px" >实时告警窗口</a></li>display: none;-->
@@ -259,7 +291,7 @@
 			//var fdwidth =500;// document.getElementById("KeFuDiv").offsetWidth;
 			var main = document.getElementById("chuangti");
 			//var header = document.getElementById("header");
-			var menu = document.getElementById("leftmenu");
+			var menu = document.getElementById("aside");
 			var content = document.getElementById("content");
 			//var footer = document.getElementById("footer");
 			//isfree="true";
@@ -329,14 +361,14 @@
 		}
 		function initIndex() {
 			showusername();
-			document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name + "</i>";
+			document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name+ "</i>";
 			if(localStorage.log_src){
 				jfjk_base_config.log_src=localStorage.log_src;
 			}
 			document.getElementById('company_log').src = jfjk_base_config.log_src;
 			document.getElementById('company_info').href = jfjk_base_config.company_url;
 			document.getElementById("company_name").innerHTML=jfjk_base_config.company;
-			document.getElementById("copyright_time").innerHTML=jfjk_base_config.ver_id+"/  "+jfjk_base_config.date;
+			document.getElementById("copyright_time").innerHTML="  "+jfjk_base_config.date;//+"  "+jfjk_base_config.ver_id 
 			//sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
 			//sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
 			//sessionStorage.cxsj = getCurrentDate(2);
@@ -1727,7 +1759,7 @@
 				//nodeIcon: 'glyphicon glyphicon-lock',//
 				emptyIcon: '',    //没有子节点的节点图标
 				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象 
-				multiSelect: multiselect,    //多选
+				multiSelect: multiselect,    //是否可以多选，采用变量控制，在切换页面时设置。
 				searchResultColor: "black",
 				color: "#fff",//所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
 				backColor: "#0d7778",//"rgba(0, 151, 105, 1);", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
@@ -1763,7 +1795,7 @@
 				},
 				onNodeUnselected : function(event,data){
 					clickNode(event, data);
-				}
+				},
 			});
 			
 			if(anodes.length>0){
@@ -1784,6 +1816,7 @@
 				//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
 				$('#tree_chi').treeview('selectNode', [currentNode, { silent: true }]);
 				sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
+				sessionStorage.SensorName=currentNode.text;//获取标签名称，用于列表显示用.20201110
 				$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
 				/**/
 			}
@@ -1888,17 +1921,21 @@
 			Ev= ev || window.event; 
 			var mousePos = mouseCoords(ev); 
 			
-			if(mousePos.x<=0){
+			if(mousePos.x<=20){
 				var leftlist=document.getElementById("leftmenu");
 				//var mainarea=document.getElementById("mainarea");
 				//var allscreen=document.getElementById("alscreen");
 				leftlist.style.display="block";
 				//mainarea.style.width="84%";
 				//allscreen.innerHTML="全屏";
+				document.getElementById("aside").className="aside";
+				document.getElementById("showaside").innerHTML="<<";
 			}
-			if((mousePos.x>(winWidth*0.15-1))){
+			if((mousePos.x>(winWidth*0.15-10))){
 				var leftlist=document.getElementById("leftmenu");
 				leftlist.style.display="none";
+				document.getElementById("aside").className="aside-hide";
+				document.getElementById("showaside").innerHTML=">>";
 			}
 			//alert("onmousemove",500);
 			//containerdiv.style.display = "block";
@@ -1917,23 +1954,40 @@
 	function showLeftMenu(aswitch){
 		if(aswitch){
 			document.getElementById("leftmenu").style.display="none";
-			document.onmousemove=mouseMove; //
+			//document.onmousemove=mouseMove; //跟踪鼠标位置
+			document.getElementById("aside").className="aside-hide";
+			document.getElementById("showaside").innerHTML=">>";
 			//document.children.onmousemove=mouseMove;
 			var iframe= document.getElementById('iframe_main');
-			iframe.onload = function() {
-				iframe.contentDocument.onmousemove =mouseMove;
-			}/**/
+			localStorage.showLeftMenu=true;
+			//iframe.onload = function() {
+				//iframe.contentDocument.onmousemove =mouseMove;//子frame跟踪鼠标位置变换
+			//}/**/
 		}else{
 			document.getElementById("leftmenu").style.display="block";
-			document.onmousemove='';//mouseMove; 
+			//document.onmousemove='';//mouseMove; 
 			//document.children.onmousemove=mouseMove;
+			document.getElementById("aside").className="aside";
+			document.getElementById("showaside").innerHTML="<<";
+			localStorage.showLeftMenu=false;
 			var iframe= document.getElementById('iframe_main');
-			iframe.onload = function() {
-				iframe.contentDocument.onmousemove =''; //mouseMove;
-			}
+			//iframe.onload = function() {
+				//iframe.contentDocument.onmousemove =''; //mouseMove;
+			//}
 		}
 		$('#iframe_main').attr('src', $('#iframe_main').attr('src'));
 	}
+	function list() {
+		var aside=document.getElementById("aside");
+		if (aside.clientWidth <= 40) {
+			showLeftMenu(false)
+		} else if (aside.clientWidth > 40) {
+			//console.log("side")
+			//body.className = "aside-hide"
+			showLeftMenu(true);
+		}
+
+        }
 	function show3D(){
 		document.getElementById('iframe_main').src="exp3.html"
 	}
