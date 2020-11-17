@@ -153,6 +153,8 @@
 		var cname,catalog;
 		var isfound=false;
 		var selectText="";
+		var timer=null;
+		var flashit=document.getElementById("chaxun");
 		inithistorychart();
 		function inithistorychart() {
 			updatapcnav(7);
@@ -341,6 +343,7 @@
 		}
 		//对比按钮
 		function oneChoice(){
+			stoptimer(timer);
 			var obj = window.parent.$("#tree_chi").treeview("getSelected");
 			$("#comprate-tbody tr").remove();
 			kssj=document.getElementById("cxsj").value+" 00:00:00"
@@ -371,9 +374,9 @@
 						}
 					}
 				}else{
-					if(allobj.length>0){//是否有显示内容配置项
-						layer.alert("请选择要显示的内容!",info_showtime);
-						showstateinfo("选择要显示的内容");
+					if(allobj.length>0){//是否有类别分组内容配置项
+						layer.alert("请选择要显示的类别分组内容!",info_showtime);
+						showstateinfo("请选择要显示的类别分组内容");
 					}else{//没有配置项，传递空串，返回所有//20200520 add this function,need Verification; 
 						gethistorybysensors(check_val,"","",1,"");
 					}
@@ -450,13 +453,13 @@
 						//showstateinfo("");
 						decodedatas( data.datas,apt,atitle);
 					} else {
-						layer.alert("没有符合条件的 "+atitle+" 记录",info_showtime);
+						Alert("没有符合条件的 "+atitle+" 记录",info_showtime);
 						showstateinfo("没有符合条件的 "+atitle+" 记录");
 						decodedatas([],apt,atitle);//
 					}
 				} else {
 					decodedatas([],apt,atitle);//
-					layer.alert("没有符合条件的 "+atitle+" 记录",info_showtime);
+					Alert("没有符合条件的 "+atitle+" 记录",info_showtime);
 					showstateinfo("没有符合条件的 "+atitle+" 记录");
 				}
 			})
@@ -513,6 +516,9 @@
 			sel_str=selectText.split(";")
 			showchartview(sel_str);
 		}
+		if(timer!=null)
+			stoptimer(timer);
+		timer=blinklink(flashit);
 	})
 	function showchartview(asel_str) {
 		switch(asel_str.length){

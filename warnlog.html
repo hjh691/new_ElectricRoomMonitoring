@@ -187,9 +187,8 @@
 	var direct=0;        //方向
 	var len;            //总行数
 	var page;            //总页数
-	var begin;
-	var end;
-	var count,count_l=0,count_h=0;
+	var begin,end;
+	var count=0,count_l=0,count_h=0;
 	var $table;
 	var configs;
 	var dname="",catalog="";
@@ -207,88 +206,88 @@
 		updatapcnav(8);
 		sessionStorage.framepage="warnlog.html";
 		var parentid=-100,parentname="";
-	var maps=[];
-	sessionStorage.pageindex = 5;
-	//var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
-	//var treenode=buildnode(treeseneors,0);
-	//inittreeview(treenode);
-	document.getElementById("kssj_warning").value = sessionStorage.kssj;
-	document.getElementById("jssj_warning").value = sessionStorage.jssj;
-	/*var sel_sensor=document.getElementById("jcdd");
-	for (var i = 0; i < sel_sensor.length; i++) {
-		sel_sensor.removeChild(sel_sensor.options[0]);
-		sel_sensor.remove(0);
-		sel_sensor.options[0] = null;
-	}*/
-	sensors=JSON.parse(localStorage.getItem("sensors"));
-	configs=JSON.parse(localStorage.getItem("Configs"));
-	/*if(sensors!=null){
-		for(var i=0;i<sensors.length;i++){
-			if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
-				parentid=sensors[i].Value.ParentId;
-				for(var j=0;j<sensors.length;j++){
-					if(sensors[j].id==parentid){
-						parentname=sensors[j].Value.Name+"_";
-						break;
+		var maps=[];
+		sessionStorage.pageindex = 5;
+		//var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+		//var treenode=buildnode(treeseneors,0);
+		//inittreeview(treenode);
+		document.getElementById("kssj_warning").value = sessionStorage.kssj;
+		document.getElementById("jssj_warning").value = sessionStorage.jssj;
+		/*var sel_sensor=document.getElementById("jcdd");
+		for (var i = 0; i < sel_sensor.length; i++) {
+			sel_sensor.removeChild(sel_sensor.options[0]);
+			sel_sensor.remove(0);
+			sel_sensor.options[0] = null;
+		}*/
+		sensors=JSON.parse(localStorage.getItem("sensors"));
+		configs=JSON.parse(localStorage.getItem("Configs"));
+		/*if(sensors!=null){
+			for(var i=0;i<sensors.length;i++){
+				if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
+					parentid=sensors[i].Value.ParentId;
+					for(var j=0;j<sensors.length;j++){
+						if(sensors[j].id==parentid){
+							parentname=sensors[j].Value.Name+"_";
+							break;
+						}
 					}
 				}
+				var map=new Object();
+				map.value=sensors[i].id;
+				map.name=parentname+sensors[i].Value.Name; 
+				maps.push(map);
 			}
-			var map=new Object();
-			map.value=sensors[i].id;
-			map.name=parentname+sensors[i].Value.Name; 
-			maps.push(map);
-		}
-		var compare = function (obj1, obj2) {
-			var val1 = obj1.name;
-			var val2 = obj2.name;
-			if (val1 < val2) {
-				return -1;
-			} else if (val1 > val2) {
-				return 1;
-			} else {
-				return 0;
-			}            
-		} 
-		maps.sort(compare);
-		for(var k=0;k<maps.length;k++){
-			var op=document.createElement("option");
-			op.setAttribute("value",maps[k].value);
-			op.innerHTML=maps[k].name;
-			sel_sensor.appendChild(op);
-		}
-	}
-	setSelectOption("jcdd", sessionStorage.SensorId);
-	sessionStorage.SensorId = sel_sensor.value;*/
-	if(sessionStorage.SensorId=="")
-		sessionStorage.SensorId=-1;
-	//GetSensorsByStation();
-	if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")){
-		sessionStorage.timeindex=0;
-	}
-	$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
-	seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
-	appenddisplaytype(sessionStorage.SensorId);
-	//if(sessionStorage.timeindex==4){
-	querywarnlog();//decodedatas();
-	//}	
-	if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
-		if(typeof(w1) == "undefined") {
-			w1 = new Worker("delay_worker.js");
-		}
-		var i=0;
-		w1.onmessage = function(event) {
-			//document.getElementById("result").innerHTML = event.data;
-			i++
-			if(i%60==0){
-				if(sessionStorage.timeindex==5)
-				showrealworning();
+			var compare = function (obj1, obj2) {
+				var val1 = obj1.name;
+				var val2 = obj2.name;
+				if (val1 < val2) {
+					return -1;
+				} else if (val1 > val2) {
+					return 1;
+				} else {
+					return 0;
+				}            
+			} 
+			maps.sort(compare);
+			for(var k=0;k<maps.length;k++){
+				var op=document.createElement("option");
+				op.setAttribute("value",maps[k].value);
+				op.innerHTML=maps[k].name;
+				sel_sensor.appendChild(op);
 			}
-		};
-	} else {
-		var t1 = window.setInterval("getrealdatabynodeid(-1);",60000);
+		}
+		setSelectOption("jcdd", sessionStorage.SensorId);
+		sessionStorage.SensorId = sel_sensor.value;*/
+		if(sessionStorage.SensorId=="")
+			sessionStorage.SensorId=-1;
+		//GetSensorsByStation();
+		if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")){
+			sessionStorage.timeindex=0;
+		}
+		$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
+		seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
+		appenddisplaytype(sessionStorage.SensorId);
+		//if(sessionStorage.timeindex==4){
+		querywarnlog();//decodedatas();
+		//}	
+		if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
+			if(typeof(w1) == "undefined") {
+				w1 = new Worker("delay_worker.js");
+			}
+			var i=0;
+			w1.onmessage = function(event) {
+				//document.getElementById("result").innerHTML = event.data;
+				i++
+				if(i%60==0){
+					if(sessionStorage.timeindex==5)
+					showrealworning();
+				}
+			};
+		} else {
+			var t1 = window.setInterval("getrealdatabynodeid(-1);",60000);
+		}
+		$("#warnlogdata-tbody").height(parent.window.windowHeight-320);
 	}
-	$("#warnlogdata-tbody").height(parent.window.windowHeight-320);
-}
 	function inittreeview(anodes) {
 		$('#tree_chi').treeview({
 			data: anodes,    // 数据源  
@@ -447,7 +446,7 @@
 						var s_des=configs[i].details//如果有，读取其所有配置项
 						for(var p in s_des){
 							lab=document.createElement("label");
-							/*if(p==0){史薛贾王
+							/*if(p==0){
 								name=s_des[p].Name;
 								catalog=s_des[p].Catalog;
 								lab.className="btn btn-primary active"
@@ -531,17 +530,13 @@
 			}else{
 				for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
 					document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
-				var li=document.createElement("li");
-				//li.text="没有可选项";
-				//document.getElementById("event_type").text="没有可选项";
+				var li=document.createElement("li"); 
 				selectText="没有告警事件选项"
 			}
 		}else{
 			for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
 				document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
-			var li=document.createElement("li");
-			//li.text="没有可选项";
-			//document.getElementById("event_type").text="没有可选项";
+			var li=document.createElement("li"); 
 			selectText="没有告警事件选项";
 		}
 		$("#select_text").val(selectText);
@@ -567,7 +562,8 @@
 			name=objS.options[objS.selectedIndex].innerText;
 		}*/
 		var type_str=[];
-		var count = 0;
+		count = 0;
+		count_h=0;
 		var count_l=[];
 			$("#warnlogdata-tbody tr").empty();
 			$table=document.getElementById("warnlogdata-tbody");
@@ -690,21 +686,21 @@
 					document.getElementById("count_val").innerHTML="";
 					document.getElementById("count_first").innerHTML="";
 					document.getElementById("count_third").innerHTML="";
-					document.getElementById("tr0").style.display="none";
-					document.getElementById("td0").style.display="none";
-					document.getElementById("tr1").style.display="none";
-					document.getElementById("td1").style.display="none";
+					//document.getElementById("tr0").style.display="none";
+					//document.getElementById("td0").style.display="none";
+					//document.getElementById("tr1").style.display="none";
+					//document.getElementById("td1").style.display="none";
 					document.getElementById("count_first").innerHTML=0;
 					document.getElementById("count_third").innerHTML=0;
 				}else{
 					//showstateinfo("");
-					for(var i=0;i<type_str.length;i++){
-						if(count_l[i]==0){
-							//document.getElementById(window.eval("'td"+i+"'")).style.display="none";
-							var dtr=document.getElementById(window.eval("'tr"+i+"'"));//;//.style.display="none";
-							$table.removeChild(dtr);//去掉统计为零的标题行
-						}
-					}
+					//for(var i=0;i<type_str.length;i++){
+					//	if(count_l[i]==0){
+					//		//document.getElementById(window.eval("'td"+i+"'")).style.display="none";
+					//		var dtr=document.getElementById(window.eval("'tr"+i+"'"));//;//.style.display="none";
+					//		$table.removeChild(dtr);//去掉统计为零的标题行
+					//	}
+					//}
 					/*if(count_h==0){
 						document.getElementById("tr0").style.display="none";
 						document.getElementById("td0").style.display="none";
@@ -716,9 +712,18 @@
 					document.getElementById("count_val").innerHTML=count;
 					document.getElementById("count_first").innerHTML=count_l[0];
 					document.getElementById("count_third").innerHTML=count_l[1];
-					var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));
-					$table.removeChild(dtr);//去掉最后一行（插入参考行
+					//var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));
+					//$table.removeChild(dtr);//去掉最后一行（插入参考行
 				}
+				for(var i=0;i<=type_str.length;i++){
+					if(count_l[i]==0){
+						//document.getElementById(window.eval("'td"+i+"'")).style.display="none";
+						var dtr=document.getElementById(window.eval("'tr"+i+"'"));//;//.style.display="none";
+						$table.removeChild(dtr);//去掉统计为零的标题行
+						count_h++
+					}
+				}
+				count_h=type_str.length+1-count_h;//统计告警类型项的数量，数据表总量要减去告警类型统计项的标题行。
 				//ps=obj_data.length;
 			}else{
 				document.getElementById("count_first").innerHTML=0;
@@ -753,7 +758,7 @@
 	function showrealworning(){
 		//document.getElementById("jcdd").disabled=true;
 		var sift=false;
-		count_l=[0,0];//count_h=0;
+		count=0,count_l=[0,0],count_h=0;
 		var timedefine=document.getElementById("timedefine");//取得主程序实时数据列表元素内容。
 		var warningtab = window.parent.document.getElementById("realwarningdata-tbody");
 		var trs = warningtab.getElementsByTagName("tr");
@@ -827,15 +832,17 @@
 					count++;
 				}
 			}
-			for(var i=0;i<type_str.length;i++){
+			for(var i=0;i<=type_str.length;i++){
 				if(count_l[i]==0){
 					//document.getElementById(window.eval("'td"+i+"'")).style.display="none";
 					var dtr=document.getElementById(window.eval("'tr"+i+"'"));//;//.style.display="none";
-					$table.removeChild(dtr);//去掉统计为零的标题行 
+					$table.removeChild(dtr);//去掉统计为零的标题行
+					count_h++; 
 				}
 			}
-			var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));//20200403
-			$table.removeChild(dtr);//去掉最后一行（插入的参考行）
+			count_h=type_str.length+1-count_h;//统计告警类型项的数量，数据表总量要减去告警类型统计项的标题行。
+			//var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));//20200403
+			//$table.removeChild(dtr);//去掉最后一行（插入的参考行）
 		}else{
 			Alert("当前没有告警!",info_showtime);
 			showstateinfo("当前没有告警信息");
@@ -859,7 +866,7 @@
 		curPage=1;    // 设置当前为第一页
 		displayPage(1);//显示第一页
 		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
-		document.getElementById("sjzl").innerHTML="数据总量 <span class='badge' style='font-size:18px'>" + len + "";        // 显示数据量
+		document.getElementById("sjzl").innerHTML="数据总量 <span class='badge' style='font-size:18px'>" + (len-count_h) + "";        // 显示数据量 数据表总量要减去告警类型统计项的标题行。
 		document.getElementById("pageSize").value = pageSize;
 	}
 		function firstPage(){    // 首页

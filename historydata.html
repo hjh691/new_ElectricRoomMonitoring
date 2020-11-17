@@ -157,6 +157,8 @@
 		var catalog="",dname="",tname="";
 		var configs,scatalog;
 		var myChart;
+		var timer=null;
+		var flashit=document.getElementById("chaxun");
 		$(function () {
 			initpage();			
 		});
@@ -377,6 +379,10 @@
 				tname= eobj[0].parentNode.innerText;
 				sessionStorage.datatype=dname;//保存选择项的值，用于页面刷新时恢复当前数据。
 				catalog=getcatalog(dname);
+				
+				if(timer!=null)
+					stoptimer(timer);
+				timer=blinklink(flashit);
 				//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
 			});
 		}
@@ -481,6 +487,7 @@
 					}
 				}
 			}
+			stoptimer(timer);
 			/*var sel=document.getElementById("jcdd");
 			if(sel.options.length<=0){
 				layer.alert("请选择要查询的测量点名称",info_showtime);
@@ -1077,6 +1084,8 @@
 			sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
 			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 		}
+		
+		
 	</script>
 </body>
 </html>

@@ -580,7 +580,11 @@
 						$("#tree").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 					}
 					$("#tree").treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
-				}
+				},
+				onSearchComplete:function(event, data) { 
+					var firstSearchResult = $('#tree').find('ul').find('li[data-nodeid='+ sessionStorage.selNodeId +']');
+					$("#tree" ).scrollTop(firstSearchResult[0].offsetTop);
+				},
 				/**方法
 				 * checkAll(options);//选中所有树节点
 				checkNode(node | nodeId, options);  //选中一个给定nodeId的树节点
@@ -647,6 +651,7 @@
 			//$('#tree').treeview('expandNode', [ tree[0].id, { levels: 2, silent: true } ]);
 			//$('#tree').treeview('selectNode', [firstNode, { silent: true }]);
 			$("#tree").treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
+			$("#tree").treeview('search', [sessionStorage.selNodeId + "", { ignoreCase: false, exactMatch: false }]);
 			//获取指定node的sensors
 			//GetSensorsByNode(sessionStorage.nodeid);
 			infotreedata = [];
@@ -1232,6 +1237,7 @@
 					}else{
 						localStorage.setItem("Config",null);
 					}
+					sessionStorage.SensorId=-1;//清除标签id，避免一些没有标签的节点借用保存的标签id形成错误的查询条件
 				}
 				refreshiframe();
 			})
@@ -1768,7 +1774,6 @@
 				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
 					//var selectnode=$("#tree_chi").treeview('getSelected');
 					//$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 
-					//sessionStorage.jfjk_nodeid = data.nodeId;
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 						var p_node = getThe_level_nodeid(data, i);
 						$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
@@ -1778,7 +1783,8 @@
 					//setSelectOption("jcdd", data.id);
                     sessionStorage.jfjk_nodeid=data.nodeId;
 					sessionStorage.SensorId=data.id;
-					sessionStorage.sel_id=data.id;
+					if(!multiselect)//多选时，标签id不被保存；用于恢复所选项
+						sessionStorage.sel_id=data.id;
 					$("#iframe_main")[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
 					sessionStorage. SensorName=data.text;
 					var sensorarray=$("#tree_chi").treeview("getSelected");
@@ -1796,14 +1802,36 @@
 				onNodeUnselected : function(event,data){
 					clickNode(event, data);
 				},
+				onSearchComplete:function(event, data) { 
+					/*if( isEmpty(data)){
+						return;
+					}*/
+					//如果查找到的位置数据超出当前范围滚动条直接滚动到搜索结果中的第一条数据的位置
+					//var nodeId = data[0].nodeId;
+					var firstSearchResult = $('#tree_chi').find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
+					$("#tree_chi" ).scrollTop(firstSearchResult[0].offsetTop-520);
+				},
 			});
 			
 			if(anodes.length>0){
 				$("#tree_chi").treeview('collapseAll');//关闭展开
-				if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
+				//if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
 					sessionStorage.jfjk_nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
+				//}
+				//$("#tree_chi").treeview('checkAll'  , { silent:   true   });
+				var allnode=$("#tree_chi").treeview("getUnselected");
+				var currentNode=null;
+				for(var j=0;j<allnode.length;j++){//根据所保存的标签编号（id）来确定那个标签被选中。
+					if(allnode[j].id==sessionStorage.sel_id)
+					{	currentNode=allnode[j]
+						sessionStorage.jfjk_nodeid=allnode[j].nodeId;
+					}
 				}
-				var currentNode = $("#tree_chi").treeview("getNode", sessionStorage.jfjk_nodeid);
+				var tree=$("#tree_chi");
+				//var firstSearchResult = $('#tree_chi').find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
+					//$("#tree_chi" ).scrollTop(firstSearchResult[0].offsetTop);
+				if(currentNode==null)
+					currentNode = $("#tree_chi").treeview("getNode", sessionStorage.jfjk_nodeid);
 				
 				if(!currentNode.hasOwnProperty("NodeId"))
 					currentNode = $("#tree_chi").treeview("getNode", 0);
@@ -1818,6 +1846,7 @@
 				sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
 				sessionStorage.SensorName=currentNode.text;//获取标签名称，用于列表显示用.20201110
 				$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
+				$("#tree_chi").treeview("search",[sessionStorage.jfjk_nodeid+'', { ignoreCase: false, exactMatch: true }]);
 				/**/
 			}
             function getThe_level_nodeid(anode, alevel) {
@@ -2022,4 +2051,41 @@
   登录过程的错误提示信息区分；数据交换过程中的不同错误提示信息的区分显示；系统设置的是否隐藏左侧菜单栏图标总是off问题（config文件初始化为false）；
 
   设备列表、app下载、联系我们等页面点击“返回（history（-1））”按钮后再次点击对应的菜单项（页面不刷新的问题）；
+  sessionStorage.framepage 保存iframe_main所加载的当前页面名称；
+  sessionStorage.pageindex = 4; iframe_main 所加载的页面索引值
+  sessionStorage.cxsj 趋势对比查询时间
+  sessionStorage.comperator_sensors 参与进行趋势对比的标签列表数组
+  sessionStorage.selectText 要显示的对比项目
+  sessionStorage.nodeId  所选择的节点编号；
+  sessionStorage.kssj;sessionStorage.jssj; 查询的起止时间
+  sessionStorage.SensorId  标签编号
+  sessionStorage.timeindex  查询时段索引
+  sessionStorage.eventTypeSelected 所选择的告警事件数组
+  sessionStorage.warnlogname  告警类别分组对应的系统实际名称
+  sessionStorage.SensorName;  标签名称
+  sessionStorage.islogin  与服务器的连接标志（通信是否正常的标志）
+  sessionStorage.errortime  通信错误次数
+  sessionStorage.password  登录密码
+  sessionStorage.token  与后台服务的认证码
+  sessionStorage.map_module 显示区域的长宽比例；
+  sessionStorage.contents  获取到的一次侧图形内容
+  sessionStorage.dataId  当前数据的最大编号（id）
+  sessionStorage.refreshtoken  刷新安全认证码的码
+  sessionStorage.datatype 数据类型也就是类别分组
+  sessionStorage.typename=dname; 数据类别名称
+  sessionStorage.typecatalog=catalog;  //对应的分组内容
+
+  localStorage.Configs 标签的配置信息数组
+  localStorage.Config  特定标签配置
+  localStorage.sensors 标签信息数组
+  localStorage.historydata 上次查询的历史数据数组
+  localStorage.username 用户名
+  localStorage.realdata 实时数据数组
+  localStorage.allConfigs 标签是所有配置项
+  localStorage.backfile 登录页面背景图片文件名
+  localStorage.showLeftMenu 左侧菜单是否显示
+  localStorage.setItem("sensor_tree",null); 标签树
+  localStorage.setItem("binaries", JSON.stringify(obj_Binaries));  一次图像列表
+  localStorage.allsensors  全部标签项信息.
+
 -->

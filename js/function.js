@@ -193,6 +193,7 @@ function LoginOrder(name, ps,flag) {
 					sessionStorage.islogin = true;
 					if ((!sessionStorage.errortime || (sessionStorage.errortime == 0))&&(flag==0)) {//修改第一次登录不能进入主页面的问题。
 						window.location.href = "mainpage.html";
+						showstateinfo(localStorage.username+"用户登录成功!");
 					} else {
 						sessionStorage.errortime = 0;
 						showusername();
@@ -260,6 +261,7 @@ function RefreshToken(){
 			sessionStorage.refreshtoken=data.refreshToken;
 			//localStorage.username = name;
 			sessionStorage.islogin = true;
+			showstateinfo("认证码刷新成功");
 		}
 	});
 }
@@ -339,7 +341,7 @@ function login() {
 function logout(){
 	sessionStorage.SensorId=-1;
 	sessionStorage.nodeId=-1;
-	sessionStorage.nodeid=-1;
+	//sessionStorage.nodeid=-1;
 	sendorder("Logout",function(data){
 		if (data){//.Error == null) {
 			localStorage.username = "未登录";
@@ -668,7 +670,7 @@ function getrealsbydataid() {
 	}
 	var url = jfjk_base_config.baseurl + "GetRealsNew?dataId=" + sessionStorage.dataId;
 	url = encodeURI(url);
-	if ((sessionStorage.islogin == "true") && (localStorage.errortime <= 3)) {
+	if ((sessionStorage.islogin == "true") && (sessionStorage.errortime <= 3)) {
 		$.ajax({
 			beforeSend: function(request) {
 				request.setRequestHeader("Authorization", sessionStorage.token);
@@ -678,20 +680,20 @@ function getrealsbydataid() {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				localStorage.errortime++;
+				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
 					layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取实时数据操作失败',info_showtime);
 				} else {
 					layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取实时数据操作失败',info_showtime);
 				}
-				if(localStorage.errortime>3){
+				if(sessionStorage.errortime>3){
 					sessionStorage.islogin=false;
 				}
 			},
 			success: function(data, status) {
 				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
-					localStorage.errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						var sensors = new Object(),
@@ -1347,23 +1349,23 @@ function GetWarnLog(mkssj, mjssj) {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				localStorage.errortime++;
+				sessionStorage.errortime++;
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
 					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取告警信息操作失败', info_showtime);
 				} else {
 					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取告警信息操作失败', info_showtime);
 				}
-				if(localStorage.errortime>3){
+				if(sessionStorage.errortime>3){
 					sessionStorage.islogin=false;
-					localStorage.errortime=0;
+					sessionStorage.errortime=0;
 				}
 			},
 			success: function(data, status) {
 				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
 					ajaxLoadingHidden();
-					localStorage.errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						if (jQuery.isEmptyObject(data.Result.Datas)) {
@@ -1446,23 +1448,23 @@ function GetWarnLogBySensorId(mkssj, mjssj) {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				localStorage.errortime++;
+				sessionStorage.errortime++;
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
 					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取告警信息操作失败',info_showtime);
 				} else {
 					Alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取告警信息操作失败',info_showtime);
 				}
-				if(localStorage.errortime>3){
+				if(sessionStorage.errortime>3){
 					sessionStorage.islogin=false;
-					localStorage.errortime=0;
+					sessionStorage.errortime=0;
 				}
 			},
 			success: function(data, status) {
 				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
 					ajaxLoadingHidden();
-					localStorage.errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						if (data.Result.Datas != null) {
@@ -1547,7 +1549,7 @@ function GetSmsLog(mkssj, mjssj) {
 			dataType: 'json',
 			timeout: 10000,
 			error: function(jqXHR, textStatus, errorThrown) {
-				localStorage.errortime++;
+				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
 					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取日志操作失败', info_showtime);
 				} else {
@@ -1559,7 +1561,7 @@ function GetSmsLog(mkssj, mjssj) {
 				if (status == "success") {
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
-						localStorage.errortime = 0;
+						sessionStorage.errortime = 0;
 						if (!jQuery.isEmptyObject(data.Result.SmsLogs)) {
 							if ((data.Result.hasOwnProperty("SmsLogs")) && (!jQuery.isEmptyObject(data.Result.SmsLogs))) {
 								for (var i = 0; i < data.Result.SmsLogs.length; i++) { //data.Result.length
@@ -1621,13 +1623,13 @@ function getchartvalue(msensorid, kssj, jssj) {
 			dataType: 'json',
 			timeout: 10000,
 			error: function() {
-				localStorage.errortime++;
+				sessionStorage.errortime++;
 				layer.alert('趋势图数据操作失败',info_showtime);
 			},
 			success: function(data, status) {
 				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
-					localStorage.errortime = 0;
+					sessionStorage.errortime = 0;
 					sessionStorage.islogin = true;
 					if (data.Error == null) {
 						if (data.Result.Datas.hasOwnProperty("Tmp")) {
@@ -1859,7 +1861,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 	function drawchart() {
 		//var myChart = echarts.init(document.getElementById('main'));
 		var option = {
-			color: ['#ff8c00', '#FF0000','#00ff00',"#9400D3","#00BFFF","#4B0082","#20B2AA","#0000CD"," #FF4500 "],//
+			color: ['#ff6c00', '#FF0000','#0fff0f',"#9400D3","#00BFFF","#3B20B2","#20B2AA","#0000CD"," #FF4500 "],//
 			backgroundColor: '#dcdcdc',
 			title : {
 						text : atitle+": "+' 变化趋势比对  ',//标题 标签名称+项目名称；
@@ -3120,11 +3122,23 @@ function sendpostorder(order,datas,callback){
 		callback(null) ;
 	}
 }
+function blinklink(flashit){
+	if(flashit.style.backgroundColor=='rgb(0, 101, 105)'){  //注意：这里拿到的是rgb格式的
+		flashit.style.backgroundColor='rgb(232, 83, 63)';
+	}else{
+		flashit.style.backgroundColor='rgba(0, 101, 105)';
+	}
+	return timer=setTimeout("blinklink(flashit)",500);
+}
+
+function stoptimer(timer){
+	flashit.style.backgroundColor='rgba(0, 101, 105)';
+	clearTimeout(timer);
+}
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
  * 
  * 连接异常时的报错信息，历史数据和实时数据没有返回值时的异常处理，对多次异常时的处理过程,主页面的登录用户名称和登录状态显示内容。
  * 系统网络连接的状态改变；系统没5-10分钟进行连接判断或重连，没15-30分钟进行一次安全验证码刷新操作，
- * 系统和部位    出水口静压力   出水压力
- * 自喷：喷头		0.05
+ * 
  */
