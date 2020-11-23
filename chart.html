@@ -66,6 +66,7 @@
 		<!--<div class="pagecard" id="pagecard1">
 			<p style="text-align:center;font-size:20px;display: none;"><b>趋势对比</b></p>
 		</div>-->
+		<div class="panel panel-default" style="margin-bottom: 0;">
 		<div style="text-align:left;padding-left: 10px;">
 			<span><label class="title-right">类别分组：</label></span>
 			<span class="dropdown" style="position: relative;" >
@@ -74,7 +75,7 @@
 				<span class="caret"></span>
 			</button>-->
 			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
-				<input id="select_text" class="select_text " data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;">
+				<input id="select_text" class="select_text" data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;">
 				<button  style="width:30px;height:35px;margin-left:-35px;position: relative;z-index: 2;"><i class= "caret">
 				</i></button></input>
 				<!--<a  class="btn  btn-default" href = "#" style="margin-left:-40px;"><i class= "caret">
@@ -89,7 +90,7 @@
 		<div  style="text-align:left;padding-left: 10px;">
 			<span><label class="title-right" >时间选择：</label></span>
 			<span>
-			<input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" id="cxsj" 
+			<input type="text" onClick="showdate({el:this,dateFmt:'yyyy-MM-dd'})" id="cxsj" 
 				style="width:130px;font-size:16px;height: 30px;border-radius: 5px;margin-right: 20px;"></input>
 			<!--<label class="title-right">计量点名称：</label>
 				<a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
@@ -102,13 +103,14 @@
 				<button class="selected" id="chaxun" value="对比" onclick="oneChoice()">对比</button>
 					<a href="javascript:void(0)" style="margin-left:10px;" onclick="exporttoexcel('compratetable')">
 						<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
-				<label id="sel-sensorname"></label>
+				<input id="sel-sensorname" style="width:50%;height:30px;overflow: hidden;margin-bottom: 0;display: inline;color:blue;" readonly="true" value="所选标签:" text="所选标签:"></input>
 			</span>
 			<form  id="jcdd" style="background-color: #dcdcdc;height: 500px;overflow: auto;font-size:16px;display:none;">
 				<p><input type="checkbox" value="0" οnclick="allChoice()" id="allCheck" name="checks"/>全选 </p>
 			</form>
 		</div>
-		<div class="container" style="text-align: center;width:100%;"><!--class="parent" class="column  MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 20px;flex:2.5;-->
+		</div>
+		<div class="container panel panel-default" style="text-align: center;width:100%;margin-bottom: 0;"><!--class="parent" class="column  MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 20px;flex:2.5;-->
 			<div class="row" style="width: 100%;margin-top: 10px;padding-left: 50px;">
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 "  style="margin-left: 0;margin-right: 0;" >
 					<div class="row" align="center">
@@ -158,6 +160,7 @@
 		inithistorychart();
 		function inithistorychart() {
 			updatapcnav(7);
+			var el=$("[class $= 't']");//jquery 选择器 结束、开始、包含、等于
 			sessionStorage.framepage="chart.html";
 			//return;
 			sessionStorage.pageindex = 4;
@@ -171,7 +174,10 @@
 			if(sessionStorage.comperator_sensors)
 			var sel_sensor =JSON.parse(sessionStorage.comperator_sensors);
 			var tree_obj=window.parent.$("#tree_chi");
-			var sensors=tree_obj.treeview("getUnselected");
+			var obj_node=tree_obj.treeview("getSelected");
+			if(obj_node.length>0)//判断有没有选中项
+			{tree_obj.treeview("unselectNode",obj_node[0]);}//使选择项为不选中，为下一步选择所有未选择项准备//	$("#sel-sensorname").val("所选标签: "+tree_obj.treeview("getSelected")[0].text);
+			var sensors=tree_obj.treeview("getUnselected");//选取未选中项
 			if(sensors && sel_sensor)
 			for (var i = 0; i <sel_sensor.length; i++) {
 				for(var j=0;j<sensors.length;j++){
@@ -181,7 +187,7 @@
 					}
 				}
 			}
-			//sensors=JSON.parse(localStorage.getItem("sensors"));//qck:>300 151-300 51-150 <50 >10000 5001-10000 2001-5000 <=2000 2 3-5 6-15 >15 500,500-1000,1000-3000,>3000,400,250,100,
+			//sensors=JSON.parse(localStorage.getItem("sensors"));//
 			configs=JSON.parse(localStorage.Configs);
 			/*if (sensors != null) {
 				for (var i = 0; i < sensors.length; i++) {
@@ -202,10 +208,10 @@
 				var compare = function (obj1, obj2) {//zw20-12 zw32-12 zw43-12 
 					var val1 = obj1.name;
 					var val2 = obj2.name;
-					return val1.localeCompare(val2);//隧道：人/普通车/危化车 1500/4 500/p -/w  501-1500/3 500/3  1501-3000/2 501-1500/2 >3000/1 >1500/1
+					return val1.localeCompare(val2);//
 				}
 				maps.sort(compare);
-				for (var k = 0; k < maps.length; k++) {//将标签添加到多选列表中 油：3-3*30  2-3*50 3-3*70  dan 50、30 
+				for (var k = 0; k < maps.length; k++) {//将标签添加到多选列表中 
 					var p = document.createElement("p");
 					var lab=document.createElement("label");
 					var input=document.createElement("input");
@@ -226,7 +232,7 @@
 			//setSelectOption("jcdd", sessionStorage.SensorId);
 			oneChoice();
 		}
-		//添加显示控制选项
+		//添加类别分组选项
 		function appenddisplaytype(anodeid){
 			selectText="";
 			if(sessionStorage.selectText){
@@ -309,7 +315,7 @@
 			showchartview(sel_str);
 		}
 	
-		function itemclick(obj){//多选列表项的点击响应过程
+		/*function itemclick(obj){//多选列表项的点击响应过程
 			var allobj = $('[name="checks"]');
 			var c=0;
 			for(var k in allobj){
@@ -340,7 +346,7 @@
 				}
 			//	btn.value="全选";
 			//}
-		}
+		}*/
 		//对比按钮
 		function oneChoice(){
 			stoptimer(timer);
@@ -516,9 +522,7 @@
 			sel_str=selectText.split(";")
 			showchartview(sel_str);
 		}
-		if(timer!=null)
-			stoptimer(timer);
-		timer=blinklink(flashit);
+		flashbutton();
 	})
 	function showchartview(asel_str) {
 		switch(asel_str.length){
@@ -553,7 +557,8 @@
 				ch4.setAttribute("style","display:block");
 				break;
 			}
-	  }
+	  	}
+		
 	</script>
 </body>
 </html>

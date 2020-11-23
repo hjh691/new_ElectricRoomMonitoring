@@ -259,9 +259,11 @@
 				window.setInterval("resetContent()", 200);
 				refreshwindow();
 				//initIndex();
-				sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
-				sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
-				sessionStorage.cxsj = getCurrentDate(2);
+				if(sessionStorage.kssj==undefined){
+					sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
+					sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
+					sessionStorage.cxsj = getCurrentDate(2);
+				}
 				if (sessionStorage.islogin) {
 					getNodes();
 				} else {
@@ -453,7 +455,7 @@
 					$("#tree").treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
 					sessionStorage.selNodeId = data.nodeId;
 					localStorage.setItem("sensor_tree",null);
-					sessionStorage.selectText="";
+					//sessionStorage.selectText="";
 					if(data.Catalog=="视频监控"){
 						sessionStorage.nodetype=0;//全局变量，用于存储节点类型，来区分要显示的内容（导航栏标题，iframe对应的html页，历史数据变化趋势的取值等）
 						maps = [];
@@ -1753,10 +1755,12 @@
 			}
 		}
 		function inittreeview_level2(anodes) {
+			
 			if(!anodes){
 				var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
 				anodes=buildnode_level2(treeseneors,0);
 			}
+			var sensorarray;
 			$('#tree_chi').treeview({
 				data: anodes,    // 数据源
 				showCheckbox: false,   //是否显示复选框
@@ -1787,12 +1791,16 @@
 						sessionStorage.sel_id=data.id;
 					$("#iframe_main")[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
 					sessionStorage. SensorName=data.text;
-					var sensorarray=$("#tree_chi").treeview("getSelected");
+					if(sessionStorage.pageindex==5){
+						$("#iframe_main")[0].contentWindow.document.getElementById("war_caption").innerHTML=data.text;
+					}
+					sensorarray=$("#tree_chi").treeview("getSelected");
 					if(sensorarray.length>6){
 						$("#tree_chi").treeview("unselectNode",[data.nodeId]);
 						alert("对比测量点不能大于6个!",info_showtime);
 						showstateinfo("对比测量点不能大于6个");
 						//showstateinfo("对比测量点不能大于6个");
+					}else {showselectesensors();
 					}
                     //catalog=getcatalog(dname);
                     //queryhistorydata();//0710
@@ -1801,6 +1809,9 @@
 				},
 				onNodeUnselected : function(event,data){
 					clickNode(event, data);
+					
+					sensorarray=$("#tree_chi").treeview("getSelected");
+					showselectesensors();
 				},
 				onSearchComplete:function(event, data) { 
 					/*if( isEmpty(data)){
@@ -1810,9 +1821,12 @@
 					//var nodeId = data[0].nodeId;
 					var firstSearchResult = $('#tree_chi').find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
 					$("#tree_chi" ).scrollTop(firstSearchResult[0].offsetTop-520);
+					if(sessionStorage.pageindex==5){
+						$("#iframe_main").contents().find("#war_caption").text(currentNode.text);
+					}
 				},
 			});
-			
+			sensorarray=$("#tree_chi").treeview("getSelected");
 			if(anodes.length>0){
 				$("#tree_chi").treeview('collapseAll');//关闭展开
 				//if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
@@ -1854,7 +1868,18 @@
                     anode = ($("#tree_chi").treeview("getParent", anode))
                 }
                 return anode;
-            }/**/
+			}/**/
+			function showselectesensors(){
+				if(sessionStorage.pageindex==4){
+					$("#iframe_main")[0].contentWindow.document.getElementById("sel-sensorname").value='所选标签:';
+					for(var i=0;i<sensorarray.length;i++){
+						$("#iframe_main")[0].contentWindow.document.getElementById("sel-sensorname").value+=sensorarray[i].text+" , ";
+					}
+					$("#iframe_main")[0].contentWindow.flashbutton();
+				}
+				if(sessionStorage.pageindex==5||sessionStorage.pageindex==3)
+					$("#iframe_main")[0].contentWindow.flashbutton();
+			}
         }
 		function buildnode_level2(data, level) {
 			var tree = [];
@@ -2018,7 +2043,7 @@
 
         }
 	function show3D(){
-		document.getElementById('iframe_main').src="exp3.html"
+		document.getElementById('iframe_main').src="l2.html"
 	}
 	</script>
 </body>

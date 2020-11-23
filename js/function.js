@@ -339,22 +339,22 @@ function login() {
 }*/
 //退出登录 used by electricroommonitor
 function logout(){
-	sessionStorage.SensorId=-1;
-	sessionStorage.nodeId=-1;
+	//sessionStorage.SensorId=-1;
+	//sessionStorage.nodeId=-1;
 	//sessionStorage.nodeid=-1;
 	sendorder("Logout",function(data){
 		if (data){//.Error == null) {
 			localStorage.username = "未登录";
 			sessionStorage.sps="";
 			sessionStorage.islogin = false;
-			window.location.href = "index.html";
+			top.location.href = "index.html";//使用top代替window，货物最顶层窗口
 			init_var();
 			return;
 		}
 	});
 	localStorage.username = "未登录";
 	sessionStorage.islogin = false;
-	window.location.href = "index.html";
+	top.location.href = "index.html";//使用top代替window，货物最顶层窗口
 	init_var();
 }
 //页面变量复位 use by electricroommonitoring
@@ -364,8 +364,12 @@ function init_var(){
 	sessionStorage.SensorName="";
 	sessionStorage.dataId=0;
 	//sessionStorage.sensors=[];
-	sessionStorage.nodeId=-1;
+	sessionStorage.nodeId=-1;//节点树的选择项
 	sessionStorage.selNodeId="";
+	sessionStorage.sel_id=-1;//标签树的选择项
+	delete sessionStorage.kssj;
+	delete sessionStorage.jssj;
+	delete sessionStorage.cxsj;
 }
 //获取用户详细信息 used by electricroommonitor
 /*function GetUserProfile() {
@@ -524,51 +528,7 @@ function inithistorystate(){
 		sessionStorage.pageindex=11;
 	}
 }
-//网络连接心跳包  no used concent
-/*function sendbeat() {
-	sessionStorage.jssj=getCurrentDate(2);
-	var url = jfjk_base_config.baseurl; //+"GetGraphic?graphicId="+stationID;
-	url = encodeURI(url);
-	if ((sessionStorage.islogin == "true") && (localStorage.errortime <= 3)) {
-		$.ajax({
-			beforeSend: function(request) {
-				request.setRequestHeader("Authorization", sessionStorage.token);
-			},
-			url: url,
-			type: 'GET',
-			dataType: 'json',
-			timeout: 10000,
-			error: function(){
-				//sessionStorage.islogin=false;
-				//Alert('获取指定编号的图形操作失败');
-				localStorage.errortime++;
-				if(localStorage.errortime>3){
-					sessionStorage.islogin=false;
-				}
-			},
-			success: function(data,status){
-				localStorage.errortime=0;
-				var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-				if(status=="success"){
-					sessionStorage.islogin=true;
-					if(data.Error==null){
-						islogin=true;
-					}else{
-						layer.alert(data.Error,info_showtime);
-						showstateinfo(data.Error);
-					}
-				}
-			}
-		});
-	} else {
-		sessionStorage.islogin = false;
-		Alert("与服务器连接失败", info_showtime);
-		showstateinfo("与服务器连接失败");
-		localStorage.errortime=0;
-		LoginOrder(localStorage.username, sessionStorage.password,1);
-	}
-}/**/
-//used by elec
+//网络连接心跳包  no used concent 
 function sendbeat(){
 	i++;
 	var stime=new Date(getCurrentDate(2).replace(/-/,"/")).getTime();
@@ -615,28 +575,13 @@ function loaduserprofile(){
 }
 //跳转到历史数据  used by electricroommonitor
 function tohistory(sorid) {
-	/*var tbody=document.getElementById('realdata-tbody');
-		var trs = tbody.getElementsByTagName("tr");
-		for(var j=0;j<trs.length;j++){
-			if(trs[j].cells[0].childNodes[0].data==sorid){
-				sessionStorage.SensorName=trs[j].cells[1].childNodes[0].data;
-				break;
-			}
-		}*/
+	
 	sessionStorage.SensorId = sorid;
 	parent.window.document.getElementById('iframe_main').src = 'historydata.html';
 }
 //跳转到告警信息查询  used by electricroommonitor
 function towarnlog(sorid) {
-	/*var tbody=document.getElementById('realdata-tbody');
-		var trs = tbody.getElementsByTagName("tr");
-		for(var j=0;j<trs.length;j++){
-			if(trs[j].cells[0].childNodes[0].data==sorid){
-				sessionStorage.SensorName=trs[j].cells[1].childNodes[0].data;
-				setSelectOption("jcdd",sorid);
-				break;
-			}
-		}*/
+	
 	flag_warning = 0;
 	sessionStorage.SensorId = sorid;
 	parent.window.document.getElementById('iframe_main').src = 'warnlog.html';
@@ -1023,9 +968,9 @@ function initlist() {
 }
 //显示新密码输入选项 used by ele
 function showeditpassword() {
-	document.getElementById("up-editpassword").style.display = "inline";
-	document.getElementById("up-yhmmqr").style.display = "inline";
-	document.getElementById("txt_postpassword").style.display = "inline";
+	document.getElementById("row-newpassword").style.display = "";
+	//document.getElementById("up-yhmmqr").style.display = "inline";
+	//document.getElementById("txt_postpassword").style.display = "inline";
 	document.getElementById("txt_editpassword").style.display="none";
 }
 //提交密码修改内容 used by ele
@@ -1045,11 +990,11 @@ function postpassword() {
 		showstateinfo("请输入新密码");
 		return;
 	}
-	document.getElementById("up-editpassword").style.display = "none";
-	document.getElementById("up-yhmmqr").style.display = "none";
+	document.getElementById("row-newpassword").style.display = "none";
+	//document.getElementById("up-yhmmqr").style.display = "none";
 	document.getElementById("up-yhmmqr").value="";
 	document.getElementById("up-yhmm").value="";
-	document.getElementById("txt_postpassword").style.display = "none";
+	//document.getElementById("txt_postpassword").style.display = "none";
 	document.getElementById("txt_editpassword").style.display="inline";
 	/*var url = jfjk_base_config.baseurl + "ChangePass?pass=" + yhmm + "&newpass=" + xmm;
 	url = encodeURI(url);
@@ -1088,11 +1033,11 @@ function postpassword() {
 	});*/
 	sendorder("ChangePass?pass=" + yhmm + "&newpass=" + xmm,function(data){
 		if (data!= null) {
-			layer.alert("密码修改成功，请用新密码登录",info_showtime);
+			alert("密码修改成功，请用新密码登录",info_showtime);
+			//if (confirm("密码修改成功，请用新密码登录")) {  
+			//}  
 			showstateinfo("密码修改成功,请使用新密码登录");
-			window.location.href = "javascript:void(0)";
-			top.location = "index.html";
-			return;
+			logout();
 		}
 	})
 }
@@ -1310,6 +1255,7 @@ function querywarnlog(num) {
 	}*/
 	//sessionStorage.SensorId = sel.value;//document.getElementById("jcdd")
 	//sessionStorage.SensorName = sel.options[document.getElementById("jcdd").selectedIndex].text;
+	stoptimer(timer);//关闭闪烁
 	if(sessionStorage.timeindex==4){
 		var kssj = document.getElementById("kssj_warning").value;
 		if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
@@ -1883,10 +1829,10 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 				show: true,
 				feature: {
 					mark: {
-						show: true
+						show: false
 					},
 					dataView: {
-						show: true,
+						show: false,
 						readOnly: false
 					},
 					magicType: {
@@ -1915,8 +1861,11 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 				data: lengenddata,
 				orient:"vertical",//"horizontal",
 				x:'right',//'left'
-        		y:'45',//
-				//color: 'white',//
+				y:'45',//
+				textStyle:{
+					color: 'blue',//
+				}
+				
 			},
 			grid: {
 				y2: 80
@@ -2745,9 +2694,10 @@ function seletime(obj){
 		showrealworning();
 		return;
 	}
+	flashbutton(); //查询按钮闪烁
 	var oneday=1000*60*60*24;
-	var today = new Date();
-	var ckssj,cjssj,ttime;
+	//var today = new Date();
+	var ckssj,cjssj;//ttime;
 	document.getElementById("count_val").innerHTML="";
 	switch(obj.value*1){
 		case 0:
@@ -3130,10 +3080,18 @@ function blinklink(flashit){
 	}
 	return timer=setTimeout("blinklink(flashit)",500);
 }
-
+function flashbutton(){//使用各子页面的全局变换timer、flashit.各个页面定义自己的timer、flashit变量和元素。
+	if(timer!=null)
+		stoptimer(timer);
+	timer=blinklink(flashit);
+}
 function stoptimer(timer){
 	flashit.style.backgroundColor='rgba(0, 101, 105)';
 	clearTimeout(timer);
+}
+function showdate(el){
+	WdatePicker(el);
+	flashbutton();
 }
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
