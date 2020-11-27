@@ -78,11 +78,11 @@
 			<h3 >告警信息</h3>			
 		</div>
 		<div class="panel panel-default" style="margin-bottom: 0;" >
-			<span class="condition" style="display: none;">
+			<!--<span class="condition" style="display: none;">
 				<label>计量点名称：</label>
 			<select id="jcdd" onchange="gradeChange()"  style="border-radius: 5px;">
 			</select ><a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()" style="display:none"></a>
-			</span>
+			</span>-->
 			<span><label>类别分组：</label></span>
 			<span id="display_type" class="btn-group" data-toggle="buttons">
 				<label class="btn btn-primary active" id="type_other"><input type="radio" class="catalog" name="options" value="">全部</label><!---->
@@ -94,7 +94,8 @@
 				<span class="caret"></span>
 			</button>-->
 			<label class="dropdown-toggle select_multiple" data-toggle="dropdown">
-				<input id="select_text" class="select_text " data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;">
+				<input id="select_text" class="select_text " data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;"
+				 placeholder="请选择告警事件，不选为全部告警">
 				<button style="width:30px;height:35px; margin-left: -35px;position: relative;z-index: 2;"><i class= "caret" >
                 </i></button>
 				</input>
@@ -122,7 +123,7 @@
 					<button class="selected" id="chaxun"  onclick="querywarnlog()" 
 				style="font-size:16px;" >查询</button>
 				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:20px;" onclick="exporttoexcel('warnlogtable')">
-					<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
+					<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;" ></a>
 				</span>
 			</div>
 		</div>
@@ -132,32 +133,34 @@
 				<li id="station_name"style="width:50px;margin-right:10px;display:none"> </li>
 				<li style="width:50px;margin-right:10px">记录数：</li>
 				<li id="count_val"style="width:50px;margin-right:10px"> </li>
-				 <li style="width:50px;margin-right:10px"></li>
+				<li style="width:50px;margin-right:10px"></li>
 			</ul>
 		</div>
 		<div class="panel panel-default" style="text-align:center;margin-bottom: 0;">
 			<table id="warnlogtable" style="margin: auto;">
-				<caption  style="text-align: center;font-size:22px;color:black;"><b id="war_caption"style="margin-right:10px"></b>告警信息统计表</caption>
-				<tr>
-					<th>开始时间:</th>
-					<td id="tj_kssj" style="text-align: left;border:0px solid black;"></td>
-					<th>终止时间:</th>
-					<td id="tj_zzsj" style="text-align: left;border:0px solid black;"></td>
-				</tr>
-				<tr style="display:none;">
-					<th>越上限</th>
-					<th id="count_first"></th>
-					<th id="count_second">越下限</th>
-					<th id="count_third"></th>
-				</tr>
-				<tr>
-					<td style="display: none;">测量点编号</td>
-					<th style="border:1px solid black;">测量点名称</th>
-					<th style="border:1px solid black;">告警时间</th>
-					<th style="border:1px solid black;">数值</th>	
-					<th style="border:1px solid black;">告警内容</th>
-					<!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>-->
-				</tr>
+				<caption  style="text-align: center;font-size:22px;color:black;"><b id="war_caption"style="margin-right:10px" ></b>告警信息统计表</caption>
+				<!--<thead></thead>-->
+					<tr>
+						<th>开始时间:</th>
+						<td id="tj_kssj" style="text-align: left;border:0px solid black;"></td>
+						<th>终止时间:</th>
+						<td id="tj_zzsj" style="text-align: left;border:0px solid black;"></td>
+					</tr>
+					<!--<tr style="display:none;">
+						<th>越上限</th>
+						<th id="count_first"></th>
+						<th id="count_second">越下限</th>
+						<th id="count_third"></th>
+					</tr>-->
+					<tr>
+						<td style="display: none;">测量点编号</td>
+						<th style="border:1px solid black;">测量点名称</th>
+						<th style="border:1px solid black;">告警时间</th>
+						<th style="border:1px solid black;">数值</th>	
+						<th style="border:1px solid rgb(221, 101, 101);">告警内容</th>
+						<!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>-->
+					</tr>
+				
 				<tbody id='warnlogdata-tbody' style="width:820px;height:100%; overflow:auto;">
 				</tbody>
 			</table>
@@ -197,11 +200,11 @@
 	var selectText="";
 	var sel_str=[];
 	var timer=null;
-	var flashit=document.getElementById("chaxun");
+	var flashit=$("#chaxun");
 	$(function () {
 		initwarnlog();		
 	});
-	
+
 	//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
 	function initwarnlog() {
 		updatapcnav(8);
@@ -212,8 +215,8 @@
 		//var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
 		//var treenode=buildnode(treeseneors,0);
 		//inittreeview(treenode);
-		document.getElementById("kssj_warning").value = sessionStorage.kssj;
-		document.getElementById("jssj_warning").value = sessionStorage.jssj;
+		$("#kssj_warning").val(sessionStorage.kssj);
+		$("#jssj_warning").val(sessionStorage.jssj);
 		/*var sel_sensor=document.getElementById("jcdd");
 		for (var i = 0; i < sel_sensor.length; i++) {
 			sel_sensor.removeChild(sel_sensor.options[0]);
@@ -271,7 +274,7 @@
 		//if(sessionStorage.timeindex==4){
 		querywarnlog();//decodedatas();
 		//}	
-		if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
+		if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。 
 			if(typeof(w1) == "undefined") {
 				w1 = new Worker("delay_worker.js");
 			}
@@ -289,7 +292,7 @@
 		}
 		$("#warnlogdata-tbody").height(parent.window.windowHeight-320);
 	}
-	function inittreeview(anodes) {
+	/*function inittreeview(anodes) {//被屏蔽的函数，停用，由左侧下部的树形菜单代替
 		$('#tree_chi').treeview({
 			data: anodes,    // 数据源  
 			showCheckbox: false,   //是否显示复选框
@@ -344,15 +347,15 @@
 		//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
 		$('#tree_chi').treeview('selectNode', [currentNode, { silent: true }]);
 		sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
-		//$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
-		/**/
+		//$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态
+		
 		function getThe_level_nodeid(anode, alevel) {
 			while (anode.level > alevel) {
 				anode = ($("#tree_chi").treeview("getParent", anode))
 			}
 			return anode;
 		}
-	}
+	}*/
 	function buildnode(data, level) {
 		var tree = [];
 		if (data == null || typeof(data) == "undefined") {
@@ -415,8 +418,9 @@
 		var temp=document.getElementById("event_type");
 		for(var i=temp.childElementCount;i>0;i--)
 			temp.removeChild(temp.children[i-1]);
-		for(var i=document.getElementById("display_type").childElementCount;i>1;i--)
-			document.getElementById("display_type").removeChild(document.getElementById("display_type").childNodes[i-1]);
+		var disply_type=document.getElementById("display_type")
+		for(var i=disply_type.childElementCount;i>1;i--)
+		disply_type.removeChild(disply_type.childNodes[i-1]);
 		//for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
 		//	document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
 		selectText="";
@@ -462,7 +466,7 @@
 							}
 							lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].name+'" onclick=displaytype(this) >'+s_des[p].desc;
 							var other=document.getElementById("type_other");
-							document.getElementById("display_type").insertBefore(lab,other);//类别
+							disply_type.insertBefore(lab,other);//类别
 							
 							if(s_des[p].folder=="event"&&s_des[p].name=="event"){//告警、事件类型 
 								var config=new Object()
@@ -521,7 +525,7 @@
 									//selectVal=selectVal.substring(0,selectVal.length - 1);
 								}
 								if(selectText==""){
-									selectText="请选择告警事件，不选为全部告警"
+									//selectText="请选择告警事件，不选为全部告警"
 								}
 							}
 						}
@@ -529,28 +533,29 @@
 					break;
 				}
 			}else{
-				for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
-					document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
+				for(var j=temp.childNodes.length;j>0;j--)
+				temp.removeChild(temp.childNodes[j-1]);
 				var li=document.createElement("li"); 
 				selectText="没有告警事件选项"
 			}
 		}else{
-			for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
-				document.getElementById("event_type").removeChild(document.getElementById("event_type").childNodes[j-1]);
+			for(var j=temp.childNodes.length;j>0;j--)
+			temp.removeChild(temp.childNodes[j-1]);
 			var li=document.createElement("li"); 
 			selectText="没有告警事件选项";
 		}
 		$("#select_text").val(selectText);
-		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。
-		$(".btn").click(function(){
+		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。 bay cay day fay gay hay jay lay kay may nay pay ray say tay way
+		$(".btn").click(function(){//play okay gray bray
 			$(this).button('toggle');
 			dname= $(".catalog:checked").val();
 			sessionStorage.warnlogname=dname;
 			catalog=getcatalog(dname);
 			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
-			//decodedatas(JSON.parse(localStorage.historydata));
+			//decodedatas(JSON.parse(localStorage.historydata));//flu across thanksgiving bakery neighborhood 
 		});
 	}
+	
 	function displaytype(obj){
 		dname= obj.value;
 		catalog=getcatalog(dname);
@@ -651,6 +656,8 @@
 						var td_dadr=document.createElement("td");
 						var value=obj_data[i].value;//(Math.random() * 10) - 0;
 						td_dadr.innerHTML=(value*1).toFixed(Number_of_decimal);
+						if(td_dadr.innerHTML=="NaN")
+							td_dadr.innerHTML="-";
 						var td_dtype=document.createElement("td");
 						td_dtype.innerHTML=obj_data[i].message;//"数值越限";/**/
 						tr.appendChild(td_did);
@@ -686,14 +693,14 @@
 					Alert("沒有符合条件的数据",info_showtime);
 					showstateinfo("没有符合条件的数据");
 					document.getElementById("count_val").innerHTML="";
-					document.getElementById("count_first").innerHTML="";
-					document.getElementById("count_third").innerHTML="";
+					//document.getElementById("count_first").innerHTML="";
+					//document.getElementById("count_third").innerHTML="";
 					//document.getElementById("tr0").style.display="none";
 					//document.getElementById("td0").style.display="none";
 					//document.getElementById("tr1").style.display="none";
 					//document.getElementById("td1").style.display="none";
-					document.getElementById("count_first").innerHTML=0;
-					document.getElementById("count_third").innerHTML=0;
+					//document.getElementById("count_first").innerHTML=0;
+					//document.getElementById("count_third").innerHTML=0;
 				}else{
 					//showstateinfo("");
 					//for(var i=0;i<type_str.length;i++){
@@ -712,8 +719,8 @@
 						document.getElementById("td1").style.display="none";
 					}*/
 					document.getElementById("count_val").innerHTML=count;
-					document.getElementById("count_first").innerHTML=count_l[0];
-					document.getElementById("count_third").innerHTML=count_l[1];
+					//document.getElementById("count_first").innerHTML=count_l[0];
+					//document.getElementById("count_third").innerHTML=count_l[1];
 					//var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));
 					//$table.removeChild(dtr);//去掉最后一行（插入参考行
 				}
@@ -728,8 +735,8 @@
 				count_h=type_str.length+1-count_h;//统计告警类型项的数量，数据表总量要减去告警类型统计项的标题行。
 				//ps=obj_data.length;
 			}else{
-				document.getElementById("count_first").innerHTML=0;
-				document.getElementById("count_third").innerHTML=0;
+				//document.getElementById("count_first").innerHTML=0;
+				//document.getElementById("count_third").innerHTML=0;
 			}
 		display();
 	}
@@ -739,7 +746,7 @@
 	}
 	function add_sign(){
 	}
-	function gradeChange() {
+	/*function gradeChange() {
 		//$("#warnlogdata-tbody tr").empty();
 		var tbl = document.getElementById('warnlogdata-tbody');
 		var tableLength = tbl.rows.length;
@@ -750,12 +757,11 @@
 		var objS = document.getElementById("jcdd");
 		sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
 		//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
-	}
-	function stopWorker() 
-		{ 
-			w1.terminate();
-			w1 = undefined;
-		};
+	}*/
+	function stopWorker(){ 
+		w1.terminate();
+		w1 = undefined;
+	};
 	//显示实时告警信息
 	function showrealworning(){
 		//document.getElementById("jcdd").disabled=true;
@@ -767,21 +773,21 @@
 		document.getElementById("tj_kssj").innerHTML="";
 		document.getElementById("tj_zzsj").innerHTML="";
 		$table = document.getElementById("warnlogdata-tbody");
-		var trl = document.createElement('tr');
+		//var trl = document.createElement('tr');
 		if ($table == null) {
 			$table = iframe_main.document.getElementById("warnlogdata-tbody");
 		}
 		var rowNum = $table.rows.length;
 		for (var i = 0; i < rowNum; i++) {
-			tr = $table.rows[0];
-			$table.removeChild(tr);
+			
+			$table.removeChild($table.rows[0]);
 		}
 		if(trs.length>0){
 			/**
 			 * 在表格中定义一些关键节点（行），采用insertbifore命令时的参考节点。//
 			 * 用于对表格中的数据进行分类插入，并作为分类显示的标题。tr1,tr2...
 			 * **/
-			 var warning_type=document.getElementById("select_text").value;
+			 var warning_type=$("#select_text").val();
 			if(warning_type.length>0){
 				type_str=warning_type.split(",");
 				sift=true;
@@ -836,7 +842,7 @@
 			}
 			for(var i=0;i<=type_str.length;i++){
 				if(count_l[i]==0){
-					//document.getElementById(window.eval("'td"+i+"'")).style.display="none";
+					//document.getElementById(window.eval("'td"+i+"'")).style.display="none";//neighbourhood
 					var dtr=document.getElementById(window.eval("'tr"+i+"'"));//;//.style.display="none";
 					$table.removeChild(dtr);//去掉统计为零的标题行
 					count_h++; 
@@ -849,8 +855,8 @@
 			Alert("当前没有告警!",info_showtime);
 			showstateinfo("当前没有告警信息");
 		}
-		document.getElementById("count_first").innerHTML=count_l[0];
-		document.getElementById("count_third").innerHTML=count_l[1];
+		//document.getElementById("count_first").innerHTML=count_l[0];
+		//document.getElementById("count_third").innerHTML=count_l[1];
 		display();
 	}
 	function refreshsensorslist(){
@@ -949,6 +955,7 @@
 				$(this).show();
 		});*/
 		}
+		
 		var selectText
 		$(document).on("click",".check_box",function(event){
 		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
@@ -1018,4 +1025,6 @@
 	1019 类型名称的忽略大小写，
 	选择实时告警时不能自动关闭时段选择控件的问题，实时数据页面导出图标和导出功能函数。
 	添加根据类别分组选择来对告警信息进行筛选的古城函数，
+	1123 修改导出操excel时的表头格式，修改列表时非数字的数值显示内容“-”取代NaN形式，防止误解。
+	1126 去掉二次菜单
 -->

@@ -11,7 +11,7 @@
 	<!--<script  type="text/javascript" src="js/json2.js"></script>-->
 	<script  type="text/javascript" src="js/function.js"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css" /> 
-	
+	<script type="text/javascript" src="js/jquery.validate.min.js"></script>
 	<style>
 	.button {
 	display: inline-block;
@@ -101,8 +101,11 @@
 			<tr>
 				<td>
 					<form id="form1" ><br>
-						<div style="color:#FFFFFF;">用户名<span class="glyphicon glyphicon-user" style="color:rgb(0,0,0);margin-left: 30px;"></span><input id="username"  type="text" name="username"  style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:20px;border-radius:8px;color:black"></input></div><br>
-						<div style="color:#FFFFFF;">密&nbsp;&nbsp; 码<span class="glyphicon glyphicon-lock" style="color: rgb(0, 0, 0);margin-left:30px;"></span><input id="password" type="password" name="password" style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:20px;border-radius:8px;color:black" onkeypress="return KeyUp()" autocomplete="new-password"></input></div>
+						<div style="color:#FFFFFF;">用户名<span class="glyphicon glyphicon-user" style="color:rgb(0,0,0);margin-left: 30px;"></span>
+							<input id="username"  type="text" name="username"  
+							style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:20px;border-radius:8px;color:black"></input></div><br>
+						<div style="color:#FFFFFF;">密&nbsp;&nbsp; 码<span class="glyphicon glyphicon-lock" style="color: rgb(0, 0, 0);margin-left:30px;"></span>
+							<input id="password" type="password" name="password" style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:20px;border-radius:8px;color:black" onkeypress="return KeyUp()" autocomplete="new-password"></input></div>
 							<div style="display:none">
 								<a href="iframe_regist.html" target="main-frame" style="font-weight:bold;text-decoration:none;" ><b>注册新用户</b></a>
 								<div style="color:red;font-size:20px;display:inline;left:40px;position:relative" >
@@ -144,7 +147,6 @@
 			var file = fileDOM.files[0], // 获取文件
 					imageType = /^image\//,
 					reader = '';
-
 			// 文件是否为图片
 			if (!imageType.test(file.type)) {
 				alert("请选择图片！");

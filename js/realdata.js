@@ -85,8 +85,9 @@ $(function () {
     });
 });
 function appendalldisplaytype(){
-    for(var i=document.getElementById("display_type").childNodes.length;i>0;i--)
-        document.getElementById("display_type").removeChild(document.getElementById("display_type").childNodes[i-1]);
+    var display_type=document.getElementById("display_type");
+    for(var i=display_type.childNodes.length;i>0;i--)
+    display_type.removeChild(display_type.childNodes[i-1]);
     allconfigs=JSON.parse(localStorage.Configs);
     if(allconfigs){//检查配置中是否有catalog项
         //for(var i=0;i<allconfigs.length;i++){
@@ -116,7 +117,7 @@ function appendalldisplaytype(){
                     lab.appendChild(ainput);
                     lab.appendChild(spn);
                     //lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
-                    document.getElementById("display_type").appendChild(lab);
+                    display_type.appendChild(lab);
                 }
             }
         //}

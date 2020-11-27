@@ -107,16 +107,18 @@
             </div>
 		<table id="devicetable" style="margin: auto;">
 			<caption style="text-align: center;font-size:20px;">设备信息汇总表</caption>
-			<tr >
-				<th onclick="$.sortTable.sort('devicetable',0)">设备编号</th>
-				<th onclick="$.sortTable.sort('devicetable',1)">设备名称</th>
-				<th onclick="$.sortTable.sort('devicetable',2)">安装时间</th>
-				<th onclick="$.sortTable.sort('devicetable',3)">地址</th>
-				<th onclick="$.sortTable.sort('devicetable',4)">类型</th>
-				<th onclick="$.sortTable.sort('devicetable',6)">配置信息</th>
-			<!--<th style="width:18px;border:0px solid black;"></th><th style="width:17px;display:none"></th>
-				<th onclick="$.sortTable.sort('devicetable',5)">分组</th>	-->
-			</tr>
+			<thead>
+				<tr >
+					<th onclick="$.sortTable.sort('devicetable',0)">设备编号</th>
+					<th onclick="$.sortTable.sort('devicetable',1)">设备名称</th>
+					<th onclick="$.sortTable.sort('devicetable',2)">安装时间</th>
+					<th onclick="$.sortTable.sort('devicetable',3)">地址</th>
+					<th onclick="$.sortTable.sort('devicetable',4)">类型</th>
+					<th onclick="$.sortTable.sort('devicetable',6)">配置信息</th>
+				<!--<th style="width:18px;border:0px solid black;"></th><th style="width:17px;display:none"></th>
+					<th onclick="$.sortTable.sort('devicetable',5)">分组</th>	-->
+				</tr>
+			</thead>
 			<tbody id='device-tbody' style="width:990px;height:550px; overflow:auto;">
 			</tbody>
 		</table>
@@ -223,7 +225,8 @@
                     tbody.appendChild(tr);
 				}
 				document.getElementById("count_val").innerHTML=sensors.length;
-            }
+			}
+			$.sortTable.sort('devicetable',0);
             //display();//分页显示功能。 
         }
 		function deleterows(atable){//清除原因表内数据
@@ -290,7 +293,7 @@
 									labright.setAttribute("style","width:150px;text-align:left");
 									labright.innerHTML=details[i].config[keys[j]]+"";
 									row.appendChild(labright);
-									document.getElementById("details").appendChild(row);
+									detail.appendChild(row);
 								}
 							}
 						}
@@ -394,4 +397,7 @@
 </body>
 <!--
 	数据列表标题和数据体由于滚动条的原因不能对齐的问题，根据标签配置显示详细配置信息。
+	1124由于table没有<thead>标签，所以排序时的table.tBodies[0]取出的只是表头，
+	实际的tbody在table.tBodies[1]中，所以排序失效，将表头tr放入<thead>标签中，在tabler.tBodies[0]
+	取出的就是tbody.
 -->

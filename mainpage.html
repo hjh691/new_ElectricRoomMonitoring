@@ -178,6 +178,7 @@
 		var nodes = null, nodeid = -1;
 		sessionStorage.txid=-1;//20200228 初始化一次图形id
 		sessionStorage.nodetype=1;
+		var iframemain=$("#iframe_main");
 		//sessionStorage.framepage="";
 		//sessionStorage.selNodeId="";
 		var multiselect=false;
@@ -186,6 +187,7 @@
 		var lastSelectedNodeId = null;
 		//最后一次触发时间
 		var lastSelectTime = null;
+
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
@@ -237,10 +239,6 @@
 					w.onmessage = function (event) {//接收定时器返回的消息
 						//document.getElementById("result").innerHTML = event.data;
 						i++;
-						//var stime=new Date(getCurrentDate(2).replace(/-/,"/")).getTime();
-						//var etime=new Date(getCurrentDate(1).replace(/-/,"/")+" 17:30:00").getTime();
-						//showstateinfo((etime-stime)/1000);
-						
 						if ((i % 60 == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
 							//sendbeat();
 							getrealdatabynodeid(-1);
@@ -254,7 +252,7 @@
 						}
 					};
 				} else {
-					var t1 = window.setInterval(sendbeat, 60000);//getrealsbydataid\\baoguochen//abcde 
+					var t1 = window.setInterval(sendbeat, 60000);//getrealsbydataid
 				}
 				window.setInterval("resetContent()", 200);
 				refreshwindow();
@@ -272,7 +270,7 @@
 				$(".tab a:last").tab("show");
 			}
 		);
-		//launchFullScreen(document.documentElement);//全屏显示
+		//launchFullScreen(document.documentElement);//全屏显示 
 		function launchFullScreen(element) {
 			if(element.requestFullScreen) {
 			element.requestFullScreen();
@@ -284,7 +282,7 @@
 		}
 		function refreshwindow() {//重画窗口，规定 尺寸,尤其是浮动窗口的位置
 			if(!sessionStorage.framepage)
-				sessionStorage.framepage = document.getElementById("iframe_main").src;
+				sessionStorage.framepage = iframemain.attr('src');
 			//if(sessionStorage.framepage.indexOf("video.html")>=0){
 			//	return;
 			//}
@@ -363,14 +361,14 @@
 		}
 		function initIndex() {
 			showusername();
-			document.getElementById('app_name').innerHTML = '<i>' + jfjk_base_config.app_name+ "</i>";
+			$('#app_name').html('<i>' + jfjk_base_config.app_name+ '</i>');
 			if(localStorage.log_src){
 				jfjk_base_config.log_src=localStorage.log_src;
 			}
-			document.getElementById('company_log').src = jfjk_base_config.log_src;
-			document.getElementById('company_info').href = jfjk_base_config.company_url;
-			document.getElementById("company_name").innerHTML=jfjk_base_config.company;
-			document.getElementById("copyright_time").innerHTML="  "+jfjk_base_config.date;//+"  "+jfjk_base_config.ver_id 
+			$('#company_log').attr('src',jfjk_base_config.log_src);
+			$('#company_info').attr('href',jfjk_base_config.company_url);
+			$("#company_name").html(jfjk_base_config.company);
+			$("#copyright_time").html("  "+jfjk_base_config.date);//+"  "+jfjk_base_config.ver_id 
 			//sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
 			//sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
 			//sessionStorage.cxsj = getCurrentDate(2);
@@ -379,11 +377,11 @@
 			//document.getElementById("iframe_main").src = 'page1.html';
 			
 			if (sessionStorage.framepage == "") {
-				document.getElementById("iframe_main").src = "infototal.html";
-				sessionStorage.framepage=document.getElementById("iframe_main").src;
+				iframemain.attr('src','infototal.html');
+				sessionStorage.framepage=iframemain.attr('src');
 				sessionStorage.pageindex = 0;
 			} else {
-				document.getElementById("iframe_main").src = sessionStorage.framepage;
+				iframemain.attr('src',sessionStorage.framepage);
 			}
 			/*if (sessionStorage.islogin) {
 				getNodes();
@@ -403,7 +401,7 @@
 		}
 		//初始化目录树
 		function inittreeview(anodes) {
-			//var obj=tree[1];
+			var sensorstree=$("#tree");
 			//obj.nodes=(JSON.parse( node));
 			//tree[1]=obj;
 			mnodes = [];
@@ -412,7 +410,7 @@
 			} else {
 				mnodes = anodes;
 			}
-			$('#tree').treeview({
+			sensorstree.treeview({
 				data: mnodes,    // 数据源
 				showCheckbox: false,   //是否显示复选框
 				highlightSelected: true,    //是否高亮选中
@@ -451,8 +449,8 @@
 				//	console.log("id = "+data.id);
 				//},
 				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
-					var selectnode=$("#tree").treeview('getSelected');
-					$("#tree").treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
+					var selectnode=sensorstree.treeview('getSelected');
+					sensorstree.treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
 					sessionStorage.selNodeId = data.nodeId;
 					localStorage.setItem("sensor_tree",null);
 					//sessionStorage.selectText="";
@@ -579,13 +577,13 @@
 					}
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 						var p_node = getThe_level_nodeid(data, i);
-						$("#tree").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+						sensorstree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 					}
-					$("#tree").treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
+					sensorstree.treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
 				},
 				onSearchComplete:function(event, data) { 
-					var firstSearchResult = $('#tree').find('ul').find('li[data-nodeid='+ sessionStorage.selNodeId +']');
-					$("#tree" ).scrollTop(firstSearchResult[0].offsetTop);
+					var firstSearchResult = sensorstree.find('ul').find('li[data-nodeid='+ sessionStorage.selNodeId +']');
+					sensorstree.scrollTop(firstSearchResult[0].offsetTop);
 				},
 				/**方法
 				 * checkAll(options);//选中所有树节点
@@ -632,7 +630,7 @@
 				*searchCleared (event, results) - 搜索结果被清除之后触发.
 				*/
 			});
-			$("#tree").treeview('collapseAll');//关闭展开
+			sensorstree.treeview('collapseAll');//关闭展开
 			if (sessionStorage.selNodeId == "" || sessionStorage.selNodeId == null) {
 				sessionStorage.selNodeId = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
 			}
@@ -643,17 +641,17 @@
 			//保存nodeid，用于获取指定node的sensors。//lazy cozy crazy easy busy dizzy fantasy 
 			//	nodeid = firstNode[0].nodeId;
 			//}
-			var firstNode = $("#tree").treeview("getNode", sessionStorage.selNodeId);
-			$("#tree").treeview('expandNode', [firstNode, { levels: 2, silent: true }]);//展开第一个节点
+			var firstNode = sensorstree.treeview("getNode", sessionStorage.selNodeId);
+			sensorstree.treeview('expandNode', [firstNode, { levels: 2, silent: true }]);//展开第一个节点
 			for (var i = 0; i < firstNode.level; i++) {//逐级展开所选节点的父节点。
 				var p_node = getThe_level_nodeid(firstNode, i);
-				$("#tree").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+				sensorstree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 			}
-			$("#tree").treeview('expandNode', [firstNode.nodeId, { levels: 1, silent: true }]);
+			sensorstree.treeview('expandNode', [firstNode.nodeId, { levels: 1, silent: true }]);
 			//$('#tree').treeview('expandNode', [ tree[0].id, { levels: 2, silent: true } ]);
 			//$('#tree').treeview('selectNode', [firstNode, { silent: true }]);
-			$("#tree").treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
-			$("#tree").treeview('search', [sessionStorage.selNodeId + "", { ignoreCase: false, exactMatch: false }]);
+			sensorstree.treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
+			sensorstree.treeview('search', [sessionStorage.selNodeId + "", { ignoreCase: false, exactMatch: false }]);
 			//获取指定node的sensors
 			//GetSensorsByNode(sessionStorage.nodeid);
 			infotreedata = [];
@@ -687,6 +685,12 @@
 			//setTimeout(function(){if(sessionStorage.pageindex==0){
 			//	document.getElementById("iframe_main").src="infototal.html";
 			//}},3000);
+			function getThe_level_nodeid(anode, alevel) {
+				while (anode.level > alevel) {
+					anode = (sensorstree.treeview("getParent", anode))
+				}
+				return anode;
+			}
 		}
 		//更新导航栏信息（主要用于区分视频监控、机房监控与其他子系统的的操作信息
 		function updatanav(type){
@@ -752,16 +756,11 @@
 		function showpage(pid){//调试用显示不同的页面，正常只有0值。
 			//if(sessionStorage.pageindex!=7){
 				updatapcnav(10);
-				document.getElementById("iframe_main").src="systeminfo.html";
+				iframemain.attr('src','systeminfo.html');
 				sessionStorage.pageindex=7;
 			//}
 		}
-		function getThe_level_nodeid(anode, alevel) {
-			while (anode.level > alevel) {
-				anode = ($("#tree").treeview("getParent", anode))
-			}
-			return anode;
-		}
+		
 		function decode(adata) {
 			var infotree = [];
 			for (var i = 0; i < adata.length; i++) {
@@ -954,43 +953,43 @@
 		}
 		function showdownload() {
 			if(sessionStorage.pageindex!=200){
-				document.getElementById("iframe_main").src = "app_download.html";
+				iframemain.attr("src","app_download.html");
 				sessionStorage.pageindex=200;
 			}else{
-				document.getElementById("iframe_main").src="app_download.html";
+				iframemain.attr("src","app_download.html");
 			}
 		}
 		function showhelp() {
 			if(sessionStorage.pageindex!=100){
 				updatapcnav(13);
-				document.getElementById("iframe_main").src = "help.html";
+				iframemain.attr("src","help.html");
 				sessionStorage.pageindex=100;
 			}else{
-				document.getElementById("iframe_main").src="help.html";
+				iframemain.attr("src","help.html");
 			}
 		}
 		function showcontactus() {
 			if(sessionStorage.pageindex!=300){
-				document.getElementById("iframe_main").src = "ContactUs.html";
+				iframemain.attr("src","ContactUs.html");
 				sessionStorage.pageindex=300;
 			}else{
-				document.getElementById("iframe_main").src="ContactUs.html";
+				iframemain.attr("src","ContactUs.html");
 			}
 		}
 		function showdevice(){
 			if(sessionStorage.pageindex!=6){
-				document.getElementById("iframe_main").src="device.html";
+				iframemain.attr("src","device.html");
 				sessionStorage.pageindex=6;
 			}else{
-				document.getElementById("iframe_main").src="device.html";
+				iframemain.attr("src","device.html");
 			}
 		}
 		function showpreview(){
 			if(sessionStorage.pageindex!=8){
 				sessionStorage.pageindex=8;
-				document.getElementById("iframe_main").src="video.html";
+				iframemain.attr("src","video.html");
 			}else{
-				document.getElementById("iframe_main").src="video.html";
+				iframemain.attr("src","video.html");
 			}
 		}
 		//获取指定节点的一次图形列表  //Fresh strawberries tastes good
@@ -1245,75 +1244,75 @@
 			})
 		}
 		function refreshiframe() {
-			var frame=document.getElementById("iframe_main");
+			//var frame=document.getElementById("iframe_main");///
 			switch (sessionStorage.pageindex) {
 				case '0':
-					if(frame.src.indexOf("/infototal.html")<=0){
-						frame.src = "infototal.html";
+					if((iframemain.attr('src')).indexOf("/infototal.html")<=0){
+						iframemain.attr('src', "infototal.html");
 					}else{
-						$("#iframe_main")[0].contentWindow.initinfototal();
+						iframemain[0].contentWindow.initinfototal();
 					}
 					break;
 				case "1":
-					if(frame.src.indexOf("/drawmap.html")<=0){
-						frame.src = "drawmap.html";
+					if((iframemain.attr('src')).indexOf("/drawmap.html")<=0){
+						iframemain.attr('src', "drawmap.html");
 					}else{		
-						$("#iframe_main")[0].contentWindow.initpage();
+						iframemain[0].contentWindow.initpage();
 					}
 					break;
 				case '2':
-					if(frame.src.indexOf("/newrealdata.html")>0){
-						$("#iframe_main")[0].contentWindow.initrealdata();
+					if((iframemain.attr('src')).indexOf("/newrealdata.html")>0){
+						iframemain[0].contentWindow.initrealdata();
 					}else{
-						frame.src = "newrealdata.html";
+						iframemain.attr('src', "newrealdata.html");
 					}
 					break;
 				case '3':
-					if(frame.src.indexOf("/historydata.html")>0){
-						$("#iframe_main")[0].contentWindow.initpage();
+					if((iframemain.attr('src')).indexOf("/historydata.html")>0){
+						iframemain[0].contentWindow.initpage();
 					}else{
-						frame.src = "historydata.html";
+						iframemain.attr('src',"historydata.html");
 					}
 					break;
 				case '4':
-					if(frame.src.indexOf("chart.html")<=0){
-						frame.src = "chart.html";
+					if((iframemain.attr('src')).indexOf("chart.html")<=0){
+						iframemain.attr('src',"chart.html");
 					}else{
-						$("#iframe_main")[0].contentWindow.inithistorychart();
+						iframemain[0].contentWindow.inithistorychart();
 					}
 					break;
 				case '5':
-					if(frame.src.indexOf("/warnlog.html")<=0){
-						frame.src = "warnlog.html";
+					if((iframemain.attr('src')).indexOf("/warnlog.html")<=0){
+						iframemain.attr('src',"warnlog.html");
 					}else{
-						$("#iframe_main")[0].contentWindow.initwarnlog();
+						iframemain[0].contentWindow.initwarnlog();
 					}
 					break;
 				case "6":
-					if(frame.src.indexOf("/device.html")>0){
-						$("#iframe_main")[0].contentWindow.initdevice();
+					if((iframemain.attr('src')).indexOf("/device.html")>0){
+						iframemain[0].contentWindow.initdevice();
 					}else{
-						frame.src = "device.html";
+						iframemain.attr('src',"device.html");
 					}
 					break;
 				case "7":
-					if(frame.src.indexOf("systeminfo.html")>0){
-						$("#iframe_main")[0].contentWindow.initsysteminfo();
+					if((iframemain.attr('src')).indexOf("systeminfo.html")>0){
+						iframemain[0].contentWindow.initsysteminfo();
 					}else{
-						frame.src="systeminfo.html";
+						iframemain.attr('src',"systeminfo.html");
 					}
 					break;
 				case "8":
-					frame.src="video.html";
+					iframemain.attr('src',"video.html");
 					break;
 				case "9":
-					frame.src="replay.html";
+					iframemain.attr('src',"replay.html");
 					break;
 				case "10":
-					frame.src="realstate.html";
+					iframemain.attr('src',"realstate.html");
 					break;
 				case "11":
-					frame.src="historystate.html";
+					iframemain.attr('src',"historystate.html");
 					break;
 				//case "100":
 					//frame.src="Help.html";
@@ -1325,7 +1324,7 @@
 					//frame.src="ContactUs.html";
 					//break;//添加注释....... 
 			}
-			sessionStorage.framepage=frame.src;
+			sessionStorage.framepage=iframemain.attr('src');
 		}
 		/*function GetSensors() {
 			var url = jfjk_base_config.baseurl + "GetSensors";
@@ -1755,13 +1754,13 @@
 			}
 		}
 		function inittreeview_level2(anodes) {
-			
+			var tree=$("#tree_chi");
 			if(!anodes){
 				var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
 				anodes=buildnode_level2(treeseneors,0);
 			}
 			var sensorarray;
-			$('#tree_chi').treeview({
+			tree.treeview({
 				data: anodes,    // 数据源
 				showCheckbox: false,   //是否显示复选框
 				highlightSelected: true,    //是否高亮选中
@@ -1780,23 +1779,23 @@
 					//$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 						var p_node = getThe_level_nodeid(data, i);
-						$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+						tree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 					}
-                    $("#tree_chi").treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
+                    tree.treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
                     
 					//setSelectOption("jcdd", data.id);
                     sessionStorage.jfjk_nodeid=data.nodeId;
 					sessionStorage.SensorId=data.id;
 					if(!multiselect)//多选时，标签id不被保存；用于恢复所选项
 						sessionStorage.sel_id=data.id;
-					$("#iframe_main")[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
+					iframemain[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
 					sessionStorage. SensorName=data.text;
 					if(sessionStorage.pageindex==5){
-						$("#iframe_main")[0].contentWindow.document.getElementById("war_caption").innerHTML=data.text;
+						iframemain[0].contentWindow.document.getElementById("war_caption").innerHTML=data.text;
 					}
-					sensorarray=$("#tree_chi").treeview("getSelected");
+					sensorarray=tree.treeview("getSelected");
 					if(sensorarray.length>6){
-						$("#tree_chi").treeview("unselectNode",[data.nodeId]);
+						tree.treeview("unselectNode",[data.nodeId]);
 						alert("对比测量点不能大于6个!",info_showtime);
 						showstateinfo("对比测量点不能大于6个");
 						//showstateinfo("对比测量点不能大于6个");
@@ -1810,7 +1809,7 @@
 				onNodeUnselected : function(event,data){
 					clickNode(event, data);
 					
-					sensorarray=$("#tree_chi").treeview("getSelected");
+					sensorarray=tree.treeview("getSelected");
 					showselectesensors();
 				},
 				onSearchComplete:function(event, data) { 
@@ -1819,21 +1818,21 @@
 					}*/
 					//如果查找到的位置数据超出当前范围滚动条直接滚动到搜索结果中的第一条数据的位置
 					//var nodeId = data[0].nodeId;
-					var firstSearchResult = $('#tree_chi').find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
-					$("#tree_chi" ).scrollTop(firstSearchResult[0].offsetTop-520);
+					var firstSearchResult = tree.find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
+					tree.scrollTop(firstSearchResult[0].offsetTop-520);
 					if(sessionStorage.pageindex==5){
-						$("#iframe_main").contents().find("#war_caption").text(currentNode.text);
+						iframemain.contents().find("#war_caption").text(currentNode.text);
 					}
 				},
 			});
-			sensorarray=$("#tree_chi").treeview("getSelected");
+			sensorarray=tree.treeview("getSelected");
 			if(anodes.length>0){
-				$("#tree_chi").treeview('collapseAll');//关闭展开
+				tree.treeview('collapseAll');//关闭展开
 				//if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
 					sessionStorage.jfjk_nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
 				//}
 				//$("#tree_chi").treeview('checkAll'  , { silent:   true   });
-				var allnode=$("#tree_chi").treeview("getUnselected");
+				var allnode=tree.treeview("getUnselected");
 				var currentNode=null;
 				for(var j=0;j<allnode.length;j++){//根据所保存的标签编号（id）来确定那个标签被选中。
 					if(allnode[j].id==sessionStorage.sel_id)
@@ -1841,44 +1840,44 @@
 						sessionStorage.jfjk_nodeid=allnode[j].nodeId;
 					}
 				}
-				var tree=$("#tree_chi");
+				
 				//var firstSearchResult = $('#tree_chi').find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
 					//$("#tree_chi" ).scrollTop(firstSearchResult[0].offsetTop);
 				if(currentNode==null)
-					currentNode = $("#tree_chi").treeview("getNode", sessionStorage.jfjk_nodeid);
+					currentNode = tree.treeview("getNode", sessionStorage.jfjk_nodeid);
 				
 				if(!currentNode.hasOwnProperty("NodeId"))
-					currentNode = $("#tree_chi").treeview("getNode", 0);
-				$("#tree_chi").treeview('expandNode', [currentNode, { levels: 2, silent: true }]);//展开第一个节点
+					currentNode = tree.treeview("getNode", 0);
+				tree.treeview('expandNode', [currentNode, { levels: 2, silent: true }]);//展开第一个节点
 				for (var i = 0; i < currentNode.level; i++) {//逐级展开所选节点的父节点。
 					var p_node = getThe_level_nodeid(currentNode, i);
-					$("#tree_chi").treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+					tree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 				}
-				$("#tree_chi").treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
+				tree.treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
 				//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
-				$('#tree_chi').treeview('selectNode', [currentNode, { silent: true }]);
+				tree.treeview('selectNode', [currentNode, { silent: true }]);
 				sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
 				sessionStorage.SensorName=currentNode.text;//获取标签名称，用于列表显示用.20201110
-				$("#tree_chi").treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
-				$("#tree_chi").treeview("search",[sessionStorage.jfjk_nodeid+'', { ignoreCase: false, exactMatch: true }]);
+				tree.treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
+				tree.treeview("search",[sessionStorage.jfjk_nodeid+'', { ignoreCase: false, exactMatch: true }]);
 				/**/
 			}
             function getThe_level_nodeid(anode, alevel) {
                 while (anode.level > alevel) {
-                    anode = ($("#tree_chi").treeview("getParent", anode))
+                    anode = (tree.treeview("getParent", anode))
                 }
                 return anode;
 			}/**/
 			function showselectesensors(){
 				if(sessionStorage.pageindex==4){
-					$("#iframe_main")[0].contentWindow.document.getElementById("sel-sensorname").value='所选标签:';
+					iframemain[0].contentWindow.document.getElementById("sel-sensorname").value='所选标签:';
 					for(var i=0;i<sensorarray.length;i++){
-						$("#iframe_main")[0].contentWindow.document.getElementById("sel-sensorname").value+=sensorarray[i].text+" , ";
+						iframemain[0].contentWindow.document.getElementById("sel-sensorname").value+=sensorarray[i].text+" , ";
 					}
-					$("#iframe_main")[0].contentWindow.flashbutton();
+					iframemain[0].contentWindow.flashbutton();
 				}
 				if(sessionStorage.pageindex==5||sessionStorage.pageindex==3)
-					$("#iframe_main")[0].contentWindow.flashbutton();
+				iframemain[0].contentWindow.flashbutton();
 			}
         }
 		function buildnode_level2(data, level) {
@@ -1956,7 +1955,7 @@
 				if (lastSelectedNodeId == data.nodeId && t < 300) {
 					//customBusiness(data);
 					if(sessionStorage.pageindex==8){
-						$("#iframe_main")[0].contentWindow.clickStartRealPlay();
+						iframemain[0].contentWindow.clickStartRealPlay();
 					}
 				}
 			}
@@ -2012,7 +2011,7 @@
 			document.getElementById("aside").className="aside-hide";
 			document.getElementById("showaside").innerHTML=">>";
 			//document.children.onmousemove=mouseMove;
-			var iframe= document.getElementById('iframe_main');
+			//var iframe= document.getElementById('iframe_main');
 			localStorage.showLeftMenu=true;
 			//iframe.onload = function() {
 				//iframe.contentDocument.onmousemove =mouseMove;//子frame跟踪鼠标位置变换
@@ -2024,12 +2023,12 @@
 			document.getElementById("aside").className="aside";
 			document.getElementById("showaside").innerHTML="<<";
 			localStorage.showLeftMenu=false;
-			var iframe= document.getElementById('iframe_main');
+			//var iframe= document.getElementById('iframe_main');
 			//iframe.onload = function() {
 				//iframe.contentDocument.onmousemove =''; //mouseMove;
 			//}
 		}
-		$('#iframe_main').attr('src', $('#iframe_main').attr('src'));
+		iframemain.attr('src', iframemain.attr('src'));
 	}
 	function list() {
 		var aside=document.getElementById("aside");
@@ -2043,7 +2042,7 @@
 
         }
 	function show3D(){
-		document.getElementById('iframe_main').src="l2.html"
+		iframemain.attr('src',"l2.html");
 	}
 	</script>
 </body>

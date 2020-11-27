@@ -133,14 +133,16 @@
 		<div align="center" >
 			<table id="compratetable" style="display: none;">
 				<caption style="text-align: center;font-size:18px;">多点数据比对</caption>
-				<tr id="table_title">
-					<!--<th>编号</th>-->
-					<th>测量点名称</th>
-					<th>测量时间</th>
-					<th>数值</th>	
-					<th>备注</th>
-				</tr>
+				<thead>
+					<tr id="table_title">
+						<!--<th>编号</th>-->
+						<th>测量点名称</th>
+						<th>测量时间</th>
+						<th>数值</th>	
+						<th>备注</th>
+				</thead><!---->
 				<tbody id='comprate-tbody' style="height:600px; overflow:auto;">
+					
 				</tbody>
 			</table>
 		</div>
@@ -156,7 +158,7 @@
 		var isfound=false;
 		var selectText="";
 		var timer=null;
-		var flashit=document.getElementById("chaxun");
+		var flashit=$("#chaxun");
 		inithistorychart();
 		function inithistorychart() {
 			updatapcnav(7);
@@ -170,7 +172,7 @@
 			ch4=document.getElementById("chart4");
 			var parentid = -100, parentname = "";
 			var maps = [];
-			document.getElementById("cxsj").value = (sessionStorage.cxsj).substr(0,11);
+			$("#cxsj").val((sessionStorage.cxsj).substr(0,11));
 			if(sessionStorage.comperator_sensors)
 			var sel_sensor =JSON.parse(sessionStorage.comperator_sensors);
 			var tree_obj=window.parent.$("#tree_chi");
@@ -351,9 +353,9 @@
 		function oneChoice(){
 			stoptimer(timer);
 			var obj = window.parent.$("#tree_chi").treeview("getSelected");
-			$("#comprate-tbody tr").remove();
-			kssj=document.getElementById("cxsj").value+" 00:00:00"
-			jssj=document.getElementById("cxsj").value+" 23:59:59"
+			//$("#comprate-tbody tr").remove();
+			kssj=$("#cxsj").val()+" 00:00:00"
+			jssj=$("#cxsj").val()+" 23:59:59"
 			sessionStorage.cxsj=jssj;
 			//var obj = $('[name="checks"]');
 			check_name=[];check_val=[];
@@ -565,5 +567,6 @@
 <!--对比配置项根据标签进行动态添加以及去除重复项功能，页面根据对比项目自动进行动态调整显示图形视窗的功能，
 	编写树形菜单的双击响应程序（采用选中与释放之间的时间作为标准进行判断，小于一定时间视为双击，视频预览添加通道双击打开再次双击关闭功能
 	0727添加显示控制配置项的页面记忆功能，在节点不变的情况下，切换页面时记忆上次的选择项并显示响应的图表视图。
-	按钮样式	
+	按钮样式
+	1126 去掉二次菜单,多选的对比项在退出或关闭后清除选项。	
 -->

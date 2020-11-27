@@ -37,8 +37,8 @@ jfjk_base_config.bg_src="res/bj011.jpg"
  //邮政编码
  jfjk_base_config.post_code="邮　　　编：071051";
  //公司邮箱
- jfjk_base_config.email1="邮　　箱1：bdjinkaiao@163.com";
- jfjk_base_config.email2="邮　　箱2：bdjinkaiao@126.com";
+ jfjk_base_config.email1="邮　　 箱1：bdjinkaiao@163.com";
+ jfjk_base_config.email2="邮　　 箱2：bdjinkaiao@126.com";
  //联系方式
  jfjk_base_config.part1="办　公　室：0312-6783281";
  jfjk_base_config.part2="技术服务部：0312-6783283 安经理";

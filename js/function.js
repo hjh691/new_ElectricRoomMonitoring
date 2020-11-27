@@ -120,13 +120,14 @@ function initlogin() {
 	$("body").css("background-size","100% auto");
 	}
 	//localStorage.backfile="res/bj03.jpg";
+	$("#username").focus();
+	$("#form1").validate();
 }
 //读取本地图片
 function previewHandle(fileDOM) {
     var file = fileDOM.files[0], // 获取文件
         imageType = /^image\//,
         reader = '';
- 
     // 文件是否为图片
     if (!imageType.test(file.type)) {
         alert("请选择图片！");
@@ -357,15 +358,16 @@ function logout(){
 	top.location.href = "index.html";//使用top代替window，货物最顶层窗口
 	init_var();
 }
-//页面变量复位 use by electricroommonitoring
+//页面变量复位 use by electricroommonitoring 点击退出或关闭页面时执行此复位程序
 function init_var(){
-	sessionStorage.SensorId=-1;
-	sessionStorage.BinariesId=-1;
-	sessionStorage.SensorName="";
-	sessionStorage.dataId=0;
+	sessionStorage.SensorId=-1;//标签编号
+	sessionStorage.BinariesId=-1;//一次侧图形编号
+	sessionStorage.SensorName="";//测量标签名称
+	sessionStorage.dataId=0;//实时数据的编号
 	//sessionStorage.sensors=[];
+	sessionStorage.comperator_sensors=[];//参加对比的标签
 	sessionStorage.nodeId=-1;//节点树的选择项
-	sessionStorage.selNodeId="";
+	sessionStorage.selNodeId="";//选中的节点
 	sessionStorage.sel_id=-1;//标签树的选择项
 	delete sessionStorage.kssj;
 	delete sessionStorage.jssj;
@@ -433,13 +435,13 @@ function GetUserProfile() {
 		//localStorage.errortime = 0;
 		//sessionStorage.islogin = true;
 		if(data){
-			document.getElementById("up-yhbh").value = data.id;
-			document.getElementById("up-yhmc").value = data.name;
-			document.getElementById("up-yhmm").value = ""; //data.Result.UserPass;
-			document.getElementById("up-yhqx").value = data.roles;//UserLimit;
-			document.getElementById("up-tel").value = data.tele;//UserLimit;
-			document.getElementById("up-email").value = data.email;//UserLimit;
-			document.getElementById("up-yhsm").value = data.display;//Description;
+			$("#up-yhbh").val(data.id);
+			$("#up-yhmc").val(data.name);
+			$("#up-yhmm").val(""); //data.Result.UserPass;
+			$("#up-yhqx").val(data.roles);//UserLimit;
+			$("#up-tel").val(data.tele);//UserLimit;
+			$("#up-email").val(data.email);//UserLimit;
+			$("#up-yhsm").val(data.display);//Description;
 		}
 	});
 }
@@ -457,54 +459,11 @@ function initrealdata(){
 		var pages=document.getElementById("iframe_main");
 		//var data=$("#tree").treeview("getSelected");
 		//if(pages.src.indexOf("/newrealdata.html")<=0){
-			document.getElementById("iframe_main").src="newrealdata.html";
+			pages.src="newrealdata.html";
 		//}
 		sessionStorage.pageindex=2;
 	}
-	/*switch (data[0].text){
-		case "行唐":
-		case "测温":
-			document.getElementById("iframe_main").src="realdata.html";
-			break;
-		case "局部放电":
-		//case "行唐":
-			document.getElementById("iframe_main").src="GaugeOfJufang.html";
-			break;
-		case "弧光保护":
-		case "石家庄":
-			document.getElementById("iframe_main").src="GaugeOfHuguang.html";
-			break;
-		case "视频监控":
-			document.getElementById("iframe_main").src="javascript:void(0)";
-			break;
-		case "机房监控":
-			document.getElementById("iframe_main").src="roommonitor.html";
-			break;
-		case "门禁":
-			document.getElementById("iframe_main").src="guard.html";
-			break;
-		case "水浸":
-			document.getElementById("iframe_main").src="flooding.html";
-			break;
-		case "灯光":
-			document.getElementById("iframe_main").src="light.html";
-			break;
-		case "环境":
-			document.getElementById("iframe_main").src="humiture.html";
-			break;
-		case "空调":
-			document.getElementById("iframe_main").src="airconditioning.html";
-			break;
-		case "动力":
-			document.getElementById("iframe_main").src="ups.html";
-			break;
-		case "烟感":
-			document.getElementById("iframe_main").src="SmokeDetector.html";
-			break;
-		case "红外":
-			document.getElementById("iframe_main").src="infrared.html";
-			break;
-	}*/
+	
 }
 //初始化机房监控子系统实时状态页面...used by electricroommonitor
 function initrealstate(){
@@ -512,7 +471,7 @@ function initrealstate(){
 		var pages=document.getElementById("iframe_main");
 		//var data=$("#tree").treeview("getSelected");
 		if(pages.src.indexOf("/realstate.html")<=0){
-			document.getElementById("iframe_main").src="realstate.html";
+			pages.src="realstate.html";
 		}
 		sessionStorage.pageindex=10;
 	}
@@ -523,7 +482,7 @@ function inithistorystate(){
 		var pages=document.getElementById("iframe_main");
 		//var data=$("#tree").treeview("getSelected");
 		if(pages.src.indexOf("/historystate.html")<=0){
-			document.getElementById("iframe_main").src="historystate.html";
+			pages.src="historystate.html";
 		}
 		sessionStorage.pageindex=11;
 	}
@@ -575,13 +534,12 @@ function loaduserprofile(){
 }
 //跳转到历史数据  used by electricroommonitor
 function tohistory(sorid) {
-	
 	sessionStorage.SensorId = sorid;
 	parent.window.document.getElementById('iframe_main').src = 'historydata.html';
 }
 //跳转到告警信息查询  used by electricroommonitor
 function towarnlog(sorid) {
-	
+
 	flag_warning = 0;
 	sessionStorage.SensorId = sorid;
 	parent.window.document.getElementById('iframe_main').src = 'warnlog.html';
@@ -968,17 +926,17 @@ function initlist() {
 }
 //显示新密码输入选项 used by ele
 function showeditpassword() {
-	document.getElementById("row-newpassword").style.display = "";
+	$("#row-newpassword").css('display', "");
 	//document.getElementById("up-yhmmqr").style.display = "inline";
 	//document.getElementById("txt_postpassword").style.display = "inline";
-	document.getElementById("txt_editpassword").style.display="none";
+	$("#txt_editpassword").css('display',"none");
 }
 //提交密码修改内容 used by ele
 function postpassword() {
 	//var yhbh=document.getElementById("up-yhbh").value;
 	//var yhmc=document.getElementById("up-yhmc").value;
-	var yhmm = document.getElementById("up-yhmm").value;
-	var xmm = document.getElementById("up-yhmmqr").value;
+	var yhmm = $("#up-yhmm").val();
+	var xmm = $("#up-yhmmqr").val();
 	//var yhsm=document.getElementById("up-yhsm").value;
 	if (yhmm == '') {
 		layer.alert("请输入原始密码",info_showtime);
@@ -990,12 +948,12 @@ function postpassword() {
 		showstateinfo("请输入新密码");
 		return;
 	}
-	document.getElementById("row-newpassword").style.display = "none";
+	$("#row-newpassword").css("display","none");
 	//document.getElementById("up-yhmmqr").style.display = "none";
-	document.getElementById("up-yhmmqr").value="";
-	document.getElementById("up-yhmm").value="";
+	$("#up-yhmmqr").val("");
+	$("#up-yhmm").val("");
 	//document.getElementById("txt_postpassword").style.display = "none";
-	document.getElementById("txt_editpassword").style.display="inline";
+	$("#txt_editpassword").css("display","inline");
 	/*var url = jfjk_base_config.baseurl + "ChangePass?pass=" + yhmm + "&newpass=" + xmm;
 	url = encodeURI(url);
 	$.ajax({
@@ -1230,8 +1188,10 @@ function gethistorydata(sensorid,folder,name,kssj, jssj,aparent) {
 	//if (sessionStorage.islogin == "true") {
 		if (typeof(sensorid) != "undefined") {
 			sendorder("GetHistoriesBySensor?sensorId=" + sensorid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
-				if(!data)
+				if(!data){
+					decodedatas(null);
 					return;
+				}
 				if (!jQuery.isEmptyObject(data.datas)) {//Result.Datas
 					localStorage.setItem("historydata",JSON.stringify(data.datas));
 					decodedatas( data.datas);//[sensorid]
@@ -1594,7 +1554,6 @@ function getchartvalue(msensorid, kssj, jssj) {
 	}
 }
 
-
 //绘图变化趋势图   used by electricroommonitor chart.html
 function decodedatas(obj_chartdatas,apt,atitle) {
 	//var iserror = false,
@@ -1617,7 +1576,8 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 		if(check_val.length>0){
 			var title_tr=document.createElement("tr");
 			var title_th=document.createElement("th");
-			title_th.setAttribute("colspan","4");
+			title_th.setAttribute('colspan','4');//setAttribute('colspan','4')"
+			//title_th.setAttribute('style','text-align: center');
 			title_th.innerHTML=atitle;
 			title_tr.appendChild(title_th);
 			tbody.appendChild(title_tr);
@@ -1807,7 +1767,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 	function drawchart() {
 		//var myChart = echarts.init(document.getElementById('main'));
 		var option = {
-			color: ['#ff6c00', '#FF0000','#0fff0f',"#9400D3","#00BFFF","#3B20B2","#20B2AA","#0000CD"," #FF4500 "],//
+			color: ['#ff6c00', '#FF0000','#228B22',"#9400D3","#00BFFF","#3B30f2","#20B2AA","#0000CD"," #FF4500 "],//
 			backgroundColor: '#dcdcdc',
 			title : {
 						text : atitle+": "+' 变化趋势比对  ',//标题 标签名称+项目名称；
@@ -2516,25 +2476,25 @@ function initrealwarning() {
 function initcontactus() {  //used by electricroommonitor 
 	updatapcnav(11);
 	sessionStorage.framepage="ContactUs.html";
-	document.getElementById('p1').innerHTML = jfjk_base_config.part1;
-	document.getElementById('p2').innerHTML = jfjk_base_config.part2;
-	document.getElementById('p3').innerHTML = jfjk_base_config.part3;
-	document.getElementById('p4').innerHTML = jfjk_base_config.part4;
-	document.getElementById('add').innerHTML = jfjk_base_config.company_address;
-	document.getElementById('postcode').innerHTML = jfjk_base_config.post_code;
-	document.getElementById('email1').innerHTML = jfjk_base_config.email1;
-	document.getElementById('email2').innerHTML = jfjk_base_config.email2;
+	$('#p1').html(jfjk_base_config.part1);
+	$('#p2').html(jfjk_base_config.part2);
+	$('#p3').html(jfjk_base_config.part3);
+	$('#p4').html(jfjk_base_config.part4);
+	$('#add').html(jfjk_base_config.company_address);
+	$('#postcode').html(jfjk_base_config.post_code);
+	$('#email1').html(jfjk_base_config.email1);
+	$('#email2').html(jfjk_base_config.email2);
 }
 function initsysteminfo(){//used by electricroommonitor
 	sessionStorage.pageindex=7;//20200214
 	$("#maxname1").height(parent.window.windowHeight-120);
 	updatapcnav(10);
 	sessionStorage.framepage="systeminfo.html";
-	//document.getElementById('p1').innerHTML = jfjk_base_config.app_name;
-	document.getElementById('p2').innerHTML = jfjk_base_config.ver_id
-	document.getElementById('p3').innerHTML = jfjk_base_config.date;
-	document.getElementById("p4").innerHTML = jfjk_base_config.copyright;
-	//document.getElementById('add').innerHTML = jfjk_base_config.company;
+	//$('#p1').html(fjk_base_config.app_name);
+	$('#p2').html(jfjk_base_config.ver_id);
+	$('#p3').html(jfjk_base_config.date);
+	$("#p4").html(jfjk_base_config.copyright);
+	//$('#add').html(jfjk_base_config.company);
 }
 //以下为新增函数
 //获取实时数据  used by electricroommonitor mainpage.html realdata.html
@@ -2810,7 +2770,7 @@ var sorter=false;
 					}
 				}
 				var table = document.getElementById(tableId);
-                var tbody = table.tBodies[0];//
+                var tbody = table.tBodies[0];//tBodies[0]取表头thead，tBodies[1]取tbody
 				var tr = tbody.rows;
 				if (tbody.sortCol == Idx){
 					sorter=(!sorter);
@@ -2955,7 +2915,7 @@ function sendorder(order,callback){
 					layer.alert("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试");
 				}else {
-					layer.alert( ' 数据获取失败',info_showtime);
+					layer.alert( jqXHR.responseText,info_showtime);
 				}
 				sessionStorage.errortime++;
 				if(sessionStorage.errortime<3){
@@ -3072,11 +3032,19 @@ function sendpostorder(order,datas,callback){
 		callback(null) ;
 	}
 }
-function blinklink(flashit){
+/*function blinklink(flashit){
 	if(flashit.style.backgroundColor=='rgb(0, 101, 105)'){  //注意：这里拿到的是rgb格式的
 		flashit.style.backgroundColor='rgb(232, 83, 63)';
 	}else{
 		flashit.style.backgroundColor='rgba(0, 101, 105)';
+	}
+	return timer=setTimeout("blinklink(flashit)",500);
+}*/
+function blinklink(flashit){
+	if(flashit.css('backgroundColor')=='rgb(0, 101, 105)'){  //注意：这里拿到的是rgb格式的
+		flashit.css('backgroundColor','rgb(232, 83, 63)');
+	}else{
+		flashit.css('backgroundColor','rgba(0, 101, 105)');
 	}
 	return timer=setTimeout("blinklink(flashit)",500);
 }
@@ -3086,7 +3054,7 @@ function flashbutton(){//使用各子页面的全局变换timer、flashit.各个
 	timer=blinklink(flashit);
 }
 function stoptimer(timer){
-	flashit.style.backgroundColor='rgba(0, 101, 105)';
+	flashit.css('backgroundColor','rgba(0, 101, 105)');
 	clearTimeout(timer);
 }
 function showdate(el){
@@ -3097,6 +3065,6 @@ function showdate(el){
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
  * 
  * 连接异常时的报错信息，历史数据和实时数据没有返回值时的异常处理，对多次异常时的处理过程,主页面的登录用户名称和登录状态显示内容。
- * 系统网络连接的状态改变；系统没5-10分钟进行连接判断或重连，没15-30分钟进行一次安全验证码刷新操作，
+ * 系统网络连接的状态改变；系统每5-10分钟进行连接判断或重连，每15-30分钟进行一次安全验证码刷新操作，
  * 
  */
