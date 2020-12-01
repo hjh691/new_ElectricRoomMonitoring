@@ -41,45 +41,6 @@
         }
         //sensors=JSON.parse(localStorage.getItem("sensors"));//
         configs=JSON.parse(localStorage.Configs);
-        /*if (sensors != null) {
-            for (var i = 0; i < sensors.length; i++) {
-                if ((sensors[i].Value.ParentId != "-1") && (sensors[i].Value.ParentId != parentid)) {
-                    parentid = sensors[i].Value.ParentId;
-                    for (var j = 0; j < sensors.length; j++) {
-                        if (sensors[j].id == parentid) {
-                            parentname = sensors[j].Value.Name + "_";
-                            break;
-                        }
-                    }
-                }
-                var map = new Object();
-                map.value = sensors[i].id;
-                map.name = parentname + sensors[i].Value.Name;  manage foreign language forest
-                maps.push(map);
-            }
-            var compare = function (obj1, obj2) {//zw20-12 zw32-12 zw43-12 
-                var val1 = obj1.name;
-                var val2 = obj2.name;
-                return val1.localeCompare(val2);//
-            }
-            maps.sort(compare);
-            for (var k = 0; k < maps.length; k++) {//将标签添加到多选列表中 
-                var p = document.createElement("p");
-                var lab=document.createElement("label");
-                var input=document.createElement("input");
-                input.setAttribute("type","checkbox");
-                input.setAttribute("name","checks");
-                input.setAttribute("id",maps[k].name);
-                input.setAttribute("value",maps[k].value);
-                input.setAttribute('onclick','itemclick(this)');
-                var spn=document.createElement("span");
-                spn.innerHTML=maps[k].name;
-                lab.appendChild(input);
-                lab.appendChild(spn);
-                p.appendChild(lab);
-                sel_sensor.appendChild(p);
-            }
-        }*/
         appenddisplaytype();
         //setSelectOption("jcdd", sessionStorage.SensorId);
         oneChoice();
@@ -166,39 +127,6 @@
         document.getElementById("select_text").value=selectText;
         showchartview(sel_str);
     }
-
-    /*function itemclick(obj){//多选列表项的点击响应过程
-        var allobj = $('[name="checks"]');
-        var c=0;
-        for(var k in allobj){
-            if(allobj[k].checked){
-                c++;
-            }
-        }
-        if(c>6){
-            obj.checked=false;
-            alert("对比测量点不能大于6个!",info_showtime);
-            showstateinfo("对比测量点不能大于6个");
-        }
-    }
-    function refreshsensorslist() {
-        window.parent.GetSensorsByNode(sessionStorage.nodeId);
-    }
-    function allChoice(){//取消选择项
-        var obj = $('[name="checks"]');
-        var btn=document.getElementById("allcheck")
-        //if(btn.value=="全选"){
-        //	for(var i=0;i<obj.length;i++){
-        //		obj[i].checked=true;
-        //	}
-        //	btn.value="全不选";
-        //}else{
-            for(var i=0;i<obj.length;i++){
-                obj[i].checked=false;
-            }
-        //	btn.value="全选";
-        //}
-    }*/
     //对比按钮
     function oneChoice(){
         stoptimer(timer);
@@ -244,66 +172,7 @@
             showstateinfo("请选择要对比的测量点名称!");
         }
     }
-    /*function gethistorybysensors(arr_sensors,folder,aname,apt,atitle){
-        var url = jfjk_base_config.baseurl + "GetHistoriesBySensors?folder="+folder+"&name="+aname+"&from="+kssj+"&to="+jssj;
-        url = encodeURI(url);
-        if (sessionStorage.islogin == "true") {
-            $.ajax({
-                beforeSend: function(request) {
-                    request.setRequestHeader("Authorization", sessionStorage.token);
-                },
-                url: url,
-                type: 'POST',
-                dataType: 'json',
-                contentType: "application/json",
-                data:JSON.stringify(arr_sensors),
-                timeout: 10000,
-                error: function(jqXHR, textStatus, errorThrown) {
-                    sessionStorage.errortime++;
-                    ajaxLoadingHidden();
-                    decodedatas([],apt,atitle);//
-                    //myChart.hideLoading();
-                    if (errorThrown == "Unauthorized") {
-                        layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败',info_showtime);
-                        showstateinfo(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取历史数据操作失败');
-                        LoginOrder(localStorage.username,sessionStorage.password,1)
-                    } else {
-                        layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败',info_showtime);
-                        showstateinfo(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取历史数据操作失败');
-                    }
-                    if(sessionStorage.errortime>3){
-                        sessionStorage.islogin=false;
-                        sessionStorage.errortime=0;
-                    }
-                },
-                success: function(data, status) {
-                    //var reg = new RegExp("(^|&)value1=([^&]*)(&|$)"); 
-                    ajaxLoadingHidden();
-                    if (status == "success") {
-                        sessionStorage.errortime = 0;
-                        sessionStorage.islogin = true;
-                        if (data.Error == null) {//Result.
-                            if (!jQuery.isEmptyObject(data.datas)) {
-                                showstateinfo("");
-                                decodedatas( data.datas,apt,atitle);
-                            } else {
-                                layer.alert("没有符合条件的 "+atitle+" 记录",info_showtime);
-                                showstateinfo("没有符合条件的 "+atitle+" 记录");
-                                decodedatas([],apt,atitle);//
-                            }
-                        } else {
-                            decodedatas([],apt,atitle);//
-                            layer.alert(data.Error,info_showtime);
-                            showstateinfo(data.Error);
-                        }
-                    }
-                }
-            });
-        } else {
-            Alert("用户未登录，您无权完成此次操作", info_showtime);
-            showstateinfo("用户未登录，你无权完成此次操作");
-        }
-    }*/
+    //获取历史数据
     function gethistorybysensors(arr_sensors,folder,aname,apt,atitle){
         sendpostorder("GetHistoriesBySensors?folder="+folder+"&name="+aname+"&from="+kssj+"&to="+jssj,arr_sensors,function(data){
             if (data!= null) {//Result.
@@ -494,123 +363,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 			}
 		}
 	}
-	/*//if(Math.ceil(senconds/1000/60)<1430){
-		for (var i = 0; i <obj_chartdata.length; i++) {
-			pa.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
-			pb.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
-			pc.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
-		}
-		maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[0].Value);
-		var strtime=obj_chartdata[0].Time.substr(0,13);
-		var temp=parseInt(strtime.substr(11));
-		for (var i = 1; i <obj_chartdata.length; i++) {
-			if(parseInt(obj_chartdata[i].Time.substr(11,13))==temp){
-				if(parseFloat(obj_chartdata[i].Value)>maxvalue){
-					maxvalue=parseFloat(obj_chartdata[i].Value);
-				}
-				if(parseFloat(obj_chartdata[i].Value)<minvalue){
-					minvalue=parseFloat(obj_chartdata[i].Value);
-				}
-				avgvalue=(parseFloat(avgvalue)+parseFloat(obj_chartdata[i].Value));
-				count++;
-			}else{
-				avgvalue=(avgvalue/count);
-				pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
-				pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
-				pc.push([strtodatetime(strtime+":00"),minvalue , ps])
-				maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[i].Value);
-				strtime=obj_chartdata[i].Time.substr(0,13);
-				temp=parseInt(strtime.substr(11));
-				ps++;
-				count=1;
-			}
-		}
-		avgvalue=(avgvalue/count);
-		pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
-		pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
-		pc.push([strtodatetime(strtime+":00"),minvalue , ps])
-	//}else 
-	/*if(Math.ceil(senconds/1000/60)<=1440){
-		jiange="按小时统计";
-		maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[0].Value);
-		maxval=minval=maxvalue;
-		var strtime=obj_chartdata[0].Time.substr(0,13);
-		var temp=parseInt(strtime.substr(11));
-		for (var i = 1; i <obj_chartdata.length; i++) {
-			if(parseInt(obj_chartdata[i].Time.substr(11,13))==temp){
-				if(parseFloat(obj_chartdata[i].Value)>maxvalue){
-					maxvalue=parseFloat(obj_chartdata[i].Value);
-				}
-				if(parseFloat(obj_chartdata[i].Value)<minvalue){
-					minvalue=parseFloat(obj_chartdata[i].Value);
-				}
-				if(parseFloat(obj_chartdata[i].Value)>maxval){
-					maxval=parseFloat(obj_chartdata[i].Value);
-				}
-				if(parseFloat(obj_chartdata[i].Value)<minval){
-					minval=parseFloat(obj_chartdata[i].Value);
-				}
-				avgvalue=(parseFloat(avgvalue)+parseFloat(obj_chartdata[i].Value));
-				count++;
-			}else{
-				avgvalue=(avgvalue/count);
-				pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
-				pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
-				pc.push([strtodatetime(strtime+":00"),minvalue , ps])
-				maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[i].Value);
-				strtime=obj_chartdata[i].Time.substr(0,13);
-				temp=parseInt(strtime.substr(11));
-				ps++;
-				count=1;
-			}
-		}
-		avgvalue=(avgvalue/count);
-		pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
-		pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
-		pc.push([strtodatetime(strtime+":00"),minvalue , ps])
-	}else{
-		jiange="按日统计";
-		maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[0].Value);
-		maxval=minval=maxvalue;
-		var strtime=obj_chartdata[0].Time.substr(0,10);
-		var temp=parseInt(strtime.substr(8));
-		for (var i = 1; i <obj_chartdata.length; i++) {
-			if(parseInt(obj_chartdata[i].Time.substr(8,10))==temp){
-				if(parseFloat(obj_chartdata[i].Value)>maxvalue){
-					maxvalue=parseFloat(obj_chartdata[i].Value);
-				}
-				if(parseFloat(obj_chartdata[i].Value)<minvalue){
-					minvalue=parseFloat(obj_chartdata[i].Value);
-				}
-				if(parseFloat(obj_chartdata[i].Value)>maxval){
-					maxval=parseFloat(obj_chartdata[i].Value);
-				}
-				if(parseFloat(obj_chartdata[i].Value)<minval){
-					minval=parseFloat(obj_chartdata[i].Value);
-				}
-				avgvalue=(parseFloat(avgvalue)+parseFloat(obj_chartdata[i].Value));
-				count++;
-			}else{
-				avgvalue=(avgvalue/count);
-				pa.push([strtodatetime(strtime), maxvalue, ps])
-				pb.push([strtodatetime(strtime), avgvalue.toFixed(Number_of_decimal), ps])
-				pc.push([strtodatetime(strtime),minvalue , ps])
-				maxvalue=minvalue=avgvalue=parseFloat(obj_chartdata[i].Value);
-				strtime=obj_chartdata[i].Time.substr(0,10);
-				temp=parseInt(strtime.substr(8));
-				ps++;
-				count=1;
-			}
-		}
-		avgvalue=(avgvalue/count);
-		pa.push([strtodatetime(strtime), maxvalue, ps])
-		pb.push([strtodatetime(strtime), avgvalue.toFixed(Number_of_decimal), ps])
-		pc.push([strtodatetime(strtime),minvalue , ps])
-	}
-	var lengenddata = [];
-	lengenddata.push("最大值");
-	lengenddata.push("平均值");
-	lengenddata.push("最小值");*/
+	
 	if(maxval==minval){
 		maxval=maxval*1.5;
 		minval=minval/2;
@@ -736,4 +489,10 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 		myChart.resize();
 	}
 }
-    
+/**
+ * 对比配置项根据标签进行动态添加以及去除重复项功能，页面根据对比项目自动进行动态调整显示图形视窗的功能，
+	编写树形菜单的双击响应程序（采用选中与释放之间的时间作为标准进行判断，小于一定时间视为双击，视频预览添加通道双击打开再次双击关闭功能
+	0727添加显示控制配置项的页面记忆功能，在节点不变的情况下，切换页面时记忆上次的选择项并显示响应的图表视图。
+	按钮样式
+	1126 去掉二次菜单,多选的对比项在退出或关闭后清除选项。
+ */

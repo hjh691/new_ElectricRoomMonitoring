@@ -804,63 +804,7 @@
 			}
 			return infotree;
 		}
-		/*function getNodes() {
-			var url = jfjk_base_config.baseurl + "GetNodes";
-			url = encodeURI(url);
-			if (sessionStorage.islogin == "true") {
-				$.ajax({
-					beforeSend: function (request) {
-						request.setRequestHeader("Authorization", sessionStorage.token);
-					},
-					url: url,
-					type: 'GET',
-					dataType: 'json',
-					timeout: 10000,
-					error: function (jqXHR, textStatus, errorThrown) {
-						inittreeview();
-						if (errorThrown == "Unauthorized") {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取系统目录列表数据失败',info_showtime);
-						} else {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取实时数据操作失败',info_showtime);
-						}
-						showstateinfo("获取系统目录列表数据失败");
-						sessionStorage.errortime++;
-						if(sessionStorage.errortime<3){
-							//getNodes();//video.html mainpage.html function.js userprofile 
-						}else{
-							sessionStorage.islogin=false;
-						}
-					},
-					success: function (data, status) {
-						var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-						if (status == "success") {
-							sessionStorage.errortime = 0;
-							sessionStorage.islogin = true;
-							if (data.Error == null) {
-								var obj_nodes = [];
-								//var result = data.Result;
-								//if (!jQuery.isEmptyObject(data.Result)) {//用data.Result替换result.Nodes
-									obj_nodes = data;//.Result;
-								//} else {
-								//	obj_nodes = null;
-								//}
-								nodes = buildnode(obj_nodes, 0);
-								inittreeview(nodes);
-								GetSensors();//将标签挂接到节点树。
-							} else {
-								layer.alert(data.Error,info_showtime);
-								showstateinfo(data.Error);
-								sessionStorage.islogin = ture;
-							}
-						}
-					}
-				});
-			} else {
-				Alert("用户未登录，您无权完成此次操作", info_showtime);
-				showstateinfo("用户未登录，你无权完成此次操作");
-				inittreeview(null, 0);
-			}
-		}*/
+		//获取所有节点信息
 		function getNodes(){
 			sendorder("GetNodes",function(getnodes){
 				if(getnodes!=null){
@@ -993,83 +937,6 @@
 			}
 		}
 		//获取指定节点的一次图形列表  //Fresh strawberries tastes good
-		/*function GetBinariesByType(atype, anodeid) {
-			//var url = jfjk_base_config.baseurl + "/GetBinariesByType?type=" + atype + "&typeid=" + anodeid;//GetSensorsByNode?nodeId
-			var url = jfjk_base_config.baseurl + "GetNodeGraphicsByNode?nodeId="+ anodeid;
-			url = encodeURI(url);
-			if (sessionStorage.islogin == "true") {
-				//if((aparent==undefined)||(aparent!=1)){
-				//ajaxLoadingShow();
-				//}
-				$.ajax({
-					beforeSend: function (request) {
-						request.setRequestHeader("Authorization", sessionStorage.token);
-					},
-					url: url,
-					type: 'GET',
-					dataType: 'json',
-					timeout: 10000,
-					error: function (jqXHR, textStatus, errorThrown) {
-						//inittreeview();
-						ajaxLoadingHidden();
-						//layer.alert('获取系统列表数据失败');
-						if (errorThrown == "Unauthorized") {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取图形数据操作失败',info_showtime);
-						} else {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取图形数据操作失败',info_showtime);
-						}
-						sessionStorage.errortime++;
-						//isfree="true";
-						if(sessionStorage.errortime>3){
-							sessionStorage.islogin=false;
-							sessionStorage.errortime=0;
-						}
-					},
-					success: function (data, status) {
-						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-						ajaxLoadingHidden();
-						if (status == "success") {
-							sessionStorage.errortime = 0;
-							//isfree="true";
-							if (data.Error == null) {
-								var obj_Binaries = [];
-								//var result = data.Result;
-								//if (!jQuery.isEmptyObject(result.Binaries)) {//20200427 修改
-								if(!jQuery.isEmptyObject(data)){//.Result
-									//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
-									obj_Binaries = data;//.Result;
-									//var binaries=buildbinaries(data.Result.Binaries);//(JSON.parse(localStorage.getItem("sensors")));
-									localStorage.setItem("binaries", JSON.stringify(obj_Binaries));
-									//localStorage.binaries=obj_Binaries;
-									
-									//refreshiframe();
-								} else {
-									localStorage.setItem("binaries", null);
-									sessionStorage.islogin = true;
-									//refreshiframe();
-								}
-							} else {
-								localStorage.setItem("binaries", null);
-								layer.alert(data.Error,info_showtime);
-								showstateinfo(data.Error)
-								sessionStorage.islogin = true;
-								//refreshiframe();
-							}
-						}
-					}
-				});
-				if(sessionStorage.pageindex==1){
-					refreshiframe();
-				}
-			} else {
-				Alert("用户未登录，您无权完成此次操作", info_showtime);
-				showstateinfo("用户未登录,你无权完成此次操作");
-				//inittreeview(null,0);
-			}
-			//if(atype==0){
-			//refreshiframe();
-			//}
-		}*/
 		function GetBinariesByType(atype, anodeid){
 			sendorder("GetNodeGraphicsByNode?nodeId="+ anodeid,function(data){
 				if(!jQuery.isEmptyObject(data)){//.Result
@@ -1081,117 +948,7 @@
 				}
 			});
 		}
-		/*function GetSensorsByNode(anodeid) {
-			//sessionStorage.jfjk_nodeid=0;
-			var url = jfjk_base_config.baseurl + "GetSensorsByNode?nodeId=" + anodeid;
-			url = encodeURI(url);
-			if (sessionStorage.islogin == "true") {
-				$.ajax({
-					beforeSend: function (request) {
-						request.setRequestHeader("Authorization", sessionStorage.token);
-					},
-					url: url,
-					type: 'GET',
-					dataType: 'json',
-					timeout: 10000,
-					error: function (jqXHR, textStatus, errorThrown) {
-						sessionStorage.errortime++;
-						isfree = "true";
-						localStorage.setItem("sensors", null);
-						localStorage.setItem("Configs",null);
-						tree2=false;
-						localStorage.setItem("sensor_tree",null);
-						var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
-						var treenode=buildnode_level2(treeseneors,0);
-						inittreeview_level2(treenode);
-						refreshiframe();
-						if (errorThrown == "Unauthorized") {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取标签信息失败',info_showtime);
-						} else {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取标签信息失败',info_showtime);
-						}
-						if(sessionStorage.errortime>3){
-							sessionStorage.islogin=false;
-							sessionStorage.errortime=0;
-						}
-					},
-					success: function (data, status) {
-						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-						if (status == "success") {
-							sessionStorage.errortime = 0;
-							isfree = "true";
-							//if (data.Error == null) {
-								var obj_sensors = [];
-								var result = data;//.Result;
-								if (!jQuery.isEmptyObject(result.sensors)) {
-									localStorage.setItem("sensor_tree",JSON.stringify(result.sensors));
-									var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
-									var treenode=buildnode_level2(treeseneors,0);
-									inittreeview_level2(treenode);
-									tree2=true;
-									maps = [];
-									var sensors = buildsensor(result.sensors);//(JSON.parse(localStorage.getItem("sensors")));
-									localStorage.setItem("sensors", JSON.stringify(sensors));
-									//var sensors=(JSON.parse(localStorage.getItem("sensors")));
-									//var localsensors=buildsensor(data.Result.Sensors);
-									//updatainfotree(infotreedata, anodeid,sensors.length,sensors);
-									if(!jQuery.isEmptyObject(result.typeConfigs)){//20200428 add
-										var configs=new Object();
-										configs=result.typeConfigs;
-										localStorage.setItem("Configs",JSON.stringify(configs));
-									}else{
-										localStorage.setItem("Configs",null);
-									}
-									if(!jQuery.isEmptyObject(result.configs)){//20200428 add
-										var config=new Object();
-										config=result.configs;
-										localStorage.setItem("Config",JSON.stringify(config));
-									}else{
-										localStorage.setItem("Config",null);
-									}
-									refreshiframe();
-								} else {
-									tree2=false;
-									localStorage.setItem("sensor_tree",null);
-									var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
-									var treenode=buildnode_level2(treeseneors,0);
-									inittreeview_level2(treenode);
-									localStorage.setItem("sensors", null);
-									if(!jQuery.isEmptyObject(result.typeConfigs)){//20200428 add
-										var configs=new Object();
-										configs=result.typeConfigs;
-										localStorage.setItem("Configs",JSON.stringify(configs));
-									}else{
-										localStorage.setItem("Configs",null);
-									}
-									sessionStorage.islogin = true;
-									refreshiframe();
-								}
-							//} else {
-								/*tree2=false;
-								localStorage.setItem("sensor_tree",null);
-								var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
-								var treenode=buildnode_level2(treeseneors,0);
-								inittreeview_level2(treenode);
-								localStorage.setItem("sensors", null);
-								localStorage.setItem("Configs",null);
-								layer.alert(data.Error,info_showtime);
-								showstateinfo(data.Error);
-								showstateinfo(data.Error);
-								sessionStorage.islogin = true;
-								refreshiframe();/* *****
-							//}
-						}
-					}
-				});
-			} else {
-				Alert("用户未登录，您无权完成此次操作", info_showtime);
-				showstateinfo("用户未登录，你无权完成此次操作");
-				tree2=false;
-				inittreeview(null, 0);
-			}
-			//refreshiframe();
-		}*/
+		//获取指定节点包含的标签信息
 		function GetSensorsByNode(anodeid){//20200928 add
 			sendorder("GetSensorsByNode?nodeId="+ anodeid,function(result){
 				if (!jQuery.isEmptyObject(result.sensors)) {
@@ -1243,6 +1000,7 @@
 				refreshiframe();
 			})
 		}
+		//刷新iframe所包含的页面内容
 		function refreshiframe() {
 			//var frame=document.getElementById("iframe_main");///
 			switch (sessionStorage.pageindex) {
@@ -1326,82 +1084,7 @@
 			}
 			sessionStorage.framepage=iframemain.attr('src');
 		}
-		/*function GetSensors() {
-			var url = jfjk_base_config.baseurl + "GetSensors";
-			url = encodeURI(url);
-			if (sessionStorage.islogin == "true") {
-				$.ajax({
-					beforeSend: function (request) {
-						request.setRequestHeader("Authorization", sessionStorage.token);
-					},
-					url: url,
-					type: 'GET',
-					dataType: 'json',
-					timeout: 10000,
-					error: function (jqXHR, textStatus, errorThrown) {
-						//inittreeview();
-						//layer.alert('获取系统列表数据失败');
-						sessionStorage.errortime++;
-						isfree = "true";
-						if (errorThrown == "Unauthorized") {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取标签信息操作失败',info_showtime);
-						} else {
-							layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取标签信息操作失败',info_showtime);
-						}
-						if(sessionStorage.errortime>3){
-							sessionStorage.islogin=false;
-							sessionStorage.errortime=0;
-						}
-					},
-					success: function (data, status) {
-						//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-						if (status == "success") {
-							sessionStorage.errortime = 0;
-							isfree = "true";
-							//if (data.Error == null) {
-								var obj_sensors = [];
-								var result = data;//.Result;
-								if (!jQuery.isEmptyObject(result.sensors)) {
-									//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
-									//sensorsnode=buildnode(data.Result.Sensors,0);//(JSON.parse(localStorage.getItem("sensors")));
-									maps=[];
-									allsensors = [];
-									buildsensor2(allsensors, result.sensors, "");
-									localStorage.setItem("allsensors",JSON.stringify(buildsensor(result.sensors)));
-									//var sensors=(JSON.parse(localStorage.getItem("sensors")));
-									//var localsensors=buildsensor(data.Result.Sensors);
-									//updatanodetree();
-									if(!jQuery.isEmptyObject(result.typeConfigs)){//20200428 add
-										var configs=new Object();
-										configs=result.typeConfigs;
-										localStorage.setItem("allConfigs",JSON.stringify(configs));
-									}
-									if(!jQuery.isEmptyObject(result.configs)){//20200428 add
-										var config=new Object();
-										config=result.configs;
-										localStorage.setItem("Config",JSON.stringify(config));
-									}else{
-										localStorage.setItem("Config",null);
-									}
-								} else {
-									allsensors = null;
-									//localStorage.setItem("allsensors",null);
-								}
-							//} else {
-							//	localStorage.setItem("allsensors", null);
-							//	layer.alert(data.Error,info_showtime);
-							//	showstateinfo(data.Error);
-							//	sessionStorage.islogin = ture;
-							//}
-						}
-					}
-				});
-			} else {
-				Alert("用户未登录，您无权完成此次操作", info_showtime);
-				showstateinfo("用户未登录，您无权完成此次操作");
-				inittreeview(null, 0);
-			}
-		}*/
+		//获取所有的标签信息
 		function GetSensors(){
 			sendorder("GetSensors",function(result){
 				if (!jQuery.isEmptyObject(result.sensors)) {
@@ -1741,7 +1424,7 @@
 			return sys_name;
 		}
 		/*function refreshData(){
-		}*/
+		}
 		function updatanodetree() {
 			if (typeof(allsensors) != "undefined" && allsensors != null) {
 				for (var i = 0; i < allsensors.length; i++) {
@@ -1752,7 +1435,7 @@
 				}
 				inittreeview(nodes);
 			}
-		}
+		}*/
 		function inittreeview_level2(anodes) {
 			var tree=$("#tree_chi");
 			if(!anodes){
@@ -1952,9 +1635,9 @@
 			if (lastSelectedNodeId && lastSelectTime) {
 				var time = new Date().getTime();
 				var t = time - lastSelectTime;
-				if (lastSelectedNodeId == data.nodeId && t < 300) {
+				if (lastSelectedNodeId == data.nodeId && t < 300) {//所选节点相同并且时间间隔小于300毫秒，视为双击
 					//customBusiness(data);
-					if(sessionStorage.pageindex==8){
+					if(sessionStorage.pageindex==8){//视频监控页面双击打开或关闭相应的视频
 						iframemain[0].contentWindow.clickStartRealPlay();
 					}
 				}
@@ -1962,11 +1645,7 @@
 			lastSelectedNodeId = data.nodeId;
 			lastSelectTime = new Date().getTime();
 		}
-		//自定义业务方法  
-		function customBusiness(data){
-			alert("双击获得节点名字： "+data.text,2000);
-		}
-		
+		//监控鼠标的移动和位置
 		function mouseMove(ev) 
 		{ 
 			//containerdiv = document.getElementById("temp1-1");       
