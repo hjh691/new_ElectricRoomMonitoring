@@ -21,11 +21,14 @@ var pageSize = 50;    //每页显示的记录条数
 
 	//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
 	function initwarnlog() {
+		try{
 		updatapcnav(8);
+		//保存页面现场，在点击浏览器的刷新按钮刷新时应用20201211
 		sessionStorage.framepage="warnlog.html";
-		var parentid=-100,parentname="";
-		var maps=[];
 		sessionStorage.pageindex = 5;
+		//var parentid=-100,parentname="";
+		//var maps=[];
+		
 		//var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
 		//var treenode=buildnode(treeseneors,0);
 		//inittreeview(treenode);
@@ -105,6 +108,9 @@ var pageSize = 50;    //每页显示的记录条数
 			var t1 = window.setInterval("getrealdatabynodeid(-1);",60000);
 		}
 		$("#warnlogdata-tbody").height(parent.window.windowHeight-320);
+		}catch(err){
+			showstateinfo(err.message,"warnlog/initwarnlog");
+		}
 	}
 	/*
 	function buildnode(data, level) {
@@ -166,6 +172,7 @@ var pageSize = 50;    //每页显示的记录条数
 		return tree;
 	}*/
 	function appenddisplaytype(asensorid){
+		try{
 		var temp=document.getElementById("event_type");
 		for(var i=temp.childElementCount;i>0;i--)
 			temp.removeChild(temp.children[i-1]);
@@ -235,7 +242,7 @@ var pageSize = 50;    //每页显示的记录条数
 											/*for(var j=0;j<sel_str.length;j++){
 												if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
 													temp.children[i].children[0].checked=true;
-													break; ball call dall fall hall pall tall wall small all 
+													break;  
 												}
 											}*/
 											continue;
@@ -296,8 +303,8 @@ var pageSize = 50;    //每页显示的记录条数
 			selectText="没有告警事件选项";
 		}
 		$("#select_text").val(selectText);
-		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。 bay cay day fay gay hay jay lay kay may nay pay ray say tay way
-		$(".btn").click(function(){//play okay gray bray
+		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。 bay cay day fay gay hay jay lay okay may nay pay ray say tay way
+		$(".btn").click(function(){//play okay gray bray stay 
 			$(this).button('toggle');
 			dname= $(".catalog:checked").val();
 			sessionStorage.warnlogname=dname;
@@ -305,6 +312,9 @@ var pageSize = 50;    //每页显示的记录条数
 			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			//decodedatas(JSON.parse(localStorage.historydata));//flu across thanksgiving bakery neighborhood 
 		});
+		}catch(err){
+			showstateinfo(err.message,"warnlog/appenddisplaytype");
+		}
 	}
 	
 	function displaytype(obj){
@@ -312,6 +322,7 @@ var pageSize = 50;    //每页显示的记录条数
 		catalog=getcatalog(dname);
 	}
 	function decodedatas(obj_data,flag){
+		try{
 		/*objS = document.getElementById("jcdd");//
 		var name;
 		var sift=false;
@@ -453,13 +464,6 @@ var pageSize = 50;    //每页显示的记录条数
 					//document.getElementById("count_third").innerHTML=0;
 				}else{
 					//showstateinfo("");
-					//for(var i=0;i<type_str.length;i++){
-					//	if(count_l[i]==0){
-					//		//document.getElementById(window.eval("'td"+i+"'")).style.display="none";
-					//		var dtr=document.getElementById(window.eval("'tr"+i+"'"));//;//.style.display="none";
-					//		$table.removeChild(dtr);//去掉统计为零的标题行
-					//	}
-					//}
 					/*if(count_h==0){
 						document.getElementById("tr0").style.display="none";
 						document.getElementById("td0").style.display="none";
@@ -488,6 +492,9 @@ var pageSize = 50;    //每页显示的记录条数
 				//document.getElementById("count_first").innerHTML=0;
 				//document.getElementById("count_third").innerHTML=0;
 			}
+		}catch(err){
+			showstateinfo(err.message,"warnlog/decodedatas");
+		}
 		display();
 	}
 	function tableclick(tr){
@@ -501,6 +508,7 @@ var pageSize = 50;    //每页显示的记录条数
 	};
 	//显示实时告警信息
 	function showrealworning(){
+		try{
 		//document.getElementById("jcdd").disabled=true;
 		var sift=false;
 		count=0,count_l=[0,0],count_h=0;
@@ -594,6 +602,9 @@ var pageSize = 50;    //每页显示的记录条数
 		}
 		//document.getElementById("count_first").innerHTML=count_l[0];
 		//document.getElementById("count_third").innerHTML=count_l[1];
+		}catch(err){
+			showstateinfo(err.message,"warnlog/showrealworning");
+		}
 		display();
 	}
 	function refreshsensorslist(){
@@ -796,4 +807,7 @@ function querywarnlog(num) {
 	添加根据类别分组选择来对告警信息进行筛选的古城函数，
 	1123 修改导出操excel时的表头格式，修改列表时非数字的数值显示内容“-”取代NaN形式，防止误解。
 	1126 去掉二次菜单
+	1211 登录页面在登录失败时控制台报错问题（元素未找到）；对其他页面进行现场保存处理，
+	添加页面现场信息保存，在当前页面点击浏览器刷新按钮时，直接进入当前页面,同时杜绝因早不到页面元素而报错。
+	
 */

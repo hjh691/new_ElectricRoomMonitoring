@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="js/config.js"></script>
+	<script type="text/javascript" src="js/function.js"></script>
 	<title>简要说明</title>
 	<style>
 		.selected {
@@ -15,6 +17,7 @@
 			border: solid #222 0px;
 		}
 	</style>
+
 </head>
 <body>
 	<div id="main"style="text-indent:2em">
@@ -69,6 +72,13 @@
 		<p>
 		在系统安装部署初期或后台数据服务器发生改变时，可以在安装目录的js目录下使用文本编辑软件打开config.js文件，对后台数据服务器地址，端口，api功能接口名称以及图片信息、联系信息等内容进行配置，所有配置内容都要有""括起来。设置项目均有注释说明。
 		</p>
-	</div>			
+	</div>
+	<script type="text/javascript">
+	//$(function(){//保存页面现场，在点击浏览器的刷新按钮刷新时应用
+		updatapcnav(13);
+		sessionStorage.framepage="help.html";
+		sessionStorage.pageindex=100;
+	//});
+	</script>			
 </body>
 </html>

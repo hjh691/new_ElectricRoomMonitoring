@@ -41,6 +41,7 @@ var alertconfig=[10,20,30,40];
 var alertcount=[10,20,30,40];
 initrealdata();
 function initrealdata(){
+    try{
     datas = [];
     datas.splice(0, datas.length);//
     for (var i = 0; i < 1; i++) {
@@ -53,10 +54,15 @@ function initrealdata(){
     initseries(datas);
     initchart2();
     initpage();
+    }catch(err){
+        showstateinfo(err.message.message,"initrealdata");
+    }
 }
 function initpage() {
     updatapcnav(3);
+    //保存页面现场，在点击浏览器的刷新按钮刷新时应用
     sessionStorage.framepage="newrealdata.html";
+    sessionStorage.pageinfex=2;
     tab_head=document.getElementById("tab_head");
     if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
         if (typeof (w1) == "undefined") {
@@ -85,6 +91,7 @@ $(function () {
     });
 });
 function appendalldisplaytype(){
+    try{
     var display_type=document.getElementById("display_type");
     for(var i=display_type.childNodes.length;i>0;i--)
     display_type.removeChild(display_type.childNodes[i-1]);
@@ -122,6 +129,9 @@ function appendalldisplaytype(){
             }
         //}
         $.sortTable.sort('realtable',3);
+    }
+    }catch(err){
+        showstateinfo(err.message,"realdata/appendalldisplaytype");
     }
 }
 //"刷新"按钮点击事件
@@ -277,6 +287,7 @@ function stopWorker() {
 };
 //根据数据列值获取Catalog。
 function getCatalog(index){
+    try{
     var  catalogsel = $('[name="options"]');
     typename=catalogsel[index].value;
     titlename=catalogsel[index].textContent;//显示项的标题 //20200518
@@ -308,8 +319,12 @@ function getCatalog(index){
             }
         }
     }
+    }catch(err){
+        showstateinfo(err.message,"realdata/getCatalog")
+    }
 }
 function decoderealdata(obj_realdata) {
+    try{
     //$("#realdata-tbody tr").empty();
     var v_sel = $('[name="options"]');
     $table = document.getElementById('realdata-tbody');
@@ -596,15 +611,18 @@ function decoderealdata(obj_realdata) {
             //showstateinfo("");
         } else {
             layer.alert("没有符合条件的数据",info_showtime);
-            showstateinfo("没有符合条件的数据");
+            showstateinfo("没有符合条件的数据","realdata");
         }
     } else {
         layer.alert("没有符合条件的数据", info_showtime);
-        showstateinfo("没有符合条件的数据");
+        showstateinfo("没有符合条件的数据","realdata");
     }
     //$table.rows[t_pt].scrollIntoView();
     //refreshData();
     display();
+    }catch(err){
+        showstateinfo(err.message,"realdata/decoderealdata");
+    }
 }
 function updatachart(atype) {
     switch (atype.toLowerCase()) {
@@ -921,6 +939,7 @@ function refreshData() {
     mychart3.setOption(option3);
 }
 function decodedatas(obj_chartdata) {
+    try{
     //maxval=0;
     //var iserror = false,
     //err_info = "获取";
@@ -1077,6 +1096,9 @@ function decodedatas(obj_chartdata) {
         };
         myChart2.hideLoading();
         myChart2.setOption(option2);
+    }
+    }catch(err){
+        showstateinfo(err.message.message,"realdata/decodedatas");
     }
 }
 function initchart2() {

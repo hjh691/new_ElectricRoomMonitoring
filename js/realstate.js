@@ -289,6 +289,7 @@ function setactive(aid){
 function initpage() {
     updatapcnav(14);
     sessionStorage.framepage="realstate.html";
+    sessionStorage.pageindex=2;
     var parentid=-100,parentname="";
 	var maps=[];
     if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。

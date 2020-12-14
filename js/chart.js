@@ -11,8 +11,10 @@
     var flashit=$("#chaxun");
     inithistorychart();
     function inithistorychart() {
+        try{
         updatapcnav(7);
         //var el=$("[class $= 't']");jquery 选择器 结束、开始、包含、等于
+        //保存页面现场，在点击浏览器的刷新按钮刷新时应用
         sessionStorage.framepage="chart.html";
         //return;
         sessionStorage.pageindex = 4;
@@ -25,28 +27,38 @@
         $("#cxsj").val((sessionStorage.cxsj).substr(0,11));
         if(sessionStorage.comperator_sensors)
         var sel_sensor =JSON.parse(sessionStorage.comperator_sensors);
+        if(typeof sel_sensor=="undefined")//首次进入页面时有可能为undefined，转换成[],否则有可能报错。
+            sel_sensor=[];
         var tree_obj=window.parent.$("#tree_chi");
         var obj_node=tree_obj.treeview("getSelected");
         if(obj_node.length>0)//判断有没有选中项
         {tree_obj.treeview("unselectNode",obj_node[0]);}//使选择项为不选中，为下一步选择所有未选择项准备//	$("#sel-sensorname").val("所选标签: "+tree_obj.treeview("getSelected")[0].text);
         var sensors=tree_obj.treeview("getUnselected");//选取未选中项
         if(sensors && sel_sensor)
-        for (var i = 0; i <sel_sensor.length; i++) {
+        var nodeid;
+        for (var i =sel_sensor.length-1 ; i >=0; i--) {//使得最后选中的标签维最靠前面的标签，树形菜单定位到第一个被选中的标签位置；原来（正序）为最后一个
             for(var j=0;j<sensors.length;j++){
                 if(sel_sensor[i]==sensors[j].id){
+                    //if(i==0)
+                        nodeid=sensors[j].nodeId;
                     tree_obj.treeview("selectNode",sensors[j].nodeId);
                     break;
                 }
             }
         }
+        tree_obj.treeview("search",[nodeid+'', { ignoreCase: false, exactMatch: true }]);
         //sensors=JSON.parse(localStorage.getItem("sensors"));//
         configs=JSON.parse(localStorage.Configs);
         appenddisplaytype();
         //setSelectOption("jcdd", sessionStorage.SensorId);
         oneChoice();
+        }catch(err){
+            showstateinfo(err.message,"chart/inithistorychart");
+        }
     }
     //添加类别分组选项
     function appenddisplaytype(anodeid){
+        try{
         selectText="";
         if(sessionStorage.selectText){
             sel_str=sessionStorage.selectText.split(";");
@@ -126,9 +138,13 @@
         }
         document.getElementById("select_text").value=selectText;
         showchartview(sel_str);
+        }catch(err){
+            showstateinfo(err.message,"chart/appenddisplaytype");
+        }
     }
     //对比按钮
     function oneChoice(){
+        try{
         stoptimer(timer);
         var obj = window.parent.$("#tree_chi").treeview("getSelected");
         //$("#comprate-tbody tr").remove();
@@ -168,8 +184,12 @@
                 }
             }
         }else{
-            layer.alert("请选择要对比的测量点名称!",info_showtime);
+            parent.dialog.html("请选择要对比的测量点名称!");//,info_showtime);
+            parent.dialog.dialog('open');
             showstateinfo("请选择要对比的测量点名称!");
+        }
+        }catch(err){
+            showstateinfo(err.message,"chart/buttonclick");
         }
     }
     //获取历史数据
@@ -281,7 +301,8 @@ function showchartview(asel_str) {
 }
 //绘图变化趋势图   used by electricroommonitor chart.html
 function decodedatas(obj_chartdatas,apt,atitle) {
-	//var iserror = false,
+    try{
+    //var iserror = false,
 	//err_info = "获取";
 	//var isnull = false,
 	var jiange="";
@@ -296,7 +317,6 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 	var step=false;
 	var myChart = echarts.init(document.getElementById('chart'+apt));
 	myChart.clear();
-	if(obj_chartdatas.length>0){
 		var tbody=document.getElementById("comprate-tbody");
 		if(check_val.length>0){
 			var title_tr=document.createElement("tr");
@@ -311,7 +331,8 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 				var series=new Object();
 				series.name=check_name[i];//+"["+sensorid+"]"
 				lengenddata.push(check_name[i]);//+"["+sensorid+"]"
-				obj_chartdata=obj_chartdatas;//[sensorid];
+            if(obj_chartdatas.length>0){
+                obj_chartdata=obj_chartdatas;//[sensorid];
 				if(obj_chartdata){
 					pb= new Array();
 					if(isNaN(parseFloat(obj_chartdata[0].value))){
@@ -353,14 +374,13 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 						minval=minval<minvalue?minval:minvalue;
 					}
 				}
-				series.type='line';
+			}	series.type='line';
 				series.step= step;
 				series.showAllSymbol=true;
 				series.symbolSize= 1;
 				series.data= pb;
 				//series.itemStyle= {normal: {areaStyle: {type: 'default'}}}; //线下区域
 				seriess.push(series);
-			}
 		}
 	}
 	
@@ -398,7 +418,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 				show: true,
 				feature: {
 					mark: {
-						show: false
+						show: false,
 					},
 					dataView: {
 						show: false,
@@ -406,15 +426,15 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 					},
 					magicType: {
 						show: true,
-						type: ['line']
+						type: ['line'],
 					},
 					//, 'bar', 'stack', 'tiled'
 					restore: {
-						show: true
+						show: true,
 					},
 					saveAsImage: {
-						show: true
-					}
+						show: true,
+					},
 				}
 			},
 			dataZoom: [{
@@ -434,10 +454,9 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 				textStyle:{
 					color: 'blue',//
 				}
-				
 			},
 			grid: {
-				y2: 80
+				y2: 80,
 			},
 			xAxis: [{//x轴
 				type: 'time',
@@ -445,9 +464,9 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 				axisLine: {
 					lineStyle: {
 						color: 'black',
-						width: 2
+						width: 2,
 					},
-					onZero:false
+					onZero:false,
 				},
 			}],
 			yAxis: [{//Y轴
@@ -455,7 +474,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 				axisLine: {
 					lineStyle: {
 						color: 'black',
-						width: 2
+						width: 2,
 					}
 				},
 				min:minval,
@@ -487,12 +506,18 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 		myChart.hideLoading();
 		myChart.setOption(option);
 		myChart.resize();
-	}
+    }
+    }catch(err){
+        showstateinfo(err.message,"chart/decodedatas");
+    }
 }
 /**
  * 对比配置项根据标签进行动态添加以及去除重复项功能，页面根据对比项目自动进行动态调整显示图形视窗的功能，
 	编写树形菜单的双击响应程序（采用选中与释放之间的时间作为标准进行判断，小于一定时间视为双击，视频预览添加通道双击打开再次双击关闭功能
 	0727添加显示控制配置项的页面记忆功能，在节点不变的情况下，切换页面时记忆上次的选择项并显示响应的图表视图。
 	按钮样式
-	1126 去掉二次菜单,多选的对比项在退出或关闭后清除选项。
+    1126 去掉二次菜单,多选的对比项在退出或关闭后清除选项。
+    20201203 修改在没有数据返回时（返回为空或没有返回时）图形区域的显示已经对应标签的图例显示。 refridgerator 
+    多选后提示，消除按钮的闪烁提醒。
+    在没有选中参加对比的标签时的提示框自定义jQuery提示框形式，添加底色和动画效果.
  */

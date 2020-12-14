@@ -14,8 +14,10 @@ $(function () {
 });
 //初始化页面
 function initpage(){
+    try{
     updatapcnav(5);
     sessionStorage.framepage="historydata.html";
+    sessionStorage.pageindex=3;
     //var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
     //var treenode=buildnode(treeseneors,0);
     //inittreeview(treenode);haoxiangshizhemohuishi conding you
@@ -81,8 +83,12 @@ function initpage(){
     $("#main").height(parent.window.windowHeight-250);
     $("#list").height(parent.window.windowHeight-250);
     myChart = echarts.init(document.getElementById('main'));
+    }catch(err){
+        showstateinfo(err.message,"historydata/initpage");
+    }
 }
 function appenddisplaytype(element_id,time){
+    try{
     var display_type=document.getElementById("display_type")
     for(var i=display_type.childElementCount;i>0;i--)
     display_type.removeChild(display_type.childNodes[i]);
@@ -143,8 +149,12 @@ function appenddisplaytype(element_id,time){
         flashbutton();
         //gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
     });
+    }catch(err){
+        showstateinfo(err.message,"historydata/appenddisplaytype");
+    }
+
 }
-function buildnode(data, level) {
+function buildnode(data, level) {//no used
     var tree = [];
     if (data == null || typeof(data) == "undefined") {
         /*for (i = 0; i < 3; i++) {
@@ -289,6 +299,7 @@ function queryhistorydata() {
     //document.getElementById("timedefine").style.display="none";
 }
 function decodedatas(obj_data){
+    try{
     var count = 0;
     var maxvalue=-1,minvalue=-1,avgvalue=-1,ps=0,ct=1,maxval=-1,minval=-1,hourvalue=-1;
     //var stime=new Date(sessionStorage.kssj).getTime();
@@ -306,12 +317,14 @@ function decodedatas(obj_data){
     for (var int = 0; int < tableLength; int++) {
         tbl.deleteRow(0);
     }
+    document.getElementById("cld_name").innerHTML=sessionStorage.SensorName;
+    document.getElementById("tongji_time").innerHTML=sessionStorage.kssj+"—"+sessionStorage.jssj
     //数据以表格行的形式添加进table中，其实现隔行颜色区分。
     if((obj_data==null)||(obj_data.length<=0)){
         document.getElementById('count_val').innerHTML = count + "条";
         document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
-        return;
-    }
+        //return;
+    }else
     if(sessionStorage.nodetype==2){//Math.ceil(senconds/1000/60)<1430//如果是机房监控，则显示所有数据，并使图形显示为阶梯图，表示开关状态。
         step='end';
         for (var i = 0; i <obj_data.length; i++) {
@@ -474,9 +487,8 @@ function decodedatas(obj_data){
         pc.push([strtodatetime(strtime+":00"),minvalue , ps])
     }
     //表标题
-    document.getElementById("cld_name").innerHTML=sessionStorage.SensorName;
-    document.getElementById("tongji_time").innerHTML=sessionStorage.kssj+"—"+sessionStorage.jssj
-    document.getElementById("his_caption").innerHTML=jiange+"报表";
+    
+    document.getElementById("his_caption").innerHTML=sessionStorage.SensorName+"  "+jiange+" 报表";
     count =ps+1;//obj_data.length;
     document.getElementById('count_val').innerHTML ="<span class='badge' style='font-size:18px'>"+ count + "条";
     //document.getElementById('station_name').innerHTML = sessionStorage.stationName;
@@ -713,6 +725,9 @@ function decodedatas(obj_data){
             minval=minval<minvalue?minval:minvalue;
         }
     }
+    }catch(err){
+        showstateinfo(err.message);
+    }
 }//
 function gradeChange() {
     $("#historydata-tbody tr").empty();
@@ -728,5 +743,7 @@ function gradeChange() {
 	0827 对返回数据中一些非数值类型的处理，如果为非数字则按-1来赋值。如果发生其他容错，则忽略。设置在最大值、最小值
 	相同时的图形边界最大值和最小值设置处理；
 	趋势图标题添加类别分组项的显示内容。
-	去掉二次菜单  1126edit
+    去掉二次菜单  1126edit
+    解决查询时没有符合条件的数据返回时（返回为空或错误时），图形标题和表标题标签名称不更新的问题 1203
+    消除在自定义时间段之前的查询按钮提示改为时间修改后提示。
 */

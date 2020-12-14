@@ -179,7 +179,9 @@
 		});*/
         function initdevice(){
 			updatapcnav(9);
+			//保存页面现场，在点击浏览器的刷新按钮刷新时应用
 			sessionStorage.framepage="device.html";
+			sessionStorage.pageindex=6;
 			var parentid=-100,parentname="";
 			tbody=document.getElementById("device-tbody");
 			deleterows(tbody);

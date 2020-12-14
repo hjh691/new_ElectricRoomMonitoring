@@ -4,13 +4,14 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 	<title>智能变电站辅助系统综合监测云平台|登录</title>
+	<link rel="shortcut icon" href="#" /><!-- 消除GET http://localhost:8080/favicon.ico 404 (Not Found) 错误提示-->
+	<link rel="stylesheet" href="css/bootstrap.min.css" /> 
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<!--<script  type="text/javascript" src="js/json2.js"></script>-->
 	<script  type="text/javascript" src="js/function.js"></script>
-	<link rel="stylesheet" href="css/bootstrap.min.css" /> 
 	<script type="text/javascript" src="js/jquery.validate.min.js"></script>
 	<style>
 	.button {
@@ -122,13 +123,14 @@
 		</table>
 	</div>
 	<script>
+		sessionStorage.errortime=0;
 		window.onresize = function(){
 			var widthoftextarea = $(window).width();
 			//设置背景图大小按比例扩大
 			var width_screen = $(window).width();
 			var height_screen = $(window).height();
 			var wh = width_screen / height_screen;
-			var bgurl = 1.2;//背景图宽高比
+			var bgurl = 1.33;//背景图宽高比
 			if (bgurl > wh)
 			{
 			$("body").css("background-size","auto 100%");
@@ -137,6 +139,16 @@
 			$("body").css("background-size","100% auto");
 			}
 		}
+		$(function(){
+			var obt=document.getElementById("btn_login");
+			
+			document.onkeydown=function(ev){
+				var ev=window.event||ev;
+				if(ev.keyCode==13){      
+				obt.click();
+				}  
+			}
+		});
 		function selectFile(){
 			//触发 文件选择的click事件
 			$("#file").trigger("click");
