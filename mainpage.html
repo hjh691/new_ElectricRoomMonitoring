@@ -406,7 +406,8 @@
 				sessionStorage.framepage=iframemain.attr('src');
 				sessionStorage.pageindex = 0;
 			} else {
-				iframemain.attr('src',sessionStorage.framepage);
+				//iframemain.attr('src',sessionStorage.framepage);
+				iframemain[0].src=sessionStorage.framepage;
 			}
 			/*if (sessionStorage.islogin) {
 				getNodes();
@@ -736,7 +737,7 @@
 					document.getElementById("li_warnlog").style.display="inline"
 					document.getElementById("li_historychart").style.display="inline";
 					document.getElementById("li_preview").style.display="none";
-					sessionStorage.pageindex=0;//显示信息总览页，有待协商
+					sessionStorage.pageindex=0;//显示信息总览页，有待协商////////////*************************************************
 					break;
 				case 0:
 					document.getElementById("li_realdata").style.display="none"
@@ -1672,7 +1673,7 @@
 					}
 					tree.push(anodes);
 				}
-			var compare = function (obj1, obj2) {
+			/*var compare = function (obj1, obj2) {
 				var val1 = obj1.text;
 				var val2 = obj2.text;
 				if (val1 < val2) {
@@ -1682,7 +1683,7 @@
 				} else {
 					return 0;
 				}
-			}
+			}*/
             return tree;
         }
 		function clickNode(event, data) {
@@ -1738,6 +1739,7 @@
 			
 		} 
 	function showLeftMenu(aswitch){
+		var img_switch=iframemain[0].contentWindow.document.getElementById("switch01");
 		if(aswitch){
 			document.getElementById("leftmenu").style.display="none"; //0356202888 
 			//document.onmousemove=mouseMove; //跟踪鼠标位置
@@ -1746,8 +1748,8 @@
 			//document.children.onmousemove=mouseMove;
 			//var iframe= document.getElementById('iframe_main');
 			localStorage.showLeftMenu=true;
-			if (sessionStorage.pageindex==7){
-				iframemain[0].contentWindow.document.getElementById("switch01").src="res/on.png";
+			if (sessionStorage.pageindex==7 && img_switch){
+				img_switch.src="res/on.png";
 			}
 			//iframe.onload = function() {
 				//iframe.contentDocument.onmousemove =mouseMove;//子frame跟踪鼠标位置变换
@@ -1759,8 +1761,8 @@
 			document.getElementById("aside").className="aside";
 			document.getElementById("showaside").innerHTML="<<";
 			localStorage.showLeftMenu=false;
-			if (sessionStorage.pageindex==7){
-				iframemain[0].contentWindow.document.getElementById("switch01").src="res/off.png";
+			if (sessionStorage.pageindex==7 && img_switch){
+				img_switch.src="res/off.png";
 			}
 			//var iframe= document.getElementById('iframe_main');
 			//iframe.onload = function() {
