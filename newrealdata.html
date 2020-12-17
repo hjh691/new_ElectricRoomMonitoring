@@ -34,12 +34,12 @@
 	table tbody {
 		display: block;
 	}*/
-	table thead,
+	/*table thead,
 	tbody tr {
 		display: table;
 		table-layout: fixed;
 	}
-	/*关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
+	关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
 	table thead {
 		width: calc( tbody.width )
 		color:#0000ff;
@@ -98,7 +98,7 @@
 					</span>
 				</div>
 				<div style="text-align: center;overflow: auto;" >
-				<table class="tablesorter" id="realtable"  style=" margin:auto;height: 300px;" >
+				<table class="tablesorter" id="realtable"  style=" margin:auto;height: 300px;overflow: auto;" >
 					<thead id="tab_head">
 					<tr >
 						<th  onclick="$.sortTable.sort('realtable',0)" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>

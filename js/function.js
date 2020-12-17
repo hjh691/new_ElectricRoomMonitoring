@@ -1774,7 +1774,8 @@ function sendorder(order,callback){
 			try{
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
-					Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
+					//Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
+					RefreshToken()
 				} else if(jqXHR.hasOwnProperty("responseJSON")&&jqXHR.responseJSON==undefined){//0928修改，判断是否由此项
 					layer.alert("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试",order);
@@ -1859,7 +1860,8 @@ function sendpostorder(order,datas,callback){
 			try{
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
-					layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
+					//layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
+					RefreshToken();
 				}else if(jqXHR.hasOwnProperty("responseJSON")&&jqXHR.responseJSON==undefined){//0928修改，判断是否由此项
 					layer.alert("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试",order);

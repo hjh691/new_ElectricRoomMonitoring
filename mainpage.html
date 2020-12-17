@@ -266,9 +266,9 @@
 						if((i % 300==0)&&(sessionStorage.islogin=="false")){
 							LoginOrder(localStorage.username,sessionStorage.password,1);
 						}
-						if((i % 900==0)&&(sessionStorage.islogin=="true")){
-							RefreshToken();
-						}
+						//if((i % 900==0)&&(sessionStorage.islogin=="true")){
+							//RefreshToken();
+						//}
 					};
 				} else {
 					var t1 = window.setInterval(sendbeat, 60000);//getrealsbydataid
@@ -1673,7 +1673,8 @@
 					}
 					tree.push(anodes);
 				}
-			/*var compare = function (obj1, obj2) {
+			var compare = function (obj1, obj2) {
+				if(obj1 && obj2){
 				var val1 = obj1.text;
 				var val2 = obj2.text;
 				if (val1 < val2) {
@@ -1683,7 +1684,19 @@
 				} else {
 					return 0;
 				}
+			}
+			}
+			/*for(var i=0;i<tree.length-1;i++){
+				for(var j=i+1;j<tree.length;j++){
+					if(tree[i].text.toLowerCase()>tree[j].text.toLowerCase()){
+						var tempstr=tree[i];
+						tree[i]=tree[j];
+						tree[j]=tempstr;
+					}	
+				}
 			}*/
+			tree.sort(compare
+			)
             return tree;
         }
 		function clickNode(event, data) {

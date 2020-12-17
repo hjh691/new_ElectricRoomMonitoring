@@ -17,9 +17,9 @@ var chartdataname1="温度";
 var sname="",sid,type_td,title_index=3;
 let isfirst = "true";
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
-var maxvaluetime="",happentime="";
+var maxvaluetime="",happentime="",maxOfRealdataName="";
 var colors = [];
-var pageSize = 100;    //每页显示的记录条数
+var pageSize = 10;    //每页显示的记录条数
 var curPage = 0;        //当前页
 //var lastPage;        //最后页
 var direct = 0;        //方向
@@ -37,8 +37,9 @@ var tab_head;
 var backgroudcolor='#999';
 //var obj_realdata;
 var datas = [];
-var alertconfig=[10,20,30,40];
-var alertcount=[10,20,30,40];
+var alertconfig=[70,100,120,140,];
+var alertcount=[0,0,0,0];//;
+let normal=0;
 initrealdata();
 function initrealdata(){
     try{
@@ -375,19 +376,21 @@ function decoderealdata(obj_realdata) {
                         atr.setAttribute("onclick", "tableclick(this)");//ondblclick
                         for(var k=0;k<tab_head.rows[0].cells.length;k++){
                             var atd=document.createElement("td");
-                            atd.setAttribute("width","150px");
+                            //atd.setAttribute("width","150px");
+                            atd.innerHTML= "&nbsp;";
                             atr.appendChild(atd);
                         }
+
                         atr.cells[0].innerHTML=sid;//标签id
                         atr.cells[0].style.cssText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
-                        atr.cells[2].innerHTML=obj_data.time;//第二列添加测量时间
+                        atr.cells[2].innerHTML=(obj_data.time.replace(/T/g," ")).substring(10,19);//第二列添加测量时间
                         // 取过去24小时时间，用于调取历史记录
-                        var ckssj=new Date((obj_data.time.replace(/-/g,"/")));//.replace(/-/g,"/"));
+                        var ckssj=new Date((obj_data.time.replace(/T/g," ")).substring(0,19));//(obj_data.time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
                         var yesterdayend=ckssj-(1000*60*60*24);
                         //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
                         kssj = dateToString(new Date(yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-                        jssj = obj_data.time;
+                        jssj = (obj_data.time.replace(/T/g," ")).substring(0,19);
                         //atr.cells[tab_head.rows[0].cells.length-4].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
                         //atr.cells[tab_head.rows[0].cells.length-3].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
                         atr.cells[tab_head.rows[0].cells.length-2].innerHTML=obj_data.name;
@@ -515,9 +518,9 @@ function decoderealdata(obj_realdata) {
                         atr.cells[0].innerHTML=sid;
                         atr.cells[0].style.cssText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
-                        atr.cells[2].innerHTML=obj_data.time;//第二列添加测量时间
+                        atr.cells[2].innerHTML=(obj_data.time.replace(/T/g," ")).substring(10,19);//第二列添加测量时间
                         // 取过去24小时时间，用于调取历史记录
-                        var ckssj=new Date((obj_data.Time.replace(/-/g,"/")));//.replace(/-/g,"/"));
+                        var ckssj=new Date((obj_data.time.replace(/T/g," ")).substring(0,19));//(obj_data.Time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
                         var yesterdayend=ckssj-(1000*60*60*24);
                         //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
                         kssj = dateToString(new Date(yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
@@ -553,6 +556,7 @@ function decoderealdata(obj_realdata) {
         }
         if (pt > 0) {
             var tableLength = $table.rows.length;
+            alertcount=[0,0,0,0,0]
             for (var int = 0; int < tableLength; int++) {
                 if ($table.rows[int].cells[0].innerHTML == sessionStorage.SensorId) {
                     sessionStorage.t_p = int;
@@ -560,6 +564,7 @@ function decoderealdata(obj_realdata) {
                 if(($table.rows[int].cells[title_index].innerHTML)*1>maxOfRealdata){
                     maxOfRealdata=($table.rows[int].cells[title_index].innerHTML)*1
                     maxvaluetime=($table.rows[int].cells[2].innerHTML);
+                    maxOfRealdataName=($table.rows[int].cells[1].innerHTML)
                 }
                 jisuanyichangbili(($table.rows[int].cells[title_index].innerHTML)*1);
             }
@@ -570,7 +575,8 @@ function decoderealdata(obj_realdata) {
                 var lasttime = $table.rows[sessionStorage.t_p].cells[2].innerHTML;
                 //var myChart2 = echarts.init(document.getElementById('realdata_chart'));
                 updatachart(typename);
-                value0 = ($table.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;//字符转实数；
+                value0 = ($table.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;//字符转实数
+                happentime=lasttime;
                 //value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
                 var heightpx = $("#realdata-tbody tr").height() + 1;//加1是网格线的宽度
                 var ppt = +sessionStorage.t_p;
@@ -578,7 +584,7 @@ function decoderealdata(obj_realdata) {
                 $table.rows[ppt].style.backgroundColor = color_table_cur;
                 if (isfirst != true) {
                     var temp_option = myChart2.getOption();
-                    if (temp_option.series[0]) {
+                    if (temp_option.series.length>0) {
                         if (temp_option.series[0].data[temp_option.series[0].data.length - 1][0] < strtodatetime(lasttime)) {
                             temp_option.series[0].data.push([strtodatetime(lasttime), value0, temp_option.series[0].data.length]);
                             //temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
@@ -597,7 +603,7 @@ function decoderealdata(obj_realdata) {
                         if (maxvalue < value0) {
                             maxvalue = value0;
                             option.series[0].data[0].value = maxvalue;
-                            option.series[1].data[0].value = value0;
+                            //option.series[1].data[0].value = value0;
                             //myChart.setOption(option);//
                         }
                         refreshData();
@@ -672,8 +678,8 @@ function tableclick(tr) {
         sessionStorage.SensorId = parseInt(tr.cells[0].innerHTML);
         var kssj = getCurrentDate(1) + " 00:00:00";
         var jssj = getCurrentDate(2);
-        kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-        jssj = (tr.cells[2].innerHTML);
+        //kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
+        //jssj = (tr.cells[2].innerHTML);
         myChart2.showLoading();
         gethistorydata(sessionStorage.SensorId,catalog,typename, kssj, jssj, 1);
     }
@@ -715,7 +721,7 @@ function initseries(data) {
         },
         series: [
             {
-                name: '24小时峰值',
+                name: '24小时极值',
                 type: 'gauge',
                 center: ['50%', '50%'], // 默认全局居中
                 radius: '70%',//半径
@@ -775,7 +781,7 @@ function initseries(data) {
                 },
                 detail: {
                     show: true,
-                    offsetCenter: [0, '80%'],
+                    offsetCenter: [0, '100%'],
                     formatter: ' {value}  \n\n' + '时间: ' + happentime,//+chart_unit,
                     textStyle: {
                         fontSize: 20, 
@@ -904,7 +910,7 @@ function refreshData() {
     value = option.series[0].data[0].value;
     option.series[0].detail.formatter = chart_sigle + value + ': \n\n' +"时间："+happentime;//+chart_unit;
     option.series[0].data[0].name = chart_unit;//sname;
-    option.title.text = sname+" : "+titlename;
+    option.title.text = sname+" : "+titlename+" 24小时峰值";
     /*for (var i = 0; i < option.series.length; i++) {
         option.series[i].axisLine.lineStyle.color = colors;
         option.series[i].max = chart_max;
@@ -927,15 +933,39 @@ function refreshData() {
     option4.series[0].max = chart_max;
     option4.series[0].min = chart_min;
     value = option4.series[0].data[0].value;
-    option4.series[0].detail.formatter = chart_sigle + value + ': \n\n' + option.series[0].name + ' ';//+chart_unit;
+    option4.series[0].detail.formatter = chart_sigle + value + ': \n\n' + option4.series[0].name + ' ';//+chart_unit;
     option4.series[0].data[0].name = chart_unit;//sname;
     option4.title.text = sname+" : "+titlename;
     myChart4.setOption(option4);
-    option1.series[0].data[0].value= 54.321;//maxOfRealdata.toFixed(Number_of_decimal);
+    option1.series[0].data[0].value= maxOfRealdata.toFixed(Number_of_decimal);//54.321;
+    option1.series[0].detail.formatter=maxOfRealdata.toFixed(Number_of_decimal)+ '\n\n 标签名称: '+maxOfRealdataName;//,"发生时刻:"+maxvaluetime+
     myChart1.setOption(option1);
+    var ratArr=[],str_name="";
     for(var i=0;i<4;i++){
-        option3.series[0].data[i].value=alertcount[i];
+        if(alertcount[i]!=0){
+            switch(i){
+                case 0:
+                    str_name="正常";
+                    break;
+                case 1:
+                    str_name="预警";
+                    break;
+                case 2:
+                    str_name="三级告警";
+                    break;
+                case 3:
+                    str_name="二级告警";
+                    break;
+                case 4:
+                    str_name="以及告警";
+                    break;
+            }
+            ratArr.push({name:str_name,value:alertcount[i]});
+        }
+        
+        
     }
+    option3.series[0].data=ratArr;
     mychart3.setOption(option3);
 }
 function decodedatas(obj_chartdata) {
@@ -960,15 +990,15 @@ function decodedatas(obj_chartdata) {
     }
     minval = maxval =value0;// obj_chartdata[0].Value;
     for (var i = 0; i < obj_chartdata.length; i++) {
-        pa.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value, i])
+        pa.push([strtodatetime(obj_chartdata[i].time), obj_chartdata[i].value, i])
         //pb.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/1.5, i])
         //pc.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/2, i])
-        if (parseFloat(obj_chartdata[i].Value) > maxval) {
-            maxval = obj_chartdata[i].Value;
-            happentime=obj_chartdata[i].Time;
+        if (parseFloat(obj_chartdata[i].value) > maxval) {
+            maxval = obj_chartdata[i].value;
+            happentime=(obj_chartdata[i].time.replace(/T/g," ")).substring(0,19);
         }
-        if (parseFloat(obj_chartdata[i].Value) < minval) {
-            minval = obj_chartdata[i].Value;
+        if (parseFloat(obj_chartdata[i].value) < minval) {
+            minval = obj_chartdata[i].value;
         }
     }
     maxvalue = (maxval * 1).toFixed(Number_of_decimal);
@@ -1451,7 +1481,7 @@ function initecharts(){
                     show: true
                 },
                 data: [{value:310,name:'正常'}, {value:52,name:'预警'},{value:20,name:'一级告警'} ,
-                    {value:34,name:'二级告警'}]//,,{value:90,name:'告警'}
+                    {value:34,name:'二级告警'}]//,,{value:90,name:'告警'},{value:0,name:"严重告警"}
                     //{value:30,name:'故障'},{value: 20,name: '停运'}]
             }
         ]
@@ -1460,14 +1490,14 @@ function initecharts(){
 }
 function jisuanyichangbili(avalue){
     if(avalue>alertconfig[3]){
-        alertcount[3]++;
+        alertcount[4]++;
     }else if(avalue>alertconfig[2]){
-        alertcount[2]++;
+        alertcount[3]++;
     }else if(avalue>alertconfig[1]){
-        alertcount[1]++;
+        alertcount[2]++;
     }else if(avalue>alertconfig[0]){
-        alertcount[0]++;
+        alertcount[1]++;
     }else{
-        normal++;
+        alertcount[0]++;
     }
 }
