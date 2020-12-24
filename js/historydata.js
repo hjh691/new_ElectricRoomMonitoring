@@ -265,13 +265,13 @@ function queryhistorydata() {
     if(sessionStorage.timeindex==4){
         var kssj = document.getElementById("kssj_history").value;
         if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
-            layer.alert("请指定开始时间",info_showtime);
+            showmsg("请指定开始时间",info_showtime);
             showstateinfo("请指定开始时间");
             return;
         }
         var jssj = document.getElementById("jssj_history").value;
         if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
-            layer.alert("请指定截至时间",info_showtime);
+            showmsg("请指定截至时间",info_showtime);
             showstateinfo("请指定截止时间");
             return;
         }
@@ -345,7 +345,7 @@ function decodedatas(obj_data){
             tdname.innerHTML=sessionStorage.SensorName;
             tdvalue1.innerHTML = obj_data[i].value;
             //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
-            tdtime.innerHTML = obj_data[i].time; //jsonObject[i].color;
+            tdtime.innerHTML = obj_data[i].time.replace(/T/g," ").substring(0,19);; //jsonObject[i].color;
             tdvalue2.innerHTML = obj_data[i].value;
             tdvalue3.innerHTML= obj_data[i].value;
             //tr.appendChild(tdname);
@@ -371,8 +371,8 @@ function decodedatas(obj_data){
         maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
         maxval=minval=maxvalue;
         hourvalue=parseFloat(obj_data[0].value);
-        maxtime=mintime=obj_data[0].time;
-        var strtime=obj_data[0].time.substr(0,13);
+        maxtime=mintime=obj_data[0].time.replace(/T/g," ").substring(0,19);
+        var strtime=obj_data[0].time.replace(/T/g," ").substr(0,13);
         var temp=parseInt(strtime.substr(11));
         jisuan(11,13);
         avgvalue=(avgvalue/ct);
@@ -433,8 +433,8 @@ function decodedatas(obj_data){
         maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
         maxval=minval=maxvalue;
         hourvalue=parseFloat(obj_data[0].value);
-        maxtime=mintime=obj_data[0].time;
-        var strtime=obj_data[0].time.substr(0,10);
+        maxtime=mintime=obj_data[0].time.replace(/T/g," ").substring(0,19);;
+        var strtime=obj_data[0].time.replace(/T/g," ").substr(0,10);
         var temp=parseInt(strtime.substr(8));
         jisuan(8,10);//参数是区日期时间格式串的起始和结束位置的由零算起的索引值。2020-04-16 14:50:10，
         avgvalue=(avgvalue/ct);
@@ -648,11 +648,11 @@ function decodedatas(obj_data){
             if(parseInt(obj_data[i].time.substr(a1,a2))==temp){
                 if(parseFloat(obj_data[i].value)>maxvalue){
                     maxvalue=parseFloat(obj_data[i].value);
-                    maxtime=obj_data[i].time;
+                    maxtime=obj_data[i].time.replace(/T/g," ").substring(0,19);;
                 }
                 if(parseFloat(obj_data[i].value)<minvalue){
                     minvalue=parseFloat(obj_data[i].value);
-                    mintime=obj_data[i].time;
+                    mintime=obj_data[i].time.replace(/T/g," ").substring(0,19);;
                 }
                 /*if(parseFloat(obj_data[i].value)>maxval){
                     maxval=parseFloat(obj_data[i].value);
@@ -715,8 +715,8 @@ function decodedatas(obj_data){
                 pc.push([strtodatetime(strtime+":00"),minvalue , ps]);
                 maxvalue=minvalue=avgvalue=parseFloat(obj_data[i].value);
                 hourvalue=parseFloat(obj_data[i].value);
-                maxtime=mintime=obj_data[i].time;
-                strtime=obj_data[i].time.substr(0,a2);
+                maxtime=mintime=obj_data[i].time.replace(/T/g," ").substring(0,19);;
+                strtime=obj_data[i].time.replace(/T/g," ").substr(0,a2);
                 temp=parseInt(strtime.substr(a1));
                 ps++;
                 ct=1;
@@ -746,4 +746,5 @@ function gradeChange() {
     去掉二次菜单  1126edit
     解决查询时没有符合条件的数据返回时（返回为空或错误时），图形标题和表标题标签名称不更新的问题 1203
     消除在自定义时间段之前的查询按钮提示改为时间修改后提示。
+    调整接收的数据时间格式（替换掉T，去掉后边的毫秒数）；
 */

@@ -17,18 +17,16 @@
 	<style type="text/css">
     /**/
     th,td{
-        border:1px solid black;
-        text-align:center;
-        /*line-height:center;*/
         width:180px;
-        height:30px;
+        height:30px;/**/
     }
 	table {
 		/*设置相邻单元格的边框间的距离*/
 		border-spacing: 0;
-		/*表格设置合并边框模型*/
+		/*表格设置合并边框模型height:100px;*/
 		border-collapse: collapse;
 		text-align: center;
+		
 	}
 	/*关键设置 tbody出现滚动条 height: 500px;overflow-y: scroll;
 	table tbody {
@@ -97,20 +95,20 @@
 							<span class="glyphicon glyphicon-refresh" style="margin:5px"></span>刷新</button>
 					</span>
 				</div>
-				<div style="text-align: center;overflow: auto;" >
-				<table class="tablesorter" id="realtable"  style=" margin:auto;height: 300px;overflow: auto;" >
+				<div style="text-align: center;overflow: auto;height: 330px;overflow: auto;" >
+				<table class="tablesorter" id="realtable"  style=" margin:auto;overflow: auto;" >
 					<thead id="tab_head">
-					<tr >
-						<th  onclick="$.sortTable.sort('realtable',0)" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
-						<!--th>数据编号</thonclick="sortt('.tmpvalue')"margin-top: 20px;"-->
-						<th  onclick="$.sortTable.sort('realtable',1)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
-						<th  onclick="$.sortTable.sort('realtable',2)"><a href="javascript:">实时值<span class="value1"></span></a></th>
-						<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>
-						<th >查看历史数据</th>
-						<th >查看告警信息</th>--><!--width="80%"-->
-						<th style="width:18px;border:0px solid black;"></th>
-					</tr>
-				</thead>
+						<tr >
+							<th  onclick="$.sortTable.sort('realtable',0)" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
+							<!--th>数据编号</thonclick="sortt('.tmpvalue')"margin-top: 20px;"-->
+							<th  onclick="$.sortTable.sort('realtable',1)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
+							<th  onclick="$.sortTable.sort('realtable',2)"><a href="javascript:">实时值<span class="value1"></span></a></th>
+							<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>
+							<th >查看历史数据</th>
+							<th >查看告警信息</th>--><!--width="80%"-->
+							<th style="width:18px;border:0px solid black;"></th>
+						</tr>
+					</thead>
 					<tbody id='realdata-tbody' >
 					</tbody>
 				</table>

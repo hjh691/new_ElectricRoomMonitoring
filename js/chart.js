@@ -177,15 +177,16 @@
                 }
             }else{
                 if(allobj.length>0){//是否有类别分组内容配置项
-                    layer.alert("请选择要显示的类别分组内容!",info_showtime);
+                    showmsg("请选择要显示的类别分组内容!",info_showtime);
                     showstateinfo("请选择要显示的类别分组内容");
                 }else{//没有配置项，传递空串，返回所有//20200520 add this function,need Verification; 
                     gethistorybysensors(check_val,"","",1,"");
                 }
             }
         }else{
-            parent.dialog.html("请选择要对比的测量点名称!");//,info_showtime);
-            parent.dialog.dialog('open');
+            //parent.dialog.html("请选择要对比的测量点名称!");//,info_showtime);
+            //parent.dialog.dialog('open');
+            showmsg("请选择要对比的测量点名称!")
             showstateinfo("请选择要对比的测量点名称!");
         }
         }catch(err){
@@ -194,22 +195,22 @@
     }
     //获取历史数据
     function gethistorybysensors(arr_sensors,folder,aname,apt,atitle){
-        sendpostorder("GetHistoriesBySensors?folder="+folder+"&name="+aname+"&from="+kssj+"&to="+jssj,arr_sensors,function(data){
+        sendorder("GetHistoriesBySensors?folder="+folder+"&name="+aname+"&from="+kssj+"&to="+jssj,function(data){
             if (data!= null) {//Result.
                 if (!jQuery.isEmptyObject(data.datas)) {
                     //showstateinfo("");
                     decodedatas( data.datas,apt,atitle);
                 } else {
-                    Alert("没有符合条件的 "+atitle+" 记录",info_showtime);
+                    //showmsg("没有符合条件的 “"+atitle+"” 记录");
                     showstateinfo("没有符合条件的 "+atitle+" 记录");
                     decodedatas([],apt,atitle);//
                 }
             } else {
                 decodedatas([],apt,atitle);//
-                Alert("没有符合条件的 "+atitle+" 记录",info_showtime);
+                //showmsg("没有符合条件的 “"+atitle+"” 记录",info_showtime);
                 showstateinfo("没有符合条件的 "+atitle+" 记录");
             }
-        })
+        },arr_sensors);
     }
 //动态添加的元素注册添加点击事件//
 $(document).on("click",".check_box",function (event){

@@ -92,6 +92,13 @@ function getJsonFile(fileName) {
 		});
 	});
 }
+function showmsg(msg){
+	layer.open({
+		time:info_showtime,
+		content:"<div>"+msg+"</div>",
+	});
+	/*Alert(msg,info_showtime);*/
+}
 //获取区间的随机整数   used by electricroommonitor 
 function rnd(n, m) {
 	var random = Math.floor(Math.random() * (m - n + 1) + n);
@@ -166,13 +173,13 @@ function LoginOrder(name, ps,flag) {
 		timeout: 10000,
 		error: function(data, status) {
 			if (status == "timeout") {
-				alert("登录超时",info_showtime);
+				showmsg("登录超时",info_showtime);
 				showstateinfo("登录超时");
 			} else if(data.hasOwnProperty("responseJSON")&&data.responseJSON==undefined){//0928修改，判断是否由此项
-				layer.alert("服务器连接失败，请稍后重试",info_showtime);
+				showmsg("服务器连接失败，请稍后重试",info_showtime);
 				showstateinfo("服务器连接失败，请稍后重试");
 			}else {
-				layer.alert(data.responseText,info_showtime);
+				showmsg(data.responseText,info_showtime);
 				showstateinfo(data.responseText,order);
 				if(flag==0)
 					sessionStorage.islogin = false;
@@ -204,7 +211,7 @@ function LoginOrder(name, ps,flag) {
 				} else {
 					sessionStorage.islogin = false;
 					window.location.href = "index.html";
-					alert("登录失败，" + data.Error + ",请确认输入信息正确，注意字母的大小写。",info_showtime);
+					showmsg("登录失败，" + data.Error + ",请确认输入信息正确，注意字母的大小写。",info_showtime);
 					showstateinfo("登录失败");
 					sessionStorage.errortime++;
 				}
@@ -213,7 +220,7 @@ function LoginOrder(name, ps,flag) {
 	});
 }
 //刷新安全证书 used by electricroommonitor
-function RefreshToken(){
+function RefreshToken(order,callback,datas){
 	sendorder("RefreshToken?refreshToken=" + sessionStorage.refreshtoken,function(data){
 		try{
 		if (data) {
@@ -221,6 +228,7 @@ function RefreshToken(){
 			sessionStorage.token ="Bearer "+ data.accessToken;
 			sessionStorage.refreshtoken=data.refreshToken;
 			//localStorage.username = name;
+			sendorder(order,callback,datas);
 			sessionStorage.islogin = true;
 			showstateinfo("认证码刷新成功");
 		}
@@ -283,6 +291,9 @@ function init_var(){
 	sessionStorage.nodeId=-1;//节点树的选择项
 	sessionStorage.selNodeId="";//选中的节点
 	sessionStorage.sel_id=-1;//标签树的选择项
+	sessionStorage.pageindex=2;//登录后显示的首页
+	localStorage.setItem("realdata",null);
+	sessionStorage.setItem("sel_datatypename",[]);
 	delete sessionStorage.kssj;
 	delete sessionStorage.jssj;
 	delete sessionStorage.cxsj;
@@ -444,9 +455,9 @@ function getrealsbydataid() {
 			error: function(jqXHR, textStatus, errorThrown) {
 				sessionStorage.errortime++;
 				if (errorThrown == "Unauthorized") {
-					layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取实时数据操作失败',info_showtime);
+					showmsg(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取实时数据操作失败',info_showtime);
 				} else {
-					layer.alert(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取实时数据操作失败',info_showtime);
+					showmsg(textStatus + ' :code' + jqXHR.status + '  ' + jqXHR.responseText + ' 获取实时数据操作失败',info_showtime);
 				}
 				if(sessionStorage.errortime>3){
 					sessionStorage.islogin=false;
@@ -706,7 +717,7 @@ function getrealsbydataid() {
 							initrealwarning();
 						}
 					} else {
-						layer.alert(data.Error,info_showtime);
+						showmsg(data.Error,info_showtime);
 					}
 				}
 			}
@@ -775,7 +786,7 @@ function postpassword() {
 	$("#txt_editpassword").css("display","inline");
 	sendorder("ChangePass?pass=" + yhmm + "&newpass=" + xmm,function(data){
 		if (data!= null) {
-			alert("密码修改成功，请用新密码登录",info_showtime);
+			showmsg("密码修改成功，请用新密码登录",info_showtime);
 			//if (confirm("密码修改成功，请用新密码登录")) {  
 			//}  
 			showstateinfo("密码修改成功,请使用新密码登录");
@@ -881,6 +892,7 @@ function closewin(ranid) {
 		document.body.removeChild(document.getElementById("alertmsgDiv" + ranid));
 	}
 }
+
 //获取历史数据    used by electricroommonitor 
 function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 	//if (sessionStorage.islogin == "true") {
@@ -894,8 +906,8 @@ function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 					localStorage.setItem("historydata",JSON.stringify(data.datas));
 					decodedatas( data.datas);//[sensorid]
 				} else {
-					Alert("没有符合条件的记录",info_showtime);
-					showstateinfo("没有符合条件的记录");
+					showmsg("没有符合条件的历史数据");
+					showstateinfo("没有符合条件的历史数据");
 					localStorage.setItem("historydata",null);
 					decodedatas(null);
 				}
@@ -903,6 +915,7 @@ function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 		}
 	//}
 }
+//showmsg('abc');
 
 //字符串转日期时间函数格式：yyyy-mm-dd hh:mm:ss
 function strtodatetime(str) {
@@ -932,7 +945,7 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 			//sessionStorage.islogin = true;
 			if(jQuery.isEmptyObject(data)){//.Result
 				//if (data.Result.Value == null) {
-				layer.alert("没有符合条件的记录",info_showtime);
+				showmsg("没有符合条件的记录",info_showtime);
 				showstateinfo("没有符合条件的记录");
 				sessionStorage.contents = null;
 				try {
@@ -1624,8 +1637,10 @@ var sorter=false;
 					if(Idx>=3){
 						catalog=getCatalog(Idx-3);
 						title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值
+						sessionStorage.realdata_index=Idx;
 						isfirst=true;//更改排序项的同时更改显示项，重新获取数据刷新图表；
 						btn_refresh_click();//刷新图表
+						return;
 					}
 				}
 				var table = document.getElementById(tableId);
@@ -1678,8 +1693,8 @@ function exporttoexcel(tabid){
 }
 //通过配置名称获取配置分组catalog的值，后台数据源的数据结构：catalog改为type；
 function getcatalog(aname){
-	var acatalog;
-	if(aname==""||aname==undefined||aname==null){
+	var acatalog="";
+	if(aname=="" || aname==undefined || aname==null){
 		acatalog="";
 	}else
 	if(configs){
@@ -1699,7 +1714,7 @@ function showstateinfo(str,order){
 	if(!stateinfo){
 		stateinfo=parent.window.document.getElementById("state_info");
 	}
-	if(typeof statinfo != "undefined" && stateinfo)
+	if(typeof stateinfo != "undefined" && stateinfo)
 		stateinfo.innerHTML=timestr+": "+str;
 	console.log(timestr+": "+order+" / "+str);
 }
@@ -1755,14 +1770,13 @@ function jsonKeysToCase(json,type){
 /**与后台服务器的通信函数
  * 说明：参数order: 数据通信的命令字；
  * callback: 回调函数；
-*/
-function sendorder(order,callback){
+
+function sendorder(order,callback,datas){
 	try{
 	var url = jfjk_base_config.baseurl + order;
 	url = encodeURI(url);
 	if (sessionStorage.islogin == "true") {
 		$.ajax({
-			
 			beforeSend: function (request) {
 				request.setRequestHeader("Authorization", sessionStorage.token);
 			},
@@ -1775,7 +1789,7 @@ function sendorder(order,callback){
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
 					//Alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
-					RefreshToken()
+					RefreshToken();
 				} else if(jqXHR.hasOwnProperty("responseJSON")&&jqXHR.responseJSON==undefined){//0928修改，判断是否由此项
 					layer.alert("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试",order);
@@ -1834,14 +1848,18 @@ function sendorder(order,callback){
 	}catch(err){
 		showstateinfo(err.message);
 	}
-}
+}*/
 /**与后台服务器的通信函数
  * 说明：参数order: 数据通信的命令字；
  * datas:命令所需携带的数据内容；
  * callback: 回调函数；
 */
-function sendpostorder(order,datas,callback){
+function sendorder(order,callback,datas){
 	try{
+	var ordertype="GET";
+	if(datas){
+		ordertype="POST";
+	}
 	var url = jfjk_base_config.baseurl + order;
 	url = encodeURI(url);
 	if (sessionStorage.islogin == "true") {
@@ -1851,8 +1869,8 @@ function sendpostorder(order,datas,callback){
 				request.setRequestHeader("Authorization", sessionStorage.token);
 			},
 			url: url,
-			type: 'POST',
-			dataType: 'json',
+			type: ordertype,//'POST',
+			dataType: "json",
 			contentType: "application/json",
 			data:JSON.stringify(datas),
 			timeout: 10000,
@@ -1861,12 +1879,12 @@ function sendpostorder(order,datas,callback){
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
 					//layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
-					RefreshToken();
+					RefreshToken(order,callback,datas);
 				}else if(jqXHR.hasOwnProperty("responseJSON")&&jqXHR.responseJSON==undefined){//0928修改，判断是否由此项
-					layer.alert("服务器连接失败，请稍后重试",info_showtime);
+					showmsg("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试",order);
 				} else {
-					layer.alert(' 数据获取失败',info_showtime);
+					showmsg(' 数据获取失败',info_showtime);
 				}
 				sessionStorage.errortime++;
 				if(sessionStorage.errortime<3){
@@ -1899,7 +1917,7 @@ function sendpostorder(order,datas,callback){
 						callback(data);//回调函数，将接收数据回传给回调函数处理。
 						
 					} else {
-						layer.alert(data.Error,info_showtime);
+						showmsg(data.Error,info_showtime);
 						showstateinfo(data.Error,order);
 						sessionStorage.islogin = ture;
 						callback(null);
@@ -1913,7 +1931,7 @@ function sendpostorder(order,datas,callback){
 			},
 		});
 	} else {
-		layer.alert("用户未登录，您无权完成此次操作", info_showtime);
+		showm("用户未登录，您无权完成此次操作", info_showtime);
 		showstateinfo("用户未登录，你无权完成此次操作",order);
 		callback(null) ;
 	}
@@ -1952,10 +1970,106 @@ function showdate(el){
 	WdatePicker(el);
 	flashbutton();
 }
+
+//------display control------
+function display(){   
+	//var $table=$("#warnlogdata-tbody");
+	if(!$table){
+		return;
+	}
+	len =$table.rows.length ;    //- 1;// 求这个表的总行数，剔除第一行介绍
+	page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
+	// alert("page==="+page);
+	curPage=1;    // 设置当前为第一页
+	displayPage(1);//显示第一页
+	document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
+	document.getElementById("sjzl").innerHTML="数据总量 <span class='badge' style='font-size:18px'>" + len + "";        // 显示数据量 数据表总量要减去告警类型统计项的标题行。
+	document.getElementById("pageSize").value = pageSize;
+}
+	function firstPage(){    // 首页
+		curPage=1;
+		direct = 0;
+		displayPage();
+	}
+	function frontPage(){    // 上一页
+		direct=-1;
+		displayPage();
+	}
+	function nextPage(){    // 下一页
+		direct=1;
+		displayPage();
+	}
+	function LastPage(){    // 尾页
+		curPage=page;
+		direct = 0;
+		displayPage();
+	}
+	function changePage(){    // 转页
+		curPage=document.getElementById("changePage").value * 1;
+		if (!/^[1-9]\d*$/.test(curPage)) {
+			showmsg("请输入正整数",info_showtime);
+			return ;
+		}
+		if (curPage > page) {
+			showmsg("超出数据页面",info_showtime);
+			return ;
+		}
+		direct = 0;
+		displayPage();
+	}
+	function setPageSize(){    // 设置每页显示多少条记录
+		pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
+		if (!/^[1-9]\d*$/.test(pageSize)) {
+			showmsg("请输入正整数",info_showtime);
+			return ;
+		}
+		//len =$table.rows.length;// - 1;
+		page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
+		curPage=1;        //当前页
+		direct=0;        //方向
+		firstPage();
+		displayPage();
+	}
+function displayPage(){
+	if(curPage <=1 && direct==-1){
+		direct=0;
+		showmsg("已经是第一页了",info_showtime);
+		return;
+	} else if (curPage >= page && direct==1) {
+		direct=0;
+		showmsg("已经是最后一页了",info_showtime);
+		return ;
+	}
+	//lastPage = curPage;
+	// 修复当len=1时，curPage计算得0的bug
+	if (len > pageSize) {
+		curPage = ((curPage + direct + len) % len);
+	} else {
+		curPage = 1;
+	}
+	document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";        // 显示当前多少页
+	begin=(curPage-1)*pageSize ;// 起始记录号
+	end = begin + 1*pageSize ;    // 末尾记录号
+	if(end > len ) end=len;
+	//var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
+	for ( var i = 0; i<len; i++ ) {
+		$table.rows[i].style.display = 'none';
+	}
+	for ( var i = begin; i<end; i++ ) {
+		$table.rows[i].style.display = '';
+	}
+	/*$table.find("tr").hide();    // 首先，设置这行为隐藏
+	$table.find("tr").each(function(i){    // 然后，通过条件判断决定本行是否恢复显示
+		if((i>=begin && i<=end) )//显示begin<=x<=end的记录
+			$(this).show();
+	});*/
+	}
+//-----------------------display contral-----------------------------
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
  * 
  * 连接异常时的报错信息，历史数据和实时数据没有返回值时的异常处理，对多次异常时的处理过程,主页面的登录用户名称和登录状态显示内容。
  * 系统网络连接的状态改变；系统每5-10分钟进行连接判断或重连，每15-30分钟进行一次安全验证码刷新操作，
- * 
+ * 20201221 将sendorde的get和post两个方法函数合并，判断有无要传输的数据数组，来觉得是使用那种方式。
+ * 同时添加在刷新安全认证吗后紧接着重新执行刚才的通信指令；添加一些变量的清除初始化工作；
  */

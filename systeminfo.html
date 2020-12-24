@@ -31,12 +31,15 @@
             }
             .selected {
                 background-color: rgba(0, 101, 105, 1);
-                width: 50px;
+                /*width: 50px;*/
                 color:white;
                 border-radius: 6px;
                 height: 35px;
                 line-height: 35px;
                 border: solid #222 0px;
+            }
+            .btn-hide{
+                display: none;
             }
         </style>
     </head>
@@ -63,7 +66,7 @@
                     <label>系统名称</label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="sysname"/><button onclick="save(0)">保存更改</button>
+                    <input type="text" style="width:75%;" id="sysname"/><button  class="btn-hide" onclick="save(0)">保存</button>
                 </div>
             </div>
             <div class="row">
@@ -71,7 +74,7 @@
                     <label>公司名称</label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="companyname"/><button onclick="save(1)">保存更改</button>
+                    <input type="text" style="width:75%;" id="companyname"/><button  class="btn-hide" onclick="save(1)">保存</button>
                 </div>
             </div>
             <div class="row">
@@ -79,7 +82,7 @@
                     <label>公司网站</label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="companyurl"/><button onclick="save(2)">保存更改</button>
+                    <input type="text" style="width:75%;" id="companyurl"/><button class="btn-hide"  onclick="save(2)">保存</button>
                 </div>
             </div>
             <div class="row">
@@ -88,7 +91,8 @@
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
                     <input type="file" id="file" onchange="previewHandle(this)" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;"/> 
-                    <input type="text" style="width:75%;" id="bg_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="selectFile()">修改保存</button>
+                    <input type="text" style="width:75%;" id="bg_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')" title="背景文件全路径名称"/>
+                    <button class="selected" onclick="selectFile()" sytle="width:150px;height:40px;">浏览</button>
                 </div>
             </div><!---->
             <div class="row">
@@ -96,7 +100,7 @@
                     <label>小数保留位数</label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="decimalnum" maxlength="1" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="save(3)">保存更改</button>
+                    <input type="text" style="width:75%;" id="decimalnum" maxlength="1" oninput = "value=value.replace(/[^\d]/g,'')" title="一位整数"/><button  class="btn-hide" onclick="save(3)">保存</button>
                 </div>
             </div>
             <div class="row">
@@ -104,26 +108,28 @@
                     <label>提示框显示时长(毫秒)</label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="delaytime" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"/><button onclick="save(4)">保存更改</button>
+                    <input type="text" style="width:75%;" id="delaytime" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')" title="最多4位整数(毫秒)"/><button  class="btn-hide" onclick="save(4)">保存</button>
                 </div>
             </div>
             
             <div class="row">
                 <div class="col-xs-4 col-md-3 system-set">
-                    <label>左侧菜单自动隐藏</label>
+                    <label>隐藏左侧菜单</label>
                 </div>
-                <div class="col-xs-4 col-sm-6 col-md-4 " align="right" >
-                    <img id="switch01" src="" style="height:30px;vertical-align: middle;margin-right: 10%;" onclick="save(5)"/>
+                <div class="col-xs-4 col-sm-6 col-md-4 " align="left" >
+                    <img id="switch01" src="" style="height:30px;vertical-align: middle;margin-right: 10%;" title="显示/隐藏左侧菜单" onclick="save(5)"/>
                 </div>
             </div>
-            <!--<div class="row">
-                <div class="col-xs-4 col-md-3 system-set"> 
+            <div class="row" align="center">
+                <!--<div class="col-xs-4 col-md-3 system-set"> 
                     <label>图片文件</label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
                     <input type="files" style="width:75%;" id="" /><button onclick="save(4)">保存更改</button>
-                </div>
-            </div>-->
+                </div>-->
+                <br><br>
+                <button type="button" class="btn btn-primary btn-lg" sytle="width:550px;height:40px;line-height:40px" onclick='saveall()'>保存修改</button>
+            </div>
         </div>
         <script >
             initsysinfo();
@@ -156,6 +162,11 @@
                     $("#bg_src").val(localStorage.backgroudfilename)
                 else
                     $("#bg_src").val(jfjk_base_config.bg_src);
+            }
+            function saveall(){
+                for(var i=0;i<5;i++){
+                    save(i);
+                }
             }
             function save(oder){
                 switch(oder*1){

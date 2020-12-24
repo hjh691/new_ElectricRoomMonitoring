@@ -171,7 +171,7 @@
         var begin;
         var end;
         var count;
-		var tbody;
+		var $table;
 		var sensors;
 		initdevice();
 		/*$(function() {
@@ -183,8 +183,8 @@
 			sessionStorage.framepage="device.html";
 			sessionStorage.pageindex=6;
 			var parentid=-100,parentname="";
-			tbody=document.getElementById("device-tbody");
-			deleterows(tbody);
+			$table=document.getElementById("device-tbody");
+			deleterows($table);
             sensors=JSON.parse(localStorage.getItem("sensors"));
 			if(sensors!=null){
 				for(var i=0;i<sensors.length;i++){
@@ -204,7 +204,7 @@
                     var td_dname=document.createElement("td");
                     td_dname.innerHTML=parentname+sensors[i].Value.name;
                     var td_dtime=document.createElement("td");
-                    td_dtime.innerHTML=sensors[i].Value.time;
+                    td_dtime.innerHTML=sensors[i].Value.time.replace(/T/g," ").substring(0,19);;
                     var td_dadr=document.createElement("td");
                     td_dadr.innerHTML=sensors[i].Value.address;
                     var td_dtype=document.createElement("td");
@@ -224,7 +224,7 @@
 					tr.appendChild(td_dtype);
 					//tr.appendChild(td_group);
 					tr.appendChild(td_serial);
-                    tbody.appendChild(tr);
+                    $table.appendChild(tr);
 				}
 				document.getElementById("count_val").innerHTML=sensors.length;
 			}
@@ -307,9 +307,9 @@
 		function hideself(obj){
 			obj.style.display="none"
 		}
-        function display(){   
+        /*function display(){   
 			//var tbody=$("#device-tbody");
-			len =tbody.rows.length ;//- 1;    // 求这个表的总行数，剔除第一行介绍
+			len =$table.rows.length ;//- 1;    // 求这个表的总行数，剔除第一行介绍
 			page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
 			// alert("page==="+page);
 			curPage=1;    // 设置当前为第一页
@@ -339,11 +339,11 @@
 		function changePage(){    // 转页
 			curPage=document.getElementById("changePage").value * 1;
 			if (!/^[1-9]\d*$/.test(curPage)) {
-				layer.alert("请输入正整数");
+				showmsg("请输入正整数");
 				return ;
 			}
 			if (curPage > page) {
-				layer.alert("超出数据页面");
+				showmsg("超出数据页面");
 				return ;
 			}
 			direct = 0;
@@ -352,10 +352,10 @@
 		function setPageSize(){    // 设置每页显示多少条记录
 			pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
 			if (!/^[1-9]\d*$/.test(pageSize)) {
-				layer.alert("请输入正整数");
+				showmsg("请输入正整数");
 				return ;
 			}
-			len =tbody.rows.length - 1;
+			//len =tbody.rows.length;// - 1;
 			page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
 			curPage=1;        //当前页
 				direct=0;        //方向
@@ -364,11 +364,11 @@
 	function displayPage(){
 		if(curPage <=1 && direct==-1){
 			direct=0;
-			layer.alert("已经是第一页了");
+			showmsg("已经是第一页了");
 			return;
 		} else if (curPage >= page && direct==1) {
 			direct=0;
-			layer.alert("已经是最后一页了");
+			showmsg("已经是最后一页了");
 			return ;
 		}
 		//lastPage = curPage;
@@ -384,17 +384,17 @@
 		if(end > len ) end=len;
 		//var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
 		for ( var i = 0; i<len; i++ ) {
-			tbody.rows[i].style.display = 'none';
+			$table.rows[i].style.display = 'none';
 		}
 		for ( var i = begin; i<end; i++ ) {
-			tbody.rows[i].style.display = '';
+			$table.rows[i].style.display = '';
 		}
 		/*$table.find("tr").hide();    // 首先，设置这行为隐藏
 		$table.find("tr").each(function(i){    // 然后，通过条件判断决定本行是否恢复显示
 			if((i>=begin && i<=end) )//显示begin<=x<=end的记录
 				$(this).show();
-		});*/
-	}
+		});// 
+	//}*/
     </script>
 </body>
 <!--

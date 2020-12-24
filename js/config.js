@@ -3,11 +3,11 @@
 var jfjk_base_config={};
 // 1. 后台服务器地址：用引号括起来默认："http://localhost";"http://192.168.1.10";"http://www.bdjka.com"等。
 
- jfjk_base_config.baseurl="http://192.168.10.67:8020/";//调试时的局域网地址。
+ jfjk_base_config.baseurl="http://192.168.10.250:20000/";//调试时的局域网地址。
  //jfjk_base_config.baseurl="http://localhost:20000/_api";//与服务器同机时实际运行时采用此地址，如果不是部署在同一台电脑中，则为服务器的实际地址,下同
  jfjk_base_config.speechurl="http://192.168.10.250:20000/_speech/";//"http://192.168.10.67:88/_speech/";
  //服务器地址
-jfjk_base_config.serverurl="http://jka.f3322.net:20000/_api/";
+jfjk_base_config.serverurl="http://jka.f3322.net:20000/";
 // 手机app存放目录和名称：要求在web的资源目录中，
  jfjk_base_config.app_path_name="/res/cloud.apk";
 //sessionStorage.videourl='';

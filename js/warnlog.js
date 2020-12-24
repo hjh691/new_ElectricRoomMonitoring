@@ -451,7 +451,7 @@ var pageSize = 50;    //每页显示的记录条数
 				}
 				if(!count){
 					if(!flag)
-					Alert("沒有符合条件的数据",info_showtime);
+					showmsg("沒有符合条件的数据",info_showtime);
 					showstateinfo("没有符合条件的数据");
 					document.getElementById("count_val").innerHTML="";
 					//document.getElementById("count_first").innerHTML="";
@@ -597,7 +597,7 @@ var pageSize = 50;    //每页显示的记录条数
 			//var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));//20200403
 			//$table.removeChild(dtr);//去掉最后一行（插入的参考行）
 		}else{
-			Alert("当前没有告警!",info_showtime);
+			showmsg("当前没有告警!",info_showtime);
 			showstateinfo("当前没有告警信息");
 		}
 		//document.getElementById("count_first").innerHTML=count_l[0];
@@ -607,11 +607,11 @@ var pageSize = 50;    //每页显示的记录条数
 		}
 		display();
 	}
-	function refreshsensorslist(){
+	/*function refreshsensorslist(){
 		window.parent.GetSensorsByNode(sessionStorage.nodeId);
-	}
+	}*/
 
-	function display(){   
+	/*function display(){   
 		//var $table=$("#warnlogdata-tbody");
 		if(!$table){
 			return;
@@ -622,7 +622,7 @@ var pageSize = 50;    //每页显示的记录条数
 		curPage=1;    // 设置当前为第一页
 		displayPage(1);//显示第一页
 		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
-		document.getElementById("sjzl").innerHTML="数据总量 <span class='badge' style='font-size:18px'>" + (len-count_h) + "";        // 显示数据量 数据表总量要减去告警类型统计项的标题行。
+		document.getElementById("sjzl").innerHTML="数据总量 <span class='badge' style='font-size:18px'>" + len + "";        // 显示数据量 数据表总量要减去告警类型统计项的标题行。
 		document.getElementById("pageSize").value = pageSize;
 	}
 		function firstPage(){    // 首页
@@ -646,11 +646,11 @@ var pageSize = 50;    //每页显示的记录条数
 		function changePage(){    // 转页
 			curPage=document.getElementById("changePage").value * 1;
 			if (!/^[1-9]\d*$/.test(curPage)) {
-				layer.alert("请输入正整数",info_showtime);
+				showmsg("请输入正整数",info_showtime);
 				return ;
 			}
 			if (curPage > page) {
-				layer.alert("超出数据页面",info_showtime);
+				showmsg("超出数据页面",info_showtime);
 				return ;
 			}
 			direct = 0;
@@ -659,24 +659,24 @@ var pageSize = 50;    //每页显示的记录条数
 		function setPageSize(){    // 设置每页显示多少条记录
 			pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
 			if (!/^[1-9]\d*$/.test(pageSize)) {
-				layer.alert("请输入正整数",info_showtime);
+				showmsg("请输入正整数",info_showtime);
 				return ;
 			}
-			len =$table.rows.length - 1;
+			//len =$table.rows.length;// - 1;
 			page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
 			curPage=1;        //当前页
-				direct=0;        //方向
-				firstPage();
-				displayPage();
+			direct=0;        //方向
+			firstPage();
+			displayPage();
 		}
 	function displayPage(){
 		if(curPage <=1 && direct==-1){
 			direct=0;
-			layer.alert("已经是第一页了",info_showtime);
+			showmsg("已经是第一页了",info_showtime);
 			return;
 		} else if (curPage >= page && direct==1) {
 			direct=0;
-			layer.alert("已经是最后一页了",info_showtime);
+			showmsg("已经是最后一页了",info_showtime);
 			return ;
 		}
 		//lastPage = curPage;
@@ -701,8 +701,8 @@ var pageSize = 50;    //每页显示的记录条数
 		$table.find("tr").each(function(i){    // 然后，通过条件判断决定本行是否恢复显示
 			if((i>=begin && i<=end) )//显示begin<=x<=end的记录
 				$(this).show();
-		});*/
-		}
+		});
+		}*/
 		
 		var selectText
 		$(document).on("click",".check_box",function(event){
@@ -778,14 +778,14 @@ function querywarnlog(num) {
 	if(sessionStorage.timeindex==4){
 		var kssj = document.getElementById("kssj_warning").value;
 		if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
-			layer.alert("请指定开始时间",info_showtime);
+			showmsg("请指定开始时间",info_showtime);
 			showstateinfo("请指定开始时间");
 			return;
 		}
 		sessionStorage.kssj = kssj;
 		var jssj = document.getElementById("jssj_warning").value;
 		if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
-			layer.alert("请指定截至时间",info_showtime);
+			showmsg("请指定截至时间",info_showtime);
 			showstateinfo("请指定截止时间");
 			return;
 		}

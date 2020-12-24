@@ -81,9 +81,9 @@
 		<!--左侧站名列表 <h4 id="head_list_name" align="left"  >变电站:</h4> style="display: none;"-->
 		<aside class="aside" id="aside">
 			<button class="butn" id="showaside" onclick="list()"><<</button>
-			<div class="leftmenu" id="leftmenu">
+			<div class="leftmenu" id="leftmenu" >
 				
-				<div class="tree " id="tree" >
+				<div class="tree " id="tree" style="overflow-x:auto;">
 				</div>
 				<div class="tree1 " id="tree_chi" >
 				</div>
@@ -191,7 +191,7 @@
 		//最后一次触发时间
 		var lastSelectTime = null;
 		var dialog=null;
-
+		var realdataid=-1;
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
@@ -239,7 +239,7 @@
 				dialog=$("#message_dialog").dialog({
                     draggable:false,
                     resizable:false,
-                    modal:true,
+                    modal:false,
 					autoOpen:false,
 					hide:'explode',
                     buttons:{
@@ -260,7 +260,7 @@
 						i++;
 						if ((i % 60 == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
 							//sendbeat();
-							getrealdatabynodeid(-1);
+							getrealdatabynodeid(realdataid);
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}
 						if((i % 300==0)&&(sessionStorage.islogin=="false")){
@@ -402,9 +402,9 @@
 			//document.getElementById("iframe_main").src = 'page1.html';
 			
 			if (sessionStorage.framepage=="undefined" || sessionStorage.framepage == "" || (typeof sessionStorage.framepage)=="undefined" ) {
-				iframemain.attr('src','infototal.html');
+				iframemain.attr('src','newrealdata.html');//infototal.html
 				sessionStorage.framepage=iframemain.attr('src');
-				sessionStorage.pageindex = 0;
+				sessionStorage.pageindex = 2;
 			} else {
 				//iframemain.attr('src',sessionStorage.framepage);
 				iframemain[0].src=sessionStorage.framepage;
@@ -571,40 +571,39 @@
 							updatanav(sessionStorage.nodetype);
 						}
 					} else {
-							sessionStorage.nodetype=-1;
-							updatanav(sessionStorage.nodetype);
-							//updatanav(sessionStorage.nodetype);
-							//sessionStorage.SensorId = data.id;
-							//var p_node = getThe_level_nodeid(data, (Levels_of_treeview-1));
-							if (data.nodeId != nodeid && data.level <= (Levels_of_treeview-1)) {
-								localStorage.setItem("sensors", null);
-								sessionStorage.nodeId = data.id;
-								//sessionStorage.nodeId = p_node.id;
-								//if(!data.hasOwnProperty("nodes"))
-								GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
-								GetSensorsByNode(sessionStorage.nodeId);
-								nodeid = data.nodeId;
-							}
-							maps = [];
-							infotreedata = [];
-							infotreeobj = {};
-							infotreeobj.id = data.id;
-							infotreeobj.name = data.text;
-							infotreeobj.level = data.level;
-							//infotreeobj.value=0;
-							infotreeobj.children = [];
-							//infotreeobj.level=data.level;
-							if ((data.hasOwnProperty("nodes")) && (data.nodes.length > 0)) {
-								infotreeobj.value = data.nodes.length;
-								var arr_node = buildsensor1(data.nodes);
-								infotreeobj.value = arr_node.length;
-								infotreeobj.children = decode(data.nodes);
-							} else {
-								infotreeobj.value = 0;
-							}
-							infotreedata.push(infotreeobj);
+						//infotreeobj.value=0;
+						infotreeobj.children = [];
+						//infotreeobj.level=data.level;
+						if ((data.hasOwnProperty("nodes")) && (data.nodes.length > 0)) {
+							infotreeobj.value = data.nodes.length;
+							var arr_node = buildsensor1(data.nodes);
+							infotreeobj.value = arr_node.length;
+							infotreeobj.children = decode(data.nodes);
+						} else {
+							infotreeobj.value = 0;
 						}
-					
+						isessionStorage.nodetype=-1;
+						updatanav(sessionStorage.nodetype);
+						//updatanav(sessionStorage.nodetype);
+						//sessionStorage.SensorId = data.id;
+						//var p_node = getThe_level_nodeid(data, (Levels_of_treeview-1));
+						if (data.nodeId != nodeid && data.level <= (Levels_of_treeview-1)) {
+							localStorage.setItem("sensors", null);
+							sessionStorage.nodeId = data.id;
+							//sessionStorage.nodeId = p_node.id;
+							//if(!data.hasOwnProperty("nodes"))
+							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);
+							GetSensorsByNode(sessionStorage.nodeId);
+							nodeid = data.nodeId;
+						}
+						maps = [];
+						infotreedata = [];
+						infotreeobj = {};
+						infotreeobj.id = data.id;
+						infotreeobj.name = data.text;
+						infotreeobj.level = data.level;
+						nfotreedata.push(infotreeobj);
+					}
 					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 						var p_node = getThe_level_nodeid(data, i);
 						sensorstree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
@@ -1032,6 +1031,7 @@
 					sessionStorage.SensorId=-1;//清除标签id，避免一些没有标签的节点借用保存的标签id形成错误的查询条件
 				}
 				refreshiframe();
+				getrealdatabynodeid(realdataid);
 			})
 		}catch(err){
 			showstateinfo(err.message,"mainpage/GetSensorsByNode");
@@ -1121,7 +1121,9 @@
 					//break;
 				//case "300":
 					//frame.src="ContactUs.html";
-					//break;//添加注释....... 
+					//break;//添加注释.......
+				default:
+					iframemain.arrt("src","newrealdata.html");
 			}
 			sessionStorage.framepage=iframemain.attr('src');
 		}catch(err){
@@ -1163,7 +1165,7 @@
 			showstateinfo(err.message.message,"mainpage/GetSensors")
 		}
 		}
-		function updatainfotree(treedata, tnodeid, tsensors) {//,tvalue
+		/*function updatainfotree(treedata, tnodeid, tsensors) {//,tvalue
 			if (treedata != null && treedata != undefined) {
 				for (var j = 0; j < treedata.length; j++) {
 					if (treedata[j].id == tnodeid) {
@@ -1198,7 +1200,7 @@
 				}
 			}
 			return map1;
-		}
+		}*/
 		function buildsensor1(aSensors) {
 			if ((typeof(aSensors) != "undefined") && (aSensors != null)) {
 				for (var j = 0; j < aSensors.length; j++) {
@@ -1832,6 +1834,7 @@
   设备列表、app下载、联系我们等页面点击“返回（history（-1））”按钮后再次点击对应的菜单项（页面不刷新的问题）；
 
   对系统名称的匹配改完全相等为包含，可以匹配更多的同义名称--1204
+  统一提示框的样式，使用layer.js的自动关闭弹出框，open()，使用showmsg（）进行封装1222
 
   sessionStorage.framepage 保存iframe_main所加载的当前页面名称；
   sessionStorage.pageindex = 4; iframe_main 所加载的页面索引值
