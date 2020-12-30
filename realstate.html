@@ -67,6 +67,7 @@
                 <li class="tab-label" id="ups"><a href="#tab_ups" data-toggle="tab"><i class="glyphicon glyphicon-retweet"></i> UPS</a></li>
                 <li class="tab-label" id="hum"><a href="#tab_room" data-toggle="tab"><i class="glyphicon glyphicon-flash"></i> 动力</a></li>
                 <li class="tab-label" id="room"><a href="#tab_hum" data-toggle="tab"><i class="glyphicon glyphicon-leaf"></i> 环境</a></li>
+                <li class="tab-label" id="weishui"><a href="#tab_yaliweishui" data-toggle="tab"><i class="glyphicon glyphicon-leaf"></i> 微水</a></li>
                 <li class="tab-label" id="air"><a href="#tab_air" data-toggle="tab"><i class="glyphicon glyphicon-random"></i> 空调</a></li>
             </ul>
             <div class="modal fade" id="guard_modal" tabindex="-1" role="dialog" aria-labelledby="modal_name" aria-hidden="true" align="center">
@@ -425,6 +426,30 @@
                         </table>
                     </div>
                     <script type="text/javascript" src="js/humiture.js"></script>
+                </div>
+                <div class="tab-pane fade" id="tab_yaliweishui">
+                    <div class="rowlay" align="center"> 
+                        <span class="condition" >
+                            <label>计量点名称：</label>
+                        <select id="jcdd" onchange="gradeChange()"  style="border-radius: 5px;">
+                        </select >
+                    </div>
+                    <div align="center"> 
+                        <table id="humiture">
+                            <tr>
+                                <td class="ht-pointname" >
+                                    <p class="ht-pointname">压力微水监测</p>
+                                </td>
+                                <td > 
+                                    <div class="ht-gauge" id="ht-yibiaopan"></div>
+                                </td>
+                                <td >
+                                    <div class="ht-chart" id="ht-qushi"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <script type="text/javascript" src="js/yaliweishui.js"></script>
                 </div>
                 <div class="tab-pane fade" id="tab_air" align="center" >
                     <h3 >精密空调实时参数状态</h3>

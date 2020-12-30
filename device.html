@@ -47,21 +47,21 @@
 	/*关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
 	table thead {
 		width: calc( tbody.width )
-	}
+	}*/
 	table thead th {
 		background: #ccc;
-	}*/
+	}
 	span{
 		margin-left:10px;
 	}
-	.fudongdiv{/*浮动窗体样式，显示详细信息*/
+	/*.fudongdiv{浮动窗体样式，显示详细信息
 		position:absolute;
-		/*height:200px;*/
+		/*height:200px;
 		width:350px;
 		background: rgb(238, 196, 196);
 		color:#000;
 		font-size:16px;
-		/*text-align: center;*/
+		/*text-align: center;
 		cursor: pointer;
 		border-radius: 5px;
 		vertical-align:center;
@@ -70,7 +70,7 @@
 		top:35%;
 		display: none;
 		min-height: 100px;
-	}
+	}*/ 
 	</style>
 </head>
 <body >
@@ -90,21 +90,7 @@
             </ul>
         </div>
 		<div style="text-align: center;">
-            <div  style="text-align: center;font-size: 18px;display: none;">
-                <a id="btn0"></a>
-                <input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
-                <a id="sjzl"></a>&nbsp;
-                <a  href="javascript:void(0)" id="btn1" onclick="firstPage()">首页</a>
-                <a  href="javascript:void(0)" id="btn2" onclick="frontPage()">上一页</a>
-                <a  href="javascript:void(0)" id="btn3" onclick="nextPage()">下一页</a>
-                <a  href="javascript:void(0)" id="btn4" onclick="lastPage()">尾页</a>&nbsp;
-                <a>转到&nbsp;</a>
-                <input id="changePage" type="text" size="1" maxlength="4"/>
-                <a>页&nbsp;</a>
-                <a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
-				<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('devicetable')"><!--method5('devicetable')-->
-					<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel"></a>
-            </div>
+			<div class="panel panel-default" style="text-align:center;margin-bottom: 0;">
 		<table id="devicetable" style="margin: auto;">
 			<caption style="text-align: center;font-size:20px;">设备信息汇总表</caption>
 			<thead>
@@ -122,6 +108,33 @@
 			<tbody id='device-tbody' style="width:990px;height:550px; overflow:auto;">
 			</tbody>
 		</table>
+		<div  style="text-align: center;font-size: 18px;float:bottom;"><!--display: none;-->
+			<a id="btn0"></a>
+			<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
+			<a id="sjzl"></a>&nbsp;
+			<a  href="javascript:void(0)" id="btn1" onclick="page.firstPage();" >首页</a>
+			<a  href="javascript:void(0)" id="btn2" onclick="page.prePage();">上一页</a>
+			<a  href="javascript:void(0)" id="btn3" onclick="page.nextPage();">下一页</a><!--onclick="firstPage()" onclick="frontPage()"onclick="nextPage()"onclick="lastPage()"-->
+			<a  href="javascript:void(0)" id="btn4" onclick="page.lastPage();">尾页</a>&nbsp;
+			<a>转到&nbsp;</a>
+			<input id="changePage" type="text" size="1" maxlength="4"/>
+			<a>页&nbsp;</a>
+			<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
+			<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('devicetable')"><!--method5('devicetable')-->
+				<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel"></a>
+			<span id="pageindex" style='display: none;'></span>
+		</div>
+		<!--<span id="s"></span>
+            <a href="#" onclick="page.firstPage();">首页</a>
+
+            <a href="#" onclick="page.prePage();">上一页</a>
+                    
+            <a href="#" onclick="page.nextPage();">下一页</a>
+                   
+            <a href="#" onclick="page.lastPage();">尾页</a>
+                   
+            <span id="pageindex" style='display: none;'></span>-->
+		</div>
 		<div class="fudongdiv" id="config_fudong" onmousedown="hideself(this) ">
             <div>
 				<!--<h3 id="bind_name">1#</h3><br>
@@ -183,8 +196,10 @@
 			sessionStorage.framepage="device.html";
 			sessionStorage.pageindex=6;
 			var parentid=-100,parentname="";
+			$("#device-tboday").empty();
+			$("#devicetable tbody").empty();
 			$table=document.getElementById("device-tbody");
-			deleterows($table);
+			//deleterows($table);
             sensors=JSON.parse(localStorage.getItem("sensors"));
 			if(sensors!=null){
 				for(var i=0;i<sensors.length;i++){
@@ -229,16 +244,18 @@
 				document.getElementById("count_val").innerHTML=sensors.length;
 			}
 			$.sortTable.sort('devicetable',0);
-            //display();//分页显示功能。 
+			//display();//分页显示功能。 
+			page=new Page(pageSize,'devicetable','device-tbody','pageindex');
+			window.parent.closeloadlayer();
         }
-		function deleterows(atable){//清除原因表内数据
-			for(var i=atable.rows.length;i>0;i--){
-				atable.removeChild(atable.rows[i-1]);
-			}
-		}
 		function tableclick(tr){
 			$(tr).siblings().css("background","");
 			$(tr).css("background","#85e494");//区分选中行
+		}
+		function setPageSize(){
+			pageSize = document.getElementById("pageSize").value;
+			//initdevice();
+			page.setPageSize(pageSize); 
 		}
 		function detailofsensor(obj,eid){
 			//浮动窗口模式时使用

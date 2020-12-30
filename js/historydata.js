@@ -83,6 +83,7 @@ function initpage(){
     $("#main").height(parent.window.windowHeight-250);
     $("#list").height(parent.window.windowHeight-250);
     myChart = echarts.init(document.getElementById('main'));
+    window.parent.closeloadlayer();
     }catch(err){
         showstateinfo(err.message,"historydata/initpage");
     }
@@ -311,12 +312,12 @@ function decodedatas(obj_data){
     var jiange="";
     
     myChart.clear();
-    //$("#historydata-tbody tr").empty();
+    $("#historydata-tbody").empty();
     var tbl = document.getElementById('historydata-tbody');
-    var tableLength = tbl.rows.length;
+    /*var tableLength = tbl.rows.length;
     for (var int = 0; int < tableLength; int++) {
         tbl.deleteRow(0);
-    }
+    }*/
     document.getElementById("cld_name").innerHTML=sessionStorage.SensorName;
     document.getElementById("tongji_time").innerHTML=sessionStorage.kssj+"—"+sessionStorage.jssj
     //数据以表格行的形式添加进table中，其实现隔行颜色区分。
@@ -613,7 +614,9 @@ function decodedatas(obj_data){
                 step: step,
                 showAllSymbol: true,
                 symbolSize: 1,
-                data: pa
+                data: pa,
+                smooth: true,
+                smoothMonotone: 'x',
             },
             {
                 name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
@@ -621,7 +624,9 @@ function decodedatas(obj_data){
                 step: step,
                 showAllSymbol: true,
                 symbolSize: 1,
-                data: pb
+                data: pb,
+                smooth: true,
+                smoothMonotone: 'x',
             },
             {
                 name: lengenddata[2],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"最小值",
@@ -629,7 +634,9 @@ function decodedatas(obj_data){
                 step: step,
                 showAllSymbol: true,
                 symbolSize: 1,
-                data: pc
+                data: pc,
+                smooth: true,
+                smoothMonotone: 'x',
             }
             ]
         };/**/

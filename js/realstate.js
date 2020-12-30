@@ -1,6 +1,7 @@
 var obj_realdata;
 var isfirst=true;
 var temp=0;
+var tabcount=9;
 var pt = [0,0,0,0,0,0,0,0];
 initpage();
 $(function (){$("[data-toggle='popover']").popover();});
@@ -236,15 +237,15 @@ function decoderealdata(){
     }
     //一些部分模拟测试动态标签页的显示和隐藏用，实际使用时需要针对数据进行修改 temperature
     if(isfirst){
-        pt[(temp%8)]=1;
+        pt[(temp%tabcount)]=1;
     }else{
-        pt[8-(temp%8)]=0;
+        pt[tabcount-(temp%tabcount)]=0;
     }
     temp++;
     var tappanes=$('.tab-pane');
     var tablabels=$('.tab-label');
     var z_count=0;
-    for(var i=0;i<8;i++){
+    for(var i=0;i<tabcount;i++){
         if(pt[i]>0){
             tappanes[i].style.display="";
             tablabels[i].style.display="";
@@ -266,7 +267,7 @@ function decoderealdata(){
     tablabels[z_count-1].classList.add("active");
     tappanes[z_count-1].classList.add("in");
     tappanes[z_count-1].classList.add("active");
-    if(z_count>=8)
+    if(z_count>=tabcount)
         isfirst=false
     else if(z_count<=1)
         isfirst=true;/**/

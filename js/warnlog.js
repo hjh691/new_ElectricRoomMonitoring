@@ -108,6 +108,7 @@ var pageSize = 50;    //每页显示的记录条数
 			var t1 = window.setInterval("getrealdatabynodeid(-1);",60000);
 		}
 		$("#warnlogdata-tbody").height(parent.window.windowHeight-320);
+		window.parent.closeloadlayer();
 		}catch(err){
 			showstateinfo(err.message,"warnlog/initwarnlog");
 		}
@@ -333,11 +334,11 @@ var pageSize = 50;    //每页显示的记录条数
 		count = 0;
 		count_h=0;
 		var count_l=[];
-			$("#warnlogdata-tbody tr").empty();
+			$("#warnlogdata-tbody").empty();//显示空了，但实际的行数还在，不过行内容已经变为空了，感觉还是逐条删除比较保险.
 			$table=document.getElementById("warnlogdata-tbody");
-			for(var j=$table.rows.length-1;j>=0;j--){
-				$table.removeChild($table.rows[j]);
-			}
+			//for(var j=$table.rows.length-1;j>=0;j--){
+			//	$table.removeChild($table.rows[j]);
+			//}
 			document.getElementById("tj_kssj").innerHTML=sessionStorage.kssj;
 			document.getElementById("tj_zzsj").innerHTML=sessionStorage.jssj;
 			if(obj_data&&obj_data.length>0){
@@ -451,8 +452,8 @@ var pageSize = 50;    //每页显示的记录条数
 				}
 				if(!count){
 					if(!flag)
-					showmsg("沒有符合条件的数据",info_showtime);
-					showstateinfo("没有符合条件的数据");
+					showmsg("沒有符合条件的告警数据",info_showtime);
+					showstateinfo("没有符合条件的告警数据");
 					document.getElementById("count_val").innerHTML="";
 					//document.getElementById("count_first").innerHTML="";
 					//document.getElementById("count_third").innerHTML="";

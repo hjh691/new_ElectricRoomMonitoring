@@ -162,6 +162,7 @@
                     $("#bg_src").val(localStorage.backgroudfilename)
                 else
                     $("#bg_src").val(jfjk_base_config.bg_src);
+                window.parent.closeloadlayer();
             }
             function saveall(){
                 for(var i=0;i<5;i++){

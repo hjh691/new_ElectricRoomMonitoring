@@ -172,6 +172,7 @@
 		</div>
 	</div>
 	<script>
+		
 		var windowHeight;
 		var infotreedata = [], maps = [];
 		var mnodes=[];
@@ -192,6 +193,7 @@
 		var lastSelectTime = null;
 		var dialog=null;
 		var realdataid=-1;
+		var loadlayer=null;
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
@@ -301,8 +303,15 @@
 			element.webkitRequestFullScreen();
 			}
 		}
+		function showloadlayer(){
+			loadlayer = layer.load(0, {shade: false,time:5000});//
+		}
+		function closeloadlayer(){
+			layer.close(loadlayer);
+		}
 		function refreshwindow() {//重画窗口，规定 尺寸,尤其是浮动窗口的位置
 		try{	
+			showloadlayer();
 			if(!sessionStorage.framepage)
 				sessionStorage.framepage = iframemain.attr('src');
 			//if(sessionStorage.framepage.indexOf("video.html")>=0){
@@ -369,6 +378,7 @@
 			showstateinfo(err.message,"mainpage/refreshwindow");
 		}
 		}
+		
 		window.onresize = window.onscroll = refreshwindow;//  
 		function resetContent() {
 			var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
@@ -482,7 +492,7 @@
 					localStorage.setItem("sensor_tree",null);
 					//sessionStorage.selectText="";
 					if(data.Catalog){//Catalog为空标书为非叶子节点（最终节点）
-						if((data.Catalog).indexOf("视频监控")>=0){//对系统名称的匹配改完全相等为包含，可以匹配更多的同义名称
+						if((data.Catalog).indexOf(sysnames[0])>=0){//对系统名称的匹配改完全相等为包含，可以匹配更多的同义名称
 							sessionStorage.nodetype=0;//全局变量，用于存储节点类型，来区分要显示的内容（导航栏标题，iframe对应的html页，历史数据变化趋势的取值等）
 							maps = [];
 							infotreedata = [];
@@ -510,7 +520,7 @@
 							}
 							//document.getElementById("iframe_main").src="http://192.168.10.164";
 							updatanav(sessionStorage.nodetype);
-						}else if ((data.Catalog.indexOf("测温")>=0 )||(data.Catalog.indexOf("局部放电")>=0)||(data.Catalog.indexOf("局放")>=0)) {
+						}else if ((data.Catalog.indexOf(sysnames[1])>=0 )||(data.Catalog.indexOf(sysnames[2])>=0)||(data.Catalog.indexOf(sysnames[3])>=0)) {
 							sessionStorage.nodetype=1;
 							maps = [];
 							infotreedata = [];
@@ -538,7 +548,7 @@
 							}
 							//iframe_main.window.num=0;
 							updatanav(sessionStorage.nodetype);
-						} else if((data.Catalog).indexOf("机房监控")>=0){//20200304
+						} else if((data.Catalog).indexOf(sysnames[4])>=0){//20200304
 							sessionStorage.nodetype=2;
 							//var p_node = getThe_level_nodeid(data,(Levels_of_treeview-1));
 							if (data.nodeId != nodeid && data.level <= (Levels_of_treeview-1)) {
@@ -570,7 +580,12 @@
 							infotreedata.push(infotreeobj);
 							updatanav(sessionStorage.nodetype);
 						}
-					} else {
+					} else if((data.Catalog).indexOf(sysnames[5])>=0){ //综合
+
+					}else if((data.Catalog).indexOf(sysnames[6])>=0){//开关柜
+
+					}
+					else {//其他或默认
 						//infotreeobj.value=0;
 						infotreeobj.children = [];
 						//infotreeobj.level=data.level;
@@ -782,6 +797,12 @@
 					if(sessionStorage.pageindex==4){
 						sessionStorage.pageindex=3;
 					}
+				break;
+				case 3:
+
+				break;
+				case 4:
+
 				break;
 			}
 		}
@@ -1518,13 +1539,13 @@
 						var p_node = getThe_level_nodeid(data, i);
 						tree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 					}
-                    tree.treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
+                    tree.treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);/**/
 					//setSelectOption("jcdd", data.id);
                     sessionStorage.jfjk_nodeid=data.nodeId;
 					sessionStorage.SensorId=data.id;
 					if(!multiselect)//多选时，标签id不被保存；用于恢复所选项
 						sessionStorage.sel_id=data.id;
-					iframemain[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
+					//iframemain[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
 					sessionStorage. SensorName=data.text;
 					if(sessionStorage.pageindex==5){
 						iframemain[0].contentWindow.document.getElementById("war_caption").innerHTML=data.text;
@@ -1617,7 +1638,7 @@
 					iframemain[0].contentWindow.flashbutton();
 				}else
 				if(sessionStorage.pageindex==5||sessionStorage.pageindex==3)
-				iframemain[0].contentWindow.flashbutton();
+					iframemain[0].contentWindow.flashbutton();
 			}
         }
 		function buildnode_level2(data, level) {
@@ -1798,8 +1819,8 @@
 
         }
 	function show3D(){
-		//iframemain.attr('src',"exp3.html");
-		$("#message_dialog").dialog('open')
+		iframemain.attr('src',"realdata.html");
+		//$("#message_dialog").dialog('open')
 	}
 	</script>
 </body>
@@ -1835,6 +1856,7 @@
 
   对系统名称的匹配改完全相等为包含，可以匹配更多的同义名称--1204
   统一提示框的样式，使用layer.js的自动关闭弹出框，open()，使用showmsg（）进行封装1222
+  添加加载知识层并进行封装1224；在加载完第一个iframe后关闭
 
   sessionStorage.framepage 保存iframe_main所加载的当前页面名称；
   sessionStorage.pageindex = 4; iframe_main 所加载的页面索引值

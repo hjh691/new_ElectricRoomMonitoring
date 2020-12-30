@@ -17,9 +17,9 @@
 	<style type="text/css">
     /**/
     th,td{
-        border:1px solid black;
+        /*border:1px solid black;
         text-align:center;
-        /*line-height:center;*/
+        line-height:center;*/
         width:180px;
         height:30px;
     }
@@ -31,7 +31,7 @@
 		text-align: center;
 	}
 	/*关键设置 tbody出现滚动条 height: 500px;overflow-y: scroll;*/
-	table tbody {
+	/*table tbody {
 		display: block;
 	}
 	table thead,
@@ -39,7 +39,7 @@
 		display: table;
 		table-layout: fixed;
 	}
-	/*关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
+	关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
 	table thead {
 		width: calc( tbody.width )
 		color:#0000ff;
@@ -47,10 +47,17 @@
 	table thead th {
 		background: #ccc;
 	}*/
+	.container{
+			width: 97%;
+			height:100%;
+            margin-left: 5px;
+			margin-right: 5px;
+			margin:0px;
+        }
   </style>
 </head>
-<body  onunload="stopWorker()" > <!--onload="getrealdatabynodeid(-1)" 20200408修改，重复调用此函数,提示框不能认为关闭。-->
-	<div>
+<body > <!-- onunload="stopWorker()" onload="getrealdatabynodeid(-1)" 20200408修改，重复调用此函数,提示框不能认为关闭。-->
+	<div class="container">
 		<!--<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
 			<h3 id="head_real" style="text-align:center" >实时数据</h3>
 			ul class="pc-nav" >
@@ -58,11 +65,13 @@
 				<li ><a href="#" target="iframe_main"><i>变化曲线</i></a></li>
 			</ul
 		</div>
-		<div align="center"></div>-->
-		<div  class="parent" >
-			<div class="column" id="realdata_gaugechart" >
+		<div align="center"> </div>-->
+		<div  class="row" >
+			<div class="col-xs-12 col-md-6 col-lg-6"  style="border: rgb(90, 89, 89) solid 0px;height: 300px;background-color:rgb(209, 207, 207);">
+				<div id="realdata_realdata" ></div>
 			</div>
-			<div class="column" id="realdata_chart" >
+			<div class="col-xs-12 col-md-6 col-lg-6"  style="border: rgb(90, 89, 89) solid 0px;height: 300px;background-color:rgb(209, 207, 207);">
+				<div id="realdata_chart" style="margin-top:20px;" ></div>
 			</div>
 		</div>
 		<div  class="row" style="margin-bottom:10px;width:100%;overflow:auto;display: none;" text-align="center">
@@ -82,6 +91,7 @@
 					</a></li>
 			</ul>
 		</div>
+		<div class="row">
 		<div class="condition" style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: auto;height:40px;line-height: 40px;"><label> 显示内容:</label>
 			<span id="display_type">
 				
@@ -124,9 +134,10 @@
 				<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
 			</div>
 		</div>
+		</div>
 	</div>
-	<script type="text/javascript" src="js/realdata.js">
+	<script type="text/javascript" src="js/otherdata.js">
 		
-	</script>
+	</script><!---->
 </body>
 </html>

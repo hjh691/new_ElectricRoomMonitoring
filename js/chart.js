@@ -52,6 +52,7 @@
         appenddisplaytype();
         //setSelectOption("jcdd", sessionStorage.SensorId);
         oneChoice();
+        window.parent.closeloadlayer();
         }catch(err){
             showstateinfo(err.message,"chart/inithistorychart");
         }
@@ -147,7 +148,7 @@
         try{
         stoptimer(timer);
         var obj = window.parent.$("#tree_chi").treeview("getSelected");
-        //$("#comprate-tbody tr").remove();
+        $('#comprate-tbody').empty();
         kssj=$("#cxsj").val()+" 00:00:00"
         jssj=$("#cxsj").val()+" 23:59:59"
         sessionStorage.cxsj=jssj;
@@ -318,7 +319,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 	var step=false;
 	var myChart = echarts.init(document.getElementById('chart'+apt));
 	myChart.clear();
-		var tbody=document.getElementById("comprate-tbody");
+        var tbody=document.getElementById("comprate-tbody");
 		if(check_val.length>0){
 			var title_tr=document.createElement("tr");
 			var title_th=document.createElement("th");
@@ -379,7 +380,9 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 				series.step= step;
 				series.showAllSymbol=true;
 				series.symbolSize= 1;
-				series.data= pb;
+                series.data= pb;
+                series.smooth=true;
+                series.smoothMonotone='x',
 				//series.itemStyle= {normal: {areaStyle: {type: 'default'}}}; //线下区域
 				seriess.push(series);
 		}
