@@ -5,9 +5,10 @@
 20200716 针对新实时数据页面添加实时最大值{仪表盘）、统计比例（柱状图）两个图表的数据计算过程，其中比例计算有待进一步完善。修改某标签过去24小时最大值和实时值以及变化趋势图的
     刷新过程，添加在主页面点击二级菜单时，对历史数据等页面的配置项进行更新显示功能
 **/
-var chart_type = "", chart_unit = "", chart_max = 0, chart_min = 0, chart_sigle = "", is_have = false;
-var chart_main_num=4,chart_chi_num=8;
-var start_angle = 0, end_angle = 180;
+var is_have = false;
+var chartOption={chart_type:"",chart_unit:"",chart_max:0,chart_min:0,chart_sigle:"",
+                 chart_main_num:4,chart_chi_num:8,chart_detail_font_size:18,chart_title_font_size:20,
+                 start_angle:0,end_angle:180}
 var myChart2 = echarts.init(document.getElementById('realdata_chart'));//趋势图
 var myChart = echarts.init(document.getElementById('realdata_maxvalOfDay'));//24小时极值
 var mychart3=echarts.init(document.getElementById('realdata_rateOfNormal'));//占比统计
@@ -38,7 +39,7 @@ var tab_head;
 var backgroudcolor='#999';
 //var obj_realdata;
 var datas = [];
-var alertconfig=[70,100,"温度过低","温度过高"];
+var alertconfig=[0,25,"温度过低","温度过高"];
 var alertcount=[0,0,0,0];//;
 let haverealdata=false;
 var catalog="Defalt";
@@ -54,7 +55,7 @@ function initrealdata(){
         var value = 0;//(Math.random() * 100).toFixed(2) - 0;
         datas.push(JSON.parse('{"name":"","value":' + value + '}'));//砸死 大堤砸掉
     }
-    updatachart(chart_type);
+    updatachart(chartOption.chart_type);
     initseries(datas);
     initchart2();
     initpage();
@@ -385,9 +386,9 @@ function getCatalog(index){
                                 var d_config=jo_config[c].details; //20200918 获取配置项参数 由allconfigs（typeconfigs）的details里的name找到typename，然后取其
                                 for(var i in d_config){            //name,由name到configs里查找name，找到后从其details里提取config，然后从config中提取所需的配置数值。
                                     if((d_config[i].name.toLowerCase()==typename.toLowerCase())&&((d_config[i].config))){
-                                        chart_unit=d_config[i].config.Unit;
-                                        chart_max=d_config[i].config.Top;
-                                        chart_min=d_config[i].config.Bot;
+                                        chartOption.chart_unit=d_config[i].config.Unit;
+                                        chartOption.chart_max=d_config[i].config.Top;
+                                        chartOption.chart_min=d_config[i].config.Bot;
                                         alertconfig[1]=d_config[i].config.Max;
                                         alertconfig[0]=d_config[i].config.Min;
                                         alertconfig[3]=d_config[i].config.MMax;
@@ -487,6 +488,7 @@ function decoderealdata(obj_realdata) {
                         atr.cells[0].innerHTML=sid;//标签id
                         atr.cells[0].style.cssText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
+                        atr.cells[2].value=(obj_data.time.replace(/T/g," "));
                         atr.cells[2].innerHTML=(obj_data.time.replace(/T/g," ")).substring(10,19);//第二列添加测量时间
                         // 取过去24小时时间，用于调取历史记录
                         var ckssj=new Date((obj_data.time.replace(/T/g," ")).substring(0,19));//(obj_data.time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
@@ -523,8 +525,9 @@ function decoderealdata(obj_realdata) {
                                     if(v_sel[k].value==dname){
                                         $table.rows[l].cells[k+3].innerHTML=(obj_data.value*1).toFixed(Number_of_decimal);
                                         isbreak=true;
-                                        if($table.rows[l].cells[1].innerHTML<obj_data.time){//更新最新时间
-                                            $table.rows[l].cells[1].innerHTML=obj_data.time;
+                                        if($table.rows[l].cells[1].innerHTML<(obj_data.time.replace(/T/g," ")).substring(10,19)){//更新最新时间
+                                            $table.rows[l].cells[1].innerHTML=(obj_data.time.replace(/T/g," ")).substring(10,19);
+                                            $table.rows[l].cells[1].value=obj_data.time.replace(/T/g," ");
                                         }
                                         break;
                                     }
@@ -645,6 +648,7 @@ function decoderealdata(obj_realdata) {
                         atr.cells[0].innerHTML=sid;
                         atr.cells[0].style.cssText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
+                        atr.cells[2].value=(obj_data.time.replace(/T/g," "));
                         atr.cells[2].innerHTML=(obj_data.time.replace(/T/g," ")).substring(10,19);//第二列添加测量时间
                         // 取过去24小时时间，用于调取历史记录
                         var ckssj=new Date((obj_data.time.replace(/T/g," ")).substring(0,19));//(obj_data.Time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
@@ -700,9 +704,10 @@ function decoderealdata(obj_realdata) {
             }
             if (typeof (sessionStorage.t_p) != "undefined") {
                 sname = $table.rows[sessionStorage.t_p].cells[1].innerHTML;
-                //chart_type = $table.rows[sessionStorage.t_p].cells[6].innerHTML;
+                //chartOption.chart_type = $table.rows[sessionStorage.t_p].cells[6].innerHTML;
                 sensor_Id = parseInt($table.rows[sessionStorage.t_p].cells[0].innerHTML);
-                var lasttime = $table.rows[sessionStorage.t_p].cells[2].innerHTML;
+                var lasttime = $table.rows[sessionStorage.t_p].cells[2].value;
+                var shottime=$table.rows[sessionStorage.t_p].cells[2].innerHTML;
                 //var myChart2 = echarts.init(document.getElementById('realdata_chart'));
                 updatachart(typename);
                 value0 = ($table.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;//字符转实数
@@ -715,6 +720,7 @@ function decoderealdata(obj_realdata) {
                 if (isfirst != true) {
                     var temp_option = myChart2.getOption();
                     if (temp_option.series.length>0) {
+                        
                         if (temp_option.series[0].data[temp_option.series[0].data.length - 1][0] < strtodatetime(lasttime)) {
                             temp_option.series[0].data.push([strtodatetime(lasttime), value0, temp_option.series[0].data.length]);
                             //temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
@@ -722,7 +728,7 @@ function decoderealdata(obj_realdata) {
                                 maxvalue = value0;
                                 maxval = (maxvalue + (maxvalue - minvalue) * 0.2).toFixed(Number_of_decimal);
                                 temp_option.yAxis[0].max = maxval;
-                                happentime=lasttime
+                                happentime=shottime;
                             }
                             if (minvalue > value0) {
                                 minvalue = value0;
@@ -736,7 +742,7 @@ function decoderealdata(obj_realdata) {
                             option.series[0].data[0].value = maxvalue;
                             //option.series[1].data[0].value = value0;
                             //myChart.setOption(option);//
-                            happentime=lasttime
+                            happentime=shottime;
                         }
                         refreshData();
                     }
@@ -763,43 +769,43 @@ function decoderealdata(obj_realdata) {
         showstateinfo(err.message,"realdata/decoderealdata");
     }
 }
-function setPageSize(){
+/*function setPageSize(){
     pageSize = document.getElementById("pageSize").value;
     //initdevice();
     page.setPageSize(pageSize); 
-}
+}*/
 function updatachart(atype) {//根据不同设备类型，更新图形当中的最大最小值设置以及数值单位
     switch (atype.toLowerCase()) {
         case "temp":
         case "tmp":
-            if(!chart_min)//20200518 如果获取的配置项参数为空或不存在，则赋予默认值
-                chart_min = -30;
-            if(!chart_max)
-                chart_max = 170;
-            start_angle = -45;
+            if(!chartOption.chart_min)//20200518 如果获取的配置项参数为空或不存在，则赋予默认值
+                chartOption.chart_min = -30;
+            if(!chartOption.chart_max)
+                chartOption.chart_max = 170;
+            chartOption.start_angle = -45;
             if(!chart_unit || chart_unit=="度")
                 chart_unit = "℃"
-            chart_sigle = "";
+            chartOption.chart_sigle = "";
             colors = [[0.15, '#1e90ff'], [0.4, '#090'], [0.6, '#ffa500'], [0.8, '#ff4500'], [1, '#ff0000']];
             break;
         case "pd":
-            //if(!chart_min)
-                chart_min = 0;
-            //if(!chart_max)
-                chart_max = -100;
+            //if(!chartOption.chart_min)
+                chartOption.chart_min = 0;
+            //if(!chartOption.chart_max)
+                chartOption.chart_max = -100;
             //if(!chart_unit)
                 chart_unit = "dB";
-            chart_sigle = ""
+            chartOption.chart_sigle = ""
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
             break;
         default:
-            //if(!chart_min)
-                chart_min = 0;
-            //if(!chart_max)
-                chart_max = 100;
+            //if(!chartOption.chart_min)
+                chartOption.chart_min = 0;
+            //if(!chartOption.chart_max)
+                chartOption.chart_max = 100;
             //if(!chart_unit)
                 chart_unit = "";
-            chart_sigle = ""
+            chartOption.chart_sigle = ""
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
     }
 }
@@ -807,7 +813,7 @@ function tableclick(tr) {
     $(tr).siblings("tr[backgroundColor!='#ff0']").css("background", "");
     sessionStorage.t_p = tr.rowIndex - 1;
     sname = tr.cells[1].innerHTML;
-    //chart_type = tr.cells[tr.cells.length-2].innerHTML;
+    //chartOption.chart_type = tr.cells[tr.cells.length-2].innerHTML;
     updatachart(typename);
     if(title_index!=-1)
         value0 = parseFloat(tr.cells[title_index].innerHTML).toFixed(Number_of_decimal);
@@ -866,11 +872,11 @@ function initseries(data) {
                 type: 'gauge',
                 center: ['50%', '50%'], // 默认全局居中
                 radius: '70%',//半径
-                min: chart_min,
-                max: chart_max,
+                min: chartOption.chart_min,
+                max: chartOption.chart_max,
                 //startAngle: 135,//起始角度
                 //endAngle: 35,//终止角度
-                splitNumber: chart_main_num,//
+                splitNumber: chartOption.chart_main_num,//
                 axisLine: { // 坐标轴线
                     lineStyle: { // 属性lineStyle控制线条样式
                         color: [
@@ -886,7 +892,7 @@ function initseries(data) {
                 },
                 axisTick: { // 坐标轴小标记
                     show: true,
-                    splitNumber: chart_chi_num,
+                    splitNumber: chartOption.chart_chi_num,
                     length:10,
                 },
                 axisLabel: {
@@ -919,7 +925,7 @@ function initseries(data) {
                     text: '24小时峰值',
                     textStyle: {
                         color: 'white',
-                        fontSize: 18
+                        fontSize: chartOption.chart_title_font_size
                     }
                 },
                 detail: {
@@ -927,7 +933,7 @@ function initseries(data) {
                     offsetCenter: [0, '100%'],
                     formatter: ' {value}  \n\n' + '时间: ' + happentime,//+chart_unit,
                     textStyle: {
-                        fontSize: 18, 
+                        fontSize: chartOption.chart_detail_font_size, 
                         color: '#F8F43C'
                     }
                 },
@@ -969,11 +975,11 @@ function initseries(data) {
                 type: 'gauge',
                 center: ['50%', "50%"], // 默认全局居中
                 radius: '70%',//半径
-                min: chart_min,
-                max: chart_max,
+                min: chartOption.chart_min,
+                max: chartOption.chart_max,
                 //startAngle: 315,//起始角度
                 //endAngle: 225,//终止角度
-                splitNumber: chart_main_num,//
+                splitNumber: chartOption.chart_main_num,//
                 axisLine: { // 坐标轴线
                     lineStyle: { // 属性lineStyle控制线条样式
                         color: [
@@ -989,7 +995,7 @@ function initseries(data) {
                 },
                 axisTick: { // 坐标轴小标记
                     show: true,
-                    splitNumber: chart_chi_num,
+                    splitNumber: chartOption.chart_chi_num,
                     length:10,
                 },
                 axisLabel: {
@@ -1021,7 +1027,7 @@ function initseries(data) {
                     offsetCenter: [0, '-30%'], // x, y，单位px
                     textStyle: {
                         color: 'white',
-                        fontSize: 18
+                        fontSize: chartOption.chart_title_font_size,
                     }
                 },
                 detail: {
@@ -1029,7 +1035,7 @@ function initseries(data) {
                     offsetCenter: [0, '100%'],
                     formatter:  '{value}  \n\n' + '实时值: ' + ' ',//'实时值:\n\n' + ' ' + ' {value}  ' + chart_unit,
                     textStyle: {
-                        fontSize: 18,
+                        fontSize: chartOption.chart_detail_font_size,
                         color: '#F8F43C'
                     }
                 },
@@ -1043,25 +1049,25 @@ function initseries(data) {
 //window.setInterval("getrealdatabynodeid(-1)",60000);
 function refreshData() {
     //var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
-    if (chart_type == "pd") {
+    if (chartOption.chart_type == "pd") {
         option.series[0].data[0].value = minvalue
     } else {
         option.series[0].data[0].value = maxvalue;
     }
     val1 = eval("value" + 0);
     //option.series[0].data[0].value = maxvalue;
-    option.series[0].max = chart_max;
-    option.series[0].min = chart_min;
+    option.series[0].max = chartOption.chart_max;
+    option.series[0].min = chartOption.chart_min;
     value = option.series[0].data[0].value;
-    option.series[0].detail.formatter = chart_sigle + value + ' \n\n' +"时间："+happentime;//+chart_unit;
+    option.series[0].detail.formatter = chartOption.chart_sigle + value + ' \n\n' +"时间："+happentime;//+chart_unit;
     option.series[0].data[0].name = chart_unit;//sname;
     option.title.text = sname+" : "+titlename+" 24小时峰值";
     /*for (var i = 0; i < option.series.length; i++) {
         option.series[i].axisLine.lineStyle.color = colors;
         option.series[i].max = chart_max;
-        option.series[i].min = chart_min;
+        option.series[i].min = chartOption.chart_min;
         value = option.series[i].data[0].value;
-        option.series[i].detail.formatter = chart_sigle + value + ': \n\n' + option.series[i].name + ' ';//+chart_unit;
+        option.series[i].detail.formatter = chartOption.chart_sigle + value + ': \n\n' + option.series[i].name + ' ';//+chart_unit;
         option.series[i].data[0].name = chart_unit;//sname;
         option.title.text = sname+" : "+titlename;//添加显示项的标题指示；*/
         //形成进度条式的填充仪表效果并分段显示不同延时用于指示不同状态。    
@@ -1075,17 +1081,17 @@ function refreshData() {
     }*/
     myChart.setOption(option);
     option4.series[0].data[0].value = val1;
-    option4.series[0].max = chart_max;
-    option4.series[0].min = chart_min;
+    option4.series[0].max = chartOption.chart_max;
+    option4.series[0].min = chartOption.chart_min;
     value = option4.series[0].data[0].value;
-    option4.series[0].detail.formatter = chart_sigle + value + ' \n\n' + option4.series[0].name + ' ';//+chart_unit;
+    option4.series[0].detail.formatter = chartOption.chart_sigle + value + ' \n\n' + option4.series[0].name + ' ';//+chart_unit;
     option4.series[0].data[0].name = chart_unit;//sname;
     option4.title.text = sname+" : "+titlename;
     myChart4.setOption(option4);
     option1.series[0].data[0].value= maxOfRealdata.toFixed(Number_of_decimal);//54.321;
     option1.series[0].detail.formatter=maxOfRealdata.toFixed(Number_of_decimal)+ '\n\n 标签名称: '+maxOfRealdataName;//实时极值的标签名称,"发生时刻:"+maxvaluetime+
-    option1.series[0].max = chart_max;
-    option1.series[0].min = chart_min;
+    option1.series[0].max = chartOption.chart_max;
+    option1.series[0].min = chartOption.chart_min;
     option1.series[0].data[0].name = chart_unit;//sname;
     option1.title.text="实时极值: "+titlename;
     myChart1.setOption(option1);
@@ -1289,6 +1295,47 @@ function decodedatas(obj_chartdata) {
                 showAllSymbol: true,
                 symbolSize: 1,
                 data: pa,
+                markPoint: {
+                    //symbol: 'circle',
+                    symbolSize:20,
+                    data: [
+                        {type: 'max', name: '最大值'},
+                        {type: 'min', name: '最小值',symbolRotate:-180}
+                    ]
+                },
+                /*markLine:{
+                    data: [
+                        //{type: 'average', name: '平均值'},
+                        [{
+                            symbol: 'none',
+                            x: '90%',
+                            yAxis: 'max'
+                        }, {
+                            symbol: 'circle',
+                            label: {
+                                position: 'start',
+                                formatter: '最大值'
+                            },
+                            type: 'max',
+                            name: '最高点'
+                        }
+                    ],
+                    [{
+                        symbol: 'none',
+                        x: '90%',
+                        yAxis: 'min'
+                    }, {
+                        symbol: 'circle',
+                        label: {
+                            position: 'start',
+                            formatter: '最小值'
+                        },
+                        type: 'min',
+                        name: '最低点'
+                    }
+                ],
+                    ]
+                },*/
                 smooth: true,//平滑曲线 sangeshijianjiedianshang
                 smoothMonotone: 'x',
             },
@@ -1542,11 +1589,11 @@ function initecharts(){
                 type: 'gauge',
                 center: ['50%', '50%'], // 默认全局居中
                 radius: '70%',//半径
-                min: chart_min,
-                max: chart_max,
+                min: chartOption.chart_min,
+                max: chartOption.chart_max,
                 //startAngle: 135,//起始角度
                 //endAngle: 35,//终止角度
-                splitNumber: chart_main_num,//
+                splitNumber: chartOption.chart_main_num,//
                 axisLine: { // 坐标轴线
                     lineStyle: { // 属性lineStyle控制线条样式
                         color: [
@@ -1562,7 +1609,7 @@ function initecharts(){
                 },
                 axisTick: { // 坐标轴小标记
                     show: true,
-                    splitNumber: chart_chi_num,
+                    splitNumber: chartOption.chart_chi_num,
                     length:10,
                     lineStyle:{
                         color:"#fff",
@@ -1597,7 +1644,7 @@ function initecharts(){
                     offsetCenter: [0, '-30%'], // x, y，单位px
                     textStyle: {
                         color: 'white',
-                        fontSize: 20
+                        fontSize: chartOption.chart_title_font_size
                     }
                 },
                 detail: {
@@ -1605,7 +1652,7 @@ function initecharts(){
                     offsetCenter: [0, '100%'],
                     formatter: ' {value}  \n\n' + '发生时刻: ' +maxvaluetime+ '\n\n 标签名称: '+sname,//+chart_unit,
                     textStyle: {
-                        fontSize: 20,
+                        fontSize: chartOption.chart_detail_font_size,
                         color: '#F8F43C'
                     }
                 },
@@ -1653,13 +1700,17 @@ function initecharts(){
             {
                 name: '占比统计',
                 type: 'pie',
-                radius: ['20%', '50%'],
+                radius: [0, '40%'],
                 avoidLabelOverlap: false,
                 label: {
                     formatter: '{b}： {c}\n\n  {{d}%}  ',
                     show: true,
                     position: 'out',
-                    color:"#fff"
+                    color:"#fff",
+                    position: 'outer',
+                    alignTo: 'edge',
+                    bleedMargin: 5,
+                    margin: 20
                 },
                 //barWidth: '60%',
                 emphasis: {

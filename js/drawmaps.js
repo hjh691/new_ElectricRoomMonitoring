@@ -16,7 +16,7 @@ function Baseline(ctx, pfdp) {
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
 		ctx.setTransform(a, b, c, d, e, f);
 	}
-	if (pfdp.hasOwnProperty("IsError") && (pfdp.IsError == true)) {
+	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
 		ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
@@ -43,7 +43,7 @@ function Line(ctx, pfdp) {
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
 		ctx.setTransform(a, b, c, d, e, f);
 	}
-	if (pfdp.hasOwnProperty("IsError") && (pfdp.IsError == "true")) {
+	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == "true")) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
 		ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
@@ -74,7 +74,7 @@ function EllipseArea(ctx, pfdp) {
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
 		ctx.setTransform(a, b, c, d, e, f);
 	}
-	if (pfdp.hasOwnProperty("IsError") && (pfdp.IsError == true)) {
+	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
 		ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
@@ -119,7 +119,7 @@ function RectArea(ctx, pfdp) {
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
 		ctx.setTransform(a, b, c, d, e, f);
 	}
-	if (pfdp.hasOwnProperty("IsError") && (pfdp.IsError == true)) {
+	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
 		ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
@@ -152,7 +152,7 @@ function JumpLine(ctx, pfdp) {
 		ctx.setTransform(a, b, c, d, e, f);
 	}
 
-	if (pfdp.hasOwnProperty("IsError") && (pfdp.IsError == true)) {
+	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
 		ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
@@ -567,7 +567,7 @@ function Node(ctx, pfdp) {
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
 		ctx.setTransform(a, b, c, d, e, f);
 	}
-	if (pfdp.hasOwnProperty("IsError") && (pfdp.IsError == true)) {
+	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.fillStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
 		ctx.fillStyle = pfdp.StrokeColor.replace("#FF","#");
@@ -657,7 +657,7 @@ function DrawText(ctx, pfdp) {
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
 		ctx.setTransform(a, b, c, d, e, f);
 	}
-	if (pfdp.hasOwnProperty("IsError") && (pfdp.IsError == true)) {
+	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.fillStyle = "#FFFF00";
 	} else {
 		ctx.fillStyle = pfdp.StrokeColor.replace("#FF","#");

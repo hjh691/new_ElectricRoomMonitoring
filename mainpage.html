@@ -1341,14 +1341,19 @@
 								if (g && g._shape && g._shape.Binding && g._shape.Text) {
 									if(allsensors[g._shape.Binding]){
 										var sid=allsensors[g._shape.Binding].id;
-										if ((obj_realdata)&&(obj_realdata.hasOwnProperty(sid))) {
-											obj_data = (obj_realdata)[sid];////
-											g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
-											if(obj_data.message){
-												g._shape.IsError=true;
-											}else{
-												g._shape.isError=false;
-											}
+										if ((obj_realdata)&&(obj_realdata.length>0)) {
+											for(var loop=0;loop<obj_realdata.length;loop++){
+												if(obj_realdata[loop].sensorId==sid){
+													obj_data = (obj_realdata)[loop];////
+													g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
+													if(obj_data.message){
+														g._shape.isError=true;
+													}else{
+														g._shape.isError=false;
+													}
+													break;
+												}
+										}
 										}
 									}
 								}

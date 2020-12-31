@@ -496,7 +496,8 @@ var pageSize = 50;    //每页显示的记录条数
 		}catch(err){
 			showstateinfo(err.message,"warnlog/decodedatas");
 		}
-		display();
+		//display();
+		page=new Page(pageSize,'warnlogtable','warnlogdata-tbody','pageindex');
 	}
 	function tableclick(tr){
 		$(tr).siblings().css("background","");

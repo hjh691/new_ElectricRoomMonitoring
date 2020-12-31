@@ -168,14 +168,15 @@
 				<a id="btn0"></a>
 				<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
 				<a id="sjzl"></a>&nbsp;
-				<a  href="javascript:void(0)" id="btn1" onclick="firstPage()">首页</a>
-				<a  href="javascript:void(0)" id="btn2" onclick="frontPage()">上一页</a>
-				<a  href="javascript:void(0)" id="btn3" onclick="nextPage()">下一页</a>
-				<a  href="javascript:void(0)" id="btn4" onclick="LastPage()">尾页</a>&nbsp;
+				<a  href="javascript:void(0)" id="btn1" onclick="page.firstPage()">首页</a>
+				<a  href="javascript:void(0)" id="btn2" onclick="page.prePage()">上一页</a>
+				<a  href="javascript:void(0)" id="btn3" onclick="page.nextPage()">下一页</a>
+				<a  href="javascript:void(0)" id="btn4" onclick="page.lastPage()">尾页</a>&nbsp;
 				<a>转到&nbsp;</a>
 				<input id="changePage" type="text" size="1" maxlength="4"/>
 				<a>页&nbsp;</a>
 				<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
+				<span id="pageindex" style='display: none;'></span>
 				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;display:none;" id="tongji" onclick="tongji('tongjitable')">告警统计</a>
 			</div>
 		</div>

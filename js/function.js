@@ -2005,17 +2005,18 @@ function display(){
 		displayPage();
 	}
 	function changePage(){    // 转页
-		curPage=document.getElementById("changePage").value * 1;
+		curPage=document.getElementById("changePage").value * 1-1;
 		if (!/^[1-9]\d*$/.test(curPage)) {
 			showmsg("请输入正整数",info_showtime);
 			return ;
 		}
-		if (curPage > page) {
+		/*if (curPage > page) {
 			showmsg("超出数据页面",info_showtime);
 			return ;
 		}
 		direct = 0;
-		displayPage();
+		displayPage();*/
+		page.changePage(curPage);
 	}
 	function setPageSize(){    // 设置每页显示多少条记录
 		pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
@@ -2023,12 +2024,13 @@ function display(){
 			showmsg("请输入正整数",info_showtime);
 			return ;
 		}
-		//len =$table.rows.length;// - 1;
+		/*//len =$table.rows.length;// - 1;
 		page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
 		curPage=1;        //当前页
 		direct=0;        //方向
 		firstPage();
-		displayPage();
+		displayPage();*/
+		page.setPageSize(pageSize); 
 	}
 	
 function displayPage(){
@@ -2196,6 +2198,7 @@ Page.prototype.__updateTableRows__ = function () {
 	document.getElementById("sjzl").innerHTML="数据总量 <span class='badge' style='font-size:18px'>" + this.rowCount + "";        // 显示数据量 数据表总量要减去告警类型统计项的标题行。
 	document.getElementById("pageSize").value = this.absolute;
 };
+//设置每页最大行数;
 Page.prototype.setPageSize= function(pagesize){
 	this.absolute=pagesize*1;
 	//this.pageIndex=0;
@@ -2205,6 +2208,11 @@ Page.prototype.setPageSize= function(pagesize){
 ? this.rowCount / this.absolute : this.rowCount / this.absolute + 1);
     } catch (exception) { }
     this.__updateTableRows__();
+}
+//跳转到指定页
+Page.prototype.changePage=function(index){
+	this.pageIndex=index;
+	this.__updateTableRows__();
 }
 /*
 克隆原始操作行集合
