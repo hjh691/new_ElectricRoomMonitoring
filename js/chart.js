@@ -40,7 +40,7 @@
             for(var j=0;j<sensors.length;j++){
                 if(sel_sensor[i]==sensors[j].id){
                     //if(i==0)
-                        nodeid=sensors[j].nodeId;
+                    nodeid=sensors[j].nodeId;
                     tree_obj.treeview("selectNode",sensors[j].nodeId);
                     break;
                 }
@@ -173,6 +173,7 @@
                             catalog=getcatalog(cname);
                             pt++;
                             gethistorybysensors(check_val,catalog,cname,pt,sel_str[i]);
+                            break;
                         }
                     }
                 }

@@ -183,9 +183,7 @@
 		sessionStorage.txid=-1;//20200228 初始化一次图形id
 		sessionStorage.nodetype=1;
 		var iframemain=$("#iframe_main");
-		//sessionStorage.framepage="";
-		//sessionStorage.selNodeId="";
-		var multiselect=false;
+		var multiselect = false;
 		var tree2=false;
 		//最后一次触发节点Id
 		var lastSelectedNodeId = null;
@@ -268,19 +266,19 @@
 						if((i % 300==0)&&(sessionStorage.islogin=="false")){
 							LoginOrder(localStorage.username,sessionStorage.password,1);
 						}
-						//if((i % 900==0)&&(sessionStorage.islogin=="true")){
-							//RefreshToken();
-						//}
+						if((i % 900==0)&&(sessionStorage.pageindex==1)){
+							iframemain[0].contentWindow.getbinary();//刷新一次图形
+						}
 					};
 				} else {
-					var t1 = window.setInterval(sendbeat, 60000);//getrealsbydataid
+					var t1 = window.setInterval(getrealdatabynodeid(realdataid), 60000);//getrealsbydataid
 				}
 				window.setInterval("resetContent()", 200);
 				refreshwindow();
 				//initIndex();
 				if(sessionStorage.kssj==undefined){
 					sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
-					sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
+					sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59" 听力
 					sessionStorage.cxsj = getCurrentDate(2);
 				}
 				if (sessionStorage.islogin) {
@@ -989,7 +987,7 @@
 				iframemain.attr("src","video.html");
 			}
 		}
-		//获取指定节点的一次图形列表  //Fresh strawberries tastes good
+		//获取指定节点的一次图形列表  //Fresh strawberries tastes good;
 		function GetBinariesByType(atype, anodeid){
 			sendorder("GetNodeGraphicsByNode?nodeId="+ anodeid,function(data){
 				if(!jQuery.isEmptyObject(data)){//.Result
@@ -1004,7 +1002,7 @@
 		//获取指定节点包含的标签信息
 		function GetSensorsByNode(anodeid){//20200928 add
 			try{
-			sendorder("GetSensorsByNode?nodeId="+ anodeid,function(result){
+			sendorder("GetSensorsByNode?nodeId="+anodeid,function(result){
 				if (!jQuery.isEmptyObject(result.sensors)) {
 					localStorage.setItem("sensor_tree",JSON.stringify(result.sensors));
 					var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
@@ -1266,9 +1264,9 @@
 						if ((!jQuery.isEmptyObject(s.children))) {
 							buildsensor2(obj, s.children, key);
 						}
-						if (v.type && $.trim(v.type) != "") {
+						/*if (v.type && $.trim(v.type) != "") {
 							key = key ? key + "_" + v.type : v.type;
-						}
+						}*/
 						obj[key.toLowerCase()] = map;
 					}
 				}
@@ -1339,11 +1337,14 @@
 							if ($.trim(g).length > 0) {
 								g = JSON.parse(g);
 								if (g && g._shape && g._shape.Binding && g._shape.Text) {
-									if(allsensors[g._shape.Binding]){
-										var sid=allsensors[g._shape.Binding].id;
+									var channel=(g._shape.Binding).substring(0,g._shape.Binding.lastIndexOf('_'));
+									var datatype=(g._shape.Binding).substr(g._shape.Binding.lastIndexOf('_')+1);
+									if(allsensors)
+									if(allsensors[channel]){
+										var sid=allsensors[channel].id;
 										if ((obj_realdata)&&(obj_realdata.length>0)) {
 											for(var loop=0;loop<obj_realdata.length;loop++){
-												if(obj_realdata[loop].sensorId==sid){
+												if(obj_realdata[loop].sensorId==sid && obj_realdata[loop].name.toLowerCase()==datatype.toLowerCase()){
 													obj_data = (obj_realdata)[loop];////
 													g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
 													if(obj_data.message){

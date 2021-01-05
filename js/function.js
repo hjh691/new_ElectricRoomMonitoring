@@ -963,19 +963,27 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 				contents.forEach(function(g){
 					if ($.trim(g).length > 0) {
 						g = JSON.parse(g);
-						if(obj_rd){
-							if (g && g._shape && g._shape.Binding && g._shape.Text) {
-								if(window.parent.allsensors[g._shape.Binding]){
-									var sid=window.parent.allsensors[g._shape.Binding].id;
-									if (obj_rd.hasOwnProperty(sid)) {
-										obj_data = (obj_rd)[sid];////
-										g._shape.Text =(obj_data[0].Value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
-										if(obj_data[0].Message){
-											g._shape.IsError=true;
-										}else{
-											g._shape.isError=false;
+						if (g && g._shape && g._shape.Binding && g._shape.Text) {
+							var channel=(g._shape.Binding).substring(0,g._shape.Binding.lastIndexOf('_'));
+							var datatype=(g._shape.Binding).substr(g._shape.Binding.lastIndexOf('_')+1);
+							if(window.parent.allsensors)
+							if(window.parent.allsensors[channel]){
+								var sid=window.parent.allsensors[channel].id;
+								if ((obj_rd)&&(obj_rd.length>0)) {
+									for(var loop=0;loop<obj_rd.length;loop++){
+										if(obj_rd[loop].sensorId==sid && obj_rd[loop].name.toLowerCase()==datatype.toLowerCase()){
+											obj_data = (obj_rd)[loop];////
+											g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
+											if(obj_data.message){
+												g._shape.isError=true;
+											}else{
+												g._shape.isError=false;
+											}
+											obj_rd.splice(loop,1);//找到需要的数据，去除数据后删除，减少循环的次数。
+											break;
+											
 										}
-									}
+								}
 								}
 							}
 						}
@@ -1565,8 +1573,8 @@ function seletime(obj){
 			cjssj=new Date((getCurrentDate(1)+" 23:59:59").replace(/-/g,"/"));
 			sessionStorage.jssj = dateToString(new Date(cjssj - oneday * cjssj.getDate()),2);
 			//$("#warnlogdata-tbody tr").empty();
-			//layer.alert("没有符合条件的记录",info_showtime); buy by pencil pen ruler rubber erase path letter write read 
-			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj); gradema bowl bottle flying kite 
+			//layer.alert("没有符合条件的记录",info_showtime); 
+			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);  
 		break;
 		case  4:
 			if(timedefine.style.display=="none"){
@@ -1576,11 +1584,11 @@ function seletime(obj){
 		break;
 	}
 }
-//导航按钮选中指示标志//20200212 table chair desk light door window cooker fridge refridgerator open/close turn off/on television movies ground blackboard
+//导航按钮选中指示标志//20200212 
 function updatapcnav(obj){
 	for(var i=1;i<16;i++){
 		var nav=document.getElementById("nav"+i);
-		if(nav==null){//如果为null。就获取父窗口下的元素。what when why where which who how many how much how whose cousin computer picture plane play 
+		if(nav==null){//如果为null。就获取父窗口下的元素。 
 			nav=window.parent.document.getElementById("nav"+i);
 		}
 		if(nav){
@@ -1593,7 +1601,7 @@ function updatapcnav(obj){
 		}
 	}
 	if(obj==7){
-		//if((multiselect==undefined)||(multiselect==null)){ teacher worker doctor actress policeman fisherman farmer
+		//if((multiselect==undefined)||(multiselect==null)){ 
 			window.parent.multiselect=true;
 		//}else{
 		//	multiselect=true;
@@ -1639,8 +1647,14 @@ var sorter=false;
 						title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值
 						sessionStorage.realdata_index=Idx;
 						isfirst=true;//更改排序项的同时更改显示项，重新获取数据刷新图表；
-						btn_refresh_click();//刷新图表
+						//btn_refresh_click();//刷新图表
 						//return;
+						var jssj = getCurrentDate(2);
+						var yesterdaytime= (new Date(jssj))-(1000*60*60*24);
+						var kssj=dateToString(new Date(yesterdaytime),2);
+						//kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
+						//jssj = (tr.cells[2].innerHTML);
+						gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
 					}
 				}
 				var table = document.getElementById(tableId);
@@ -1702,6 +1716,7 @@ function getcatalog(aname){
 			for(var l in configs[p].details){
 				if(configs[p].details[l].name.toLowerCase()==aname.toLowerCase()){
 					acatalog=configs[p].details[l].folder;//;//Catalog;
+					return acatalog;
 				}
 			}
 		}
@@ -1972,7 +1987,7 @@ function showdate(el){
 }
 
 //------display control------
-function display(){   
+/*function display(){   
 	//var $table=$("#warnlogdata-tbody");
 	if(!$table){
 		return;
@@ -2003,9 +2018,9 @@ function display(){
 		curPage=page;
 		direct = 0;
 		displayPage();
-	}
+	}*/
 	function changePage(){    // 转页
-		curPage=document.getElementById("changePage").value * 1-1;
+		curPage=parseInt(document.getElementById("changePage").value)-1;
 		if (!/^[1-9]\d*$/.test(curPage)) {
 			showmsg("请输入正整数",info_showtime);
 			return ;
@@ -2019,7 +2034,7 @@ function display(){
 		page.changePage(curPage);
 	}
 	function setPageSize(){    // 设置每页显示多少条记录
-		pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
+		pageSize = parseInt(document.getElementById("pageSize").value);    //每页显示的记录条数
 		if (!/^[1-9]\d*$/.test(pageSize)) {
 			showmsg("请输入正整数",info_showtime);
 			return ;
@@ -2030,10 +2045,14 @@ function display(){
 		direct=0;        //方向
 		firstPage();
 		displayPage();*/
-		page.setPageSize(pageSize); 
+		page.setPageSize(pageSize);
+		if(sessionStorage.pageindex==2){
+			sessionStorage.pageSize=pageSize; 
+			btn_refresh_click();
+		}
 	}
 	
-function displayPage(){
+/*function displayPage(){
 	if(curPage <=1 && direct==-1){
 		direct=0;
 		showmsg("已经是第一页了",info_showtime);
@@ -2058,7 +2077,7 @@ function displayPage(){
 	theTable.bind('paging',function(){  
 		theTable.find('tbody tr').hide().slice(curPage*pageSize,(curPage+1)*pageSize).show();  
 	});  
-	/*for ( var i = 0; i<len; i++ ) {
+	for ( var i = 0; i<len; i++ ) {
 		$table.rows[i].style.display = 'none';
 	}
 	for ( var i = begin; i<end; i++ ) {
@@ -2068,8 +2087,8 @@ function displayPage(){
 	$table.find("tr").each(function(i){    // 然后，通过条件判断决定本行是否恢复显示
 		if((i>=begin && i<=end) )//显示begin<=x<=end的记录
 			$(this).show();
-	});*/
-	}
+	});
+	}*/
 //-----------------------display contral-----------------------------
 
 
@@ -2085,7 +2104,7 @@ function displayPage(){
 * function __method__(){};private
 */
 function Page(iAbsolute, sTableId, sTBodyId,sPageId) {
-    this.absolute = iAbsolute; //每页最大记录数
+    this.absolute = parseInt(iAbsolute); //每页最大记录数
     this.tableId = sTableId;
     this.tBodyId = sTBodyId;
     this.rowCount = 0; //记录数
@@ -2178,12 +2197,24 @@ Page.prototype.__updateTableRows__ = function () {
     var removedTBody = this.__oTable__.removeChild(this.__oTBody__);
     var newTBody = document.createElement("TBODY");
     newTBody.setAttribute("id", this.tBodyId);
+	/*for( var i=0;i<tempRows.length;i++){
+		newTBody.appendChild(tempRows[i]);
+	}
+	this.__oTable__.appendChild(newTBody);
+	$("#"+this.tableId+" tr").hide();    // 首先，设置这行为隐藏
+	begin=iCurrentRowCount;
+	end=this.absolute + iCurrentRowCount - iMoreRow;
+	$("#"+this.tableId+" tr").each(function(i){    // 然后，通过条件判断决定本行是否恢复显示
+		if((i>begin && i<=end) || i==0 )//显示begin<=x<=end的记录
+			$(this).show();
+	});*/
 
     for (var i = iCurrentRowCount; i < this.absolute + iCurrentRowCount - iMoreRow; i++) {
         newTBody.appendChild(tempRows[i]);
-    }
-    this.__oTable__.appendChild(newTBody);
+	}
+	this.__oTable__.appendChild(newTBody);
     /*
+    
     this.dataRows为this.oTBody的一个引用，
     移除this.oTBody那么this.dataRows引用将销失,
     code:this.dataRows = tempRows;恢复原始操作行集合.
@@ -2200,7 +2231,7 @@ Page.prototype.__updateTableRows__ = function () {
 };
 //设置每页最大行数;
 Page.prototype.setPageSize= function(pagesize){
-	this.absolute=pagesize*1;
+	this.absolute=parseInt(pagesize);
 	//this.pageIndex=0;
 	try {
         this.absolute = (this.absolute <= 0) || (this.absolute > this.rowCount) ? this.rowCount : this.absolute;
@@ -2211,7 +2242,7 @@ Page.prototype.setPageSize= function(pagesize){
 }
 //跳转到指定页
 Page.prototype.changePage=function(index){
-	this.pageIndex=index;
+	this.pageIndex=parseInt(index);
 	this.__updateTableRows__();
 }
 /*
@@ -2238,4 +2269,6 @@ Page.prototype.__cloneRows__ = function () {
  * 系统网络连接的状态改变；系统每5-10分钟进行连接判断或重连，每15-30分钟进行一次安全验证码刷新操作，
  * 20201221 将sendorde的get和post两个方法函数合并，判断有无要传输的数据数组，来觉得是使用那种方式。
  * 同时添加在刷新安全认证吗后紧接着重新执行刚才的通信指令；添加一些变量的清除初始化工作；
+ * 2021
+ * 对所有循环操作进行必要的优化（添加break或删除已找到的元素或直接返回退出，以减少循环次数，优化运行效果）
  */

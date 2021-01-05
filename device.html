@@ -35,9 +35,11 @@
 		border-collapse: collapse;
 		text-align: center;
 	}
-	/*关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
+	/*关键设置 tbody出现滚动条*/
 	table tbody {
 		display: block;
+		height: 560px;
+		overflow-y: scroll;
 	}
 	table thead,
 	tbody tr {
@@ -74,7 +76,7 @@
 	</style>
 </head>
 <body >
-	<div><button class="selected" onclick="javascript:history.go(-1)" style="float:right;margin-right:20px;">返回</button>
+	<div style="width:100%;height:600px;"><button class="selected" onclick="javascript:history.go(-1)" style="float:right;margin-right:20px;">返回</button>
 		<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
 			<h3 >设备信息</h3>
         </div>
@@ -91,7 +93,7 @@
         </div>
 		<div style="text-align: center;">
 			<div class="panel panel-default" style="text-align:center;margin-bottom: 0;">
-		<table id="devicetable" style="margin: auto;">
+		<table id="devicetable" style="margin: auto;overflow:auto;">
 			<caption style="text-align: center;font-size:20px;">设备信息汇总表</caption>
 			<thead>
 				<tr >
@@ -105,7 +107,7 @@
 					<th onclick="$.sortTable.sort('devicetable',5)">分组</th>	-->
 				</tr>
 			</thead>
-			<tbody id='device-tbody' style="width:990px;height:550px; overflow:auto;">
+			<tbody id='device-tbody' style="width:990px;height:550px;">
 			</tbody>
 		</table>
 		<div  style="text-align: center;font-size: 18px;float:bottom;"><!--display: none;-->
@@ -121,7 +123,7 @@
 			<a>页&nbsp;</a>
 			<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
 			<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('devicetable')"><!--method5('devicetable')-->
-				<img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel"></a>
+				<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;" ></a>
 			<span id="pageindex" style='display: none;'></span>
 		</div>
 		<!--<span id="s"></span>
@@ -135,15 +137,15 @@
                    
             <span id="pageindex" style='display: none;'></span>-->
 		</div>
-		<div class="fudongdiv" id="config_fudong" onmousedown="hideself(this) ">
+		<!--<div class="fudongdiv" id="config_fudong" onmousedown="hideself(this) ">
             <div>
-				<!--<h3 id="bind_name">1#</h3><br>
+				<h3 id="bind_name">1#</h3><br>
 				<div id="details" align="center">
 					<div id="bind_addr">安装地址：1#房间</div>计时器缓慢进行
 					<div id="bind_view">绑定信息：3#视频</div>
-				</div>-->
+				</div>
             </div>
-		</div>
+		</div>-->
 		<!-- <button class="btn btn-primary btn-lg " data-toggle="modal" data-target="#myModal">开始演示模态框</button>
 		模态框（Modal） -->
 		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
@@ -277,6 +279,7 @@
 					}
 				}
 				if(config){
+					detail.appendChild(creatrow("标签类型: ",config));
 					var configs=JSON.parse(localStorage.Config);
 					var typeconfigs=JSON.parse(localStorage.Configs);
 					var details,typeconfig;
@@ -301,19 +304,11 @@
 						var keys=Object.keys(details[i].config);
 						for(var k=0;k<typeconfig.length;k++){
 							if(details[i].name.toLowerCase()==typeconfig[k].name.toLowerCase()){
+								detail.appendChild(creatrow(" "+(i+1)+".  "+details[i].desc,""))
 								for(var j=0;j<keys.length;j++){
-									var row=document.createElement("tr");
-									//row.setAttribute("style","width:200px;text-align:left");
-									var lableft=document.createElement("td");
-									lableft.setAttribute("style","width:150px;text-align:left");
-									lableft.innerHTML=typeconfig[k].config[keys[j]]+" : ";
-									row.appendChild(lableft);
-									var labright=document.createElement("td");
-									labright.setAttribute("style","width:150px;text-align:left");
-									labright.innerHTML=details[i].config[keys[j]]+"";
-									row.appendChild(labright);
-									detail.appendChild(row);
+									detail.appendChild(creatrow((i+1)+"."+(j+1)+"  "+typeconfig[k].config[keys[j]]+" : ",details[i].config[keys[j]]+""))
 								}
+								break;
 							}
 						}
 					}
@@ -321,97 +316,23 @@
 				//$("#mymodal").modal("show");
 			}
 		}
+		function creatrow(name,value){
+			var row=document.createElement("tr");
+			//row.setAttribute("style","width:200px;text-align:left");
+			var lableft=document.createElement("td");
+			lableft.setAttribute("style","width:150px;text-align:left");
+			lableft.innerHTML=name+" : ";
+			row.appendChild(lableft);
+			var labright=document.createElement("td");
+			labright.setAttribute("style","width:150px;text-align:left");
+			labright.innerHTML=value+"";
+			row.appendChild(labright);
+			return row;
+		}
 		function hideself(obj){
 			obj.style.display="none"
 		}
-        /*function display(){   
-			//var tbody=$("#device-tbody");
-			len =$table.rows.length ;//- 1;    // 求这个表的总行数，剔除第一行介绍
-			page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
-			// alert("page==="+page);
-			curPage=1;    // 设置当前为第一页
-			displayPage(1);//显示第一页
-			document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
-			document.getElementById("sjzl").innerHTML="数据总量 <span class='badge' style='font-size:18px'>" + len + "";        // 显示数据量
-			document.getElementById("pageSize").value = pageSize;
-		}
-		function firstPage(){    // 首页
-			curPage=1;
-			direct = 0;
-			displayPage();
-		}
-		function frontPage(){    // 上一页
-			direct=-1;
-			displayPage();
-		}
-		function nextPage(){    // 下一页
-			direct=1;
-			displayPage();
-		}
-		function lastPage(){    // 尾页
-			curPage=page;
-			direct = 0;
-			displayPage();
-		}
-		function changePage(){    // 转页
-			curPage=document.getElementById("changePage").value * 1;
-			if (!/^[1-9]\d*$/.test(curPage)) {
-				showmsg("请输入正整数");
-				return ;
-			}
-			if (curPage > page) {
-				showmsg("超出数据页面");
-				return ;
-			}
-			direct = 0;
-			displayPage();
-		}
-		function setPageSize(){    // 设置每页显示多少条记录
-			pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
-			if (!/^[1-9]\d*$/.test(pageSize)) {
-				showmsg("请输入正整数");
-				return ;
-			}
-			//len =tbody.rows.length;// - 1;
-			page=len % pageSize==0 ? len/pageSize : Math.floor(len/pageSize)+1;//根据记录条数，计算页数
-			curPage=1;        //当前页
-				direct=0;        //方向
-				firstPage();
-		}
-	function displayPage(){
-		if(curPage <=1 && direct==-1){
-			direct=0;
-			showmsg("已经是第一页了");
-			return;
-		} else if (curPage >= page && direct==1) {
-			direct=0;
-			showmsg("已经是最后一页了");
-			return ;
-		}
-		//lastPage = curPage;
-		// 修复当len=1时，curPage计算得0的bug
-		if (len > pageSize) {
-			curPage = ((curPage + direct + len) % len);
-		} else {
-			curPage = 1;
-		}
-		document.getElementById("btn0").innerHTML="当前 " + curPage + "/" + page + " 页    每页 ";        // 显示当前多少页
-		begin=(curPage-1)*pageSize ;// 起始记录号
-		end = begin + 1*pageSize ;    // 末尾记录号
-		if(end > len ) end=len;
-		//var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
-		for ( var i = 0; i<len; i++ ) {
-			$table.rows[i].style.display = 'none';
-		}
-		for ( var i = begin; i<end; i++ ) {
-			$table.rows[i].style.display = '';
-		}
-		/*$table.find("tr").hide();    // 首先，设置这行为隐藏
-		$table.find("tr").each(function(i){    // 然后，通过条件判断决定本行是否恢复显示
-			if((i>=begin && i<=end) )//显示begin<=x<=end的记录
-				$(this).show();
-		});// 
-	//}*/
+        
     </script>
 </body>
 <!--
@@ -419,4 +340,8 @@
 	1124由于table没有<thead>标签，所以排序时的table.tBodies[0]取出的只是表头，
 	实际的tbody在table.tBodies[1]中，所以排序失效，将表头tr放入<thead>标签中，在tabler.tBodies[0]
 	取出的就是tbody.
+	2021
+	绑定信息信息添加类型以及配置项名称和序号。
+	
+	列表添加表内滚动条。
 -->

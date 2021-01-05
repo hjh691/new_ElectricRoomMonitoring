@@ -1,4 +1,4 @@
-var pageSize = 50;    //每页显示的记录条数
+	var pageSize = 18;    //每页显示的记录条数
 	var curPage=0;        //当前页
 	//var lastPage;        //最后页
 	var direct=0;        //方向
@@ -304,14 +304,14 @@ var pageSize = 50;    //每页显示的记录条数
 			selectText="没有告警事件选项";
 		}
 		$("#select_text").val(selectText);
-		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。 bay cay day fay gay hay jay lay okay may nay pay ray say tay way
-		$(".btn").click(function(){//play okay gray bray stay 
+		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。 
+		$(".btn").click(function(){// 
 			$(this).button('toggle');
 			dname= $(".catalog:checked").val();
 			sessionStorage.warnlogname=dname;
 			catalog=getcatalog(dname);
 			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
-			//decodedatas(JSON.parse(localStorage.historydata));//flu across thanksgiving bakery neighborhood 
+			//decodedatas(JSON.parse(localStorage.historydata));// 
 		});
 		}catch(err){
 			showstateinfo(err.message,"warnlog/appenddisplaytype");

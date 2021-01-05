@@ -49,6 +49,8 @@ function initrealdata(){
     try{
     datas = [];
     datas.splice(0, datas.length);//
+    if(sessionStorage.pageSize)
+        pageSize=parseInt(sessionStorage.pageSize);
     for (var i = 0; i < 1; i++) {
         var value = 0;//(Math.random() * 100).toFixed(2) - 0;
         datas.push(JSON.parse('{"name":"","value":' + value + '}'));
@@ -104,6 +106,9 @@ function initpage() {
             $("table").eq(0).find('thead').attr("style","transform: translateY(0px);")//复原
         }
     });
+    if(sessionStorage.getItem("chartoption")){
+        chartOption=JSON.parse(sessionStorage.getItem("chartoption"));
+    }
 }
 $(function () {
     $(".btn").click(function(){
@@ -389,6 +394,7 @@ function getCatalog(index){
                                         chartOption.chart_unit=d_config[i].config.Unit;
                                         chartOption.chart_max=d_config[i].config.Top;
                                         chartOption.chart_min=d_config[i].config.Bot;
+                                        sessionStorage.setItem("chartoption",JSON.stringify(chartOption));
                                         alertconfig[1]=d_config[i].config.Max;
                                         alertconfig[0]=d_config[i].config.Min;
                                         alertconfig[3]=d_config[i].config.MMax;
@@ -458,14 +464,17 @@ function decoderealdata(obj_realdata) {
                         type_td = sensors[i].Value.type;//Catalog;//
                         sname = sensors[i].Value.name;
                         //parentid=sensors[i].Value.parentId;
-                        if((sensors[i].Value.parentId!="-1")&&(sensors[i].Value.parentId!=parentid)){//20201221
-                            parentid=sensors[i].Value.parentId;
-                            for(var k=0;k<sensors.length;k++){
-                                if(sensors[k].id==parentid){
-                                    parentname=sensors[k].Value.name+"_";
-                                    break;
+                        if(sensors[i].Value.parentId!="-1"){  
+                            if((sensors[i].Value.parentId!=parentid)){//20201221
+                                parentid=sensors[i].Value.parentId;
+                                for(var k=0;k<sensors.length;k++){
+                                    if(sensors[k].id==parentid){
+                                        parentname=sensors[k].Value.name+"_";
+                                        break;
+                                    }
                                 }
                             }
+                            sensors.splice(i, 1);
                         }
                         sname=parentname+sname;
                         isfind=true;
@@ -619,15 +628,17 @@ function decoderealdata(obj_realdata) {
                         //sid = sensors[i].id + "";
                         type_td = sensors[i].Value.tyoe;//Catalog;
                         sname = sensors[i].Value.name;
-                        if((sensors[i].Value.parentId!="-1")&&(sensors[i].Value.parentId!=parentid)){
-                            parentid=sensors[i].Value.parentId;
-                            for(var k=0;k<sensors.length;k++){
-                                if(sensors[k].id==parentid){
-                                    parentname=sensors[k].Value.name+"_";
-                                    
-                                    break;
+                        if(sensors[i].Value.parentId!="-1"){
+                            if((sensors[i].Value.parentId!=parentid)){
+                                parentid=sensors[i].Value.parentId;
+                                for(var k=0;k<sensors.length;k++){
+                                    if(sensors[k].id==parentid){
+                                        parentname=sensors[k].Value.name+"_";
+                                        break;
+                                    }
                                 }
                             }
+                            sensors.splice(i, 1);//找到并应用后删除元素，减少后续的循环次数。
                         }
                         sname=parentname+sname;
                         isfind=true;
@@ -713,9 +724,14 @@ function decoderealdata(obj_realdata) {
                 value0 = ($table.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;//字符转实数
                 //happentime=lasttime;
                 //value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
-                var heightpx = $("#realdata-tbody tr").height() + 1;//加1是网格线的宽度
+                var heightpx = $("#realdata-tbody tr").height();// + 1;//加1是网格线的宽度
                 var ppt = +sessionStorage.t_p;
-                $("#realdata-tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行
+                if(ppt>pageSize){
+                    curPage=parseInt(ppt/pageSize);
+                }else{
+                    curPage=0;
+                }
+                $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
                 $table.rows[ppt].style.backgroundColor = color_table_cur;
                 if (isfirst != true) {
                     var temp_option = myChart2.getOption();
@@ -747,7 +763,7 @@ function decoderealdata(obj_realdata) {
                         refreshData();
                     }
                 } else {
-                    isfirst = false;
+                    isfirst = false; //6-ran 9-yxj 11-wx 16-ajl 18-lzf 23-lwf 25-rq 30-zw 1-zln 6-ajl/yhl/...
                     //myChart2.showLoading();
                     gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
                 }
@@ -765,6 +781,7 @@ function decoderealdata(obj_realdata) {
     //refreshData();
     //display();
     page=new Page(pageSize,'realtable','realdata-tbody','pageindex');
+    page.changePage(curPage);
     }catch(err){
         showstateinfo(err.message,"realdata/decoderealdata");
     }
@@ -802,7 +819,7 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
             //if(!chartOption.chart_min)
                 chartOption.chart_min = 0;
             //if(!chartOption.chart_max)
-                chartOption.chart_max = 100;
+                chartOption.chart_max = 0;
             //if(!chart_unit)
                 chart_unit = "";
             chartOption.chart_sigle = ""
@@ -1196,11 +1213,12 @@ function decodedatas(obj_chartdata) {
             },/**/
             tooltip: {
                 trigger: 'item',
+                //trigger: 'axis',
                 formatter: function (params) {
                     var date = new Date(params.value[0]);
                     data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
                     return data + '<br/>' + params.value[1];
-                }
+                }/**/
             },
             toolbox: {
                 show: true,
@@ -1296,11 +1314,11 @@ function decodedatas(obj_chartdata) {
                 symbolSize: 1,
                 data: pa,
                 markPoint: {
-                    //symbol: 'circle',
+                    symbol: 'arrow',
                     symbolSize:20,
                     data: [
-                        {type: 'max', name: '最大值'},
-                        {type: 'min', name: '最小值',symbolRotate:-180}
+                        {type: 'max', name: '最大值',symbolRotate:-180},
+                        {type: 'min', name: '最小值'}
                     ]
                 },
                 /*markLine:{
@@ -1700,10 +1718,10 @@ function initecharts(){
             {
                 name: '占比统计',
                 type: 'pie',
-                radius: [0, '40%'],
+                radius: ['20%', '50%'],
                 avoidLabelOverlap: false,
                 label: {
-                    formatter: '{b}： {c}\n\n  {{d}%}  ',
+                    formatter: '{b}: {c}\n\n  {{d}%}  ',
                     show: true,
                     position: 'out',
                     color:"#fff",
@@ -1712,18 +1730,18 @@ function initecharts(){
                     bleedMargin: 5,
                     margin: 20
                 },
-                //barWidth: '60%',
+                //barWidth: '60%', []
                 emphasis: {
                     label: {
                         show: true,
-                        fontSize: '20',
+                        fontSize: '18',
                         fontWeight: 'bold'
                     }
                 },
                 labelLine: {
                     show: true
                 },
-                data: []//,,{value:90,name:'告警'},{value:0,name:"严重告警"}
+                data: []//,,{value:90,name:'告警'},{value:0,name:"严重告警"} 
                     //{value:30,name:'故障'},{value: 20,name: '停运'}]{value:310,name:'正常'}, {value:52,name:'预警'},{value:20,name:'一级告警'} ,
                     //{value:34,name:'二级告警'}
             }
@@ -1754,4 +1772,9 @@ function jisuanyichangbili(avalue){
  * 数据列表项控制显示项添加folder属性，并进行页面级存储，在刷新时加载。同时可以在标签没有配置项时可以通过实时数据获取到其folder属性。1224
  * 数据列表显示控制函数合并（告警、设备、实时）
  * 解决在没有数据时的状态比例图形显示错误问题；
+ * 2021
+ * 解决原来数值不能进行倒叙排序的问题。图表配置项页面保存
+ * 
+ * 解析实时数据时对标签选项的匹配做优化，减少循环次数提高运行效率。分页的每页最大行数进行页面级保存。添加刷新时重新定位到当前选定的行所在的页和行。
+ * 解决由于从页面取值为字符类型而设置分页长度失败的问题。
  */

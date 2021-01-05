@@ -253,6 +253,7 @@ function queryhistorydata() {
         for(var i=0;i<sensors.length;i++){
             if(sensors[i].id==sessionStorage.SensorId){
                 type=sensors[i].Value.type; //Catalog
+                break;
             }
         }
     }
