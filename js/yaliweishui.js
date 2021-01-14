@@ -1,8 +1,8 @@
 //const { data } = require("jquery");
-var option,option1;
-var chartgauge_hut=echarts.init(document.getElementById("ht-gauge"));
+var min=0;
+var chartgauge=echarts.init(document.getElementById("ht-yibiaopan"));
 function initgauge(divid,data){
-    option={
+    var option={
         backgroundColor: '#7b7b7b',
         tooltip: {
             formatter:  "{a}: <br/>{c} "
@@ -84,7 +84,7 @@ function initgauge(divid,data){
             detail: {
                 show: true,
                 offsetCenter: ['0', '-130%'],
-                formatter:  "温度: {value} ℃",
+                formatter:  "压力: {value} Pa",
                 textStyle: {
                     fontSize: 18,
                     color:'#F8F43C',
@@ -153,7 +153,7 @@ function initgauge(divid,data){
             detail: {
                 show: true,
                 offsetCenter: ['0', '130%'],
-                formatter: '湿度: {value}'+'%',
+                formatter: '微水: {value} PPM',
                 textStyle: {
                     fontSize: 18,
                     color:'#F8F43C',
@@ -164,19 +164,19 @@ function initgauge(divid,data){
     }
     divid.setOption(option);
 }
-initgauge(chartgauge_hut,[{value:65,name:"温度"},{value:10,name:"湿度"}])
-var chart_line_hut=echarts.init(document.getElementById("ht-chart"));
+initgauge(chartgauge,[{value:65,name:"压力"},{value:10,name:"微水"}])
+var chart_line=echarts.init(document.getElementById("ht-qushi"));
 function initlinechart(divid,data){
-    option1 = {
+    var option = {
         title: {
-            text: '温湿度变化趋势',
+            text: '压力微水变化趋势',
         },
         tooltip: {
             trigger: 'axis',
             formatter: function (params) {
                 param = params[0];
                 var date = new Date(param.name);
-                return date.getFullYear()+'-'+ (date.getMonth() + 1)+date.getDate()+ ' '+date.getHours()+':'+date.getMinutes()+'  <br/> ' +" 温度 ："+ params[0].value[1]+"℃ <br/>  湿度 ："+params[1].value[1]+" %";
+                return date.getFullYear()+'-'+ (date.getMonth() + 1)+date.getDate()+ ' '+date.getHours()+':'+date.getMinutes()+'  <br/> ' +" 压力 ："+ params[0].value[1]+"Pa <br/>  微水 ："+params[1].value[1]+" ppm";
             },
             axisPointer: {
                 animation: false,
@@ -214,7 +214,7 @@ function initlinechart(divid,data){
         }
         ],
         yAxis: [{
-            name: '温度',
+            name: '压力',
             type: 'value',
             //boundaryGap: [0, '100%'],
             splitLine: {
@@ -223,7 +223,7 @@ function initlinechart(divid,data){
             max:200,
             min:-30,
         },{
-            name: '湿度',
+            name: '微水',
             type: 'value',
             //namelocation: 'start',
             gridIndex: 1,
@@ -249,14 +249,14 @@ function initlinechart(divid,data){
             }
         ],
         legend: {
-            data: ["温度","湿度"],
+            data: ["压力","微水"],
             color: '#FF0000',
             x: 'center',
             y: 'top',
             orient :'horizontal',//'vertical',
         },
         series: [{
-            name: '温度',
+            name: '压力',
             type: 'line',
             color:"#f00",
             showSymbol: false,
@@ -264,7 +264,7 @@ function initlinechart(divid,data){
             data: data[0],
         },
         {
-            name: '湿度',
+            name: '微水',
             type: 'line',
             color:"#00f",
             xAxisIndex: 1,
@@ -274,13 +274,13 @@ function initlinechart(divid,data){
             data: data[1],
         }],
     };
-    divid.setOption(option1);
+    divid.setOption(option);
 }
 function randomData() {
     now = new Date(+now + oneHour);
     value =  Math.random() * 180 - 20;
     value1 =  Math.random() * 100 - 0;
-    var min=now.getMinutes();
+    min=now.getMinutes();
     if(min<10){
         min="0"+min;
     }
@@ -293,34 +293,34 @@ function randomData() {
     ];
 }
 var datas = [];
-var data1=[],data2=[];
+var data3=[],data4=[];
 var now = +new Date(2020,6, 1,3,8);
 var oneHour=600*1000;
 var oneDay = 24*oneHour;
 var value = Math.random() * 10;
 for (var i = 0; i < 99; i++) {
     var value2=randomData();
-    data1.push(value2[0]);
-    data2.push(value2[1]);
+    data3.push(value2[0]);
+    data4.push(value2[1]);
 }
-datas.push(data1);
-datas.push(data2);
-initlinechart(chart_line_hut,datas);
+datas.push(data3);
+datas.push(data4);
+initlinechart(chart_line,datas);
 setInterval(function () {
     
     for (var i = 0; i <1; i++) {
-        data1.shift();
-        data2.shift();
+        data3.shift();
+        data4.shift();
         var value3=randomData();
-        //data1.push(value3[0]);
-        //data2.push(value3[1]);
+        //data3.push(value3[0]);
+        //data4.push(value3[1]);
     }
-    refresh_hum_temp(new Date(+now + oneHour),value3[0].value[1],value3[1].value[1]);
-   // refresh_hum_swet(new Date(+now + oneHour),value3[1].value[1]);
+    refresh_yaliweishui_swet(new Date(now + oneHour),value3[1]);
+    refresh_yaliweishui_temp(new Date(now + oneHour),value3[0])
     /*datas.splice(0,datas.length);//
-    datas.push(data1);
-    datas.push(data2);
-    chart_line_hut.setOption({
+    datas.push(data3);
+    datas.push(data4);
+    chart_line.setOption({
         series: [{
             //data: datas[0],
         },
@@ -329,7 +329,7 @@ setInterval(function () {
         },
     ],
     });
-    chartgauge_hut.setOption({
+    chartgauge.setOption({
         series:[
             {
                 data:[{name:"温度",value:value3[0].value[1]}],
@@ -386,49 +386,52 @@ function iniview(){
 	}
 	setSelectOption("jcdd", sessionStorage.SensorId);
 }
-function refresh_hum_temp(atime,avalue,avalue2){
-    //data1.shift();
+function refresh_yaliweishui_temp(atime,avalue){
+    //data3.shift();
     var min=atime.getMinutes();
     if(min<10){
         min="0"+min;
     }
-    if(avalue)
-        data1.push({name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue]});
-    if(avalue2)
-        data2.push({name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue2]});
-    option1.series[0].data=data1;
-        chart_line_hut.setOption( {series:[{
-            data:data1,
+    data3.push(avalue);//{name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue]});
+    //data4.push({name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue2]});
+    chart_line.setOption({series:[{
+            data:data3,
         },
         {
-            data:data2,
+            //data:data4,
         }],
     });
-    option.series[0].data[0].value=avalue;
-    chartgauge_hut.setOption({
+    chartgauge.setOption({
         series:[
             {
-                data:[{name:"温度",value:avalue}],
+                data:[{name:"压力",value:avalue.value[1]}],
             },
             {
-                data:[{name:"湿度",value:avalue2}],
+                //data:[{name:"微水",value:avalue2}],
             },
         ],
     });
 }
-function refresh_hum_swet(atime,avalue2){
-    data2.push({name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue2]});
-    //option1.series[1].data=data2;
-    chart_line_hut.setOption({
+function refresh_yaliweishui_swet(atime,avalue2){
+    data4.push(avalue2);//{name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue2]});
+    chart_line.setOption({
         series:[{
-            data:data1,
+            //data:data3,
         },
         {
-            data:data2,
+            data:data4,
         }],
     });
-    option.series[1].data[0].value=avalue2;
-        chartgauge_hut.setOption(option) 
+    chartgauge.setOption({
+        series:[
+            {
+                //data:[{name:"压力",value:avalue}],
+            },
+            {
+                data:[{name:"微水",value:avalue2.value[1]}],
+            },
+        ],
+    });
 }
 function gradeChange() {
     var objS = document.getElementById("jcdd");

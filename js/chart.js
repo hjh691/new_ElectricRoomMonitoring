@@ -36,8 +36,9 @@
         var sensors=tree_obj.treeview("getUnselected");//选取未选中项
         if(sensors && sel_sensor)
         var nodeid;
-        for (var i =sel_sensor.length-1 ; i >=0; i--) {//使得最后选中的标签维最靠前面的标签，树形菜单定位到第一个被选中的标签位置；原来（正序）为最后一个
-            for(var j=0;j<sensors.length;j++){
+        let sel_sersor_len=sel_sensor.length,sensors_len=sensors.length;
+        for (var i =sel_sersor_len-1 ; i >=0; i--) {//使得最后选中的标签维最靠前面的标签，树形菜单定位到第一个被选中的标签位置；原来（正序）为最后一个
+            for(var j=0;j<sensors_len;j++){
                 if(sel_sensor[i]==sensors[j].id){
                     //if(i==0)
                     nodeid=sensors[j].nodeId;
@@ -58,7 +59,7 @@
         }
     }
     //添加类别分组选项
-    function appenddisplaytype(anodeid){
+    function appenddisplaytype(){
         try{
         selectText="";
         if(sessionStorage.selectText){
@@ -66,6 +67,7 @@
         }else{
             sel_str=[];
         }
+        let sel_str_len=sel_str.length;
         var temp=document.getElementById("display_type");
         allconfigs=JSON.parse(localStorage.Configs);
         if(allconfigs){
@@ -81,7 +83,7 @@
                     }
                     if(isfound){
                         isfound=false;
-                        for(var j=0;j<sel_str.length;j++){
+                        for(var j=0;j<sel_str_len;j++){
                             if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
                                 temp.children[i].children[0].checked=true;
                                 break;
@@ -201,14 +203,14 @@
             if (data!= null) {//Result.
                 if (!jQuery.isEmptyObject(data.datas)) {
                     //showstateinfo("");
-                    decodedatas( data.datas,apt,atitle);
+                    decodedatas( data.datas,apt,atitle,aname);
                 } else {
                     //showmsg("没有符合条件的 “"+atitle+"” 记录");
                     showstateinfo("没有符合条件的 "+atitle+" 记录");
-                    decodedatas([],apt,atitle);//
+                    decodedatas([],apt,atitle,aname);//
                 }
             } else {
-                decodedatas([],apt,atitle);//
+                decodedatas([],apt,atitle,aname);//
                 //showmsg("没有符合条件的 “"+atitle+"” 记录",info_showtime);
                 showstateinfo("没有符合条件的 "+atitle+" 记录");
             }
@@ -227,7 +229,7 @@ $(document).on("click",".check_box",function (event){
     //文本值，用于显示
     //var selectVal=$selectValDom.val();//实际值，会提交到后台的
     var selected_text=$(this).siblings("span").text();//当次勾选的文本值
-    var selected_val=$(this).val();//当次勾选的实际值
+    //var selected_val=$(this).val();//当次勾选的实际值
     //判断是否选择过
     if(isSelected=="true"){
         selectText=$selectTextDom.val();
@@ -303,15 +305,9 @@ function showchartview(asel_str) {
     }
 }
 //绘图变化趋势图   used by electricroommonitor chart.html
-function decodedatas(obj_chartdatas,apt,atitle) {
+function decodedatas(obj_chartdatas,apt,atitle,aname) {
     try{
-    //var iserror = false,
-	//err_info = "获取";
-	//var isnull = false,
 	var jiange="";
-	//var stime=new Date(kssj).getTime();
-	//var etime=new Date(jssj).getTime();
-	//var senconds=etime-stime;
 	var pa = [],pb = [],pc = [];
 	var maxvalue=-1,minvalue=-1,maxval=-1,minval=-1;//avgvalue=0,ps=0,count=1,
 	var lengenddata = [];
@@ -328,7 +324,12 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 			//title_th.setAttribute('style','text-align: center');
 			title_th.innerHTML=atitle;
 			title_tr.appendChild(title_th);
-			tbody.appendChild(title_tr);
+            tbody.appendChild(title_tr);
+            let atr=creatTr();
+            for(i=0;i<check_name.length;i++){
+                atr.cells[i+2].innerHTML=check_name[i];
+            }
+            tbody.appendChild(atr);
 			for(var i=0;i<check_val.length;i++){
 				var sensorid=check_val[i];
 				var series=new Object();
@@ -343,8 +344,9 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 					}
 					maxvalue=minvalue=parseFloat(obj_chartdata[0].value);
 					for (var j = 0; j <obj_chartdata.length; j++) {
-						if(obj_chartdata[j].sensorId==sensorid){
-							pb.push([strtodatetime(obj_chartdata[j].time), obj_chartdata[j].value, j]);
+                        if(obj_chartdata[j].sensorId==sensorid){
+                            let name=obj_chartdata[j].name.toLowerCase();
+                            pb.push([strtodatetime(obj_chartdata[j].time.replace(/T/g," ").substring(0,19)), obj_chartdata[j].value, j]);
 							if(isNaN(parseFloat(obj_chartdata[j].value))){
 								obj_chartdata[j].value=-1;
 							}
@@ -353,20 +355,51 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 							}
 							if(parseFloat(obj_chartdata[j].value)<minvalue){
 								minvalue=parseFloat(obj_chartdata[j].value);
-							}
-							var tr=document.createElement("tr");
-							var td_name=document.createElement("td");
-							td_name.innerHTML=check_name[i];
-							var td_time=document.createElement("td");
-							td_time.innerHTML=obj_chartdata[j].time;
-							var td_value=document.createElement("td");
-							td_value.innerHTML=obj_chartdata[j].value;//.toFixed(2);
-							var td_bz=document.createElement("td");
-							tr.appendChild(td_name);
-							tr.appendChild(td_time);
-							tr.appendChild(td_value);
-							tr.appendChild(td_bz);
-							tbody.appendChild(tr);
+                            }
+                            if(i===0){
+                                atr=creatTr();
+                                atr.cells[0].innerHTML=obj_chartdata[j].name.toLowerCase();
+                                atr.cells[1].innerHTML=obj_chartdata[j].time.replace(/T/g," ").substring(0,19);
+                                atr.cells[2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
+                                tbody.appendChild(atr);
+                            }else{
+                                let rows=tbody.rows;
+                                let rows_len=rows.length;
+                                for(k=2;k<rows_len;k++){
+                                    let tname=rows[k].cells[0].outerText;
+                                    if(tname==name){
+                                        let jiange=GetDateDiff(rows[k].cells[1].outerText,obj_chartdata[j].time.replace(/T/g," ").substring(0,19),"minute");
+                                        if(jiange<-1*min_timeInterval){
+                                            atr=creatTr();
+                                            atr.cells[0].innerHTML=obj_chartdata[j].name.toLowerCase();
+                                            atr.cells[i].innerHTML=obj_chartdata[j].time.replace(/T/g," ").substring(0,19);
+                                            atr.cells[i+2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
+                                            tbody.insertBefore(atr,rows[k]);
+                                            break;
+                                        }else if(jiange<min_timeInterval){
+                                            rows[k].cells[i+2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
+                                            break;
+                                        } else if(jiange>2 && jiange<=max_timeInterval){
+                                            atr=creatTr();
+                                            atr.cells[0].innerHTML=obj_chartdata[j].name.toLowerCase();
+                                            atr.cells[1].innerHTML=obj_chartdata[j].time.replace(/T/g," ").substring(0,19);
+                                            atr.cells[i+2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
+                                            tbody.insertBefore(atr,rows[k+1]);
+                                            break;
+                                        }else{
+                                            continue;
+                                        }
+                                    }else{
+                                        continue;
+                                    }
+                                }
+                                if(k>rows_len){
+                                    atr=creatTr();
+                                    atr.cells[0].innerHTML=obj_chartdata[j].time.replace(/T/g," ").substring(0,19);
+                                    atr.cells[i+1].innerHTML=(obj_chartdata[j].vlaue*1).toFixed(Number_of_decimal);
+                                    tbody.appendChild(atr);
+                                }
+                            }
 						}
 					}
 					if(i==0){
@@ -377,15 +410,16 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 						minval=minval<minvalue?minval:minvalue;
 					}
 				}
-			}	series.type='line';
-				series.step= step;
-				series.showAllSymbol=true;
-				series.symbolSize= 1;
-                series.data= pb;
-                series.smooth=true;
-                series.smoothMonotone='x',
-				//series.itemStyle= {normal: {areaStyle: {type: 'default'}}}; //线下区域
-				seriess.push(series);
+            }	
+            series.type='line';
+            series.step= step;
+            series.showAllSymbol=true;
+            series.symbolSize= 1;
+            series.data= pb;
+            series.smooth=true;
+            series.smoothMonotone='x',
+            //series.itemStyle= {normal: {areaStyle: {type: 'default'}}}; //线下区域
+            seriess.push(series);
 		}
 	}
 	
@@ -401,7 +435,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 	function drawchart() {
 		//var myChart = echarts.init(document.getElementById('main'));
 		var option = {
-			color: ['#ff6c00', '#FF0000','#228B22',"#9400D3","#00BFFF","#3B30f2","#20B2AA","#0000CD"," #FF4500 "],//
+			color: ['#ff6c00', '#FF0000','#228B22',"#9400D3","#00BFFF","#3B30f2"],//,"#20B2AA","#0000CD"," #FF4500 "
 			backgroundColor: '#dcdcdc',
 			title : {
 						text : atitle+": "+' 变化趋势比对  ',//标题 标签名称+项目名称；
@@ -426,9 +460,25 @@ function decodedatas(obj_chartdatas,apt,atitle) {
 						show: false,
 					},
 					dataView: {
-						show: false,
-						readOnly: false
-					},
+                        show: true,
+                        readOnly: false,
+                        optionToContent: function () {
+                            //let axisData = opt.xAxis[0].data; //坐标数据
+                            let table= '<table border="1" ><tbody>';
+                            let tbody=$("#comprate-tbody").clone();
+                            let rl=tbody[0].rows.length;
+                            tbody[0].rows[0].cells[0].setAttribute("style","display:none");
+                            if(!aname)//避免aname为空时造成函数操作错误。
+                                aname="";
+                            for(let i=2;i<rl;i++){
+                                if(tbody[0].rows[i].cells[0].outerText!=aname.toLowerCase()){//屏蔽掉其他类型的数据，因为tbody是克隆的所有查询的数据列表.
+                                    tbody[0].rows[i].setAttribute("style","display:none");
+                                }
+                            }
+                            table += tbody[0].innerHTML+'</tbody></table>';
+                            return table;
+                        }
+                    },
 					magicType: {
 						show: true,
 						type: ['line'],
@@ -516,6 +566,18 @@ function decodedatas(obj_chartdatas,apt,atitle) {
         showstateinfo(err.message,"chart/decodedatas");
     }
 }
+//创建新的报表数据行（所选类型总和在多两列（数据类型（隐藏用于区分数据分组的项）和时间）
+function creatTr(){
+    let atr=document.createElement("tr");
+    for(var i=0;i<=check_val.length+1;i++){
+        let atd=document.createElement("td");
+        atd.innerHTML= "&nbsp;";
+        if(i===0)
+            atd.setAttribute("style",'display:none');
+        atr.appendChild(atd);
+    }
+    return atr;
+}
 /**
  * 对比配置项根据标签进行动态添加以及去除重复项功能，页面根据对比项目自动进行动态调整显示图形视窗的功能，
 	编写树形菜单的双击响应程序（采用选中与释放之间的时间作为标准进行判断，小于一定时间视为双击，视频预览添加通道双击打开再次双击关闭功能
@@ -525,4 +587,7 @@ function decodedatas(obj_chartdatas,apt,atitle) {
     20201203 修改在没有数据返回时（返回为空或没有返回时）图形区域的显示已经对应标签的图例显示。 refridgerator 
     多选后提示，消除按钮的闪烁提醒。
     在没有选中参加对比的标签时的提示框自定义jQuery提示框形式，添加底色和动画效果.
+
+    修改数据报表格式和方法。
+    修改图形数据视图格式，去掉多余数据只显示本类型数据,其他列没有数据名称的问题，数据视图不显示。
  */

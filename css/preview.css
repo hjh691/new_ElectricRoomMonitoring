@@ -63,6 +63,7 @@ legend{
 fieldset
 {
 	display:block;
+	border:1px solid #7F9DB9;
 }
 /*本地配置*/
 .localconfig

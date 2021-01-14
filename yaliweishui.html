@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>压力微水状态</title>
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/flooding_smoking.css"/><!---->
+        <link rel="stylesheet" href="css/electricroommonitoring.css"/>
+    </head>
+    <body>
+        <div class="rowlay" align="center"> 
+            <span class="condition" >
+                <label>计量点名称：</label>
+            <select id="jcdd" onchange="gradeChange()"  style="border-radius: 5px;">
+            </select >
+        </div>
+        <h2 align="center">压力微水状态</h2>
+        <div align="center"> 
+            <table id="humiture">
+                <tr>
+                    <!--<td class="ht-pointname" >
+                        <p class="ht-pointname">现场温湿度</p>
+                    </td>-->
+                    <td >
+                        <div class="ht-gauge" id="ht-yibiaopan"></div>
+                    </td>
+                    <td >
+                        <div class="ht-chart" id="ht-qushi"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <script type="text/javascript" sre="js/jquery-3.3.1.js"></script>
+        <script type="text/javascript" src="js/echarts.js"></script>
+        <script type="text/javascript" src="js/yaliweishui.js"></script>
+    </body>
+</html>

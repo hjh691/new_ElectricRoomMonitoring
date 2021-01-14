@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 	<link rel="stylesheet" href="css/bootstrap.min.css" />
 	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
-	<title>实时数据</title>
+	<title>实时气象</title>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js" ></script>
 	<script  type="text/javascript" src="js/config.js"></script>
@@ -50,21 +50,50 @@
 	.container{
 			width: 97%;
 			height:100%;
-            margin-left: 5px;
+            margin-left: 15px;
 			margin-right: 5px;
-			margin:0px;
+            margin:15px;
+            align:center;
         }
+    .wather{
+        border: rgb(90, 89, 89) solid 1px;
+        height: 200px;background-color:rgb(209, 207, 207);
+        margin: 0px;
+        display: table-cell;
+        vertical-align: middle;
+    }
+    .wather_wind{
+        font-size: 20px;
+    }
   </style>
 </head>
 <body > <!-- onunload="stopWorker()" onload="getrealdatabynodeid(-1)" 20200408修改，重复调用此函数,提示框不能认为关闭。-->
 	<div class="container">
-		<div  class="row" >
-			<div class="col-xs-12 col-md-6 col-lg-6"  style="border: rgb(90, 89, 89) solid 0px;height: 300px;background-color:rgb(209, 207, 207);">
-				<div id="realdata_realdata" ></div>
+		<div  class="row" align="center">
+			<div class="col-xs-4 col-md-2 col-lg-2 wather"  >
+                <div id="wather" style="display:table-cell;vertical-align: middle;height: 100%;width:300px;height: 200px;" >
+                    <div class="wather_wind"><span> 天气：<i id="wind_forward" class="glyphicon glyphicon-cog"></i>  晴</span></div>
+                    <div class="wather_wind"><i id="wind_class" class="glyphicon glyphicon-dashboard"></i><span> 气压： Mpa</span></div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-md-2 col-lg-2 wather" > 
+				<div id="wather_wind" style="display:table-cell;vertical-align: middle;height: 100%;width:300px;height: 200px;">
+                    <div class="wather_wind"><i id="wind_forward" class="glyphicon glyphicon-tint"></i><span> 风向：西北</span></div>
+                    <div class="wather_wind"><i id="wind_class" class="glyphicon glyphicon-cloud"></i><span> 风力：3-4级</span></div>
+                </div>
 			</div>
-			<div class="col-xs-12 col-md-6 col-lg-6"  style="border: rgb(90, 89, 89) solid 0px;height: 300px;background-color:rgb(209, 207, 207);">
-				<div id="realdata_chart" style="margin-top:20px;" ></div>
-			</div>
+			<div class="col-xs-4 col-md-2 col-lg-2 wather"  >
+				<div id="wather_temp" style="display:table-cell;vertical-align: middle;height: 100%;width:300px;height: 200px;" ></div>
+            </div>
+            <div class="col-xs-4 col-md-2 col-lg-2 wather"  >
+				<div id="wather_swet" style="display:table-cell;vertical-align: middle;height: 100%;width:300px;height: 200px;" ></div>
+            </div>
+            <div class="col-xs-4 col-md-2 col-lg-2 wather"  >
+				<div id="wather_pa" style="margin-top:20px;" ></div>
+            </div>
+            <div class="col-xs-4 col-md-2 col-lg-2 wather"  >
+				<div id="wather_water" style="margin-top:20px;" ></div>
+            </div>
 		</div>
 		<div  class="row" style="margin-bottom:10px;width:100%;overflow:auto;display: none;" text-align="center">
 			<ul class="count_info" text-align="center" widht="1000px" >
@@ -128,7 +157,7 @@
 		</div>
 		</div>
 	</div>
-	<script type="text/javascript" src="js/otherdata.js">
+	<script type="text/javascript" src="js/wather.js">
 		
 	</script><!---->
 </body>

@@ -55,9 +55,9 @@ function decoderealdata(){
     if (obj_realdata) {
         if(v_sel){//有显示控制选择项时进行如下操作， 20200509 编写，还需测试完善。
             for (var j=0;j<obj_realdata.length;j++) {
-                typename=obj_realdata[j].Name;
-                grouptype=obj_realdata[j].Catalog;
-                bondinginfo=obj_realdata[j].Desc
+                typename=obj_realdata[j].name;
+                grouptype=obj_realdata[j].folder;
+                bondinginfo=obj_realdata[j].desc
                 if(obj_realdata[j].SensorId==sid){//是否为新的标签项
                     isnew=false;
                 }else{ 
@@ -255,8 +255,8 @@ function decoderealdata(){
             //tappanes[i].classList.add("active");
             z_count++;
         }else{
-            tappanes[i].style.display="none";
-            tablabels[i].style.display="none";
+            //tappanes[i].style.display="none";
+            //tablabels[i].style.display="none";
         }
         tablabels[i].classList.remove("in");
         tablabels[i].classList.remove("active");
@@ -291,6 +291,7 @@ function initpage() {
     updatapcnav(14);
     sessionStorage.framepage="realstate.html";
     sessionStorage.pageindex=2;
+    window.parent.closeloadlayer();
     var parentid=-100,parentname="";
 	var maps=[];
     if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。

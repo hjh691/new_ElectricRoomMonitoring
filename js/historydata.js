@@ -77,8 +77,8 @@ function initpage(){
         sessionStorage.SensorName="";
     }
     //if(sessionStorage.timeindex==4){//
-                                        
-        queryhistorydata(0);//decodedatas();//
+        stoptimer(timer)                             
+        //queryhistorydata(0);//decodedatas();//
     //}
     $("#main").height(parent.window.windowHeight-250);
     $("#list").height(parent.window.windowHeight-250);
@@ -94,17 +94,19 @@ function appenddisplaytype(element_id,time){
     for(var i=display_type.childElementCount;i>0;i--)
     display_type.removeChild(display_type.childNodes[i]);
     if(element_id>=0){
-        if(sensors)
-        for(var k=0;k<sensors.length;k++){
+        if(sensors){
+        let sensors_len=sensors.length;
+        for(var k=0;k<sensors_len;k++){
             if(sensors[k].Value.id==element_id){
                 scatalog=sensors[k].Value.type;//catalog;//读取对应的Catalog项1
                 if(scatalog)
                     scatalog=scatalog.toLowerCase();
                 break;
             }
-        }
+        }}
         if(configs){
-            for(var i=0;i<configs.length;i++){
+            let configs_len=configs.length;
+            for(var i=0;i<configs_len;i++){
                 if((configs[i].name.toLowerCase()==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
                     var s_des=configs[i].details;//如果有，读取其所有配置项
                     for(var p in s_des){
@@ -174,8 +176,9 @@ function buildnode(data, level) {//no used
             //var lnode=new Object();
             tree.push(anodes);
         }*/
-    }else
-    for (var j = 0; j < data.length; j++) {
+    }else{
+    let data_len=data.length;
+    for (var j = 0; j < data_len; j++) {
             var anodes = new Object();
             anodes.text = data[j].Value.Name;
             anodes.id = data[j].Value.Id;
@@ -226,6 +229,7 @@ function buildnode(data, level) {//no used
             }
             tree.push(anodes);
         }
+    }
     return tree;
 }
 function tableclick(tr){
@@ -249,14 +253,14 @@ function changetype(){
 }
 //查询历史记录
 function queryhistorydata() {
-    if(sensors){//
+    /*if(sensors){//
         for(var i=0;i<sensors.length;i++){
             if(sensors[i].id==sessionStorage.SensorId){
                 type=sensors[i].Value.type; //Catalog
                 break;
             }
         }
-    }
+    }*/
     stoptimer(timer);
     /*var sel=document.getElementById("jcdd");
     if(sel.options.length<=0){
@@ -296,6 +300,44 @@ function queryhistorydata() {
     for (var int = 0; int < tableLength; int++) {
         tbl.deleteRow(0);
     }*/
+    gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
+    isfirst=false;
+    //document.getElementById("timedefine").style.display="none";
+}
+//自主查询历史记录
+function queryhistorydataself() {
+    let folder=$('#folder_history');
+    let datatype=$("#datatype_history");
+    if(folder[0].value==null||folder[0].value.trim()==""){//
+        showmsg("请输入数据分组名称");
+        return;
+    }else{
+        catalog=folder[0].value;
+    }
+    if(datatype[0].value==null||datatype[0].value.trim()==""){//
+        showmsg("请输入查询的数据类型名称");
+        return;
+    }else{
+        dname=datatype[0].value;
+    }
+    if(sessionStorage.timeindex==4){
+        var kssj = document.getElementById("kssj_history").value;
+        if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
+            showmsg("请指定开始时间",info_showtime);
+            showstateinfo("请指定开始时间");
+            return;
+        }
+        var jssj = document.getElementById("jssj_history").value;
+        if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
+            showmsg("请指定截至时间",info_showtime);
+            showstateinfo("请指定截止时间");
+            return;
+        }
+        sessionStorage.kssj = kssj;
+        sessionStorage.jssj = jssj;
+    }
+    sessionStorage.typename=dname;
+    sessionStorage.typecatalog=catalog;
     gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
     isfirst=false;
     //document.getElementById("timedefine").style.display="none";
@@ -435,7 +477,7 @@ function decodedatas(obj_data){
         maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
         maxval=minval=maxvalue;
         hourvalue=parseFloat(obj_data[0].value);
-        maxtime=mintime=obj_data[0].time.replace(/T/g," ").substring(0,19);;
+        maxtime=mintime=obj_data[0].time.replace(/T/g," ").substring(0,19);
         var strtime=obj_data[0].time.replace(/T/g," ").substr(0,10);
         var temp=parseInt(strtime.substr(8));
         jisuan(8,10);//参数是区日期时间格式串的起始和结束位置的由零算起的索引值。2020-04-16 14:50:10，
@@ -537,7 +579,29 @@ function decodedatas(obj_data){
                     },
                     dataView: {
                         show: true,
-                        readOnly: false
+                        readOnly: false,
+                        optionToContent: function (opt) {
+                            //let axisData = opt.xAxis[0].data; //坐标数据
+                            let series = opt.series; //折线图数据
+                            let tdHeads = '<td  >时间</td>'; //表头
+                            let tdBodys = ''; //数据
+                            series.forEach(function (item) {
+                                //组装表头
+                                tdHeads += `<td >${item.name}</td>`;
+                            });
+                            let table = `<table border="1" ><tbody><tr>${tdHeads} </tr>`;
+                            for (let i = 0, l = series[0].data.length; i < l; i++) {
+                                for (let j = 0; j < series.length; j++) {
+                                    //组装表数据
+                                    strtime=dateToString(new Date(series[j].data[i][0]),2);
+                                    tdBodys += `<td>${ series[j].data[i][1]}</td>`;
+                                }
+                                table += `<tr><td >${strtime}</td>${tdBodys}</tr>`;
+                                tdBodys = '';
+                            }
+                            table += '</tbody></table>';
+                            return table;
+                        }
                     },
                     magicType: { //
                         show: true,

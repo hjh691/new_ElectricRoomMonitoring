@@ -2,7 +2,7 @@
 function timedCount()
 {
     postMessage(1);
-    setTimeout("timedCount()",1000);
+    setTimeout("timedCount()",60000);
 }
 
 timedCount();

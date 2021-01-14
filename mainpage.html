@@ -172,7 +172,6 @@
 		</div>
 	</div>
 	<script>
-		
 		var windowHeight;
 		var infotreedata = [], maps = [];
 		var mnodes=[];
@@ -180,7 +179,7 @@
 		var allsensors = null;
 		var sensorsnode=null;
 		var nodes = null, nodeid = -1;
-		sessionStorage.txid=-1;//20200228 初始化一次图形id
+		//sessionStorage.txid=-1;//20200228 初始化一次图形id
 		sessionStorage.nodetype=1;
 		var iframemain=$("#iframe_main");
 		var multiselect = false;
@@ -236,6 +235,7 @@
 			function () {
 				try{
 				$("#KeFuDiv").roll({ speed: 3 });//字幕滚动/**/
+				//jquery信息框
 				dialog=$("#message_dialog").dialog({
                     draggable:false,
                     resizable:false,
@@ -258,15 +258,15 @@
 					w.onmessage = function (event) {//接收定时器返回的消息
 						//document.getElementById("result").innerHTML = event.data;
 						i++;
-						if ((i % 60 == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
+						//if ((i % 60 == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
 							//sendbeat();
 							getrealdatabynodeid(realdataid);
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
-						}
-						if((i % 300==0)&&(sessionStorage.islogin=="false")){
+						//}
+						if((sessionStorage.islogin=="false")&&(i % 5==0)){
 							LoginOrder(localStorage.username,sessionStorage.password,1);
 						}
-						if((i % 900==0)&&(sessionStorage.pageindex==1)){
+						if((sessionStorage.pageindex==1)&&(i % 15==0)){
 							iframemain[0].contentWindow.getbinary();//刷新一次图形
 						}
 					};
@@ -580,9 +580,9 @@
 						}
 					} else if((data.Catalog).indexOf(sysnames[5])>=0){ //综合
 
-					}else if((data.Catalog).indexOf(sysnames[6])>=0){//开关柜
+					}//else if((data.Catalog).indexOf(sysnames[6])>=0){//开关柜
 
-					}
+					//}
 					else {//其他或默认
 						//infotreeobj.value=0;
 						infotreeobj.children = [];
@@ -617,11 +617,12 @@
 						infotreeobj.level = data.level;
 						nfotreedata.push(infotreeobj);
 					}
-					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
-						var p_node = getThe_level_nodeid(data, i);
-						sensorstree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
-					}
-					sensorstree.treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
+					//for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
+					//	var p_node = getThe_level_nodeid(data, i);
+					//	sensorstree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+					//}
+					//sensorstree.treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);
+					sensorstree.treeview("revealNode",[data.nodeId, { levels: 1, silent: true }])
 				},
 				onSearchComplete:function(event, data) { 
 					var firstSearchResult = sensorstree.find('ul').find('li[data-nodeid='+ sessionStorage.selNodeId +']');
@@ -685,11 +686,12 @@
 			//}
 			var firstNode = sensorstree.treeview("getNode", sessionStorage.selNodeId);
 			sensorstree.treeview('expandNode', [firstNode, { levels: 2, silent: true }]);//展开第一个节点
-			for (var i = 0; i < firstNode.level; i++) {//逐级展开所选节点的父节点。
-				var p_node = getThe_level_nodeid(firstNode, i);
-				sensorstree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
-			}
-			sensorstree.treeview('expandNode', [firstNode.nodeId, { levels: 1, silent: true }]);
+			//for (var i = 0; i < firstNode.level; i++) {//逐级展开所选节点的父节点。
+			//	var p_node = getThe_level_nodeid(firstNode, i);
+			//	sensorstree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+			//}
+			//sensorstree.treeview('expandNode', [firstNode.nodeId, { levels: 1, silent: true }]);
+			sensorstree.treeview("revealNode",[firstNode.nodeId, { levels: 1, silent: true }])//展开所选节点
 			//$('#tree').treeview('expandNode', [ tree[0].id, { levels: 2, silent: true } ]);
 			//$('#tree').treeview('selectNode', [firstNode, { silent: true }]);
 			sensorstree.treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
@@ -814,7 +816,8 @@
 		
 		function decode(adata) {
 			var infotree = [];
-			for (var i = 0; i < adata.length; i++) {
+			let data_len=adata.length;
+			for (var i = 0; i < data_len; i++) {
 				var tempobj = new Object();
 				tempobj.name = adata[i].text;
 				tempobj.id = adata[i].id
@@ -837,14 +840,15 @@
 		function decode_sensors(adata) {
 			var infotree = [];
 			var ishavechild = false;
-			for (var i = 0; i < adata.nodes.length; i++) {
+			let data_nodes_len=adata.nodes.length;
+			for (var i = 0; i < data_nodes_len; i++) {
 				if ((adata.hasOwnProperty("nodes")) && adata.nodes.length > 0) {
 					//adata=adata.nodes;
 					var tempobj = new Object();
 					tempobj.name = adata.text;
 					tempobj.id = adata.id;
 					tempobj.level = adata.level;
-					tempobj.value = adata.nodes.length;
+					tempobj.value = data_nodes_len;
 					tempobj.children = [];
 					ishavechild = true;
 					//var tempobj=new Object();
@@ -882,7 +886,8 @@
 				//}*/
 				alert("该用户没有复合条件的节点数据,<br>请使用其他用户名称登录",info_showtime);
 			} else {
-				for (var j = 0; j < data.length; j++) {
+				let data_len=data.length;
+				for (var j = 0; j < data_len; j++) {
 					var anodes = new Object();
 					anodes.text = data[j].value.name;//+"[Id:"+data[j].value.id+"]";
 					anodes.id = data[j].value.id;
@@ -1010,6 +1015,8 @@
 					inittreeview_level2(treenode);
 					tree2=true;
 					maps = [];
+					allsensors = new Object();
+					buildsensor2(allsensors, result.sensors, "");
 					var sensors = buildsensor(result.sensors);//(JSON.parse(localStorage.getItem("sensors")));
 					localStorage.setItem("sensors", JSON.stringify(sensors));
 					if(!jQuery.isEmptyObject(result.typeConfigs)){
@@ -1157,8 +1164,8 @@
 					//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
 					//sensorsnode=buildnode(data.Result.Sensors,0);//(JSON.parse(localStorage.getItem("sensors")));
 					maps=[];
-					allsensors = [];
-					buildsensor2(allsensors, result.sensors, "");
+					//allsensors = new Object();
+					//buildsensor2(allsensors, result.sensors, "");
 					localStorage.setItem("allsensors",JSON.stringify(buildsensor(result.sensors)));
 					//var sensors=(JSON.parse(localStorage.getItem("sensors")));
 					//var localsensors=buildsensor(data.Result.Sensors);
@@ -1222,7 +1229,8 @@
 		}*/
 		function buildsensor1(aSensors) {
 			if ((typeof(aSensors) != "undefined") && (aSensors != null)) {
-				for (var j = 0; j < aSensors.length; j++) {
+				let sensors_len=aSensors.length;
+				for (var j = 0; j < sensors_len; j++) {
 					var anodes = new Object();
 					anodes.name = aSensors[j].text;
 					anodes.id = aSensors[j].id;
@@ -1250,7 +1258,8 @@
 		}
 		function buildsensor2(obj, aSensors, parentkey) {
 			if ((typeof(aSensors) != "undefined") && (aSensors != null)) {
-				for (var i = 0; i < aSensors.length; i++) {
+				let sensors_len=aSensors.length;
+				for (var i = 0; i < sensors_len; i++) {
 					var s = aSensors[i];
 					if (s != null && !jQuery.isEmptyObject(s.value)) {
 						var v = s.value
@@ -1259,7 +1268,8 @@
 						map.Value = v;
 						var key = $.trim(parentkey);
 						if (v.address && $.trim(v.address) != "") {
-							key = key ? key + "_" + v.address : v.address;
+							//key = key ? key + "_" + v.address : v.address;
+							key = key ? key + "." + v.address : v.address;
 						}
 						if ((!jQuery.isEmptyObject(s.children))) {
 							buildsensor2(obj, s.children, key);
@@ -1274,7 +1284,8 @@
 		}
 		function buildsensor(aSensors) {
 			if ((typeof(aSensors) != "undefined") && (aSensors != null)) {
-				for (var i = 0; i < aSensors.length; i++) {
+				let sensors_len=aSensors.length;
+				for (var i = 0; i < sensors_len; i++) {
 					if ((aSensors[i] != null) && (!jQuery.isEmptyObject(aSensors[i].value))) {
 						var map = new Object();
 						map.id = aSensors[i].value.id;
@@ -1313,6 +1324,7 @@
 			//}
 			//obj_realdata=JSON.parse(localStorage.getItem("realdata"));//考虑使用此方法去掉调用的参数，20200408修改。暂时不用。
 			var sensors = allsensors;
+			var sensors=JSON.parse(localStorage.getItem("allsensors"));
 			var obj_data = new Object();
 			var pt = 0;
 			if (sensors != null) {
@@ -1337,14 +1349,33 @@
 							if ($.trim(g).length > 0) {
 								g = JSON.parse(g);
 								if (g && g._shape && g._shape.Binding && g._shape.Text) {
-									var channel=(g._shape.Binding).substring(0,g._shape.Binding.lastIndexOf('_'));
-									var datatype=(g._shape.Binding).substr(g._shape.Binding.lastIndexOf('_')+1);
+									/*var channel=(g._shape.Binding).substring(0,g._shape.Binding.lastIndexOf('_'));
+									var datatype=(g._shape.Binding).substr(g._shape.Binding.lastIndexOf('_')+1);*/
+									var datafolder='',dataname='',channel='',datatype='';
+									if(g._shape.Binding.indexOf(":")!=-1){
+										channel=(g._shape.Binding).substring(0,g._shape.Binding.indexOf(':'));
+										datatype=(g._shape.Binding).substr(g._shape.Binding.indexOf(':')+1);
+									}
+									if(g._shape.Binding.indexOf("：")!=-1){
+										channel=(g._shape.Binding).substring(0,g._shape.Binding.indexOf('：'));
+										datatype=(g._shape.Binding).substr(g._shape.Binding.indexOf('：')+1);
+									}
+									if(datatype.lastIndexOf(".")==-1){
+										datafolder="Default";
+										dataname=datatype;
+									}else{
+										var datafolder=datatyep.substring(0,datatype.lastIndexOf("."));
+										var dataname=datatype.substr(datatype.lastIndexOf("."));
+									}
 									if(allsensors)
 									if(allsensors[channel]){
 										var sid=allsensors[channel].id;
 										if ((obj_realdata)&&(obj_realdata.length>0)) {
-											for(var loop=0;loop<obj_realdata.length;loop++){
-												if(obj_realdata[loop].sensorId==sid && obj_realdata[loop].name.toLowerCase()==datatype.toLowerCase()){
+											let realdata_len=obj_realdata.length;
+											for(var loop=0;loop<realdata_len;loop++){
+												/*if(obj_realdata[loop].sensorId==sid && obj_realdata[loop].name.toLowerCase()==datatype.toLowerCase()){*/
+												if(obj_realdata[loop].sensorId==sid && obj_realdata[loop].name.toLowerCase()==dataname.toLowerCase()
+													&&(obj_realdata[loop].folder.toLowerCase()==datafolder.toLowerCase())){
 													obj_data = (obj_realdata)[loop];////
 													g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
 													if(obj_data.message){
@@ -1364,50 +1395,65 @@
 					}
 					sessionStorage.setItem("contents",JSON.stringify(obj))
 				}
-				var sensors=JSON.parse(localStorage.getItem("allsensors"));
-				for (var i = 0; i < sensors.length; i++) {
+				let sersors_len=sensors.length;
+				for (var i = 0; i < sersors_len; i++) {
 					var sid = sensors[i].id + "";
 					var nid=sensors[i].Value.nodeId;
 					if((sensors[i].Value.parentId!="-1")&&(sensors[i].Value.parentId!=parentid)){
 						parentid=sensors[i].Value.parentId;
-						for(var j=0;j<sensors.length;j++){
+						for(var j=0;j<sersors_len;j++){
 							if(sensors[j].id==parentid){
 								parentname=sensors[j].Value.name+"_";
 								break;
 							}
 						}
 					}
-					if ((obj_realdata)&&(obj_realdata.hasOwnProperty(sid))) {
-						obj_data = (obj_realdata)[sid];////
-						var rows=tbody.rows;
-						var trs = tbody.getElementsByTagName("tr");
-						for(var k=0;k<rows.length;k++){
-							if(rows[k].cells[0].outerText==(sid+"")){
-								var msg = obj_data.message;
-								if (msg == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == ""){
-									tbody.deleteRow(k);
-									break;
-								}else{
-									if(rows[k].cells[3].outerText==(obj_data.value *1).toFixed(Number_of_decimal)){
-										rows[k].cells[2].innerHTML=obj_data.time;
-										rows[k].cells[3].innerHTML=(obj_data.value *1).toFixed(Number_of_decimal);
+					if ((obj_realdata)&&(obj_realdata.length>0)) {
+						let obj_length=obj_realdata.length;
+						for(var loop=0;loop<obj_length;loop++){
+						if(obj_realdata[loop].sensorId==sid){
+							obj_data = obj_realdata[loop];////
+							var rows=tbody.rows;
+							var trs = tbody.getElementsByTagName("tr");
+							let rowlength=rows.length;
+							var msg=obj_data.message;
+							//let ishave=false;
+							for(var k=0;k<rowlength;k++){
+								if(rows[k].cells[0].outerText==(sid+"")){
+									//var msg = obj_data.message;
+									if (!msg){// == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == ""){//在列表中，但目前告警已取消则从列表中删除告警内容。
+										if(pt>0)pt--;
+										tbody.deleteRow(k);
+										//ishave=true;
 										break;
 									}else{
-										tbody.deleteRow(k);
-										showgaojing();
-										break;
-									}
-								} 
+										//if(rows[k].cells[3].outerText==(obj_data.value *1).toFixed(Number_of_decimal)){
+											let jiange=GetDateDiff(rows[k].cells[2].outerText,((obj_data.time).replace(/T/g," ")).substring(0,19),"minute")
+											if(jiange<10){
+											//rows[k].cells[2].innerHTML=((obj_data.time).replace(/T/g," ")).substring(0,19);
+											rows[k].cells[3].innerHTML=(obj_data.value *1).toFixed(Number_of_decimal);
+											break;
+										}else{
+											tbody.deleteRow(k);
+											showgaojing();
+											//rows[k].cells[2].innerHTML=((obj_data.time).replace(/T/g," ")).substring(0,19);
+											//rows[k].cells[3].innerHTML=(obj_data.value *1).toFixed(Number_of_decimal);
+											//ishave=true;
+											break;
+										}
+									} 
+								}
+							}
+							//var msg = obj_data.message;
+							if (!msg){// == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == "") {//ishave ||
+								continue;
+							}
+							if(k>=rows.length){//不在告警信息列表中则为新的告警，则进行添加。
+								showgaojing();
 							}
 						}
-						var msg = obj_data.message;
-						if (msg == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == "") {
-							continue;
-						}
-						if(k>=rows.length){
-							showgaojing();
-						}
 					}
+				}
 				}
 				if (pt > 0) {
 					gaojing.innerHTML = "<pre  style='vertical-align:center;background-color: rgba(255,255,0,0);'>" + str_alert + "</pre>";
@@ -1424,9 +1470,9 @@
 		}*/
 			//tbody.rows[t_pt].scrollIntoView();
 			//refreshData();
-			function showgaojing(){
+			function showgaojing(){//将告警形象添加到实时告警列表，并添加告警信息到告警信息字符串中供浮动窗口显示。
 				var alert_sys_name=getsysname(mnodes,nid);//站和子系统名称
-				alerttime = obj_data.time.substr(11);
+				alerttime = ((obj_data.time).replace(/T/g," ")).substring(0,19).substr(11);
 				alertinfo = msg;
 				alertvalue = parseFloat(obj_data.value).toFixed(Number_of_decimal);
 				sname =parentname+ sensors[i].Value.name;
@@ -1449,7 +1495,7 @@
 				tdid.style.cssText="display:none";
 				tdtype.innerHTML = type_td;
 				tdtype.style.cssText = "display:none";
-				tdtime.innerHTML = obj_data.time; //jsonObject[i].color;
+				tdtime.innerHTML = ((obj_data.time).replace(/T/g," ")).substring(0,19); //jsonObject[i].color;
 				tdvalue.innerHTML = (obj_data.value * xs).toFixed(Number_of_decimal);
 				//tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);
 				//tdhistory.setAttribute('backgroundColor', '#ffffff');
@@ -1475,11 +1521,11 @@
 				pt++;
 				tbody.appendChild(tr);
 				if ((alertvalue !== null) && (alertvalue !== "NaN")) {
-					str_speech = str_speech +alert_sys_name+" "+sname + alertinfo + " 数值" + alertvalue;
-					str_alert = str_alert + " " + alerttime + "  " + ": " +alert_sys_name+" "+ sname + " " + type_td+" "+ alertinfo + " 数值为:" + alertvalue;
+					str_speech = str_speech +alert_sys_name+" "+sname + alertinfo + " 数值" + alertvalue +" / ";
+					str_alert = str_alert + " " + alerttime + "  " + ": " +alert_sys_name+" "+ sname + " " + type_td+" "+ alertinfo + " 数值为:" + alertvalue+" / ";
 				} else {
-					str_speech =str_speech +alert_sys_name+ sname + alertinfo;
-					str_alert = str_alert + " " + alerttime + "  " +": " +alert_sys_name+" "+ sname + " "+ type_td+" " + alertinfo + " ";// + alertvalue;
+					str_speech =str_speech +alert_sys_name+ sname + alertinfo + alertvalue+" / ";
+					str_alert = str_alert + " " + alerttime + "  " +": " +alert_sys_name+" "+ sname + " "+ type_td+" " + alertinfo + " " + alertvalue+" / ";// + alertvalue;
 				}
 			}
 		}catch(err){
@@ -1488,9 +1534,9 @@
 		}
 		//获取标签+系统+站名的全称。
 		function getsysname(anodes,aid){
-			var sys_name;
+			var sys_name="";
 			for(var i in anodes) {
-				if(anodes[i].id==aid){
+				if(anodes[i].id == aid){
 					sys_name=anodes[i].text;
 					var pid=anodes[i].ParentId
 					if(pid!=-1){
@@ -1518,13 +1564,13 @@
 			}
 		}*/
 		function inittreeview_level2(anodes) {
-			var tree=$("#tree_chi");
+			var tree1=$("#tree_chi");
 			if(!anodes){
 				var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
 				anodes=buildnode_level2(treeseneors,0);
 			}
 			var sensorarray;
-			tree.treeview({
+			tree1.treeview({
 				data: anodes,    // 数据源
 				showCheckbox: false,   //是否显示复选框
 				highlightSelected: true,    //是否高亮选中
@@ -1541,27 +1587,33 @@
 				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
 					//var selectnode=$("#tree_chi").treeview('getSelected');
 					//$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 
-					for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
-						var p_node = getThe_level_nodeid(data, i);
-						tree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
-					}
-                    tree.treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);/**/
+					//for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
+					//	var p_node = getThe_level_nodeid(data, i);
+					//	tree1.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+					//}
+					tree1.treeview("revealNode",[currentNode, { levels: 2, silent: true }]);
+                    //tree1.treeview('expandNode', [data.nodeId, { levels: 1, silent: true }]);/**/
 					//setSelectOption("jcdd", data.id);
                     sessionStorage.jfjk_nodeid=data.nodeId;
 					sessionStorage.SensorId=data.id;
 					if(!multiselect)//多选时，标签id不被保存；用于恢复所选项
 						sessionStorage.sel_id=data.id;
-					//iframemain[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
+					if (sessionStorage.pageindex==2){
+						iframemain[0].contentWindow.localrowbysensorid(data.id);//实时数据页面的点击标签树形菜单进行实时数据列表定位
+					}else{
+						iframemain[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
+					}
 					sessionStorage. SensorName=data.text;
 					if(sessionStorage.pageindex==5){
 						iframemain[0].contentWindow.document.getElementById("war_caption").innerHTML=data.text;
 					}
-					sensorarray=tree.treeview("getSelected");
+					sensorarray=tree1.treeview("getSelected");
 					if(sensorarray.length>6){
-						tree.treeview("unselectNode",[data.nodeId]);
-						dialog.html("对比测量点不能大于6个!");
-						dialog.dialog("open");//,info_showtime);
+						tree1.treeview("unselectNode",[data.nodeId]);
+						//dialog.html("对比测量点不能大于6个!");
+						//dialog.dialog("open");//,info_showtime);
 						showstateinfo("对比测量点不能大于6个");
+						showmsg("对比测量点不能大于6个");
 						iframemain[0].contentWindow.stoptimer(iframemain[0].contentWindow.timer);//停止闪烁
 						return;
 						//showstateinfo("对比测量点不能大于6个");
@@ -1570,12 +1622,12 @@
 					}
                     //catalog=getcatalog(dname);
                     //queryhistorydata();//0710
-                    //对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO 
+					//对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO 
 					clickNode(event, data)
 				},
 				onNodeUnselected : function(event,data){
 					clickNode(event, data);
-					sensorarray=tree.treeview("getSelected");
+					sensorarray=tree1.treeview("getSelected");
 					showselectesensors();
 				},
 				onSearchComplete:function(event, data) { 
@@ -1584,54 +1636,55 @@
 					}*/
 					//如果查找到的位置数据超出当前范围滚动条直接滚动到搜索结果中的第一条数据的位置
 					//var tnodeId = data[0].nodeId;
-					var firstSearchResult = tree.find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
+					var firstSearchResult = tree1.find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
 					if(firstSearchResult.length>0)//避免树形菜单为空时，可能报错
-						tree.scrollTop(firstSearchResult[0].offsetTop-520);
+						tree1.scrollTop(firstSearchResult[0].offsetTop-520);
 					if(sessionStorage.pageindex==5){
 						iframemain.contents().find("#war_caption").text(currentNode.text);
 					}
 				},
 			});
-			sensorarray=tree.treeview("getSelected");
+			sensorarray=tree1.treeview("getSelected");
 			if(anodes.length>0){
-				tree.treeview('collapseAll');//关闭展开
+				tree1.treeview('collapseAll');//关闭展开
 				//if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
 					sessionStorage.jfjk_nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
 				//}
 				//$("#tree_chi").treeview('checkAll'  , { silent:   true   });
-				var allnode=tree.treeview("getUnselected");
+				var allnode=tree1.treeview("getUnselected");
 				var currentNode=null;
 				for(var j=0;j<allnode.length;j++){//根据所保存的标签编号（id）来确定那个标签被选中。
 					if(allnode[j].id==sessionStorage.sel_id)
 					{	currentNode=allnode[j]
 						sessionStorage.jfjk_nodeid=allnode[j].nodeId;
+						break;
 					}
 				}
-				
 				//var firstSearchResult = $('#tree_chi').find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
 					//$("#tree_chi" ).scrollTop(firstSearchResult[0].offsetTop);
 				if(currentNode==null)
-					currentNode = tree.treeview("getNode", sessionStorage.jfjk_nodeid);
+					currentNode = tree1.treeview("getNode", sessionStorage.jfjk_nodeid);
 				
 				if(!currentNode.hasOwnProperty("NodeId"))
-					currentNode = tree.treeview("getNode", 0);
-				tree.treeview('expandNode', [currentNode, { levels: 2, silent: true }]);//展开第一个节点
-				for (var i = 0; i < currentNode.level; i++) {//逐级展开所选节点的父节点。
-					var p_node = getThe_level_nodeid(currentNode, i);
-					tree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
-				}
-				tree.treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
+					currentNode = tree1.treeview("getNode", 0);
+				tree1.treeview("revealNode",[currentNode, { levels: 2, silent: true }]);
+				//tree1.treeview('expandNode', [currentNode, { levels: 2, silent: true }]);//展开第一个节点
+				//for (var i = 0; i < currentNode.level; i++) {//逐级展开所选节点的父节点。
+				//	var p_node = getThe_level_nodeid(currentNode, i);
+				//	tree1.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+				//}
+				tree1.treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
 				//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
-				tree.treeview('selectNode', [currentNode, { silent: true }]);
+				tree1.treeview('selectNode', [currentNode, { silent: true }]);
 				sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
 				sessionStorage.SensorName=currentNode.text;//获取标签名称，用于列表显示用.20201110
-				tree.treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
-				tree.treeview("search",[sessionStorage.jfjk_nodeid+'', { ignoreCase: false, exactMatch: true }]);
+				tree1.treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
+				tree1.treeview("search",[sessionStorage.jfjk_nodeid+'', { ignoreCase: false, exactMatch: true }]);
 				/**/
 			}
             function getThe_level_nodeid(anode, alevel) {
                 while (anode.level > alevel) {
-                    anode = (tree.treeview("getParent", anode))
+                    anode = (tree1.treeview("getParent", anode));
                 }
                 return anode;
 			}/**/
@@ -1646,7 +1699,30 @@
 				if(sessionStorage.pageindex==5||sessionStorage.pageindex==3)
 					iframemain[0].contentWindow.flashbutton();
 			}
-        }
+		}
+		function treelocationforsensorid(asensorid){//与实时数据页实时数据列表中的当前选择项同步定位于指定标签id下。
+			var tree1=$("#tree_chi");
+			var obj_node=tree1.treeview("getSelected");
+			if(obj_node.length>0)//判断有没有选中项
+			{tree1.treeview("unselectNode",obj_node[0]);}//使选择项为不选中，为下一步选择所有未选择项准备//	$("#sel-sensorname").val("所选标签: "+tree_obj.treeview("getSelected")[0].text);
+			var sensors=tree1.treeview("getUnselected");//选取未选中项
+			if(sensors )
+			var nodeid;
+			let sensors_len=sensors.length;
+			//for (var i =sel_sersor_len-1 ; i >=0; i--) {//使得最后选中的标签维最靠前面的标签，树形菜单定位到第一个被选中的标签位置；原来（正序）为最后一个
+				for(var j=0;j<sensors_len;j++){
+					if(sensors[j].id==asensorid){
+						//if(i==0)
+						nodeid=sensors[j].nodeId;
+						tree1.treeview("selectNode",sensors[j].nodeId);
+						var firstSearchResult = tree1.find('ul').find('li[data-nodeid='+ nodeid +']');
+						if(firstSearchResult.length>0)//避免树形菜单为空时，可能报错
+							tree1.scrollTop(firstSearchResult[0].offsetTop-520);
+						break;
+					}
+				}
+			//}
+		}
 		function buildnode_level2(data, level) {
 			var tree = [];
             if (data == null || typeof(data) == "undefined") {
@@ -1900,5 +1976,9 @@
   localStorage.setItem("sensor_tree",null); 标签树
   localStorage.setItem("binaries", JSON.stringify(obj_Binaries));  一次图像列表
   localStorage.allsensors  全部标签项信息.
+	
+  2021
+  修改标签与图形绑定值的格式以及对应关系，修改实时数据中有关告警数据的解析过程；90=1/3
 
+  浮动窗的告警信息显示变更为两次测量时间不相同时进行浮动窗告警信息显示；在选择标签后对应实时数据的列表进行定位；
 -->

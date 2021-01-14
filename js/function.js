@@ -798,16 +798,17 @@ function postpassword() {
 function setSelectOption(objid, sensor) {
 	var sel = document.getElementById(objid);
 	var options = sel.options;
-	for (var i = 0; i < options.length; i++) {
+	let opt_len=options.length;
+	for (var i = 0; i < opt_len; i++) {
 		if (options[i].value == sensor) {
 			options[i].defaultSelected = true;
 			options[i].selected = true;
 			break;
 		}
 	}
-	if(options.length<=0){
+	if(opt_len<=0){
 		sessionStorage.SensorId=-1;
-	}else if(i>=options.length)
+	}else if(i>=opt_len)
 		sessionStorage.SensorId=options[0].value;
 }
 //可自动关闭提示框 used by electricroommonitor
@@ -964,14 +965,33 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 					if ($.trim(g).length > 0) {
 						g = JSON.parse(g);
 						if (g && g._shape && g._shape.Binding && g._shape.Text) {
-							var channel=(g._shape.Binding).substring(0,g._shape.Binding.lastIndexOf('_'));
-							var datatype=(g._shape.Binding).substr(g._shape.Binding.lastIndexOf('_')+1);
+							//var channel=(g._shape.Binding).substring(0,g._shape.Binding.lastIndexOf('_'));
+							//var datatype=(g._shape.Binding).substr(g._shape.Binding.lastIndexOf('_')+1);
+							var datafolder='',dataname='',channel='',datatype='';
+							if(g._shape.Binding.indexOf(":")!=-1){
+								channel=(g._shape.Binding).substring(0,g._shape.Binding.indexOf(':'));
+								datatype=(g._shape.Binding).substr(g._shape.Binding.indexOf(':')+1);
+							}
+							if(g._shape.Binding.indexOf("：")!=-1){
+								channel=(g._shape.Binding).substring(0,g._shape.Binding.indexOf('：'));
+								datatype=(g._shape.Binding).substr(g._shape.Binding.indexOf('：')+1);
+							}
+							if(datatype.lastIndexOf(".")==-1){
+								datafolder="Default";
+								dataname=datatype;
+							}else{
+								var datafolder=datatyep.substring(0,datatype.lastIndexOf("."));
+								var dataname=datatype.substr(datatype.lastIndexOf("."));
+							}
 							if(window.parent.allsensors)
 							if(window.parent.allsensors[channel]){
 								var sid=window.parent.allsensors[channel].id;
 								if ((obj_rd)&&(obj_rd.length>0)) {
-									for(var loop=0;loop<obj_rd.length;loop++){
-										if(obj_rd[loop].sensorId==sid && obj_rd[loop].name.toLowerCase()==datatype.toLowerCase()){
+									let obj_rd_len=obj_rd.length;
+									for(var loop=0;loop<obj_rd_len;loop++){
+										//if(obj_rd[loop].sensorId==sid && obj_rd[loop].name.toLowerCase()==datatype.toLowerCase()){
+										if(obj_rd[loop].sensorId==sid && obj_rd[loop].name.toLowerCase()==dataname.toLowerCase()
+											&&(obj_rd[loop].folder.toLowerCase()==datafolder.toLowerCase())){
 											obj_data = (obj_rd)[loop];////
 											g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
 											if(obj_data.message){
@@ -979,7 +999,7 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 											}else{
 												g._shape.isError=false;
 											}
-											obj_rd.splice(loop,1);//找到需要的数据，去除数据后删除，减少循环的次数。
+											//obj_rd.splice(loop,1);//找到需要的数据，去除数据后删除，减少循环的次数。
 											break;
 											
 										}
@@ -1032,7 +1052,8 @@ function drawmap(arr) {
 		ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
 		return;
 	}
-	for (var i = 0; i < arr.length; i++) {
+	let arr_len=arr.length;
+	for (var i = 0; i < arr_len; i++) {
 		if (!arr[i]) {
 			continue;
 		}
@@ -1093,7 +1114,7 @@ function drawmap(arr) {
 	ctx.save();
 	ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
 	var pfdp = new Object();
-	for (var i = 0; i < arr.length; i++) {
+	for (var i = 0; i < arr_len; i++) {
 		if (!arr[i]) {
 			continue;
 		}
@@ -1502,7 +1523,8 @@ function getname(key){
 		key=key.toLowerCase();
 	var allconfig=JSON.parse(localStorage.allConfigs);
 	if(allconfig){
-		for(var i=0;i<allconfig.length;i++){
+		let all_config_len=allconfig.length;
+		for(var i=0;i<all_config_len;i++){
 			if(key==allconfig[i].name.toLowerCase()){
 				key=allconfig[i].desc;
 				break;
@@ -1615,7 +1637,8 @@ function updatapcnav(obj){
 	}
 	//if(window.parent.tree2)
 		window.parent.inittreeview_level2();
-	switch(obj){
+	switch(obj){//控制标签树形菜单是否显示。
+		case 3:
 		case 4:
 		case 5:
 		case 7:
@@ -1654,7 +1677,9 @@ var sorter=false;
 						var kssj=dateToString(new Date(yesterdaytime),2);
 						//kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
 						//jssj = (tr.cells[2].innerHTML);
-						gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
+						decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。
+						//gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
+						//refreshData();
 					}
 				}
 				var table = document.getElementById(tableId);
@@ -1664,7 +1689,8 @@ var sorter=false;
 					sorter=(!sorter);
 				}else{sorter=false}
                 var trValue = new Array();
-                for (var i=0; i<tr.length; i++ ) {
+				let tr_len=tr.length;
+				for (var i=0; i<tr_len; i++ ) {
 					trValue[i] = tr[i];  //
                 }
 				if(sorter)
@@ -1684,7 +1710,7 @@ var sorter=false;
                     });
                 }
                 var fragment = document.createDocumentFragment();  //新建一个代码片段，用于保存排序后的结果
-                for (var i=0; i<trValue.length; i++ ) {
+                for (var i=0; i<tr_len; i++ ) {
                     fragment.appendChild(trValue[i]);
 				}
 				tbody.clear;
@@ -1946,7 +1972,7 @@ function sendorder(order,callback,datas){
 			},
 		});
 	} else {
-		showm("用户未登录，您无权完成此次操作", info_showtime);
+		showmsg("用户未登录，您无权完成此次操作", info_showtime);
 		showstateinfo("用户未登录，你无权完成此次操作",order);
 		callback(null) ;
 	}
@@ -2250,7 +2276,8 @@ Page.prototype.changePage=function(index){
 */
 Page.prototype.__cloneRows__ = function () {
     var tempRows = [];
-    for (var i = 0; i < this.__dataRows__.length; i++) {
+	let datarows_len=this.__dataRows__.length;
+	for (var i = 0; i < datarows_len; i++) {
         /*
         code:this.dataRows[i].cloneNode(param), 
         param = 1 or true:复制以指定节点发展出去的所有节点,
@@ -2261,6 +2288,39 @@ Page.prototype.__cloneRows__ = function () {
     return tempRows;
 };
 
+/* 
+* 获得时间差,时间格式为 年-月-日 小时:分钟:秒 或者 年/月/日 小时：分钟：秒 
+* 其中，年月日为全格式，例如 ： 2010-10-12 01:00:00 
+* 返回精度为：秒，分，小时，天 
+*/
+function GetDateDiff(startTime, endTime, diffType) { 
+	//将xxxx-xx-xx的时间格式，转换为 xxxx/xx/xx的格式 
+	startTime = startTime.replace(/\-/g, "/"); 
+	endTime = endTime.replace(/\-/g, "/"); 
+	//将计算间隔类性字符转换为小写 
+	diffType = diffType.toLowerCase(); 
+	var sTime = new Date(startTime); //开始时间 
+	var eTime = new Date(endTime); //结束时间 
+	//作为除数的数字 
+	var divNum = 1; 
+	switch (diffType) { 
+	case "second": 
+	divNum = 1000; 
+	break; 
+	case "minute": 
+	divNum = 1000 * 60; 
+	break; 
+	case "hour": 
+	divNum = 1000 * 3600; 
+	break; 
+	case "day": 
+	divNum = 1000 * 3600 * 24; 
+	break; 
+	default: 
+	break; 
+	} 
+	return parseInt((eTime.getTime() - sTime.getTime()) / parseInt(divNum)); 
+	} 
 
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
