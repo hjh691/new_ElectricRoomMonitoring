@@ -813,7 +813,7 @@ function initseries(data) {
             textStyle: {
                 color: 'white',
             },
-            text: sname+"--24小时极值",
+            text: sname+"--当前温度值",
         },
         tooltip: {
             formatter: "{a} <br/>{c} {b}"
@@ -1140,8 +1140,8 @@ function decodedatas(obj_chartdata) {
         minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
     }
     var lengenddata = [];
-    lengenddata.push("当天峰值");
-    lengenddata.push("实时值");
+    lengenddata.push("当前温度值");
+    lengenddata.push("湿度");
     //lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457");
     option.series[0].data[0].value = maxvalue;
     //option.series[0].data[0]

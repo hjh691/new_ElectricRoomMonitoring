@@ -644,7 +644,7 @@ CanvasRenderingContext2D.prototype.fillTextVertical = function(text, x, y) {
 //绘制文本，必要时竖排。
 function DrawText(ctx, pfdp) {
 	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
-	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
+	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1))+pfdp.FontSize;//字体向上延申字体高度。需在基准点y值加上字体高度（即字号fontsize）
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
 	if (pfdp.hasOwnProperty("_matrix")) {

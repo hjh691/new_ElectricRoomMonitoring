@@ -386,7 +386,7 @@ function decodedatas(obj_data){
             tdvalue2.className="value2";// setAttribute('class', 'value2');
             var tdvalue3=document.createElement("td");
             tdvalue3.className="value3";// setAttribute("class",'value3');
-            tdname.innerHTML=sessionStorage.SensorName;
+            tdname.innerHTML=sessionStorage.sensorallpathname;// sessionStorage.SensorName;
             tdvalue1.innerHTML = obj_data[i].value;
             //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
             tdtime.innerHTML = obj_data[i].time.replace(/T/g," ").substring(0,19);; //jsonObject[i].color;
@@ -532,7 +532,7 @@ function decodedatas(obj_data){
     }
     //表标题
     
-    document.getElementById("his_caption").innerHTML=sessionStorage.SensorName+"  "+jiange+" 报表";
+    document.getElementById("his_caption").innerHTML=sessionStorage.sensorallpathname+"  "+jiange+" 报表";//sessionStorage.SensorName
     count =ps+1;//obj_data.length;
     document.getElementById('count_val').innerHTML ="<span class='badge' style='font-size:18px'>"+ count + "条";
     //document.getElementById('station_name').innerHTML = sessionStorage.stationName;

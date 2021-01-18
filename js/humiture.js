@@ -315,8 +315,8 @@ setInterval(function () {
         //data1.push(value3[0]);
         //data2.push(value3[1]);
     }
-    refresh_hum_temp(new Date(+now + oneHour),value3[0].value[1],value3[1].value[1]);
-   // refresh_hum_swet(new Date(+now + oneHour),value3[1].value[1]);
+    refresh_hum_temp(new Date(+now + oneHour),value3[0]);//.value[1],value3[1].value[1]);
+    refresh_hum_swet(new Date(+now + oneHour),value3[1]);//.value[1]);
     /*datas.splice(0,datas.length);//
     datas.push(data1);
     datas.push(data2);
@@ -386,49 +386,40 @@ function iniview(){
 	}
 	setSelectOption("jcdd", sessionStorage.SensorId);
 }
-function refresh_hum_temp(atime,avalue,avalue2){
+function refresh_hum_temp(atime,avalue){
     //data1.shift();
     var min=atime.getMinutes();
     if(min<10){
         min="0"+min;
     }
     if(avalue)
-        data1.push({name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue]});
-    if(avalue2)
-        data2.push({name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue2]});
-    option1.series[0].data=data1;
+        data1.push(avalue);//{name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue]});
+    //if(avalue2)
+        //data2.push({name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue2]});
+    //option1.series[0].data=data1;
         chart_line_hut.setOption( {series:[{
             data:data1,
         },
         {
-            data:data2,
+            //data:data2,
         }],
     });
-    option.series[0].data[0].value=avalue;
-    chartgauge_hut.setOption({
-        series:[
-            {
-                data:[{name:"温度",value:avalue}],
-            },
-            {
-                data:[{name:"湿度",value:avalue2}],
-            },
-        ],
-    });
+    option.series[0].data[0].value=avalue.value[1];
+    chartgauge_hut.setOption(option);
 }
 function refresh_hum_swet(atime,avalue2){
-    data2.push({name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue2]});
-    //option1.series[1].data=data2;
-    chart_line_hut.setOption({
+    data2.push(avalue2);//{name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue2]});
+    option1.series[1].data=data2;
+    chart_line_hut.setOption(option1);/*{
         series:[{
-            data:data1,
+            //data:data1,
         },
         {
             data:data2,
         }],
-    });
-    option.series[1].data[0].value=avalue2;
-        chartgauge_hut.setOption(option) 
+    });*/
+    option.series[1].data[0].value=avalue2.value[1];
+    chartgauge_hut.setOption(option) 
 }
 function gradeChange() {
     var objS = document.getElementById("jcdd");

@@ -124,7 +124,7 @@ function appendalldisplaytype(){
         display_type.removeChild(display_type.childNodes[i-1]);
     allconfigs=JSON.parse(localStorage.Configs);
     var sel_datatypename=[];
-    if(sessionStorage.sel_datatypename) 
+    /*if(sessionStorage.sel_datatypename) 
     {
         sel_datatypename=JSON.parse(sessionStorage.sel_datatypename);
     }
@@ -134,7 +134,7 @@ function appendalldisplaytype(){
             add_displaytype(display_type,sel_datatypename[i].value,sel_datatypename[i].folder,sel_datatypename[i].text,sel_datatypename[i].checked);
         }
     }
-    else{
+    else*/{
     
     if(allconfigs){//检查配置中是否有catalog项
         for(var ac in allconfigs){//如果有，读取其所有配置项
@@ -531,11 +531,17 @@ function decoderealdata(obj_realdata,asensorid) {
                         for(var k=0;k<v_sel.length;k++){//添加到指定列,不同配置项添加到不同的列，由显示控制项控制显示与否
                             if(v_sel[k].value == dname){
                                 atr.cells[k+3].innerHTML=(obj_data.value*1).toFixed(Number_of_decimal);
+                                if(obj_data.message){
+                                    atr.cells[k+3].style.backgroundColor="#ffff00";
+                                }else{
+                                    atr.cells[k+3].style.backgroundColor=""
+                                }
                                 isfindtype=true;
                             }
                             if(!v_sel[k].checked){
                                 atr.cells[k+3].style.cssText = "display:none";
                             }
+                            break;
                         }
                         if((k>=v_sel.length)&&(!isfindtype)){//如果没有在类型列表中，要如何处置
                             //需要表头标题添加name，所有列表项添加一列（cell）
@@ -556,6 +562,11 @@ function decoderealdata(obj_realdata,asensorid) {
                                         if($table.rows[l].cells[1].innerHTML<(obj_data.time.replace(/T/g," ")).substring(10,19)){//更新最新时间
                                             $table.rows[l].cells[1].innerHTML=(obj_data.time.replace(/T/g," ")).substring(10,19);
                                             $table.rows[l].cells[1].value=obj_data.time.replace(/T/g," ");
+                                        }
+                                        if(obj_data.message){
+                                            atr.cells[k+3].style.backgroundColor="#ffff00";
+                                        }else{
+                                            atr.cells[k+3].style.backgroundColor=""
                                         }
                                         break;
                                     }
@@ -693,6 +704,11 @@ function decoderealdata(obj_realdata,asensorid) {
                         for(var k in tab_head.rows[0].cells){//添加到指定列。
                             if(obj_data.name==tab_head.rows[0].cells[k].innerHTML){
                                 atr.cells[k].innerHTML=obj_data.value.toFixed(Number_of_decimal);
+                                if(obj_data.message){
+                                    atr.cells[k+3].style.backgroundColor="#ffff00";
+                                }else{
+                                    atr.cells[k+3].style.backgroundColor=""
+                                }
                                 break;
                             }
                         }
@@ -708,6 +724,11 @@ function decoderealdata(obj_realdata,asensorid) {
                                 for(var k in tab_head.rows[0].cells){
                                     if(obj_data.name==tab_head.rows[0].cells[k].innerHTML){//添加到指定列
                                         atr.cells[k].innerHTML=obj_data.Value.toFixed(Number_of_decimal);
+                                        if(obj_data.message){
+                                            atr.cells[k+3].style.backgroundColor="#ffff00";
+                                        }else{
+                                            atr.cells[k+3].style.backgroundColor=""
+                                        }
                                         break;
                                     }
                                 }
@@ -858,6 +879,8 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
             colors = [[0.15, '#1e90ff'], [0.4, '#090'], [0.6, '#ffa500'], [0.8, '#ff4500'], [1, '#ff0000']];
             break;
         case "pd":
+        case "max":
+        case "avg":
             //if(!chartOption.chart_min)
                 chartOption.chart_min = 0;
             //if(!chartOption.chart_max)
@@ -1274,9 +1297,11 @@ function decodedatas(obj_chartdata) {
                 trigger: 'item',
                 //trigger: 'axis',
                 formatter: function (params) {
+                    if(params.seriesId){
                     var date = new Date(params.value[0]);
                     data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
                     return data + '<br/>' + params.value[1];
+                    }
                 }/**/
             },
             toolbox: {
@@ -1379,7 +1404,8 @@ function decodedatas(obj_chartdata) {
                     data: [
                         {type: 'max', name: '最大值',symbolRotate:-180},
                         {type: 'min', name: '最小值'}
-                    ]
+                    ],
+                    tooltip:false,
                 },
                 /*markLine:{
                     data: [
@@ -1450,8 +1476,10 @@ function initchart2() {
             x: "center",
         },/**/
         tooltip: {
-            trigger: 'item',
+            //trigger: 'item',
+            trigger:"axis",
             formatter: function (params) {
+                if(params.seriesId)
                 var date = new Date(params.value[0]);
                 data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
                 return data + '<br/>' + params.value[1];

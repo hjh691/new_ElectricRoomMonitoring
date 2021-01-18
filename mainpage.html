@@ -191,9 +191,11 @@
 		var dialog=null;
 		var realdataid=-1;
 		var loadlayer=null;
+		var time=null;
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
+				
 				roll: function (options) {
 					var defaults = {
 						speed: 1
@@ -206,7 +208,7 @@
 					var init_left = $container.width();
 					$content.css({ left: parseInt(init_left) + "px" });
 					var This = this;
-					var time = setInterval(function () { This.move($container, $content, speed); }, 20); //setInterval会改变this指向，即使加了This=this，也要用匿名函数封装，这里调试了n久
+					time = setInterval(function () { This.move($container, $content, speed); }, 20); //setInterval会改变this指向，即使加了This=this，也要用匿名函数封装，这里调试了n久
 					$container.bind("mouseover", function () {
 						clearInterval(time);
 					});
@@ -217,7 +219,8 @@
 				},
 				move: function ($container, $content, speed) {
 					var fdck = document.getElementById("KeFuDiv");
-					if (fdck.style.display == "none") { return }
+					if (fdck.style.display == "none") { 
+						return }
 					var container_width = $container.width();
 					var content_width = $content.width();
 					if (parseInt($content.css("left")) + content_width > 0) {
@@ -227,6 +230,9 @@
 						$content.css({ left: parseInt(container_width) + "px" });
 						document.getElementById("alert_info").innerHTML="";
 						fdck.style.display = "none";
+						//clearInterval(time);
+						//time=null;
+						//window.speechSynthesis.cancel();
 					}
 				}
 			});
@@ -383,8 +389,10 @@
 			var allw = bodyfrm.clientWidth;// - 10;
 			var allh = bodyfrm.clientHeight ;//- 60;
 			var adst = document.getElementById("KeFuDiv").style;
-			if (document.getElementById("alert_info").innerHTML.replace(/^\s+$/g,"").length > 0) {
-			adst.display = 'block';
+			var str_al_info=document.getElementById("alert_info").innerHTML;
+			str_al_info=str_al_info.replace(/^\s+$/g,"");
+			if (str_al_info.length > 0) {
+				adst.display = 'block';
 				adst.top = (bodyfrm.scrollTop + bodyfrm.clientHeight - 50) + "px";
 				adst.left = (bodyfrm.scrollLeft + bodyfrm.clientWidth - 500) + "px";
 			}
@@ -1455,14 +1463,24 @@
 					}
 				}
 				}
+				var fdck = document.getElementById("KeFuDiv");
 				if (pt > 0) {
+					
+					if(fdck.style.display=="block"){
+						str_alert=gaojing.outerText+str_alert;
+					}
 					gaojing.innerHTML = "<pre  style='vertical-align:center;background-color: rgba(255,255,0,0);'>" + str_alert + "</pre>";
-					speech.innerHTML =str_speech;// str_alert;//str_speech;
-					speech.click();
+					//fdck.style.display="block";
+					//resetContent();
+					//speech.innerHTML =str_speech;// str_alert;//str_speech;
+					//speech.click();
+					playVoices(str_speech);
 					//fdck.style.display = "block";
 				} else {
-					gaojing.innerText = "";
-					speech.innerHTML = "";
+					if(fdck.style.display!="block"){
+						gaojing.innerText = "";
+						speech.innerHTML = "";
+					}
 					//fdck.style.display = "none";
 				}
 			}/*else{
@@ -1521,10 +1539,10 @@
 				pt++;
 				tbody.appendChild(tr);
 				if ((alertvalue !== null) && (alertvalue !== "NaN")) {
-					str_speech = str_speech +alert_sys_name+" "+sname + alertinfo + " 数值" + alertvalue +" / ";
+					str_speech = str_speech +alert_sys_name+" "+sname.replace(/_/g,"杠")+" "+ alertinfo + " 数值" + alertvalue.replace(/^-/g,"负") +"  ";
 					str_alert = str_alert + " " + alerttime + "  " + ": " +alert_sys_name+" "+ sname + " " + type_td+" "+ alertinfo + " 数值为:" + alertvalue+" / ";
 				} else {
-					str_speech =str_speech +alert_sys_name+ sname + alertinfo + alertvalue+" / ";
+					str_speech =str_speech +alert_sys_name+" "+sname.replace(/_/g,"杠") +" "+ alertinfo ;
 					str_alert = str_alert + " " + alerttime + "  " +": " +alert_sys_name+" "+ sname + " "+ type_td+" " + alertinfo + " " + alertvalue+" / ";// + alertvalue;
 				}
 			}
@@ -1603,9 +1621,10 @@
 					}else{
 						iframemain[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
 					}
-					sessionStorage. SensorName=data.text;
+					sessionStorage.SensorName=data.text;
+					sessionStorage.sensorallpathname=getSensorAllPathName(data);
 					if(sessionStorage.pageindex==5){
-						iframemain[0].contentWindow.document.getElementById("war_caption").innerHTML=data.text;
+						iframemain[0].contentWindow.document.getElementById("war_caption").innerHTML=sessionStorage.sensorallpathname;
 					}
 					sensorarray=tree1.treeview("getSelected");
 					if(sensorarray.length>6){
@@ -1640,7 +1659,7 @@
 					if(firstSearchResult.length>0)//避免树形菜单为空时，可能报错
 						tree1.scrollTop(firstSearchResult[0].offsetTop-520);
 					if(sessionStorage.pageindex==5){
-						iframemain.contents().find("#war_caption").text(currentNode.text);
+						iframemain.contents().find("#war_caption").text(sessionStorage.sensorallpathname);
 					}
 				},
 			});
@@ -1678,9 +1697,21 @@
 				tree1.treeview('selectNode', [currentNode, { silent: true }]);
 				sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
 				sessionStorage.SensorName=currentNode.text;//获取标签名称，用于列表显示用.20201110
+				sessionStorage.sensorallpathname=getSensorAllPathName(currentNode);
 				tree1.treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
 				tree1.treeview("search",[sessionStorage.jfjk_nodeid+'', { ignoreCase: false, exactMatch: true }]);
 				/**/
+			}
+			function getSensorAllPathName(anode){
+				var allpathname=anode.text;
+				if(anode.parentId!=null  && anode!="undefined"){
+					var parentnode=tree1.treeview("getNode",anode.parentId);
+					allpathname=parentnode.text+"_"+allpathname;
+					if(parentnode.parentId!=null && parentnode.parentId!="undefined"){
+						getSensorAllPathName(parentnode);
+					}
+				}
+				return allpathname
 			}
             function getThe_level_nodeid(anode, alevel) {
                 while (anode.level > alevel) {
@@ -1729,7 +1760,7 @@
             }else
             for (var j = 0; j < data.length; j++) {
 					var anodes = new Object();
-					anodes.text = data[j].value.name+"[Id:"+data[j].value.id+"]";//20201021
+					anodes.text = data[j].value.name;//20201021+"[Id:"+data[j].value.id+"]"
 					anodes.id = data[j].value.id;
                     anodes.ParentId=data[j].value.parentId;
                     anodes.NodeId=data[j].value.nodeId;//----
@@ -1901,8 +1932,27 @@
 
         }
 	function show3D(){
-		iframemain.attr('src',"realdata.html");
+		//iframemain.attr('src',"realdata.html");
 		//$("#message_dialog").dialog('open')
+		var num="-0.5dB,-32"
+		playVoices('你好，世界！1234.56 1947年12月30日 '+num.replace(/^-/,"负"));
+	}
+	function playVoices(str){
+		var msg = new window.SpeechSynthesisUtterance();
+		msg.text = str;
+		msg.lang = "zh-CN";//设置语言
+		msg.volume = 100;//音量
+		msg.rate =localStorage.speech_rate;//说话速度
+		msg.pitch =localStorage.speech_pitch;//语调，值越大越尖锐
+		//window.speechSynthesis.cancel();
+		var str_al_info=document.getElementById("alert_info").innerHTML;
+			str_al_info=str_al_info.replace(/^\s+$/g,"");
+			if (str_al_info.length > 0) {
+				window.speechSynthesis.speak(msg);
+			}else{
+				window.speechSynthesis.cancel();
+			}
+
 	}
 	</script>
 </body>

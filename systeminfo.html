@@ -41,6 +41,49 @@
             .btn-hide{
                 display: none;
             }
+            .ui-slide {
+            width: 400px;
+            margin: 0 auto;
+            /*margin-left: 100px;*/
+            text-align: center;
+        }
+        .slider-track {
+            /*width: 50%;*/
+            height: 15px;
+            border-radius: 1em;
+            border: 1px solid #AAAAAA;
+            background: linear-gradient(#E5E5E5, #F2F2F2) repeat scroll 0 0 #EEEEEE;
+            position: relative;
+        }
+        .slider-thumb {
+            display: block;
+            width: 28px;
+            height: 28px;
+            border: 1px solid grey;
+            border-radius: 1em;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(#FAFAFA, #F6F6F6) repeat scroll 0 0 #FFFFFF;
+            position: absolute;
+            /*left: 0;*/
+            top: 50%;
+            margin: -15px 0 0 -15px;
+        }
+        input[type="text"] {
+            display: inline-block;
+            margin-bottom: 1em;
+            width: 3em;
+            text-align: center;
+        }
+        .min, .max {
+            position: absolute;
+        }
+        .min {
+            left: -30px;
+        }
+        .max {
+            right: -60px;
+        }
+
         </style>
     </head>
     <body onload="initsysteminfo()">
@@ -117,8 +160,34 @@
                     <label>隐藏左侧菜单</label>
                 </div>
                 <div class="col-xs-4 col-sm-6 col-md-4 " align="left" >
-                    <img id="switch01" src="" style="height:30px;vertical-align: middle;margin-right: 10%;" title="显示/隐藏左侧菜单" onclick="save(5)"/>
+                    <img id="switch01" src="" style="height:30px;vertical-align: middle;margin-right: 10%;" title="显示/隐藏左侧菜单" onclick="save(15)"/>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set">
+                    <label>语音播放速度</label>
+                </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4 " >
+                        <input type="text" style="width:75%;" id="speech_rate" maxlength="1" oninput = "value=value.replace(/[^\d]/g,'')" title="一位整数" value="2"/><button  class="btn-hide" onclick="save(3)">保存</button>
+                    </div>
+                    <!--div class="ui-slide">
+                        <div class="slider-track">
+                            <span class="min">0</span><span class="slider-thumb"></span><span class="max">10</span>
+                        </div>
+                    </div-->
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set">
+                    <label>语音播放语调</label>
+                </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4 " >
+                        <input type="text" style="width:75%;" id="speech_pitch" maxlength="1" oninput = "value=value.replace(/[^\d]/g,'')" title="一位整数" value="1"/><button  class="btn-hide" onclick="save(3)">保存</button>
+                    </div>
+                    <!--div class="ui-slide">
+                        <div class="slider-track">
+                            <span class="min">0</span><span class="slider-thumb"></span><span class="max">10</span>
+                        </div>
+                    </div-->
             </div>
             <div class="row" align="center">
                 <!--<div class="col-xs-4 col-md-3 system-set"> 
@@ -130,6 +199,7 @@
                 <br><br>
                 <button type="button" class="btn btn-primary btn-lg" sytle="width:550px;height:40px;line-height:40px" onclick='saveall()'>保存修改</button>
             </div>
+            
         </div>
         <script >
             initsysinfo();
@@ -165,7 +235,7 @@
                 window.parent.closeloadlayer();
             }
             function saveall(){
-                for(var i=0;i<5;i++){
+                for(var i=0;i<9;i++){
                     save(i);
                 }
             }
@@ -193,7 +263,7 @@
                         localStorage.delayTime=$("#delaytime").val();
                         info_showtime=localStorage.delayTime;
                         break;
-                    case 5:
+                    case 15:
                         var swithbutton=$("#switch01")
                         if(swithbutton[0].src.indexOf("/on.png")>0){
                             swithbutton[0].src="res/off.png";
@@ -207,6 +277,12 @@
                         break;
                     case 6:
                         //localStorage.backfile=$('#bg_src').val();
+                        break;
+                    case 7:
+                        localStorage.speech_rate=$("#speech_rate").val()*1;
+                        break;
+                    case 8:
+                        localStorage.speech_pitch=$("#speech_pitch").val()*1;
                         break;
                 }
             }
@@ -253,6 +329,32 @@
             };
             reader.readAsDataURL(file);
         }
+        
+        </script>
+        <script>
+            /*var sliderThumb = document.getElementsByClassName("slider-thumb")[0];
+            var input = document.getElementsByTagName("input")[0];
+            sliderThumb.style.left = "0px";
+            sliderThumb.onmousedown = function (evt) {
+                var that = this;
+                var oldX = evt.clientX;
+                var left = parseInt(that.style.left);
+                document.onmousemove = function(evt) {
+                    var x = evt.clientX - oldX;
+                    that.style.left = left + x + "px";
+                    if ( parseInt(that.style.left) < 0) {
+                        that.style.left = 0;
+                    }
+                    if (parseInt(that.style.left) > 400) {
+                        that.style.left = 400 + "px";
+                    }
+                }
+        　　　　 input.value = Math.ceil(parseInt(that.style.left) / 400 * 1000)/100;
+                document.onmouseup = function (evt) {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
+            }*/
         </script>
     </body>
 </html>

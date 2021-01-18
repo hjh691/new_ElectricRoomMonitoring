@@ -392,7 +392,7 @@
 						td_did.innerHTML=sessionStorage.SensorId;//objS.options[objS.selectedIndex].value;
 						td_did.setAttribute("style","display:none");
 						var td_dname=document.createElement("td");
-						td_dname.innerHTML=sessionStorage.SensorName;//name;
+						td_dname.innerHTML=sessionStorage.sensorallpathname;// SensorName;//name;
 						var td_dtime=document.createElement("td");
 						var time=((obj_data[i].time).replace(/T/g," ")).substring(0,19);//(ttime-oneday*(2*i+5));
 						td_dtime.innerHTML=time;//dateToString(new Date(time),2);
