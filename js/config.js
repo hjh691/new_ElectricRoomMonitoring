@@ -73,10 +73,18 @@ if(localStorage.delayTime)
     info_showtime=localStorage.delayTime*1;
 min_timeInterval=2;//单位分钟
 max_timeInterval=3;
-if(!localStorage.speech_rate)
-    localStorage.speech_rate=1;
-if(!localStorage.speech_pitch)
-    localStorage.speech_pitch=1;
+between_time=10;
+speech_rate=1;
+speech_pitch=1;
+speed_scroll=3;
+if(localStorage.speech_rate)
+    speech_rate=localStorage.speech_rate;
+if(localStorage.speech_pitch)
+    speech_pitch=localStorage.speech_pitch;
+if(localStorage.speed_scroll)
+    speed_scroll=localStorage.speed_scroll;
+if(localStorage.between_time)
+    between_time=localStorage.between_time;
 //localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
  /**un business
   * 

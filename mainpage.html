@@ -46,7 +46,7 @@
 		}
 	</style>
 </head>
-<body >
+<body onunload="clearpara()">
 	<!--<div id="container" onmousemove="div_mousemove();"  style="background:rgba(250,0,0,0);width:100%;height:100%;position:absolute;"></div>
 	onload="initIndex()""showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>onresize="resizeFresh()"-->
 	<div class="header" id="header" >
@@ -195,7 +195,7 @@
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
-				
+
 				roll: function (options) {
 					var defaults = {
 						speed: 1
@@ -218,6 +218,9 @@
 					return this;
 				},
 				move: function ($container, $content, speed) {
+					if(!localStorage.speed_scroll && localStorage.speed_scroll!=speed){
+						speed=localStorage.speed_scroll;
+					}
 					var fdck = document.getElementById("KeFuDiv");
 					if (fdck.style.display == "none") { 
 						return }
@@ -230,17 +233,20 @@
 						$content.css({ left: parseInt(container_width) + "px" });
 						document.getElementById("alert_info").innerHTML="";
 						fdck.style.display = "none";
-						//clearInterval(time);
-						//time=null;
+						clearInterval(time);
+						time=null;
 						//window.speechSynthesis.cancel();
 					}
+				},
+				stop: function(){
+					clearInterval(time);
 				}
 			});
 		})(jQuery);
 		$(document).ready(
 			function () {
 				try{
-				$("#KeFuDiv").roll({ speed: 3 });//字幕滚动/**/
+				$("#KeFuDiv").roll({ speed: localStorage.speed_scroll });//字幕滚动/**/
 				//jquery信息框
 				dialog=$("#message_dialog").dialog({
                     draggable:false,
@@ -264,11 +270,11 @@
 					w.onmessage = function (event) {//接收定时器返回的消息
 						//document.getElementById("result").innerHTML = event.data;
 						i++;
-						//if ((i % 60 == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
+						if ((i % 2 == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
 							//sendbeat();
 							getrealdatabynodeid(realdataid);
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
-						//}
+						}
 						if((sessionStorage.islogin=="false")&&(i % 5==0)){
 							LoginOrder(localStorage.username,sessionStorage.password,1);
 						}
@@ -378,6 +384,7 @@
 			}
 			windowHeight=height;
 			initIndex();//窗口尺寸变化时是否重画所有内容。
+			window.speechSynthesis.cancel();
 		}catch(err){
 			showstateinfo(err.message,"mainpage/refreshwindow");
 		}
@@ -1437,7 +1444,7 @@
 									}else{
 										//if(rows[k].cells[3].outerText==(obj_data.value *1).toFixed(Number_of_decimal)){
 											let jiange=GetDateDiff(rows[k].cells[2].outerText,((obj_data.time).replace(/T/g," ")).substring(0,19),"minute")
-											if(jiange<10){
+											if(jiange<=between_time){
 											//rows[k].cells[2].innerHTML=((obj_data.time).replace(/T/g," ")).substring(0,19);
 											rows[k].cells[3].innerHTML=(obj_data.value *1).toFixed(Number_of_decimal);
 											break;
@@ -1465,11 +1472,12 @@
 				}
 				var fdck = document.getElementById("KeFuDiv");
 				if (pt > 0) {
-					
-					if(fdck.style.display=="block"){
-						str_alert=gaojing.outerText+str_alert;
-					}
+					//if(fdck.style.display=="block"){
+					//	str_alert=gaojing.outerText+str_alert;
+					//}
 					gaojing.innerHTML = "<pre  style='vertical-align:center;background-color: rgba(255,255,0,0);'>" + str_alert + "</pre>";
+					if(!time)
+						$("#KeFuDiv").roll({ speed: localStorage.speed_scroll });//字幕滚动/**/
 					//fdck.style.display="block";
 					//resetContent();
 					//speech.innerHTML =str_speech;// str_alert;//str_speech;
@@ -1540,10 +1548,10 @@
 				tbody.appendChild(tr);
 				if ((alertvalue !== null) && (alertvalue !== "NaN")) {
 					str_speech = str_speech +alert_sys_name+" "+sname.replace(/_/g,"杠")+" "+ alertinfo + " 数值" + alertvalue.replace(/^-/g,"负") +"  ";
-					str_alert = str_alert + " " + alerttime + "  " + ": " +alert_sys_name+" "+ sname + " " + type_td+" "+ alertinfo + " 数值为:" + alertvalue+" / ";
+					str_alert = str_alert + "  /" + alerttime + "  " + ": " +alert_sys_name+" "+ sname + " " + type_td+" "+ alertinfo + " 数值为:" + alertvalue+"  ";
 				} else {
 					str_speech =str_speech +alert_sys_name+" "+sname.replace(/_/g,"杠") +" "+ alertinfo ;
-					str_alert = str_alert + " " + alerttime + "  " +": " +alert_sys_name+" "+ sname + " "+ type_td+" " + alertinfo + " " + alertvalue+" / ";// + alertvalue;
+					str_alert = str_alert + "  /" + alerttime + "  " +": " +alert_sys_name+" "+ sname + " "+ type_td+" " + alertinfo + " " + alertvalue+" ";// + alertvalue;
 				}
 			}
 		}catch(err){
@@ -1944,16 +1952,30 @@
 		msg.volume = 100;//音量
 		msg.rate =localStorage.speech_rate;//说话速度
 		msg.pitch =localStorage.speech_pitch;//语调，值越大越尖锐
-		//window.speechSynthesis.cancel();
-		var str_al_info=document.getElementById("alert_info").innerHTML;
-			str_al_info=str_al_info.replace(/^\s+$/g,"");
-			if (str_al_info.length > 0) {
-				window.speechSynthesis.speak(msg);
-			}else{
-				window.speechSynthesis.cancel();
-			}
-
+		window.speechSynthesis.cancel();
+		window.speechSynthesis.speak(msg);
 	}
+	function clearpara(){
+		w1.terminate();
+		w1 = undefined;
+		window.speechSynthesis.cancel();
+		sessionStorage.allscreen=false;
+	}
+	function FullScreen(el) {
+    var isFullscreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
+    if (!isFullscreen) { //进入全屏,多重短路表达式
+        (el.requestFullscreen && el.requestFullscreen()) ||
+        (el.mozRequestFullScreen && el.mozRequestFullScreen()) ||
+        (el.webkitRequestFullscreen && el.webkitRequestFullscreen()) || (el.msRequestFullscreen && el.msRequestFullscreen());
+
+    } else { //退出全屏,三目运算符
+        document.exitFullscreen ? document.exitFullscreen() :
+            document.mozCancelFullScreen ? document.mozCancelFullScreen() :
+            document.webkitExitFullscreen ? document.webkitExitFullscreen() : '';
+    }
+}
+
+
 	</script>
 </body>
 </html>

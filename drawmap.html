@@ -14,8 +14,8 @@
 	<script  type="text/javascript" src="js/function.js"></script>
 	<style type="text/css"></style>
 </head>
-<body >
-	<div>
+<body  >
+	<div id="drawmap">
 		<div id="head_map">
 			<div class="pagecard"  style="text-align: center;font-size:20px;font-style:normal;display:none;"><b>站示意图<!--onclick="getrealsbydataid()"--></b></div>
 			<div class="rowlay" id="refrsh-binarys" ><b>
@@ -29,8 +29,9 @@
 			</div>
 		</div>
 		<a id="mapmodule" style="color:red;position:absolute;top:7px;right:20px;text-align:right" href="javascript:void(0)" onclick="showmodule()" ></a>
-		<div id="maprefresh" style="display:none" onclick="refresh()"></div><!--有告警时刷新图形显示-->
-		<div id="mycanvasdiv" style="background-color:#cccccc;position: relative; text-align: center; overflow: auto;">
+		<a id="mapmodule1" style="color:red;position:absolute;top:7px;right:100px;text-align:right" href="javascript:void(0)" onclick="toggleFullScreen(event)" ></a>
+		<div id="maprefresh" style="display:none" onclick="refresh()"></div><!--有告警时刷新图形显示overflow: auto;-->
+		<div id="mycanvasdiv" style="background-color:#cccccc;position: relative; text-align: center; ">
 			<div align="center">
 				<canvas id="mycanvas" align="center" width="900px" height="700px" style="background-color:#000;">
 				</canvas>

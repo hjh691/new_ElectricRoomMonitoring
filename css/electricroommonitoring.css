@@ -85,11 +85,11 @@
         transform: translateX(0)
     }
 }**/
-	/*body.active{opacity: 1;}*/
+	/*body.active{opacity: 1;}overflow: auto;*/
 	.header{
 		height:80px;
 		position:relative;
-		overflow: auto;
+		
 	}
 	.mainarea{
 		position:relative;

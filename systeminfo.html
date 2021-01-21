@@ -17,7 +17,7 @@
                 margin-right: 5px;
             }
             .row{
-                margin-top: 5px;
+                margin-top: 3px;
             }
             .system-set{
                 text-align: left;
@@ -94,7 +94,7 @@
                     <label></label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " align="center">
-                    <img src="res/jka_100.png"  />
+                    <img src="res/jka_100.png" style="height: 100px;" />
                     <div style="color:#0000b0;font-size:16px;display:none">
                         <P id="p1"></p><!---->
                         <p id="p2"></p>
@@ -165,29 +165,35 @@
             </div>
             <div class="row">
                 <div class="col-xs-4 col-md-3 system-set">
+                    <label>字幕滚动速度</label>
+                </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4 " >
+                        <input type="number" style="width:75%;" id="speed_scroll" maxlength="1" title="一位整数" value="3"/><button  class="btn-hide" onclick="save(5)">保存</button>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set">
                     <label>语音播放速度</label>
                 </div>
                     <div class="col-xs-12 col-sm-6 col-md-4 " >
-                        <input type="text" style="width:75%;" id="speech_rate" maxlength="1" oninput = "value=value.replace(/[^\d]/g,'')" title="一位整数" value="2"/><button  class="btn-hide" onclick="save(3)">保存</button>
+                        <input type="number" style="width:75%;" id="speech_rate" maxlength="3"  title="一位整数" value="2"/><button  class="btn-hide" onclick="save(7)">保存</button>
                     </div>
-                    <!--div class="ui-slide">
-                        <div class="slider-track">
-                            <span class="min">0</span><span class="slider-thumb"></span><span class="max">10</span>
-                        </div>
-                    </div-->
             </div>
             <div class="row">
                 <div class="col-xs-4 col-md-3 system-set">
                     <label>语音播放语调</label>
                 </div>
                     <div class="col-xs-12 col-sm-6 col-md-4 " >
-                        <input type="text" style="width:75%;" id="speech_pitch" maxlength="1" oninput = "value=value.replace(/[^\d]/g,'')" title="一位整数" value="1"/><button  class="btn-hide" onclick="save(3)">保存</button>
+                        <input type="number" style="width:75%;" id="speech_pitch" maxlength="3"  title="一位整数" value="1"/><button  class="btn-hide" onclick="save(8)">保存</button>
                     </div>
-                    <!--div class="ui-slide">
-                        <div class="slider-track">
-                            <span class="min">0</span><span class="slider-thumb"></span><span class="max">10</span>
-                        </div>
-                    </div-->
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set">
+                    <label>相同告警时间间隔</label>
+                </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4 " >
+                        <input type="number" style="width:75%;" id="between_time" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')" title="一位整数" value="1"/><button  class="btn-hide" onclick="save(9)">保存</button>
+                    </div>
             </div>
             <div class="row" align="center">
                 <!--<div class="col-xs-4 col-md-3 system-set"> 
@@ -195,8 +201,8 @@
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
                     <input type="files" style="width:75%;" id="" /><button onclick="save(4)">保存更改</button>
-                </div>-->
-                <br><br>
+                </div><br><br>-->
+                
                 <button type="button" class="btn btn-primary btn-lg" sytle="width:550px;height:40px;line-height:40px" onclick='saveall()'>保存修改</button>
             </div>
             
@@ -232,10 +238,23 @@
                     $("#bg_src").val(localStorage.backgroudfilename)
                 else
                     $("#bg_src").val(jfjk_base_config.bg_src);
+                if(localStorage.speed_scroll)
+                    $("#speed_scroll").val(localStorage.speed_scroll);
+                if(localStorage.speech_rate){
+                    $("#speech_rate").val(localStorage.speech_rate);
+                }
+                if(localStorage.speech_pitch){
+                    $("#speech_pitch").val(localStorage.speech_pitch);
+                }
+                if(localStorage.beteewn_time){
+                    $("#between_time").val(localStorage.between_time);
+                }else{
+                    $("#between_time").val(between_time);
+                }
                 window.parent.closeloadlayer();
             }
             function saveall(){
-                for(var i=0;i<9;i++){
+                for(var i=0;i<10;i++){
                     save(i);
                 }
             }
@@ -275,14 +294,18 @@
                             parent.window.showLeftMenu(true);
                         }
                         break;
-                    case 6:
-                        //localStorage.backfile=$('#bg_src').val();
+                    case 5:
+                        localStorage.speed_scroll=$('#speed_scroll').val();
                         break;
                     case 7:
                         localStorage.speech_rate=$("#speech_rate").val()*1;
                         break;
                     case 8:
                         localStorage.speech_pitch=$("#speech_pitch").val()*1;
+                        break;
+                    case 9:
+                        localStorage.between_time=parseInt($("#between_time").val());
+                        between_time=localStorage.between_time;
                         break;
                 }
             }

@@ -7,7 +7,7 @@
 **/
 var is_have = false;
 var chartOption={chart_type:"",chart_unit:"",chart_max:0,chart_min:0,chart_sigle:"",
-                 chart_main_num:4,chart_chi_num:8,chart_detail_font_size:18,chart_title_font_size:20,
+                 chart_main_num:4,chart_chi_num:8,chart_detail_font_size:16,chart_title_font_size:16,
                  start_angle:0,end_angle:180}
 var myChart2 = echarts.init(document.getElementById('realdata_chart'));//趋势图
 var myChart = echarts.init(document.getElementById('realdata_maxvalOfDay'));//24小时极值
@@ -39,8 +39,9 @@ var tab_head;
 var backgroudcolor='#999';
 //var obj_realdata;
 var datas = [];
-var alertconfig=[0,25,"温度过低","温度过高"];
-var alertcount=[0,0,0,0];//;
+//var alertconfig=[0,25,"温度过低","温度过高"];
+//var alertcount=[0,0,0,0];//;
+var alert_obj=new Object();
 let haverealdata=false;
 var catalog="Defalt";
 var display_type=document.getElementById("display_type");
@@ -406,10 +407,10 @@ function getCatalog(index){
                                             chartOption.chart_chi_num=10;
                                         }
                                         sessionStorage.setItem("chartoption",JSON.stringify(chartOption));
-                                        alertconfig[1]=d_config[i].config.Max;
-                                        alertconfig[0]=d_config[i].config.Min;
-                                        alertconfig[3]=d_config[i].config.MMax;
-                                        alertconfig[2]=d_config[i].config.MMin;
+                                        //alertconfig[1]=d_config[i].config.Max;
+                                        //alertconfig[0]=d_config[i].config.Min;
+                                        //alertconfig[3]=d_config[i].config.MMax;
+                                        //alertconfig[2]=d_config[i].config.MMin;
                                         break;
                                     }
                                 }
@@ -458,6 +459,7 @@ function decoderealdata(obj_realdata,asensorid) {
     let realdata_len=obj_realdata.length,tablehead_len=tab_head.rows[0].cells.length;
     if (obj_realdata) {
         refresh_tabhead(v_sel);//根据选项刷新表头的显示内容
+        alert_obj={};
         //var title_len=tab_head.rows[0].cells.length;
         if(v_sel){//有显示控制选择项时进行如下操作.
             for (var j=0;j<realdata_len;j++) {
@@ -745,7 +747,7 @@ function decoderealdata(obj_realdata,asensorid) {
         }
         if (pt > 0) {
             var tableLength = $table.rows.length;
-            alertcount=[0,0,0,0,0]
+            //alertcount=[0,0,0,0,0]
             maxOfRealdata=($table.rows[0].cells[title_index].innerHTML)*1;
             maxvaluetime=($table.rows[0].cells[2].innerHTML);
             maxOfRealdataName=($table.rows[0].cells[1].innerHTML)
@@ -760,7 +762,8 @@ function decoderealdata(obj_realdata,asensorid) {
                     maxvaluetime=($table.rows[int].cells[2].innerHTML);
                     maxOfRealdataName=($table.rows[int].cells[1].innerHTML)
                 }
-                jisuanyichangbili(($table.rows[int].cells[title_index].innerHTML)*1);
+                //jisuanyichangbili(($table.rows[int].cells[title_index].innerHTML)*1);
+                jisuanyichangbili(($table.rows[int].cells[tab_head.rows[0].cells.length-1].innerHTML));
             }
             if (typeof (sessionStorage.t_p) != "undefined") {
                 sname = $table.rows[sessionStorage.t_p].cells[1].innerHTML;
@@ -876,7 +879,7 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
             if(!chart_unit || chart_unit=="度")
                 chart_unit = "℃"
             chartOption.chart_sigle = "";
-            colors = [[0.15, '#1e90ff'], [0.4, '#090'], [0.6, '#ffa500'], [0.8, '#ff4500'], [1, '#ff0000']];
+            colors = [[0.2, '#1e90ff'], [0.7, '#090'], [0.8, '#ffa500'], [0.9, '#ff4500'], [1, '#ff0000']];
             break;
         case "pd":
         case "max":
@@ -940,6 +943,9 @@ function initseries(data) {
             offsetCenter: ['200%', '0'],
             textStyle: {
                 color: 'white',
+                //fontStyle: "normal",
+                fontWeight: 'normal',
+                fontSize:14,
             },
             text: sname+"--24小时极值",
         },
@@ -977,7 +983,7 @@ function initseries(data) {
                             [0.2, 'green'],
                             [1, '#1f1f1f']
                         ],
-                        color: [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
+                        color: colors,//[[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
                         width: 29,
                         /*shadowColor: 'yellow', //默认透明
                         shadowOffsetX:2,
@@ -1019,7 +1025,7 @@ function initseries(data) {
                     text: '24小时峰值',
                     textStyle: {
                         color: 'white',
-                        fontSize: chartOption.chart_title_font_size
+                        fontSize: chartOption.chart_title_font_size-4,
                     }
                 },
                 detail: {
@@ -1043,6 +1049,8 @@ function initseries(data) {
             offsetCenter: ['200%', '0'],
             textStyle: {
                 color: 'white',
+                fontWeight: 'normal',
+                fontSize:14,
             },
             text: sname+"-实时值",
         },
@@ -1080,7 +1088,7 @@ function initseries(data) {
                             [0.2, 'green'],
                             [1, '#1f1f1f']
                         ],
-                        color: [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
+                        color: colors,//[[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
                         width: 29,
                         /* shadowColor: 'yellow', //默认透明
                          shadowOffsetX:2,
@@ -1153,11 +1161,12 @@ function refreshData() {
     option.series[0].max = chartOption.chart_max;
     option.series[0].min = chartOption.chart_min;
     option.series[0].splitNumber=chartOption.chart_main_num;
+    option.series[0].axisLine.lineStyle.color=colors;
     option.series[0].axisTick.splitNumber=chartOption.chart_chi_num;
     value = option.series[0].data[0].value;
     option.series[0].detail.formatter = chartOption.chart_sigle + value + ' \n\n' +"时间："+happentime;//+chart_unit;
     option.series[0].data[0].name = chart_unit;//sname;
-    option.title.text = sname+" : "+titlename+" 24小时峰值";
+    option.title.text = sname+":  "+titlename+" 24小时峰值";
     /*for (var i = 0; i < option.series.length; i++) {
         option.series[i].axisLine.lineStyle.color = colors;
         option.series[i].max = chart_max;
@@ -1180,6 +1189,7 @@ function refreshData() {
     option4.series[0].max = chartOption.chart_max;
     option4.series[0].min = chartOption.chart_min;
     option4.series[0].splitNumber=chartOption.chart_main_num;
+    option4.series[0].axisLine.lineStyle.color=colors;
     option4.series[0].axisTick.splitNumber=chartOption.chart_chi_num;
     value = option4.series[0].data[0].value;
     option4.series[0].detail.formatter = chartOption.chart_sigle + value + ' \n\n' + option4.series[0].name + ' ';//+chart_unit;
@@ -1187,35 +1197,23 @@ function refreshData() {
     option4.title.text = sname+" : "+titlename;
     myChart4.setOption(option4);
     option1.series[0].data[0].value= maxOfRealdata.toFixed(Number_of_decimal);//54.321;
-    option1.series[0].detail.formatter=maxOfRealdata.toFixed(Number_of_decimal)+ '\n\n 标签名称: '+maxOfRealdataName;//实时极值的标签名称,"发生时刻:"+maxvaluetime+
+    option1.series[0].detail.formatter=maxOfRealdata.toFixed(Number_of_decimal)+ '\n\n标签名称: '+maxOfRealdataName;//实时极值的标签名称,"发生时刻:"+maxvaluetime+
     option1.series[0].max = chartOption.chart_max;
     option1.series[0].min = chartOption.chart_min;
     option1.series[0].splitNumber=chartOption.chart_main_num;
+    option1.series[0].axisLine.lineStyle.color=colors;
     option1.series[0].axisTick.splitNumber=chartOption.chart_chi_num;
     option1.series[0].data[0].name = chart_unit;//sname;
     option1.title.text="实时极值: "+titlename;
     myChart1.setOption(option1);
-    var ratArr=[],str_name="";
-    for(var i=0;i<3;i++){//alertcount.length
-        if(alertcount[i]!=0){
-            switch(i){
-                case 0:
-                    str_name="正常";
-                    break;
-                case 1:
-                    str_name=alertconfig[i+1];
-                    break;
-                case 2:
-                    str_name=alertconfig[i+1];
-                    break;
-                /*case 3:
-                    str_name="二级告警";
-                    break;
-                case 4:
-                    str_name="一级告警";
-                    break;*/
-            }
-            ratArr.push({name:str_name,value:alertcount[i]});
+    var ratArr=[];//,str_name=""
+    var keys=Object.keys(alert_obj);
+    for(i=keys.length-1;i>=0 ;i--){
+        //console.log(key + '---' + alert_obj[key])
+        key=keys[i];
+        if(alert_obj[key]!=0){
+            
+            ratArr.push({name:key,value:alert_obj[key]});
         }
     }
     option3.series[0].data=ratArr;
@@ -1292,6 +1290,10 @@ function decodedatas(obj_chartdata) {
             title: {
                 text: sname+" "+titlename+' : 24小时变化趋势图',//20200518
                 x: "center",
+                textStyle: {
+                    fontWeight: 'normal',
+                    fontSize:chartOption.chart_title_font_size,
+                }
             },/**/
             tooltip: {
                 trigger: 'item',
@@ -1669,6 +1671,8 @@ function initecharts(){
             offsetCenter: ['200%', '0'],
             textStyle: {
                 color: 'white',
+                fontWeight: 'normal',
+                fontSize: chartOption.chart_title_font_size,
             },
             text: '实时极值',
         },
@@ -1706,7 +1710,7 @@ function initecharts(){
                             [0.2, 'green'],
                             [1, '#1f1f1f']
                         ],
-                        color: [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
+                        color: colors,//[[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
                         width: 29,
                         /*shadowColor: 'yellow', //默认透明
                         shadowOffsetX:2,
@@ -1769,7 +1773,7 @@ function initecharts(){
     myChart1.setOption(option1);
     option3 = {
         backgroundColor: backgroudcolor,
-        color:['#090','#055','#f75','#b00','#095','#f0f','#444'],
+        color:['#090','#f75','#055','#b00','#095','#f0f','#444'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {            // 坐标轴指示器，坐标轴触发有效
@@ -1786,6 +1790,8 @@ function initecharts(){
             text: "状态统计图",
             textStyle:{
                 color: "#FFF",
+                fontWeight: 'normal',
+                fontSize: chartOption.chart_title_font_size,
             },
         },
         /*xAxis: [
@@ -1840,7 +1846,17 @@ function initecharts(){
         console.log(params);
     });
 }
+
 function jisuanyichangbili(avalue){
+    if(!avalue){
+        avalue="正常";
+    }
+    if(alert_obj.hasOwnProperty(avalue)){
+        alert_obj[avalue]++;
+    }else{
+        alert_obj[avalue]=1;
+    }
+    /*
     //if(avalue>alertconfig[3]){
     //    alertcount[4]++;
     //}else if(avalue>alertconfig[2]){
@@ -1852,7 +1868,7 @@ function jisuanyichangbili(avalue){
         alertcount[1]++;
     }else{
         alertcount[0]++;
-    }
+    }*/
 }
 /**
  * 解决在首次登录今日实时数据页面时数据不立即显示的问题，标签名称添加上级名称，区分同名标签；
@@ -1869,4 +1885,7 @@ function jisuanyichangbili(avalue){
  * 更新图形绑定标签格式以及告警信息列表的数据更新，根据配置确定仪表盘图形的刻度线数量；解决采集器数据为空时实时极值显示NaN的问题；
  * 
  * 实时数据列表点击后要与标签树形菜单进行同步对应选择（标签进行选择和滚动定位）（比较耗时）
+ * 
+ * 异常统计，采用告警信息作为标准，对象形式进行统计；
+ * 仪表盘图形的分段显示因图而异的功能，以及图形标题字体字号的跳转，长标题可以显示完全。
  */

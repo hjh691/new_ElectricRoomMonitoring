@@ -297,6 +297,8 @@ function init_var(){
 	delete sessionStorage.kssj;
 	delete sessionStorage.jssj;
 	delete sessionStorage.cxsj;
+	window.speechSynthesis.cancel();
+	sessionStorage.allscreen=false;
 }
 //获取用户详细信息 used by electricroommonitor
 function GetUserProfile() {
@@ -1026,120 +1028,120 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 //绘图函数 in used by electricroommonitoring
 function drawmap(arr) {
 	try{
-	var mCanvasDiv=document.getElementById("mycanvasdiv");
-	var mCanvas = document.getElementById("mycanvas");
-	var mheadmap=document.getElementById("head_map")
-	if (mCanvas == null) {
-		mCanvas = iframe_main.document.getElementById("mycanvas");
-	}
-	if (mCanvasDiv == null) {
-		mCanvasDiv = iframe_main.document.getElementById("mycanvasdiv");
-	}
-	if(mheadmap==null){
-		mheadmap=iframe_main.document.getElementById("head_map");
-	}
-	//mCanvas.width = document.documentElement.clientWidth - 17;
-	//mCanvas.height = document.documentElement.clientHeight;
-	var swidth = cwidth= document.documentElement.clientWidth ;
-	var sheight = cheight=document.documentElement.clientHeight-mheadmap.clientHeight;;
-	mCanvasDiv.style.width= cwidth  + 'px';
-	mCanvasDiv.style.height= cheight + 'px';
-	var background_color="#cccccc";
-	mCanvasDiv.style.backgroundColor = mCanvas.style.backgroundColor =background_color;
-	if(arr==null){
+		var mCanvasDiv=document.getElementById("mycanvasdiv");
+		var mCanvas = document.getElementById("mycanvas");
+		var mheadmap=document.getElementById("head_map")
+		if (mCanvas == null) {
+			mCanvas = iframe_main.document.getElementById("mycanvas");
+		}
+		if (mCanvasDiv == null) {
+			mCanvasDiv = iframe_main.document.getElementById("mycanvasdiv");
+		}
+		if(mheadmap==null){
+			mheadmap=iframe_main.document.getElementById("head_map");
+		}
+		//mCanvas.width = document.documentElement.clientWidth - 17;
+		//mCanvas.height = document.documentElement.clientHeight;
+		var swidth = cwidth= document.documentElement.clientWidth ;
+		var sheight = cheight=document.documentElement.clientHeight-mheadmap.clientHeight;;
+		mCanvasDiv.style.width= cwidth  + 'px';
+		mCanvasDiv.style.height= cheight + 'px';
+		var background_color="#cccccc";
+		mCanvasDiv.style.backgroundColor = mCanvas.style.backgroundColor =background_color;
+		if(arr==null){
+			var ctx = mCanvas.getContext("2d");
+			ctx.save();
+			ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+			return;
+		}
+		let arr_len=arr.length;
+		for (var i = 0; i < arr_len; i++) {
+			if (!arr[i]) {
+				continue;
+			}
+			try {
+				var strs = JSON.parse(arr[i]);
+			} catch(err) {
+				return;
+			}
+			if ((strs.hasOwnProperty("_type")) && (strs._type == "Selection")) {
+				if (strs.hasOwnProperty("_shape")) {
+					var str = strs._shape;
+					var sx = parseFloat(str.StartPoint.substring(0, str.StartPoint.indexOf(",")));
+					var sy = parseFloat(str.StartPoint.substr(str.StartPoint.indexOf(",") + 1));
+					var ex = parseFloat(str.EndPoint.substring(0, str.EndPoint.indexOf(",")));
+					var ey = parseFloat(str.EndPoint.substring(str.EndPoint.indexOf(",") + 1));
+					mCanvasDiv.style.backgroundColor = mCanvas.style.backgroundColor = str.StrokeColor.replace(/\#../,"#");
+					swidth=Math.ceil(ex+sx);
+					sheight=Math.ceil(ey+sy);
+					/*if (Math.ceil(ex + sx) > (document.documentElement.clientWidth - 17)) {
+						mCanvas.width = Math.ceil(ex + sx);
+					} else {
+						mCanvas.width = document.documentElement.clientWidth - 17;
+					}
+					if (Math.ceil(ey + sy) > document.documentElement.clientHeight) {
+						mCanvas.height = Math.ceil(ey + sy);
+					} else {
+						mCanvas.height = document.documentElement.clientHeight;
+					}*/
+					break;
+				}
+			} /*else {
+				mCanvas.width = document.documentElement.clientWidth - 17;
+				mCanvas.height = document.documentElement.clientHeight;
+			}*/
+		}
+		mCanvas.width = swidth;
+		mCanvas.height = sheight;
+		//长宽比例对比
+		if(sessionStorage.map_module==0)
+		{
+			if(swidth > 0 && sheight > 0)
+			{
+				var tx = cwidth / swidth;
+				var ty = cheight / sheight;
+				var t = tx > ty ? ty : tx;
+				cwidth = swidth * t;
+				cheight = sheight * t;
+			}
+		}
+		else
+		{//原尺寸时width与style.width设置相同。
+			cwidth = swidth;
+			cheight = sheight;
+		}
+		mCanvas.style.width= cwidth*scaler  + 'px';
+		mCanvas.style.height= cheight*scaler-15 + 'px';
 		var ctx = mCanvas.getContext("2d");
 		ctx.save();
 		ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
-		return;
-	}
-	let arr_len=arr.length;
-	for (var i = 0; i < arr_len; i++) {
-		if (!arr[i]) {
-			continue;
-		}
-		try {
+		var pfdp = new Object();
+		for (var i = 0; i < arr_len; i++) {
+			if (!arr[i]) {
+				continue;
+			}
 			var strs = JSON.parse(arr[i]);
-		} catch(err) {
-			return;
-		}
-		if ((strs.hasOwnProperty("_type")) && (strs._type == "Selection")) {
+			if (strs.hasOwnProperty("_type")) {
+				pfdp.type = strs._type;
+			}
+			if (strs.hasOwnProperty("_matrix")) {
+				pfdp._matrix = strs._matrix;
+			}
 			if (strs.hasOwnProperty("_shape")) {
 				var str = strs._shape;
-				var sx = parseFloat(str.StartPoint.substring(0, str.StartPoint.indexOf(",")));
-				var sy = parseFloat(str.StartPoint.substr(str.StartPoint.indexOf(",") + 1));
-				var ex = parseFloat(str.EndPoint.substring(0, str.EndPoint.indexOf(",")));
-				var ey = parseFloat(str.EndPoint.substring(str.EndPoint.indexOf(",") + 1));
-				mCanvasDiv.style.backgroundColor = mCanvas.style.backgroundColor = str.StrokeColor.replace(/\#../,"#");
-				swidth=Math.ceil(ex+sx);
-				sheight=Math.ceil(ey+sy);
-				/*if (Math.ceil(ex + sx) > (document.documentElement.clientWidth - 17)) {
-					mCanvas.width = Math.ceil(ex + sx);
-				} else {
-					mCanvas.width = document.documentElement.clientWidth - 17;
+				//将shape的属性和值赋值给pfdp。
+				for (var key in str) {
+					pfdp[key] = str[key];
 				}
-				if (Math.ceil(ey + sy) > document.documentElement.clientHeight) {
-					mCanvas.height = Math.ceil(ey + sy);
-				} else {
-					mCanvas.height = document.documentElement.clientHeight;
-				}*/
-				break;
 			}
-		} /*else {
-			mCanvas.width = document.documentElement.clientWidth - 17;
-			mCanvas.height = document.documentElement.clientHeight;
-		}*/
-	}
-	mCanvas.width = swidth;
-	mCanvas.height = sheight;
-	//长宽比例对比
-	if(sessionStorage.map_module==0)
-	{
-		if(swidth > 0 && sheight > 0)
-		{
-			var tx = cwidth / swidth;
-			var ty = cheight / sheight;
-			var t = tx > ty ? ty : tx;
-			cwidth = swidth * t;
-			cheight = sheight * t;
-		}
-	}
-	else
-	{//原尺寸时width与style.width设置相同。
-		cwidth = swidth;
-		cheight = sheight;
-	}
-	mCanvas.style.width= cwidth  + 'px';
-	mCanvas.style.height= cheight-15 + 'px';
-	var ctx = mCanvas.getContext("2d");
-	ctx.save();
-	ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
-	var pfdp = new Object();
-	for (var i = 0; i < arr_len; i++) {
-		if (!arr[i]) {
-			continue;
-		}
-		var strs = JSON.parse(arr[i]);
-		if (strs.hasOwnProperty("_type")) {
-			pfdp.type = strs._type;
-		}
-		if (strs.hasOwnProperty("_matrix")) {
-			pfdp._matrix = strs._matrix;
-		}
-		if (strs.hasOwnProperty("_shape")) {
-			var str = strs._shape;
-			//将shape的属性和值赋值给pfdp。
-			for (var key in str) {
-				pfdp[key] = str[key];
+			ctx.setTransform(1, 0, 0, 1, 0, 0); //还原矩阵，没有此句，图形将在上一次变化的基础上进行变化。
+			ctx.setLineDash([]);
+			eval(pfdp.type)(ctx, pfdp);//类反射，pfdp.type对应各类图形名称去调用相应的绘图函数。移动至drawmap.js里。
+			for (var key in pfdp) {
+				delete pfdp[key];
 			}
 		}
-		ctx.setTransform(1, 0, 0, 1, 0, 0); //还原矩阵，没有此句，图形将在上一次变化的基础上进行变化。
-		ctx.setLineDash([]);
-		eval(pfdp.type)(ctx, pfdp);//类反射，pfdp.type对应各类图形名称去调用相应的绘图函数。移动至drawmap.js里。
-		for (var key in pfdp) {
-			delete pfdp[key];
-		}
-	}
-	ctx.restore();
+		ctx.restore();
 	}catch(err){
 		showstateinfo(err.message,"drawmap");
 	}
