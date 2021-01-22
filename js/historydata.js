@@ -389,7 +389,7 @@ function decodedatas(obj_data){
             tdname.innerHTML=sessionStorage.sensorallpathname;// sessionStorage.SensorName;
             tdvalue1.innerHTML = obj_data[i].value;
             //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
-            tdtime.innerHTML = obj_data[i].time.replace(/T/g," ").substring(0,19);; //jsonObject[i].color;
+            tdtime.innerHTML = dateToString(obj_data[i].time,2);; //jsonObject[i].color;
             tdvalue2.innerHTML = obj_data[i].value;
             tdvalue3.innerHTML= obj_data[i].value;
             //tr.appendChild(tdname);
@@ -415,8 +415,8 @@ function decodedatas(obj_data){
         maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
         maxval=minval=maxvalue;
         hourvalue=parseFloat(obj_data[0].value);
-        maxtime=mintime=obj_data[0].time.replace(/T/g," ").substring(0,19);
-        var strtime=obj_data[0].time.replace(/T/g," ").substr(0,13);
+        maxtime=mintime=dateToString(obj_data[0].time,2);//.replace(/T/g," ").substring(0,19);
+        var strtime=dateToString(obj_data[0].time,2).replace(/T/g," ").substr(0,13);
         var temp=parseInt(strtime.substr(11));
         jisuan(11,13);
         avgvalue=(avgvalue/ct);
@@ -477,8 +477,8 @@ function decodedatas(obj_data){
         maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
         maxval=minval=maxvalue;
         hourvalue=parseFloat(obj_data[0].value);
-        maxtime=mintime=obj_data[0].time.replace(/T/g," ").substring(0,19);
-        var strtime=obj_data[0].time.replace(/T/g," ").substr(0,10);
+        maxtime=mintime=dateToString(obj_data[0].time,2);//.replace(/T/g," ").substring(0,19);
+        var strtime=dateToString(obj_data[0].time,2).replace(/T/g," ").substr(0,10);
         var temp=parseInt(strtime.substr(8));
         jisuan(8,10);//参数是区日期时间格式串的起始和结束位置的由零算起的索引值。2020-04-16 14:50:10，
         avgvalue=(avgvalue/ct);
@@ -593,7 +593,7 @@ function decodedatas(obj_data){
                             for (let i = 0, l = series[0].data.length; i < l; i++) {
                                 for (let j = 0; j < series.length; j++) {
                                     //组装表数据
-                                    strtime=dateToString(new Date(series[j].data[i][0]),2);
+                                    strtime=dateToString((series[j].data[i][0]),2);
                                     tdBodys += `<td>${ series[j].data[i][1]}</td>`;
                                 }
                                 table += `<tr><td >${strtime}</td>${tdBodys}</tr>`;
@@ -717,14 +717,14 @@ function decodedatas(obj_data){
             if(isNaN(parseFloat(obj_data[i].value))){
                 obj_data[i].value=-1;
             }
-            if(parseInt(obj_data[i].time.substr(a1,a2))==temp){
+            if(parseInt(dateToString(obj_data[i].time,2).substr(a1,a2))==temp){
                 if(parseFloat(obj_data[i].value)>maxvalue){
                     maxvalue=parseFloat(obj_data[i].value);
-                    maxtime=obj_data[i].time.replace(/T/g," ").substring(0,19);;
+                    maxtime=dateToString(obj_data[i].time,2);//.replace(/T/g," ").substring(0,19);;
                 }
                 if(parseFloat(obj_data[i].value)<minvalue){
                     minvalue=parseFloat(obj_data[i].value);
-                    mintime=obj_data[i].time.replace(/T/g," ").substring(0,19);;
+                    mintime=dateToString(obj_data[i].time,2);//.replace(/T/g," ").substring(0,19);;
                 }
                 /*if(parseFloat(obj_data[i].value)>maxval){
                     maxval=parseFloat(obj_data[i].value);
@@ -787,8 +787,8 @@ function decodedatas(obj_data){
                 pc.push([strtodatetime(strtime+":00"),minvalue , ps]);
                 maxvalue=minvalue=avgvalue=parseFloat(obj_data[i].value);
                 hourvalue=parseFloat(obj_data[i].value);
-                maxtime=mintime=obj_data[i].time.replace(/T/g," ").substring(0,19);;
-                strtime=obj_data[i].time.replace(/T/g," ").substr(0,a2);
+                maxtime=mintime=dateToString(obj_data[i].time,2);//.replace(/T/g," ").substring(0,19);;
+                strtime=dateToString(obj_data[i].time,2).replace(/T/g," ").substr(0,a2);
                 temp=parseInt(strtime.substr(a1));
                 ps++;
                 ct=1;

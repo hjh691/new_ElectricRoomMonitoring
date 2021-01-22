@@ -346,7 +346,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
 					for (var j = 0; j <obj_chartdata.length; j++) {
                         if(obj_chartdata[j].sensorId==sensorid){
                             let name=obj_chartdata[j].name.toLowerCase();
-                            pb.push([strtodatetime(obj_chartdata[j].time.replace(/T/g," ").substring(0,19)), obj_chartdata[j].value, j]);
+                            pb.push([Date.parse(obj_chartdata[j].time), obj_chartdata[j].value, j]);
 							if(isNaN(parseFloat(obj_chartdata[j].value))){
 								obj_chartdata[j].value=-1;
 							}
@@ -359,7 +359,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                             if(i===0){
                                 atr=creatTr();
                                 atr.cells[0].innerHTML=obj_chartdata[j].name.toLowerCase();
-                                atr.cells[1].innerHTML=obj_chartdata[j].time.replace(/T/g," ").substring(0,19);
+                                atr.cells[1].innerHTML=dateToString(obj_chartdata[j].time,2);//.replace(/T/g," ").substring(0,19);
                                 atr.cells[2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
                                 tbody.appendChild(atr);
                             }else{
@@ -372,7 +372,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                         if(jiange<-1*min_timeInterval){
                                             atr=creatTr();
                                             atr.cells[0].innerHTML=obj_chartdata[j].name.toLowerCase();
-                                            atr.cells[i].innerHTML=obj_chartdata[j].time.replace(/T/g," ").substring(0,19);
+                                            atr.cells[i].innerHTML=dateToString(obj_chartdata[j].time,2);//.replace(/T/g," ").substring(0,19);
                                             atr.cells[i+2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
                                             tbody.insertBefore(atr,rows[k]);
                                             break;
@@ -382,7 +382,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                         } else if(jiange>2 && jiange<=max_timeInterval){
                                             atr=creatTr();
                                             atr.cells[0].innerHTML=obj_chartdata[j].name.toLowerCase();
-                                            atr.cells[1].innerHTML=obj_chartdata[j].time.replace(/T/g," ").substring(0,19);
+                                            atr.cells[1].innerHTML=dateToString(obj_chartdata[j].time,2);//.replace(/T/g," ").substring(0,19);
                                             atr.cells[i+2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
                                             tbody.insertBefore(atr,rows[k+1]);
                                             break;
@@ -395,7 +395,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                 }
                                 if(k>rows_len){
                                     atr=creatTr();
-                                    atr.cells[0].innerHTML=obj_chartdata[j].time.replace(/T/g," ").substring(0,19);
+                                    atr.cells[0].innerHTML=dateToString(obj_chartdata[j].time,2);//.replace(/T/g," ").substring(0,19);
                                     atr.cells[i+1].innerHTML=(obj_chartdata[j].vlaue*1).toFixed(Number_of_decimal);
                                     tbody.appendChild(atr);
                                 }

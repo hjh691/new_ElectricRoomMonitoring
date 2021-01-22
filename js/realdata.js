@@ -124,8 +124,8 @@ function appendalldisplaytype(){
     for(var i=display_type.childNodes.length;i>0;i--)
         display_type.removeChild(display_type.childNodes[i-1]);
     allconfigs=JSON.parse(localStorage.Configs);
-    var sel_datatypename=[];
-    /*if(sessionStorage.sel_datatypename) 
+    /*var sel_datatypename=[];
+    if(sessionStorage.sel_datatypename) 
     {
         sel_datatypename=JSON.parse(sessionStorage.sel_datatypename);
     }
@@ -163,7 +163,7 @@ function appendalldisplaytype(){
                     //lab.className="";
                     add_displaytype(display_type,s_des[p].name,s_des[p].folder,s_des[p].desc,false);
                 }
-                /*lab.appendChild(ainput);
+                /*lab.appendChild(ainput);//a-
                 lab.appendChild(spn);
                 //lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
                 display_type.appendChild(lab);*/
@@ -201,7 +201,7 @@ function add_displaytype(parent,name,folder,text,check){
         //lab.className=""
     //}else{
         lab.className="";
-    //}
+    //} 
     lab.appendChild(ainput);
     lab.appendChild(spn);
     parent.appendChild(lab);
@@ -223,8 +223,8 @@ function btn_refresh_click(obj){
     sessionStorage.setItem("sel_datatypename",JSON.stringify(allselects));
     refresh_tabhead(allselect);
     decoderealdata();
-    if(haverealdata)
-        decodedatas();
+    //if(haverealdata)
+        //decodedatas();
 }
 function refresh_tabhead(sel){
     count=0;
@@ -456,7 +456,7 @@ function decoderealdata(obj_realdata,asensorid) {
     let nodata=true;
     if(!asensorid)
         nodata=false;
-    let realdata_len=obj_realdata.length,tablehead_len=tab_head.rows[0].cells.length;
+    let realdata_len=obj_realdata.length, tablehead_len=tab_head.rows[0].cells.length;
     if (obj_realdata) {
         refresh_tabhead(v_sel);//根据选项刷新表头的显示内容
         alert_obj={};
@@ -466,7 +466,7 @@ function decoderealdata(obj_realdata,asensorid) {
                 dname=obj_realdata[j].name;
                 realdatafolder=obj_realdata[j].folder;
                 isfindtype=false;
-                grouptype=obj_realdata[j].type;//Catalog;
+                //grouptype=obj_realdata[j].type;//Catalog;
                 if(obj_realdata[j].sensorId==asensorid)
                     nodata=false;
                 if(obj_realdata[j].sensorId==sid){//是否为新的标签项,相同标签的数据默认连续
@@ -516,14 +516,14 @@ function decoderealdata(obj_realdata,asensorid) {
                         atr.cells[0].innerHTML=sid;//标签id
                         atr.cells[0].style.cssText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
-                        atr.cells[2].value=(obj_data.time.replace(/T/g," "));
-                        atr.cells[2].innerHTML=(obj_data.time.replace(/T/g," ")).substring(10,19);//第二列添加测量时间
+                        atr.cells[2].value=dateToString(obj_data.time,2);
+                        atr.cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);//第二列添加测量时间
                         // 取过去24小时时间，用于调取历史记录
-                        var ckssj=new Date((obj_data.time.replace(/T/g," ")).substring(0,19));//(obj_data.time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
+                        var ckssj=new Date(dateToString(obj_data.time,2));//(obj_data.time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
                         var yesterdayend=ckssj-(1000*60*60*24);
                         //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
-                        kssj = dateToString(new Date(yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-                        jssj = (obj_data.time.replace(/T/g," ")).substring(0,19);
+                        kssj = dateToString((yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
+                        jssj = (dateToString(obj_data.time,2));
                         //atr.cells[tab_head.rows[0].cells.length-4].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
                         //atr.cells[tab_head.rows[0].cells.length-3].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
                         atr.cells[tablehead_len-2].innerHTML=obj_data.name;
@@ -539,11 +539,14 @@ function decoderealdata(obj_realdata,asensorid) {
                                     atr.cells[k+3].style.backgroundColor=""
                                 }
                                 isfindtype=true;
+                                if(!v_sel[k].checked){
+                                    atr.cells[k+3].style.cssText = "display:none";
+                                }
+                                //break;
                             }
                             if(!v_sel[k].checked){
                                 atr.cells[k+3].style.cssText = "display:none";
                             }
-                            break;
                         }
                         if((k>=v_sel.length)&&(!isfindtype)){//如果没有在类型列表中，要如何处置
                             //需要表头标题添加name，所有列表项添加一列（cell）
@@ -561,16 +564,22 @@ function decoderealdata(obj_realdata,asensorid) {
                                     if(v_sel[k].value==dname){
                                         $table.rows[l].cells[k+3].innerHTML=(obj_data.value*1).toFixed(Number_of_decimal);
                                         isbreak=true;
-                                        if($table.rows[l].cells[1].innerHTML<(obj_data.time.replace(/T/g," ")).substring(10,19)){//更新最新时间
-                                            $table.rows[l].cells[1].innerHTML=(obj_data.time.replace(/T/g," ")).substring(10,19);
-                                            $table.rows[l].cells[1].value=obj_data.time.replace(/T/g," ");
+                                        if($table.rows[l].cells[1].innerHTML<dateToString(obj_data.time,2).substring(10,19)){//更新最新时间
+                                            $table.rows[l].cells[1].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                            $table.rows[l].cells[1].value=dateToString(obj_data.time,2);
                                         }
                                         if(obj_data.message){
                                             atr.cells[k+3].style.backgroundColor="#ffff00";
                                         }else{
                                             atr.cells[k+3].style.backgroundColor=""
                                         }
-                                        break;
+                                        if(!v_sel[k].checked){
+                                            atr.cells[k+3].style.cssText = "display:none";
+                                        }
+                                        //break;
+                                    }
+                                    if(!v_sel[k].checked){
+                                        atr.cells[k+3].style.cssText = "display:none";
                                     }
                                 }
                                 if((k>=v_sel.length)&&(!isbreak)){//如果没有在类型列表中，要如何处置
@@ -646,7 +655,7 @@ function decoderealdata(obj_realdata,asensorid) {
         }else{//如果没有显示控制项（分组配置项） 20200509 编写，还需测试完善。
             for (var j=0;j<realdata_len;j++) {
                 dname=obj_realdata[j].name;
-                grouptype=obj_realdata[j].type;//Catalog;
+                //grouptype=obj_realdata[j].type;//Catalog;
                 if(obj_realdata[j].SensorId==sid){//是否为新的标签项
                     isnew=false;
                 }else{ 
@@ -693,14 +702,14 @@ function decoderealdata(obj_realdata,asensorid) {
                         atr.cells[0].innerHTML=sid;
                         atr.cells[0].style.cssText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
-                        atr.cells[2].value=(obj_data.time.replace(/T/g," "));
-                        atr.cells[2].innerHTML=(obj_data.time.replace(/T/g," ")).substring(10,19);//第二列添加测量时间
+                        atr.cells[2].value=dateToString(obj_data.time,2);
+                        atr.cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);//第二列添加测量时间
                         // 取过去24小时时间，用于调取历史记录
-                        var ckssj=new Date((obj_data.time.replace(/T/g," ")).substring(0,19));//(obj_data.Time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
+                        var ckssj=new Date(dateToString(obj_data.time,2));//(obj_data.Time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
                         var yesterdayend=ckssj-(1000*60*60*24);
                         //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
-                        kssj = dateToString(new Date(yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-                        jssj = (obj_data.time.replace(/T/g," ")).substring(0,19);
+                        kssj = dateToString((yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
+                        jssj = dateToString(obj_data.time,2);
                         //atr.cells[length-2].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
                         //atr.cells[length-1].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
                         for(var k in tab_head.rows[0].cells){//添加到指定列。
@@ -789,8 +798,8 @@ function decoderealdata(obj_realdata,asensorid) {
                     var temp_option = myChart2.getOption();
                     if (temp_option.series.length>0) {
                         
-                        if (temp_option.series[0].data[temp_option.series[0].data.length - 1][0] < strtodatetime(lasttime)) {
-                            temp_option.series[0].data.push([strtodatetime(lasttime), value0, temp_option.series[0].data.length]);
+                        if (temp_option.series[0].data[temp_option.series[0].data.length - 1][0] < Date.parse(lasttime)) {
+                            temp_option.series[0].data.push([Date.parse(lasttime), value0, temp_option.series[0].data.length]);
                             //temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
                             if (maxvalue < value0) {
                                 maxvalue = value0;
@@ -920,7 +929,7 @@ function tableclick(tr) {
         //var kssj = getCurrentDate(1) + " 00:00:00";
         var jssj = getCurrentDate(2);
         var yesterdaytime= (new Date(jssj))-(1000*60*60*24);
-        var kssj=dateToString(new Date(yesterdaytime),2);
+        var kssj=dateToString((yesterdaytime),2);
         //kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
         //jssj = (tr.cells[2].innerHTML);
         myChart2.showLoading();
@@ -1207,12 +1216,10 @@ function refreshData() {
     option1.title.text="实时极值: "+titlename;
     myChart1.setOption(option1);
     var ratArr=[];//,str_name=""
-    var keys=Object.keys(alert_obj);
-    for(i=keys.length-1;i>=0 ;i--){
+    //var keys=Object.keys(alert_obj);
+    for(let key in alert_obj){
         //console.log(key + '---' + alert_obj[key])
-        key=keys[i];
         if(alert_obj[key]!=0){
-            
             ratArr.push({name:key,value:alert_obj[key]});
         }
     }
@@ -1244,16 +1251,16 @@ function decodedatas(obj_chartdata) {
     }
     minval = maxval = obj_chartdata[0].value;//value0;
     //var zero=getCurrentDate(1) + " 00:00:00";
-    happentime=(obj_chartdata[0].time.replace(/T/g," ")).substring(0,19);//发生时刻
+    happentime=dateToString(obj_chartdata[0].time,2);//发生时刻
     let chartdata_len=obj_chartdata.length;
     for (var i = 0; i < chartdata_len; i++) {
         //if((obj_chartdata[i].time).replace(/T/g," ").substring(0,19)>=zero)//取当天零点以后的值，obj_chartdata保存24小时以内的值
-            pa.push([strtodatetime(obj_chartdata[i].time), obj_chartdata[i].value, i]);
+            pa.push([Date.parse(obj_chartdata[i].time), obj_chartdata[i].value, i]);
         //pb.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/1.5, i])
         //pc.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/2, i])
         if (parseFloat(obj_chartdata[i].value) > maxval) {
             maxval = obj_chartdata[i].value;
-            happentime=(obj_chartdata[i].time.replace(/T/g," ")).substring(0,19);
+            happentime=dateToString(obj_chartdata[i].time,2);
         }
         if (parseFloat(obj_chartdata[i].value) < minval) {
             minval = obj_chartdata[i].value;
@@ -1329,7 +1336,7 @@ function decodedatas(obj_chartdata) {
                             for (let i = 0, l = series_data_len; i < l; i++) {
                                 //for (let j = 0; j < series.length; j++) {
                                     //组装表数据
-                                    strtime=dateToString(new Date(series[0].data[i][0]),2);
+                                    strtime=dateToString((series[0].data[i][0]),2);
                                     tdBodys += `<td>${ series[0].data[i][1]}</td>`;
                                 //}
                                 table += `<tr><td >${strtime}</td>${tdBodys}</tr>`;

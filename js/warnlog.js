@@ -394,7 +394,7 @@
 						var td_dname=document.createElement("td");
 						td_dname.innerHTML=sessionStorage.sensorallpathname;// SensorName;//name;
 						var td_dtime=document.createElement("td");
-						var time=((obj_data[i].time).replace(/T/g," ")).substring(0,19);//(ttime-oneday*(2*i+5));
+						var time=dateToString((obj_data[i].time),2);//.replace(/T/g," ")).substring(0,19);//(ttime-oneday*(2*i+5));
 						td_dtime.innerHTML=time;//dateToString(new Date(time),2);
 						var td_dadr=document.createElement("td");
 						var value=obj_data[i].value;//(Math.random() * 10) - 0;

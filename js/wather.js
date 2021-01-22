@@ -470,7 +470,7 @@ function decoderealdata(obj_realdata) {
                         var ckssj=new Date((obj_data.time.replace(/T/g," ")).substring(0,19));//(obj_data.time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
                         var yesterdayend=ckssj-(1000*60*60*24);
                         //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
-                        kssj = dateToString(new Date(yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
+                        kssj = dateToString((yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
                         jssj = (obj_data.time.replace(/T/g," ")).substring(0,19);
                         //atr.cells[tab_head.rows[0].cells.length-4].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
                         //atr.cells[tab_head.rows[0].cells.length-3].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
@@ -628,7 +628,7 @@ function decoderealdata(obj_realdata) {
                         var ckssj=new Date((obj_data.time.replace(/T/g," ")).substring(0,19));//(obj_data.Time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
                         var yesterdayend=ckssj-(1000*60*60*24);
                         //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
-                        kssj = dateToString(new Date(yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
+                        kssj = dateToString((yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
                         jssj = (obj_data.time.replace(/T/g," ")).substring(0,19);
                         //atr.cells[length-2].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
                         //atr.cells[length-1].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
@@ -790,7 +790,7 @@ function tableclick(tr) {
         //var kssj = getCurrentDate(1) + " 00:00:00";
         var jssj = getCurrentDate(2);
         var yesterdaytime= (new Date(jssj))-(1000*60*60*24);
-        var kssj=dateToString(new Date(yesterdaytime),2);
+        var kssj=dateToString((yesterdaytime),2);
         //kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
         //jssj = (tr.cells[2].innerHTML);
         myChart2.showLoading();

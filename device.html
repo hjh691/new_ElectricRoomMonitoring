@@ -221,7 +221,7 @@
                     var td_dname=document.createElement("td");
                     td_dname.innerHTML=parentname+sensors[i].Value.name;
                     var td_dtime=document.createElement("td");
-                    td_dtime.innerHTML=sensors[i].Value.time.replace(/T/g," ").substring(0,19);;
+                    td_dtime.innerHTML=dateToString(sensors[i].Value.time,2).substring(0,19);;
                     var td_dadr=document.createElement("td");
                     td_dadr.innerHTML=sensors[i].Value.address;
                     var td_dtype=document.createElement("td");

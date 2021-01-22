@@ -56,6 +56,10 @@ function getCurrentDate(format) {
 	return time;
 }
 function dateToString(now,format){
+	if(now==null)
+		return;
+	if(typeof(now)!="object")
+		now=new Date(now);
 	var year = now.getFullYear(); //得到年份
 	var month = now.getMonth(); //得到月份
 	var date = now.getDate(); //得到日期
@@ -1574,10 +1578,10 @@ function seletime(obj){
 			timedefine.style.display="none";
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			var yesterdaystar=ckssj-oneday;
-			sessionStorage.kssj=dateToString(new Date(yesterdaystar),2);
+			sessionStorage.kssj=dateToString((yesterdaystar),2);
 			cjssj=new Date((getCurrentDate(1)+" 23:59:59").replace(/-/g,"/"));
 			var yesterdayend=cjssj-oneday;
-			sessionStorage.jssj=dateToString(new Date(yesterdayend),2);
+			sessionStorage.jssj=dateToString((yesterdayend),2);
 			//$("#warnlogdata-tbody tr").empty();
 			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			//layer.alert("没有符合条件的记录",info_showtime);
@@ -1585,7 +1589,7 @@ function seletime(obj){
 		case 2:
 			timedefine.style.display="none";
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
-			sessionStorage.kssj=dateToString(new Date(ckssj.setDate(1)),2);
+			sessionStorage.kssj=dateToString((ckssj.setDate(1)),2);
 			sessionStorage.jssj=getCurrentDate(2);
 			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			break;
@@ -1593,9 +1597,9 @@ function seletime(obj){
 			timedefine.style.display="none";	
 			ckssj=new Date((getCurrentDate(1)+" 00:00:00").replace(/-/g,"/"));
 			var lastMonthFirst = new Date(ckssj - oneday * ckssj.getDate());
-			sessionStorage.kssj = dateToString(new Date(lastMonthFirst - oneday * (lastMonthFirst.getDate() - 1)),2);
+			sessionStorage.kssj = dateToString((lastMonthFirst - oneday * (lastMonthFirst.getDate() - 1)),2);
 			cjssj=new Date((getCurrentDate(1)+" 23:59:59").replace(/-/g,"/"));
-			sessionStorage.jssj = dateToString(new Date(cjssj - oneday * cjssj.getDate()),2);
+			sessionStorage.jssj = dateToString((cjssj - oneday * cjssj.getDate()),2);
 			//$("#warnlogdata-tbody tr").empty();
 			//layer.alert("没有符合条件的记录",info_showtime); 
 			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);  
@@ -1676,7 +1680,7 @@ var sorter=false;
 						//return;
 						var jssj = getCurrentDate(2);
 						var yesterdaytime= (new Date(jssj))-(1000*60*60*24);
-						var kssj=dateToString(new Date(yesterdaytime),2);
+						var kssj=dateToString((yesterdaytime),2);
 						//kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
 						//jssj = (tr.cells[2].innerHTML);
 						decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。

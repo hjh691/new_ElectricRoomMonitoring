@@ -416,7 +416,7 @@
 			$('#company_log').attr('src',jfjk_base_config.log_src);
 			$('#company_info').attr('href',jfjk_base_config.company_url);
 			$("#company_name").html(jfjk_base_config.company);
-			$("#copyright_time").html("  "+jfjk_base_config.date);//+"  "+jfjk_base_config.ver_id 
+			$("#copyright_time").html("  "+jfjk_base_config.date+"  "+jfjk_base_config.ver_id); 
 			//sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
 			//sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59"
 			//sessionStorage.cxsj = getCurrentDate(2);
@@ -1443,7 +1443,7 @@
 										break;
 									}else{
 										//if(rows[k].cells[3].outerText==(obj_data.value *1).toFixed(Number_of_decimal)){
-											let jiange=GetDateDiff(rows[k].cells[2].outerText,((obj_data.time).replace(/T/g," ")).substring(0,19),"minute")
+											let jiange=GetDateDiff(rows[k].cells[2].outerText,(dateToString(obj_data.time,2)),"minute")
 											if(jiange<=between_time){
 											//rows[k].cells[2].innerHTML=((obj_data.time).replace(/T/g," ")).substring(0,19);
 											rows[k].cells[3].innerHTML=(obj_data.value *1).toFixed(Number_of_decimal);
@@ -1498,7 +1498,7 @@
 			//refreshData();
 			function showgaojing(){//将告警形象添加到实时告警列表，并添加告警信息到告警信息字符串中供浮动窗口显示。
 				var alert_sys_name=getsysname(mnodes,nid);//站和子系统名称
-				alerttime = ((obj_data.time).replace(/T/g," ")).substring(0,19).substr(11);
+				alerttime = (dateToString(obj_data.time,2).substr(11));
 				alertinfo = msg;
 				alertvalue = parseFloat(obj_data.value).toFixed(Number_of_decimal);
 				sname =parentname+ sensors[i].Value.name;
@@ -1521,7 +1521,7 @@
 				tdid.style.cssText="display:none";
 				tdtype.innerHTML = type_td;
 				tdtype.style.cssText = "display:none";
-				tdtime.innerHTML = ((obj_data.time).replace(/T/g," ")).substring(0,19); //jsonObject[i].color;
+				tdtime.innerHTML = (dateToString(obj_data.time,2));//.replace(/T/g," ")).substring(0,19); //jsonObject[i].color;
 				tdvalue.innerHTML = (obj_data.value * xs).toFixed(Number_of_decimal);
 				//tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);
 				//tdhistory.setAttribute('backgroundColor', '#ffffff');
