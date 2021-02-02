@@ -45,7 +45,11 @@ var alert_obj=new Object();
 let haverealdata=false;
 var catalog="Defalt";
 var display_type=document.getElementById("display_type");
-initrealdata();
+$(function () {
+    
+    initrealdata();
+
+});
 function initrealdata(){
     try{
     datas = [];
@@ -68,6 +72,7 @@ function initrealdata(){
 }
 function initpage() {
     updatapcnav(3);
+    window.parent.closeloadlayer();
     //保存页面现场，在点击浏览器的刷新按钮刷新时应用
     sessionStorage.framepage="newrealdata.html";
     sessionStorage.pageinfex=2;
@@ -79,7 +84,8 @@ function initpage() {
         var i = 0;
         w1.onmessage = function (event) {
             i++
-            //if (i % 60 == 0) {
+            if (i <=1) 
+                return;
                 //getrealdatabynodeid(-1);rage
                 decoderealdata();
             //}
@@ -89,7 +95,7 @@ function initpage() {
     }
     appendalldisplaytype();/*"display_type"*/
     btn_refresh_click();
-    window.parent.closeloadlayer();
+    
     var topTable = $("table").eq(0).offset().top;//获取表格位置
     var c_top =  $('.oa-nav_top').height() ? $('.oa-nav_top').height() : 0;//获取导航高度没有可填0
     $("#datadiv").scroll(function() {
@@ -433,10 +439,6 @@ function decoderealdata(obj_realdata,asensorid) {
     var v_sel = $('[name="options"]');
     $('#realdata-tbody').empty();
     $table = document.getElementById('realdata-tbody');
-    //var tableLength = $table.rows.length;
-    //for (var j = $table.rows.length - 1; j >= 0; j--) {
-    //    $table.removeChild($table.rows[j]);
-    //}
     if(!obj_realdata){
         obj_realdata=JSON.parse(localStorage.getItem("realdata"));
     }
@@ -504,6 +506,17 @@ function decoderealdata(obj_realdata,asensorid) {
                 if(isfind){//在需要显示的标签列表
                     //isnew=true;
                     obj_data = (obj_realdata)[j];////sid
+                    for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
+                        if(v_sel[k].value==dname){
+                            break;
+                        }
+                    }
+                    if((k>=v_sel.length)&&(!isfindtype)){//如果没有在类型列表中，要如何处置
+                        //需要表头标题添加name，所有列表项添加一列（cell）
+                        add_displaytype(display_type,dname,realdatafolder,dname,false);
+                        v_sel = $('[name="options"]');
+                        tablehead_len++;
+                    }
                     if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，
                         atr=document.createElement("tr");
                         atr.setAttribute("onclick", "tableclick(this)");//ondblclick
@@ -539,21 +552,18 @@ function decoderealdata(obj_realdata,asensorid) {
                                     atr.cells[k+3].style.backgroundColor=""
                                 }
                                 isfindtype=true;
-                                if(!v_sel[k].checked){
-                                    atr.cells[k+3].style.cssText = "display:none";
-                                }
-                                //break;
+                    
                             }
                             if(!v_sel[k].checked){
                                 atr.cells[k+3].style.cssText = "display:none";
                             }
                         }
-                        if((k>=v_sel.length)&&(!isfindtype)){//如果没有在类型列表中，要如何处置
+                        /*if((k>=v_sel.length)&&(!isfindtype)){//如果没有在类型列表中，要如何处置
                             //需要表头标题添加name，所有列表项添加一列（cell）
                             add_displaytype(display_type,dname,realdatafolder,dname,false);
                             v_sel = $('[name="options"]');
                             tablehead_len++;
-                        }
+                        }*/
                         $table.appendChild(atr);
                         pt++;
                     }else{//不是新标签
@@ -570,23 +580,24 @@ function decoderealdata(obj_realdata,asensorid) {
                                         }
                                         if(obj_data.message){
                                             atr.cells[k+3].style.backgroundColor="#ffff00";
+                                            if(atr.cells[tablehead_len-1].innerHTML)
+                                                atr.cells[tablehead_len-1].innerHTML+=","+obj_data.message
+                                            else
+                                            atr.cells[tablehead_len-1].innerHTML=obj_data.message;
                                         }else{
                                             atr.cells[k+3].style.backgroundColor=""
                                         }
-                                        if(!v_sel[k].checked){
-                                            atr.cells[k+3].style.cssText = "display:none";
-                                        }
-                                        //break;
+                                        
                                     }
                                     if(!v_sel[k].checked){
                                         atr.cells[k+3].style.cssText = "display:none";
                                     }
                                 }
-                                if((k>=v_sel.length)&&(!isbreak)){//如果没有在类型列表中，要如何处置
+                                /*if((k>=v_sel.length)&&(!isbreak)){//如果没有在类型列表中，要如何处置
                                     //需要表头标题添加name，所有列表项添加一列（cell）
                                     add_displaytype(display_type,dname,realdatafolder,dname,false);
                                     v_sel = $('[name="options"]');
-                                }
+                                }*/
                                 break;
                             }
                         }
@@ -728,6 +739,7 @@ function decoderealdata(obj_realdata,asensorid) {
                         atr.cells[tablehead_len-1].innerHTML=obj_data.message;
                         atr.cells[tablehead_len-1].style.cssText="display:none";
                         $table.appendChild(atr);
+                        pt++;
                     }else{//不是新标签
                         let tab_row_len=$table.rows.length;
                         for(var l=0;l<tab_row_len;l++){//定位到指定行
@@ -737,6 +749,10 @@ function decoderealdata(obj_realdata,asensorid) {
                                         atr.cells[k].innerHTML=obj_data.Value.toFixed(Number_of_decimal);
                                         if(obj_data.message){
                                             atr.cells[k+3].style.backgroundColor="#ffff00";
+                                            if(atr.cells[tablehead_len-1].innerHTML)
+                                                atr.cells[tablehead_len-1].innerHTML+=","+obj_data.message
+                                            else
+                                            atr.cells[tablehead_len-1].innerHTML=obj_data.message;
                                         }else{
                                             atr.cells[k+3].style.backgroundColor=""
                                         }
@@ -799,6 +815,10 @@ function decoderealdata(obj_realdata,asensorid) {
                     if (temp_option.series.length>0) {
                         
                         if (temp_option.series[0].data[temp_option.series[0].data.length - 1][0] < Date.parse(lasttime)) {
+                            //从队头删除数据,如果第一个数据的时间与24小时前的时间差在10分钟内，则删除第一数据,否则添加数据,firsttime 最后时间的24小时前的时间
+                            var firsttime=(Date.parse(lasttime)-1000*3600*24);
+                            if (Math.abs(GetDateDiff(dateToString(temp_option.series[0].data[0][0],2),dateToString(firsttime,2),"minute"))<10)
+                                temp_option.series[0].data.shift();
                             temp_option.series[0].data.push([Date.parse(lasttime), value0, temp_option.series[0].data.length]);
                             //temp_option.series[1].data.push([strtodatetime(lasttime),value1,temp_option.series[1].data.length]);
                             if (maxvalue < value0) {
@@ -956,7 +976,7 @@ function initseries(data) {
                 fontWeight: 'normal',
                 fontSize:14,
             },
-            text: sname+"--24小时极值",
+            text: sname+"--24h 极值",
         },
         tooltip: {
             formatter: "{a} <br/>{c} {b}"
@@ -977,7 +997,7 @@ function initseries(data) {
         },
         series: [
             {
-                name: '24小时极值',
+                name: '24h 极值',
                 type: 'gauge',
                 center: ['50%', '50%'], // 默认全局居中
                 radius: '70%',//半径
@@ -1031,7 +1051,7 @@ function initseries(data) {
                 title: {
                     show: true,
                     offsetCenter: [0, '-30%'], // x, y，单位px
-                    text: '24小时峰值',
+                    text: '24h 峰值',
                     textStyle: {
                         color: 'white',
                         fontSize: chartOption.chart_title_font_size-4,
@@ -1175,7 +1195,7 @@ function refreshData() {
     value = option.series[0].data[0].value;
     option.series[0].detail.formatter = chartOption.chart_sigle + value + ' \n\n' +"时间："+happentime;//+chart_unit;
     option.series[0].data[0].name = chart_unit;//sname;
-    option.title.text = sname+":  "+titlename+" 24小时峰值";
+    option.title.text = sname+":  "+titlename+" 24h 峰值";
     /*for (var i = 0; i < option.series.length; i++) {
         option.series[i].axisLine.lineStyle.color = colors;
         option.series[i].max = chart_max;
@@ -1295,7 +1315,7 @@ function decodedatas(obj_chartdata) {
             color: ['#FF0000', '#FFFF00'],//,'#00ff00'
             backgroundColor: '#d0d0d0',
             title: {
-                text: sname+" "+titlename+' : 24小时变化趋势图',//20200518
+                text: sname+" "+titlename+' : 24h 变化趋势图',//20200518
                 x: "center",
                 textStyle: {
                     fontWeight: 'normal',
@@ -1409,12 +1429,20 @@ function decodedatas(obj_chartdata) {
                 data: pa,
                 markPoint: {
                     symbol: 'arrow',
-                    symbolSize:20,
+                    color: 'blue',
+                    symbolSize:15,
                     data: [
                         {type: 'max', name: '最大值',symbolRotate:-180},
-                        {type: 'min', name: '最小值'}
+                        {type: 'min', name: '最小值', label:{position:'bottom',}}
                     ],
-                    tooltip:false,
+                    itemStyle:{
+                        color: 'rgb(0,144,0)',
+                    },
+                    label:{
+                        position: 'top',
+                        color:'rgb(0,0,0)',
+                        fontSize: 14,
+                    }
                 },
                 /*markLine:{
                     data: [
@@ -1481,17 +1509,19 @@ function initchart2() {
         color: ['#FFFF00', '#FF0000'],//,'#00ff00' complain mountain 
         backgroundColor: backgroudcolor,
         title: {
-            text: '24小时变化趋势图',
+            text: '24h 变化趋势图',
             x: "center",
         },/**/
         tooltip: {
-            //trigger: 'item',
-            trigger:"axis",
+            show:false,
+            trigger: 'item',
+            //trigger:"axis",
             formatter: function (params) {
-                if(params.seriesId)
-                var date = new Date(params.value[0]);
-                data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
-                return data + '<br/>' + params.value[1];
+                if(params.seriesId){
+                    var date = new Date(params.value[0]);
+                    data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+                    return data + '<br/>' + params.value[1];
+                }
             }
         },
         toolbox: {
@@ -1820,16 +1850,15 @@ function initecharts(){
                 name: '占比统计',
                 type: 'pie',
                 radius: ['20%', '50%'],
-                avoidLabelOverlap: false,
+                //avoidLabelOverlap: false,
                 label: {
                     formatter: '{b}: {c}\n\n  {{d}%}  ',
                     show: true,
-                    position: 'out',
-                    color:"#fff",
                     position: 'outer',
-                    alignTo: 'edge',
+                    color:"#fff",
+                    alignTo: 'labelLine',
                     bleedMargin: 5,
-                    margin: 20
+                    //margin: 20
                 },
                 //barWidth: '60%', []
                 emphasis: {
@@ -1838,7 +1867,7 @@ function initecharts(){
                         fontSize: '18',
                         fontWeight: 'bold'
                     }
-                },
+                },/**/
                 labelLine: {
                     show: true
                 },
@@ -1854,7 +1883,7 @@ function initecharts(){
     });
 }
 
-function jisuanyichangbili(avalue){
+function jisuanyichangbili(avalue){//一个标签有多个类型的数据报警时，告警类型的统计可能有问题，有待验证。
     if(!avalue){
         avalue="正常";
     }

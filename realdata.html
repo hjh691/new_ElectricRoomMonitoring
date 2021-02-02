@@ -69,14 +69,14 @@
 		<div  class="row" style="margin-bottom:10px;width:100%;overflow:auto;display: none;" text-align="center">
 			<ul class="count_info" text-align="center" widht="1000px" >
 				<li style="width:50px"><b>站名：</b></li>
-				<li id="station_name"style="width:50px;margin-right:0px"> </li>
+				<li id="station_name" style="width:50px;margin-right:0px"></li>
 				<li style="width:30px;margin-right:10px"><b>记录：</b></li>
-				<li id="count_val"style="width:30px;margin-right:0px"> </li>
+				<li id="count_val" style="width:30px;margin-right:0px"> </li>
 				<!-- 
 				<li style="width:50px;margin-right:0px"><b>正常数：</b> </li>
 				<li id="normal_count"style="width:150px;margin-right:0px"> </li>display: none;method5('realtable')-->
 				<li style="width:30px;margin-right:0px"><b>异常：</b></li>
-				<li id="err_count"style="width:30px;margin-right:0px"> </li>
+				<li id="err_count" style="width:30px;margin-right:0px"> </li>
 				<li style="text-align:right;width:100px;margin-right:0px;margin-left:20px;">
 					<a href="javascript:void(0)"  onclick="exporttoexcel('realtable')">
 						<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive">
@@ -99,17 +99,23 @@
 			<table class="tablesorter" id="realtable" width="1000px" style=" margin:auto;" >
 				<thead id="tab_head">
 				<tr >
-					<th  onclick="$.sortTable.sort('realtable',0)" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
-					<!--th>数据编号</thonclick="sortt('.tmpvalue')"-->
-					<th  onclick="$.sortTable.sort('realtable',1)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
-					<th  onclick="$.sortTable.sort('realtable',2)"><a href="javascript:">实时值<span class="value1"></span></a></th>
+					<th  onclick="$.sortTable.sort('realtable',0)"><a href="javascript:">序号 <span class="time"></span></a></th>
+					<th  onclick="$.sortTable.sort('realtable',1)" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
+					<th  onclick="$.sortTable.sort('realtable',2)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
+					<th  onclick="$.sortTable.sort('realtable',3)"><a href="javascript:">检测地点<span class="value1"></span></a></th>
+					<th  onclick="$.sortTable.sort('realtable',4)"><a href="javascript:">类型 <span class="time"></span></a></th>
+					<th  onclick="$.sortTable.sort('realtable',5)"><a href="javascript:">参考值<span class="value1"></span></a></th>
+					<th  onclick="$.sortTable.sort('realtable',6)"><a href="javascript:">实时值 <span class="time"></span></a></th>
+					<th  onclick="$.sortTable.sort('realtable',7)"><a href="javascript:">状态<span class="value1"></span></a></th>
+					<th  onclick="$.sortTable.sort('realtable',8)"><a href="javascript:">告警信息<span class="time"></span></a></th>
+					<th  onclick="$.sortTable.sort('realtable',9)"><a href="javascript:">关联信息<span class="value1"></span></a></th>
 					<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>-->
 					<!--<th >查看历史数据</th>
 					<th >查看告警信息</th>-->
 					<th style="width:18px;border:0px solid black;"></th>
 				</tr>
 			</thead>
-				<tbody id='realdata-tbody' >
+				<tbody id="others_realdata_tbody" >
 				</tbody>
 			</table>
 			<div style="text-align: center;font-size: 18px;display:none;">

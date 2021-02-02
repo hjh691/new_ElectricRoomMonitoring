@@ -11,154 +11,71 @@
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	<script type="text/javascript" src="js/echarts.js"></script>
-	<script  type="text/javascript" src="js/layer/layer.js"></script>
+	<!--<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
-	<script  type="text/javascript" src="js/function.js"></script>
+	<script  type="text/javascript" src="js/function.js"></script>-->
 	<style type="text/css">
-    /**/
-    th,td{
-        /*border:1px solid black;
-        text-align:center;
-        line-height:center;*/
-        width:180px;
-        height:30px;
-    }
-	table {
-		/*设置相邻单元格的边框间的距离*/
-		border-spacing: 0;
-		/*表格设置合并边框模型*/
-		border-collapse: collapse;
-		text-align: center;
-	}
-	/*关键设置 tbody出现滚动条 height: 500px;overflow-y: scroll;*/
-	/*table tbody {
-		display: block;
-	}
-	table thead,
-	tbody tr {
-		display: table;
-		table-layout: fixed;
-	}
-	关键设置：滚动条默认宽度是16px 将thead的宽度减16pxwidth: 100%;
-	table thead {
-		width: calc( tbody.width )
-		color:#0000ff;
-	}
-	table thead th {
-		background: #ccc;
-	}*/
 	.container{
 			width: 97%;
-			height:100%;
+			height:650px;
             margin-left: 15px;
 			margin-right: 5px;
             margin:15px;
-            align:center;
         }
     .wather{
-        border: rgb(90, 89, 89) solid 1px;
-        height: 200px;background-color:rgb(209, 207, 207);
-        margin: 0px;
+        border: rgb(90, 89, 89) solid 0px;
+        height: 300px;
+		/*background-color:rgb(209, 207, 207);*/
+        margin-top: 10px;
         display: table-cell;
         vertical-align: middle;
     }
     .wather_wind{
         font-size: 20px;
+		text-align: center;
+		vertical-align: middle;
     }
   </style>
 </head>
 <body > <!-- onunload="stopWorker()" onload="getrealdatabynodeid(-1)" 20200408修改，重复调用此函数,提示框不能认为关闭。-->
-	<div class="container">
-		<div  class="row" align="center">
-			<div class="col-xs-4 col-md-2 col-lg-2 wather"  >
-                <div id="wather" style="display:table-cell;vertical-align: middle;height: 100%;width:300px;height: 200px;" >
-                    <div class="wather_wind"><span> 天气：<i id="wind_forward" class="glyphicon glyphicon-cog"></i>  晴</span></div>
-                    <div class="wather_wind"><i id="wind_class" class="glyphicon glyphicon-dashboard"></i><span> 气压： Mpa</span></div>
-                </div>
-            </div>
-            <div class="col-xs-4 col-md-2 col-lg-2 wather" > 
-				<div id="wather_wind" style="display:table-cell;vertical-align: middle;height: 100%;width:300px;height: 200px;">
-                    <div class="wather_wind"><i id="wind_forward" class="glyphicon glyphicon-tint"></i><span> 风向：西北</span></div>
-                    <div class="wather_wind"><i id="wind_class" class="glyphicon glyphicon-cloud"></i><span> 风力：3-4级</span></div>
-                </div>
+	<div class="panel panel-default wather_wind" >
+		<span><label>检测地点：</label></span>
+		<span ><label><input type="radio" value="5" onclick="seletime(this)" name="addressselect" checked="true"/>前院</label></span>
+		<span ><label><input type="radio" value="0" onclick="seletime(this)" name="addressselect" /> 楼前 </label> </span>
+		<span ><label><input type="radio" value="1" onclick="seletime(this)" name="addressselect"/> 1#变 </label></span>
+		<span ><label><input type="radio" value="2" onclick="seletime(this)" name="addressselect"/> 2#变 </label> </span>
+		<span ><label><input type="radio" value="3" onclick="seletime(this)" name="addressselect"/> 后院 </label></span>
+	</div>
+	<div class="container" style="overflow: auto;">
+		<div  class="row" align="center" >
+			<div class="col-xs-12 col-md-6 col-lg-4 wather"  >
+				<div id="wather_temp" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;" ></div>
 			</div>
-			<div class="col-xs-4 col-md-2 col-lg-2 wather"  >
-				<div id="wather_temp" style="display:table-cell;vertical-align: middle;height: 100%;width:300px;height: 200px;" ></div>
-            </div>
-            <div class="col-xs-4 col-md-2 col-lg-2 wather"  >
-				<div id="wather_swet" style="display:table-cell;vertical-align: middle;height: 100%;width:300px;height: 200px;" ></div>
-            </div>
-            <div class="col-xs-4 col-md-2 col-lg-2 wather"  >
-				<div id="wather_pa" style="margin-top:20px;" ></div>
-            </div>
-            <div class="col-xs-4 col-md-2 col-lg-2 wather"  >
-				<div id="wather_water" style="margin-top:20px;" ></div>
-            </div>
-		</div>
-		<div  class="row" style="margin-bottom:10px;width:100%;overflow:auto;display: none;" text-align="center">
-			<ul class="count_info" text-align="center" widht="1000px" >
-				<li style="width:50px"><b>站名：</b></li>
-				<li id="station_name"style="width:50px;margin-right:0px"> </li>
-				<li style="width:30px;margin-right:10px"><b>记录：</b></li>
-				<li id="count_val"style="width:30px;margin-right:0px"> </li>
-				<!-- 
-				<li style="width:50px;margin-right:0px"><b>正常数：</b> </li>
-				<li id="normal_count"style="width:150px;margin-right:0px"> </li>display: none;method5('realtable')-->
-				<li style="width:30px;margin-right:0px"><b>异常：</b></li>
-				<li id="err_count"style="width:30px;margin-right:0px"> </li>
-				<li style="text-align:right;width:100px;margin-right:0px;margin-left:20px;">
-					<a href="javascript:void(0)"  onclick="exporttoexcel('realtable')">
-						<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive">
-					</a></li>
-			</ul>
-		</div>
-		<div class="row">
-		<div class="condition" style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: auto;height:40px;line-height: 40px;"><label> 显示内容:</label>
-			<span id="display_type">
-				
-			</span>
-			<span>
-				<button type="button" id="chaxun" value="刷新" onclick="btn_refresh_click()"
-						style="font-size:14px;height: 30px;line-height:30px;margin-left: 20px;padding: 0px;">
-						<span class="glyphicon glyphicon-refresh" style="margin:5px"></span>刷新</button>
-			</span>
-		</div>
-		<div style="text-align: center;overflow: auto;" >
-			
-			<table class="tablesorter" id="realtable" width="1000px" style=" margin:auto;" >
-				<thead id="tab_head">
-				<tr >
-					<th  onclick="$.sortTable.sort('realtable',0)" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
-					<!--th>数据编号</thonclick="sortt('.tmpvalue')"-->
-					<th  onclick="$.sortTable.sort('realtable',1)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
-					<th  onclick="$.sortTable.sort('realtable',2)"><a href="javascript:">实时值<span class="value1"></span></a></th>
-					<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>-->
-					<!--<th >查看历史数据</th>
-					<th >查看告警信息</th>-->
-					<th style="width:18px;border:0px solid black;"></th>
-				</tr>
-			</thead>
-				<tbody id='realdata-tbody' >
-				</tbody>
-			</table>
-			<div style="text-align: center;font-size: 18px;display:none;">
-				<a id="btn0"></a>
-				<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
-				<a id="sjzl"></a>&nbsp;
-				<a  href="javascript:void(0)" id="btn1" onclick="firstPage()">首页</a>
-				<a  href="javascript:void(0)" id="btn2" onclick="frontPage()">上一页</a>
-				<a  href="javascript:void(0)" id="btn3" onclick="nextPage()">下一页</a>
-				<a  href="javascript:void(0)" id="btn4" onclick="LastPage()">尾页</a>&nbsp;
-				<a>转到&nbsp;</a>
-				<input id="changePage" type="text" size="1" maxlength="4"/>
-				<a>页&nbsp;</a>
-				<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
+			<div class="col-xs-12 col-md-6 col-lg-4 wather"  >
+				<div id="wather_swet" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;" ></div>
 			</div>
-		</div>
+		
+			<div class="col-xs-12 col-md-6 col-lg-4 wather"  >
+				<div id="wather_pa" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;" ></div>
+			</div>
+			<div class="col-xs-12 col-md-6 col-lg-4 wather"  >
+				<div id="wather_water" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;" ></div>
+			</div>
+		
+			<div class="col-xs-12 col-md-6 col-lg-4 "  >
+				<div id="wather" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;" >
+					<div class="wather_wind"><i id="illumination" class="glyphicon glyphicon-cog"></i><span> 光照： Lux</span></div>
+					<div class="wather_wind"><i id="airpresure" class="glyphicon glyphicon-dashboard"></i><span> 气压： Kpa</span></div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-6 col-lg-4" > 
+				<div id="wather_wind" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;">
+					<div class="wather_wind"><i id="wind_forward" class="glyphicon glyphicon-tint"></i><span> 风向：西北</span></div>
+					<div class="wather_wind"><i id="wind_class" class="glyphicon glyphicon-cloud"></i><span> 风力：3-4级</span></div>
+				</div>
+			</div>
 		</div>
 	</div>
-	<script type="text/javascript" src="js/wather.js">
-		
-	</script><!---->
+	<script type="text/javascript" src="js/wather.js"></script><!---->
 </body>
 </html>

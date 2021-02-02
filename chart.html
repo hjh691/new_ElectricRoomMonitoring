@@ -75,9 +75,9 @@
 				<span class="caret"></span> select_multiple
 			</button>-->
 			<label class="dropdown-toggle" data-toggle="dropdown">
-				<input id="select_text" class="select_text" data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;">
+				<input id="select_text" class="select_text" data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;"/>
 				<button  style="width:30px;height:35px;margin-left:-35px;position: relative;z-index: 2;"><i class= "caret">
-				</i></button></input>
+				</i></button>
 				<!--<a  class="btn  btn-default" href = "#" style="margin-left:-40px;"><i class= "caret">
                 </i></a>-->
 			</label>
@@ -90,20 +90,20 @@
 		<div  style="text-align:left;padding-left: 10px;">
 			<span><label class="title-right" >时间选择：</label></span>
 			<span>
-			<input type="text" onClick="showdate({el:this,dateFmt:'yyyy-MM-dd'})" id="cxsj" 
-				style="width:130px;font-size:16px;height: 30px;border-radius: 5px;margin-right: 20px;"></input>
+			<input type="text" onclick="showdate({el:this,dateFmt:'yyyy-MM-dd'})" id="cxsj" 
+				style="width:130px;font-size:16px;height: 30px;border-radius: 5px;margin-right: 20px;"/>
 			<!--<label class="title-right">计量点名称：</label>
 				<a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
 					<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">display:none
 				</select>-->
 				<!--<input class="button" type="button" id="chaxun" value="对比" onclick="oneChoice()"
-					style="font-size:16px;height: 30px;line-height: 30px;margin-left: 10px;"></input>
+					style="font-size:16px;height: 30px;line-height: 30px;margin-left: 10px;"/>
 				<input class="button" type="button" id="allcheck" value="取消选择" onclick="allChoice()"
-					style="font-size:16px;width:100px;height: 30px;line-height: 30px;"></input>-->
+					style="font-size:16px;width:100px;height: 30px;line-height: 30px;"/>-->
 				<button class="selected" id="chaxun" value="对比" onclick="oneChoice()">对比</button>
 					<a href="javascript:void(0)" style="margin-left:10px;" onclick="exporttoexcel('compratetable')">
 						<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
-				<input id="sel-sensorname" style="width:50%;height:30px;overflow: hidden;margin-bottom: 0;display: inline;color:blue;" readonly="true" value="所选标签:" text="所选标签:"></input>
+				<input id="sel-sensorname" style="width:50%;height:30px;overflow: hidden;margin-bottom: 0;display: inline;color:blue;" readonly="true" value="所选标签:" text="所选标签:"/>
 			</span>
 			<form  id="jcdd" style="background-color: #dcdcdc;height: 500px;overflow: auto;font-size:16px;display:none;">
 				<p><input type="checkbox" value="0" οnclick="allChoice()" id="allCheck" name="checks"/>全选 </p>
@@ -148,9 +148,9 @@
 							<th>测量点4</th>
 							<th>测量点5</th>
 							<th>测量点6</th>
-						
+					</tr>	
 				</thead><!---->
-				<tbody id='comprate-tbody' style="height:600px; overflow:auto;">
+				<tbody id="comprate-tbody" style="height:600px; overflow:auto;">
 					
 				</tbody>
 			</table>

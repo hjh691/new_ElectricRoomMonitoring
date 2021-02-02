@@ -41,7 +41,7 @@
             for(var j=0;j<sensors_len;j++){
                 if(sel_sensor[i]==sensors[j].id){
                     //if(i==0)
-                    nodeid=sensors[j].nodeId;
+                    nodeid=sensors[j].text;
                     tree_obj.treeview("selectNode",sensors[j].nodeId);
                     break;
                 }

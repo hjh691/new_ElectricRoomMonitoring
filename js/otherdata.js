@@ -195,7 +195,7 @@ function btn_refresh_click(obj){
         allselects.push(obj_sel);
     }
     sessionStorage.setItem("sel_datatypename",JSON.stringify(allselects));
-    refresh_tabhead(allselect);
+    //refresh_tabhead(allselect);
     decoderealdata();
     if(haverealdata)
         decodedatas();
@@ -389,9 +389,9 @@ function getCatalog(index){
 }
 function decoderealdata(obj_realdata) {
     try{
-    $("#realdata-tbody").empty();
+    $("#others_realdata_tbody").empty();
     var v_sel = $('[name="options"]');
-    $table = document.getElementById('realdata-tbody');
+    $table = document.getElementById('others_realdata_tbody');
     //var tableLength = $table.rows.length;
     //for (var j = $table.rows.length - 1; j >= 0; j--) {
     //    $table.removeChild($table.rows[j]);
@@ -686,9 +686,9 @@ function decoderealdata(obj_realdata) {
                 value0 = ($table.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;//字符转实数
                 //happentime=lasttime;
                 //value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
-                var heightpx = $("#realdata-tbody tr").height() + 1;//加1是网格线的宽度
+                var heightpx = $("#others_realdata_tbody tr").height() + 1;//加1是网格线的宽度
                 var ppt = +sessionStorage.t_p;
-                $("#realdata-tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行张丽欣
+                $("#others_realdata_tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行张丽欣
                 $table.rows[ppt].style.backgroundColor = color_table_cur;
                 if (isfirst != true) {
                     var temp_option = myChart2.getOption();
@@ -1260,22 +1260,7 @@ function decodedatas(obj_chartdata) {
                 data: pa,
                 smooth: true,//平滑曲线 sangeshijianjiedianshang
                 smoothMonotone: 'x',
-            },
-                /*{
-                    name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
-                    type: 'line',
-                    showAllSymbol: true,
-                    symbolSize: 1,
-                    data: pb,
-                    smooth: true//平滑曲线
-                },
-                {
-                    name: document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457",
-                    type: 'line',
-                    showAllSymbol: true,
-                    symbolSize: 1,
-                    data: pc
-                }*/
+            }
             ]
         };
         myChart2.hideLoading();
@@ -1290,7 +1275,7 @@ function initchart2() {
         color: ['#FFFF00', '#FF0000'],//,'#00ff00' complain mountain 
         backgroundColor: backgroudcolor,
         title: {
-            text: '24小时变化趋势图',
+            text: '24h 变化趋势图',
             x: "center",
         },/**/
         tooltip: {
@@ -1365,7 +1350,7 @@ function initchart2() {
             type: 'line',
             showAllSymbol: true,
             symbolSize: 1,
-            data: [0]
+            data: [0],
         },
 			/*{
 				name: '',//lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
@@ -1386,97 +1371,7 @@ function initchart2() {
     //myChart2.hideLoading();
     myChart2.setOption(option2);
 }
-/*function display() {
-    //var $table=$("#warnlogdata-tbody");
-    len = $table.rows.length;// - 1;    // 求这个表的总行数，剔除第一行介绍
-    page = len % pageSize == 0 ? len / pageSize : Math.floor(len / pageSize) + 1;//根据记录条数，计算页数
-    //if(page==0) page=1; 为零时，即只有第一页，第零页即第一页
-    // alert("page==="+page);
-    curPage = 1;    // 设置当前为第一页
-    displayPage(1);//显示第一页
-    document.getElementById("btn0").innerHTML = "当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
-    document.getElementById("sjzl").innerHTML = "数据总量 <span class='badge' style='font-size:18px'>" + len + "";        // 显示数据量
-    document.getElementById("pageSize").value = pageSize;
-}
-function firstPage() {    // 首页
-    curPage = 1;
-    direct = 0;
-    displayPage();
-}
-function frontPage() {    // 上一页
-    direct = -1;
-    displayPage();
-}
-function nextPage() {    // 下一页
-    direct = 1;
-    displayPage();
-}
-function LastPage() {    // 尾页
-    curPage = page;
-    direct = 0;
-    displayPage();
-}
-function changePage() {    // 转页
-    curPage = document.getElementById("changePage").value * 1;
-    if (!/^[1-9]\d*$/.test(curPage)) {
-        showmsg("请输入正整数", info_showtime);
-        return;
-    }
-    if (curPage > page) {
-        showmsg("超出数据页面", info_showtime);
-        return;
-    }
-    direct = 0;
-    displayPage();
-}
-function setPageSize() {    // 设置每页显示多少条记录
-    pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
-    if (!/^[1-9]\d*$/.test(pageSize)) {
-        showmsg("请输入正整数", info_showtime);
-        return;
-    }
-    //len = $table.rows.length; //- 1;
-    page = len % pageSize == 0 ? len / pageSize : Math.floor(len / pageSize) + 1;//根据记录条数，计算页数
-    curPage = 1;        //当前页
-    direct = 0;        //方向
-    firstPage();
-    displayPage();
-}
-function displayPage() {
-    
-    if (curPage <= 1 && direct == -1) {
-        direct = 0;
-        showmsg("已经是第一页了", info_showtime);
-        //return;
-    } else if (curPage >= page && direct == 1) {
-        direct = 0;
-        showmsg("已经是最后一页了", info_showtime);
-        //return;
-    }
-    //lastPage = curPage;
-    // 修复当len=1时，curPage计算得0的bug
-    if (len > pageSize) {
-        curPage = ((curPage + direct + len) % len);
-    } else {
-        curPage = 1;
-    }
-    document.getElementById("btn0").innerHTML = "当前 " + curPage + "/" + page + " 页    每页 ";        // 显示当前多少页
-    begin = (curPage - 1) * pageSize;// 起始记录号
-    end = begin + 1 * pageSize;    // 末尾记录号
-    if (end > len) end = len;
-    //var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
-    for (var i = 0; i < len; i++) {
-        $table.rows[i].style.display = 'none';
-    }
-    for (var i = begin; i < end; i++) {
-        $table.rows[i].style.display = '';
-    }
-    /*$table.find("tr").hide();    // 首先，设置这行为隐藏
-    $table.find("tr").each(function(i){    // 然后，通过条件判断决定本行是否恢复显示
-        if((i>=begin && i<=end) )//显示begin<=x<=end的记录
-            $(this).show();
-    });
-}*/
+
 function initecharts(){
     option1 = {
         backgroundColor: backgroudcolor,

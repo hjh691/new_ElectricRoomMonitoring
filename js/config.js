@@ -22,9 +22,9 @@ jfjk_base_config.bg_src="res/bj011.jpg"
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
- jfjk_base_config.ver_id="Ver 1.1.22";
+ jfjk_base_config.ver_id="Ver 1.2.2";
  //发布日期
- jfjk_base_config.date="2021-01-10"
+ jfjk_base_config.date="2021-02-02"
 //公司名称
  jfjk_base_config.company="保定金凯澳自动化设备有限公司";
  //版权时间
@@ -46,7 +46,7 @@ jfjk_base_config.bg_src="res/bj011.jpg"
  jfjk_base_config.part3="生　产　部：0312-6783282 刘经理";
  jfjk_base_config.part4="市　场　部：13313227451 闫经理";
 //各子系统的指定名称
- sysnames=['视频监控','测温','局部放电','局放','机房监控','辅助综合','开关柜'];
+ sysnames=['视频监控','测温','局部放电','局放','机房监控','辅助综合','开关柜','气象','微气象'];
 //图形颜色
  colors=["#080","#d58930", "#28cfed", "#236be2", "#bd59d5", "#2fcea7", "#ee4a4b", "#0c9cef"];
  mcol=4;
@@ -87,7 +87,7 @@ if(localStorage.between_time)
     between_time=localStorage.between_time;
 //localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
  /**un business
-  * 
+  * 1.2.2 节点树的节点字体颜色变化的问题，告警信息每次都显示的问题（同一节点有不同类型的数据和不一样的告警状态造成），节点目录自动折叠的问题；代码精简。
   * 
   * 
   * 

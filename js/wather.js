@@ -7,11 +7,11 @@
 **/
 var chart_type = "", chart_unit = "", chart_max = 100, chart_min = 0, chart_sigle = "", is_have = false;
 var start_angle = 0, end_angle = 180;
-var myChart = echarts.init(document.getElementById('wather_temp'));//趋势图
-//var myChart = echarts.init(document.getElementById('realdata_maxvalOfDay'));//24小时极值
+var myChart = echarts.init(document.getElementById('wather_temp'));//温度
+var myChart2 = echarts.init(document.getElementById('wather_pa'));//温度趋势
 //var mychart3=echarts.init(document.getElementById('realdata_rateOfNormal'));//占比统计
-//var myChart1=echarts.init(document.getElementById('realdata_maxvalOfReal'));//实时极值
-var myChart4=echarts.init(document.getElementById('wather_swet'));//实时值
+var myChart1=echarts.init(document.getElementById('wather_water'));//湿度趋势
+var myChart4=echarts.init(document.getElementById('wather_swet'));//湿度
 var option,option1,option2,option3,option4;//对应mychart（1-4）的配置项 need speed seed deed
 var chartdataname1="";
 var sname="",sid,type_td,title_index=3;
@@ -34,7 +34,7 @@ var allconfigs;
 var allselect=null;
 var typename="",titlename="";
 var tab_head;
-var backgroudcolor='#999';
+var backgroudcolor='#006569';
 //var obj_realdata;
 var datas = [];
 var alertconfig=[70,100,120,140,];
@@ -42,19 +42,40 @@ var alertcount=[0,0,0,0];//;
 let haverealdata=false;
 var catalog="Defalt";
 var display_type=document.getElementById("display_type");
+var base = +new Date();
+var oneDay = 24 * 3600 * 1000;
+var oneTime=5*6000;
+var visdata = [[base, Math.random() * 100]];
+
+var TP_value = 55;
+var kd = [];
+var Gradient = [];
+var leftColor = '';
+var showValue = '';
+var boxPosition = [85, 0];
+var TP_txt = ''
+var now = new Date(base += oneTime);
 initrealdata();
 function initrealdata(){
     try{
     datas = [];
     datas.splice(0, datas.length);//
     for (var i = 0; i < 1; i++) {
-        var value = 0;//(Math.random() * 100).toFixed(2) - 0;
+        var value = (Math.random() * 100).toFixed(2) - 0;
         datas.push(JSON.parse('{"name":"","value":' + value + '}'));
-        var value = 0;//(Math.random() * 100).toFixed(2) - 0;
+        var value = (Math.random() * 100).toFixed(2) - 0;
         datas.push(JSON.parse('{"name":"","value":' + value + '}'));//
+    }
+    for (var i = 1; i < 24; i++) {
+        now = new Date(base += oneDay);
+        visdata.push([
+            [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
+            Math.round((Math.random() - 0.5) * 100 )
+        ]);
     }
     updatachart(chart_type);
     initseries(datas);
+    initchart2(visdata);
     //initchart2();
     initpage();
     }catch(err){
@@ -85,6 +106,7 @@ function initpage() {
     //appendalldisplaytype();/*"display_type"*/
     //btn_refresh_click();
     //window.parent.closeloadlayer();
+    var t1 = window.setInterval("refreshData();", 5000);
 }
 $(function () {
     $(".btn").click(function(){
@@ -802,11 +824,68 @@ function tableclick(tr) {
     $(tr).css("background", color_table_cur);//区分选中行
     //var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 }
-function initseries(data) {
+function initseries(data) {//温度计、湿度表。
+    // 刻度使用柱状图模拟，短设置1，长的设置3；构造一个数据
+    for(var i = 0, len = 135; i <= len; i++) {
+        if(i < 10 || i > 130) {
+            kd.push('')
+        } else {
+            if((i - 10) % 20 === 0) {
+                kd.push('-3');
+            } else if((i - 10) % 4 === 0) {
+                kd.push('-1');
+            } else {
+                kd.push('');
+            }
+        }
+    }
+    //中间线的渐变色和文本内容
+		if(TP_value > 80) {
+			TP_txt = '温度偏高';
+			Gradient.push({
+				offset: 0,
+				color: '#93FE94'
+			}, {
+				offset: 0.5,
+				color: '#E4D225'
+			}, {
+				offset: 1,
+				color: '#E01F28'
+			})
+		} else if(TP_value > 10) {
+			TP_txt = '温度正常';
+			Gradient.push({
+				offset: 0,
+				color: '#93FE94'
+			}, {
+				offset: 1,
+				color: '#E4D225'
+			})
+		} else {
+			TP_txt = '温度偏低';
+			Gradient.push({
+				offset: 1,
+				color: '#93FE94'
+			})
+		}
+	   /*  if(TP_value > 62) {
+			showValue = 62
+		} else {
+			if(TP_value < -60) {
+				showValue = -60
+			} else {
+				showValue = TP_value
+			}
+		}
+		if(TP_value < -10) {
+			boxPosition = [65, -120];
+        } */
+        leftColor = Gradient[Gradient.length - 1].color;
     // 基于准备好的dom，初始化echarts实例
-    // 指定图表的配置项和数据
+    // 指定图表的配置项和数据,通过组合echart图表，模拟温度计形象表示。
     option = {
-        backgroundColor: backgroudcolor,
+        //backgroundColor: backgroudcolor,
+        backgroundColor: '#006569',
         title: {
             //left: '40%',
             offsetCenter: ['200%', '0'],
@@ -832,82 +911,210 @@ function initseries(data) {
                 }
             }
         },
-        series: [
-            {
-                name: '温度值',
-                type: 'gauge',
-                center: ['50%', '50%'], // 默认全局居中
-                radius: '70%',//半径
-                min: -40,
-                max: 60,
-                //startAngle: 135,//起始角度
-                //endAngle: 35,//终止角度
-                splitNumber: 5,//
-                axisLine: { // 坐标轴线
-                    lineStyle: { // 属性lineStyle控制线条样式
-                        color: [
-                            [0.2, 'green'],
-                            [1, '#1f1f1f']
-                        ],
-                        color: [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
-                        width: 29,
-                        /*shadowColor: 'yellow', //默认透明
-                        shadowOffsetX:2,
-                        shadowBlur: 10*/
-                    }
-                },
-                axisTick: { // 坐标轴小标记
-                    show: true,
-                    splitNumber: 10,
-                    length:10,
-                },
-                axisLabel: {
-                    textStyle: { // 属性lineStyle控制线条样式
-                        fontWeight: 'bolder',
-                        color: '#fff',
-                        shadowColor: '#fff', //默认透明
-                        shadowBlur: 10,
-                        fontSize:14,
-                    },
-                },
-                splitLine: { // 分隔线
-                    length: 18, // 属性length控制线长
-                    lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
-                        width: 2,
-                        color: '#fff',
-                        shadowColor: '#fff', //默认透明
-                        shadowBlur: 10
-                    }
-                },
-                pointer: {
-                    show: true,
-                    width: 5,
-                    shadowColor: '#fff', //默认透明
-                    shadowBlur: 0
-                },
-                title: {
-                    show: true,
-                    offsetCenter: [0, '-30%'], // x, y，单位px
-                    text: '当前温度值',
-                    textStyle: {
-                        color: 'white',
-                        fontSize: 20
-                    }
-                },
-                detail: {
-                    show: true,
-                    offsetCenter: [0, '100%'],
-                    formatter: ' {value}  \n\n' + '时间: ' + happentime,//+chart_unit,
-                    textStyle: {
-                        fontSize: 20, 
-                        color: '#F8F43C'
-                    }
-                },
-                data: [data[0]],//[{value: 20,name: '温度'}]
+        yAxis: [{
+            show: false,
+            data: [],
+            min: 0,
+            max: 125,
+            axisLine: {
+                show: false
+            }
+        }, {
+            show: false,
+            min: 0,
+            max: 50,
+        }, {
+            type: 'category',
+            data: ['', '', '', '', '', '', '', '', '', '', '°C'],
+            position: 'left',
+            offset: -155,
+            axisLabel: {
+                fontSize: 10,
+                color: 'white'
             },
-        ]
+            axisLine: {
+                show: false
+            },
+            axisTick: {
+                show: false
+            },
+        }], 
+        xAxis: [{
+            show: false,
+            min: -40,
+            max: 80,
+            data: []
+        }, {
+            show: false,
+            min: -40,
+            max: 80,
+            data: []
+        }, {
+            show: false,
+            min: -40,
+            max: 80,
+            data: []
+        }, {
+            show: false,
+            min: -30,
+            max: 80,
+        }],
+        series: [{
+            name: '条',
+            type: 'bar',
+            // 对应上面XAxis的第一个对)象配置
+            xAxisIndex: 0,
+            data: [{
+                value: (TP_value + 20),//这个改带颜色刻度的
+                label: {
+                    normal: {
+                        show: true,
+                        position: boxPosition,
+                        /*backgroundColor: {
+                            image: 'plugin/subway_beijing/images/power/bg5Valuebg.png',//文字框背景图
+                        },*/
+                        width: 40,
+                        height: 90,
+                        formatter: '{back| ' + TP_value + ' }{unit|°C}',//\n{downTxt|' + TP_txt + '}',
+                        rich: {
+                            back: {
+                                align: 'center',
+                                lineHeight: 50,
+                                fontSize: 40,
+                                fontFamily: 'digifacewide',
+                                color: leftColor
+                            },
+                            unit: {
+                                fontFamily: '微软雅黑',
+                                fontSize: 15,
+                                lineHeight: 50,
+                                color: leftColor
+                            },
+                            downTxt: {
+                                lineHeight: 50,
+                                fontSize: 25,
+                                align: 'center',
+                                color: '#fff'
+                            }
+                        }
+                    }
+                }
+            }],
+            barWidth: 18,
+            itemStyle: {
+                normal: {
+                    color: new echarts.graphic.LinearGradient(0, 1, 0, 0, Gradient)
+                }
+            },
+            z: 2
+        }, {
+            name: '白框',
+            type: 'bar',
+            xAxisIndex: 1,
+            barGap: '-100%',
+            data: [134],
+            barWidth: 28,
+            itemStyle: {
+                normal: {
+                    color: '#0C2E6D',
+                    barBorderRadius: 50,
+                }
+            },
+            z: 1
+        }, {
+            name: '外框',
+            type: 'bar',
+            xAxisIndex: 2,
+            barGap: '-100%',
+            data: [135],
+            barWidth: 38,
+            itemStyle: {
+                normal: {
+                    color: '#4577BA',
+                    barBorderRadius: 50,
+                }
+            },
+            z: 0
+        }, {
+            name: '圆',
+            type: 'scatter',
+            hoverAnimation: false,
+            data: [0],
+            xAxisIndex: 0,
+            symbolSize: 40,
+            itemStyle: {
+                normal: {
+                    color: '#93FE94',
+                    opacity: 1,
+                }
+            },
+            z: 2
+        }, {
+            name: '白圆',
+            type: 'scatter',
+            hoverAnimation: false,
+            data: [0],
+            xAxisIndex: 1,
+            symbolSize: 60,
+            itemStyle: {
+                normal: {
+                    color: '#0C2E6D',
+                    opacity: 1,
+                }
+            },
+            z: 1
+        }, {
+            name: '外圆',
+            type: 'scatter',
+            hoverAnimation: false,
+            data: [0],
+            xAxisIndex: 2,
+            symbolSize: 70,
+            itemStyle: {
+                normal: {
+                    color: '#4577BA',
+                    opacity: 1,
+                }
+            },
+            z: 0
+        }, {
+            name: '刻度',
+            type: 'bar',
+            yAxisIndex: 0,
+            xAxisIndex: 3,
+            label: {
+                normal: {
+                    show: true,
+                    position: 'left',
+                    distance: 10,
+                    color: 'white',
+                    fontSize: 14,
+                    formatter: function(params) {
+                        if(params.dataIndex > 130 || params.dataIndex < 10) {
+                            return '';
+                        } else {
+                            if((params.dataIndex - 10) % 20 === 0) {
+                                return params.dataIndex - 20;//这个改刻度的，当减70的时候刻度是从-60开始不是从零开始
+                            } else {
+                                return '';
+                            }
+                        }
+                    }
+                }
+            },
+            barGap: '-100%',
+            data: kd,
+            barWidth: 1,
+            itemStyle: {
+                normal: {
+                    color: 'white',
+                    barBorderRadius: 120,
+                }
+            },
+            z: 0
+        }]
     };
-    myChart.setOption(option);//24小时极值
+    myChart.setOption(option);//温度计
     option4 = {
         backgroundColor: backgroudcolor,
         title: {
@@ -916,7 +1123,7 @@ function initseries(data) {
             textStyle: {
                 color: 'white',
             },
-            text: sname+"-湿度",
+            text: sname+"-相对湿度",
         },
         tooltip: {
             formatter: "{a} <br/>{c} {b}"
@@ -1010,17 +1217,14 @@ function initseries(data) {
         ]
     };
     myChart4.setOption(option4);
-    //initecharts();
 }
 //window.setInterval("getrealdatabynodeid(-1)",60000);
 function refreshData() {
-    //var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
-    if (chart_type == "pd") {
-        option.series[0].data[0].value = minvalue
-    } else {
-        option.series[0].data[0].value = maxvalue;
-    }
-    val1 = eval("value" + 0);
+    TP_value= ((Math.random() * 110 - 10).toFixed(Number_of_decimal))*1;
+    //var refresh_option=myChart.getOption();
+    option.series[0].data[0].value=TP_value+20;
+    option.series[0].data[0].label.normal.formatter= '{back| ' + TP_value + ' }{unit|°C}',//\n{downTxt|' + TP_txt + '}',
+    myChart.setOption(option);
     /*//option.series[0].data[0].value = maxvalue;
     option.series[0].max = chart_max;
     option.series[0].min = chart_min;
@@ -1046,7 +1250,7 @@ function refreshData() {
         }
     }
     myChart.setOption(option);*/
-    option4.series[0].data[0].value = val1;
+    option4.series[0].data[0].value = TP_value;
     option4.series[0].max = chart_max;
     option4.series[0].min = chart_min;
     value = option4.series[0].data[0].value;
@@ -1054,41 +1258,20 @@ function refreshData() {
     option4.series[0].data[0].name = chart_unit;//sname;
     option4.title.text = sname+" : "+titlename;
     myChart4.setOption(option4);
-   /* option1.series[0].data[0].value= maxOfRealdata.toFixed(Number_of_decimal);//54.321;
-    option1.series[0].detail.formatter=maxOfRealdata.toFixed(Number_of_decimal)+ '\n\n 标签名称: '+maxOfRealdataName;//实时极值的标签名称,"发生时刻:"+maxvaluetime+
-    option1.series[0].max = chart_max;
-    option1.series[0].min = chart_min;
-    option1.series[0].data[0].name = chart_unit;//sname;
-    option1.title.text="实时极值: "+titlename;
-    myChart1.setOption(option1);
-    var ratArr=[],str_name="";
-    for(var i=0;i<alertcount.length;i++){
-        if(alertcount[i]!=0){
-            switch(i){
-                case 0:
-                    str_name="正常";
-                    break;
-                case 1:
-                    str_name="预警";
-                    break;
-                case 2:
-                    str_name="三级告警";
-                    break;
-                case 3:
-                    str_name="二级告警";
-                    break;
-                case 4:
-                    str_name="一级告警";
-                    break;
-            }
-            ratArr.push({name:str_name,value:alertcount[i]});
-        }
-        
-        
-    }
-    option3.series[0].data=ratArr;
-    mychart3.setOption(option3);
-    */
+    option2.series[0].data.shift();
+    now = new Date(base += oneDay);
+    option2.series[0].data.push([
+        [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
+        TP_value
+    ])// maxOfRealdata.toFixed(Number_of_decimal);//54.321;
+    //option1.series[0].detail.formatter=maxOfRealdata.toFixed(Number_of_decimal)+ '\n\n 标签名称: '+maxOfRealdataName;//实时极值的标签名称,"发生时刻:"+maxvaluetime+
+    option2.series[0].max = chart_max;
+    option2.series[0].min = chart_min;
+    //option2.series[0].data[0].name = chart_unit;//sname;
+    //option2.title.text="实时极值: "+titlename;
+    myChart1.setOption(option2);
+    myChart2.setOption(option2);
+    
 }
 function decodedatas(obj_chartdata) {
     try{
@@ -1260,22 +1443,7 @@ function decodedatas(obj_chartdata) {
                 data: pa,
                 smooth: true,//平滑曲线 sangeshijianjiedianshang
                 smoothMonotone: 'x',
-            },
-                /*{
-                    name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
-                    type: 'line',
-                    showAllSymbol: true,
-                    symbolSize: 1,
-                    data: pb,
-                    smooth: true//平滑曲线
-                },
-                {
-                    name: document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457",
-                    type: 'line',
-                    showAllSymbol: true,
-                    symbolSize: 1,
-                    data: pc
-                }*/
+            }
             ]
         };
         myChart2.hideLoading();
@@ -1285,12 +1453,12 @@ function decodedatas(obj_chartdata) {
         showstateinfo(err.message.message,"realdata/decodedatas");
     }
 }
-function initchart2() {
-    var option2 = {
+function initchart2(adata) {
+    option2 = {
         color: ['#FFFF00', '#FF0000'],//,'#00ff00' complain mountain 
         backgroundColor: backgroudcolor,
         title: {
-            text: '24小时变化趋势图',
+            text: '24h 变化趋势图',
             x: "center",
         },/**/
         tooltip: {
@@ -1340,7 +1508,7 @@ function initchart2() {
         },
         xAxis: [{
             type: 'time',
-            splitNumber: 10,
+            splitNumber: 6,
             axisLine: {
                 lineStyle: {
                     color: 'black',
@@ -1357,15 +1525,15 @@ function initchart2() {
                     width: 2
                 }
             },
-            min: minval,
-            max: maxval,
+            //min: minval,
+            //max: maxval,
         }],
         series: [/**/{
             name: '',//lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
             type: 'line',
             showAllSymbol: true,
             symbolSize: 1,
-            data: [0]
+            data: adata,
         },
 			/*{
 				name: '',//lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
@@ -1385,272 +1553,7 @@ function initchart2() {
     };
     //myChart2.hideLoading();
     myChart2.setOption(option2);
-}
-/*function display() {
-    //var $table=$("#warnlogdata-tbody");
-    len = $table.rows.length;// - 1;    // 求这个表的总行数，剔除第一行介绍
-    page = len % pageSize == 0 ? len / pageSize : Math.floor(len / pageSize) + 1;//根据记录条数，计算页数
-    //if(page==0) page=1; 为零时，即只有第一页，第零页即第一页
-    // alert("page==="+page);
-    curPage = 1;    // 设置当前为第一页
-    displayPage(1);//显示第一页
-    document.getElementById("btn0").innerHTML = "当前 " + curPage + "/" + page + " 页    每页 ";    // 显示当前多少页
-    document.getElementById("sjzl").innerHTML = "数据总量 <span class='badge' style='font-size:18px'>" + len + "";        // 显示数据量
-    document.getElementById("pageSize").value = pageSize;
-}
-function firstPage() {    // 首页
-    curPage = 1;
-    direct = 0;
-    displayPage();
-}
-function frontPage() {    // 上一页
-    direct = -1;
-    displayPage();
-}
-function nextPage() {    // 下一页
-    direct = 1;
-    displayPage();
-}
-function LastPage() {    // 尾页
-    curPage = page;
-    direct = 0;
-    displayPage();
-}
-function changePage() {    // 转页
-    curPage = document.getElementById("changePage").value * 1;
-    if (!/^[1-9]\d*$/.test(curPage)) {
-        showmsg("请输入正整数", info_showtime);
-        return;
-    }
-    if (curPage > page) {
-        showmsg("超出数据页面", info_showtime);
-        return;
-    }
-    direct = 0;
-    displayPage();
-}
-function setPageSize() {    // 设置每页显示多少条记录
-    pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
-    if (!/^[1-9]\d*$/.test(pageSize)) {
-        showmsg("请输入正整数", info_showtime);
-        return;
-    }
-    //len = $table.rows.length; //- 1;
-    page = len % pageSize == 0 ? len / pageSize : Math.floor(len / pageSize) + 1;//根据记录条数，计算页数
-    curPage = 1;        //当前页
-    direct = 0;        //方向
-    firstPage();
-    displayPage();
-}
-function displayPage() {
-    
-    if (curPage <= 1 && direct == -1) {
-        direct = 0;
-        showmsg("已经是第一页了", info_showtime);
-        //return;
-    } else if (curPage >= page && direct == 1) {
-        direct = 0;
-        showmsg("已经是最后一页了", info_showtime);
-        //return;
-    }
-    //lastPage = curPage;
-    // 修复当len=1时，curPage计算得0的bug
-    if (len > pageSize) {
-        curPage = ((curPage + direct + len) % len);
-    } else {
-        curPage = 1;
-    }
-    document.getElementById("btn0").innerHTML = "当前 " + curPage + "/" + page + " 页    每页 ";        // 显示当前多少页
-    begin = (curPage - 1) * pageSize;// 起始记录号
-    end = begin + 1 * pageSize;    // 末尾记录号
-    if (end > len) end = len;
-    //var theTable=$("#warnlogdata-tbody");// document.getElementById("warnlogdata-tbody");
-    for (var i = 0; i < len; i++) {
-        $table.rows[i].style.display = 'none';
-    }
-    for (var i = begin; i < end; i++) {
-        $table.rows[i].style.display = '';
-    }
-    /*$table.find("tr").hide();    // 首先，设置这行为隐藏
-    $table.find("tr").each(function(i){    // 然后，通过条件判断决定本行是否恢复显示
-        if((i>=begin && i<=end) )//显示begin<=x<=end的记录
-            $(this).show();
-    });
-}*/
-function initecharts(){
-    option1 = {
-        backgroundColor: backgroudcolor,
-        title: {
-            //left: '40%',
-            offsetCenter: ['200%', '0'],
-            textStyle: {
-                color: 'white',
-            },
-            text: '实时极值',
-        },
-        tooltip: {
-            formatter: "{a} <br/>{c} {b}"
-        },
-        toolbox: {
-            show: false,
-            feature: {
-                mark: {
-                    show: true
-                },
-                restore: {
-                    show: true
-                },
-                saveAsImage: {
-                    show: true
-                }
-            }
-        },
-        series: [
-            {
-                name: '实时极值',
-                type: 'gauge',
-                center: ['50%', '50%'], // 默认全局居中
-                radius: '70%',//半径
-                min: chart_min,
-                max: chart_max,
-                //startAngle: 135,//起始角度
-                //endAngle: 35,//终止角度
-                splitNumber: 5,//
-                axisLine: { // 坐标轴线
-                    lineStyle: { // 属性lineStyle控制线条样式
-                        color: [
-                            [0.2, 'green'],
-                            [1, '#1f1f1f']
-                        ],
-                        color: [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
-                        width: 29,
-                        /*shadowColor: 'yellow', //默认透明
-                        shadowOffsetX:2,
-                        shadowBlur: 10*/
-                    }
-                },
-                axisTick: { // 坐标轴小标记
-                    show: true,
-                    splitNumber: 4,
-                    length:10,
-                    lineStyle:{
-                        color:"#fff",
-                    }
-                },
-                axisLabel: {
-                    textStyle: { // 属性lineStyle控制线条样式
-                        fontWeight: 'bolder',
-                        color: '#fff',
-                        shadowColor: '#fff', //默认透明
-                        shadowBlur: 10,
-                        fontSize:14,
-                    },
-                },
-                splitLine: { // 分隔线
-                    length: 20, // 属性length控制线长
-                    lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
-                        width: 2,
-                        color: '#fff',
-                        shadowColor: '#fff', //默认透明
-                        shadowBlur: 10
-                    }
-                },
-                pointer: {
-                    show: true,
-                    width: 5,
-                    shadowColor: '#fff', //默认透明
-                    shadowBlur: 0
-                },
-                title: {
-                    show: true,
-                    offsetCenter: [0, '-30%'], // x, y，单位px
-                    textStyle: {
-                        color: 'white',
-                        fontSize: 20
-                    }
-                },
-                detail: {
-                    show: true,
-                    offsetCenter: [0, '100%'],
-                    formatter: ' {value}  \n\n' + '发生时刻: ' +maxvaluetime+ '\n\n 标签名称: '+sname,//+chart_unit,
-                    textStyle: {
-                        fontSize: 20,
-                        color: '#F8F43C'
-                    }
-                },
-                data: [{value: 20,name: chartdataname1}],//[data[0]],//
-            },
-        ]
-    };
-    //myChart1.setOption(option1);
-    option3 = {
-        backgroundColor: backgroudcolor,
-        color:['#090','#055','#f70','#b00','#095','#f0f','#444'],
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-            }
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        title : {
-            text: "状态统计图",
-            textStyle:{
-                color: "#FFF",
-            },
-        },
-        /*xAxis: [
-            {
-                type: 'category',
-                data: ['正常', '预警', '一级', '二级', '告警'],
-                axisTick: {
-                    alignWithLabel: true
-                }
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],*/
-        series: [
-            {
-                name: '占比统计',
-                type: 'pie',
-                radius: ['20%', '50%'],
-                avoidLabelOverlap: false,
-                label: {
-                    formatter: '{b}： {c}\n\n  {{d}%}  ',
-                    show: true,
-                    position: 'out',
-                    color:"#fff"
-                },
-                //barWidth: '60%',
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: '20',
-                        fontWeight: 'bold'
-                    }
-                },
-                labelLine: {
-                    show: true
-                },
-                data: []//,,{value:90,name:'告警'},{value:0,name:"严重告警"}
-                    //{value:30,name:'故障'},{value: 20,name: '停运'}]{value:310,name:'正常'}, {value:52,name:'预警'},{value:20,name:'一级告警'} ,
-                    //{value:34,name:'二级告警'}
-            }
-        ]
-    };
-    //mychart3.setOption(option3);
-    //mychart3.on('click',function(params){//点击事件
-    //    console.log(params);
-    //});
+    myChart1.setOption(option2);
 }
 function jisuanyichangbili(avalue){
     if(avalue>alertconfig[3]){
@@ -1665,6 +1568,7 @@ function jisuanyichangbili(avalue){
         alertcount[0]++;
     }
 }
+
 /**
  * 解决在首次登录今日实时数据页面时数据不立即显示的问题，标签名称添加上级名称，区分同名标签；
  * 状态统计添加图形序列的数值显示；

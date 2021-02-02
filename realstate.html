@@ -59,7 +59,7 @@
     </head>
     <body onunload="stopWorker()" >
         <div class="container" style="margin: 0;padding:0 ;">
-            <ul class="nav nav-tabs" disabled='disabled' id="nav" style="font-size: 16px;font-style: italic;margin-top: 0px;">
+            <ul class="nav nav-tabs" disabled="disabled" id="nav" style="font-size: 16px;font-style: italic;margin-top: 0px;">
                 <li class="tab-label active" id="guard"><a href="#tab_guard" data-toggle="tab"><i class="glyphicon glyphicon-log-in"></i> 门禁</a></li>
                 <li class="tab-label" id="light"><a href="#tab_light" data-toggle="tab"><i class="glyphicon glyphicon-cog" ></i> 灯光</a></li>
                 <li class="tab-label" id="smoken"><a href="#tab_smoken" data-toggle="tab"><i class="glyphicon glyphicon-cloud-upload"></i> 烟感</a></li>
@@ -88,7 +88,7 @@
                             </div>
                         </div>
                     </div>
-            <div class="tab-content" id='tab-content'>
+            <div class="tab-content" id="tab-content">
                 <div class="tab-pane fade in active" align="center" id="tab_guard">
                     <img src="res/menjin.png" style="width:300px;height:150px;">
                     <table >
@@ -271,35 +271,35 @@
                         <img src="res/ups.jpg" style="width:100%; height:100%;min-width: 800px;min-height: 600px;z-index:-1"/>
                         <!---->
                         <div class="textbox" id="txb-shidian" style="left:6%;top:15%;">
-                            <li >Ａ相电压<input class="ups-edit" id="sd_a" value=220.34 title="输入端电压UA"></input></li>
-                            <li >Ｂ相电压<input class="ups-edit" id="sd_b" value=220.34 title="输入端电压UB"></input></li>
-                            <li >Ｃ相电压<input class="ups-edit" id="sd_c" value=220.34 title="输入端电压UC"></input></li>
-                            <li >输入频率<input class="ups-edit" id="sd_pl" value=50.01 title="输入端频率"></input></li>
+                            <li >Ａ相电压<input class="ups-edit" id="sd_a" value="220.34" title="输入端电压UA"/></li>
+                            <li >Ｂ相电压<input class="ups-edit" id="sd_b" value="220.34" title="输入端电压UB"/></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="sd_c" value="220.34" title="输入端电压UC"/></li>
+                            <li >输入频率<input class="ups-edit" id="sd_pl" value="50.01" title="输入端频率"/></li>
                         </div>
                         <div class="textbox" id="txb-batter" style="left:6%;top:60%;">
-                            <li>电池状态<input class="ups-stated" id="bat_state" value="正常"></input></li>
-                            <li>电池容量<input class="ups-edit" id="bat_con" value=220.34></input></li>
-                            <li>电池电压<input class="ups-edit" id="bat_val" value=220.34></input></li>
-                            <li>电池频率<input class="ups-edit" id="bat_pl" value=50></input></li>
+                            <li>电池状态<input class="ups-stated" id="bat_state" value="正常"/></li>
+                            <li>电池容量<input class="ups-edit" id="bat_con" value="220.34"/></li>
+                            <li>电池电压<input class="ups-edit" id="bat_val" value="220.34"/></li>
+                            <li>电池频率<input class="ups-edit" id="bat_pl" value="50"/></li>
                         </div>
                         <div class="textbox" id="txb-switch" style="left:35%;top:4%;">
-                            <li >Ａ相电压<input class="ups-edit" id="pl_a" value=220.34 title="旁路电压UA"></input></li>
+                            <li >Ａ相电压<input class="ups-edit" id="pl_a" value="220.34" title="旁路电压UA"/></li>
                             <li></li>
-                            <li style="display: inline">Ｂ相电压<input class="ups-edit" id="pl_b" value=220.34 title="旁路电压UB"></input></li>
-                            <li style="display: inline">旁路频率<input class="ups-edit" id="pl_pl" value=49.99 title="旁路频率"></input></li>
-                            <li >Ｃ相电压<input class="ups-edit" id="pl_c" value=220.34 title="旁路电压UC"></input></li>
+                            <li style="display: inline">Ｂ相电压<input class="ups-edit" id="pl_b" value="220.34" title="旁路电压UB"/></li>
+                            <li style="display: inline">旁路频率<input class="ups-edit" id="pl_pl" value="49.99" title="旁路频率"/></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="pl_c" value="220.34" title="旁路电压UC"/></li>
                         </div>
                         <div class="textbox" id="txb-device" style="left:73%;top:48%;">
-                            <li >Ａ相电压<input class="ups-edit" id="dev_a" value=220.34 title="设备端电压UA"></input></li>
-                            <li >Ｂ相电压<input class="ups-edit" id="dev_b" value=220.34 title="设备端电压UB"></input></li>
-                            <li >Ｃ相电压<input class="ups-edit" id="dev_c" value=220.34 title="设备端电压UC"></input></li>
-                            <li >输出频率<input class="ups-edit" id="dev_pl" value=50.01 title="设备端频率"></input></li>
+                            <li >Ａ相电压<input class="ups-edit" id="dev_a" value="220.34" title="设备端电压UA"/></li>
+                            <li >Ｂ相电压<input class="ups-edit" id="dev_b" value="220.34" title="设备端电压UB"/></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="dev_c" value="220.34" title="设备端电压UC"/></li>
+                            <li >输出频率<input class="ups-edit" id="dev_pl" value="50.01" title="设备端频率"/></li>
                         </div>
                         <div class="textbox" id="txb-ups" style="left:40%;top:70%;">
-                            <li >Ａ相电压<input class="ups-edit" id="ups_a" value=212.34 title="UPS输入端电压UA"></input></li>
-                            <li >Ｂ相电压<input class="ups-edit" id="ups_b" value=210.34 title="UPS输入端电压UB"></input></li>
-                            <li >Ｃ相电压<input class="ups-edit" id="ups_c" value=211.34 title="UPS输入端电压UC"></input></li>
-                            <li >输入频率<input class="ups-edit" id="ups_pl" value=50.1 title="UPS输入端频率"></input></li>
+                            <li >Ａ相电压<input class="ups-edit" id="ups_a" value="212.34" title="UPS输入端电压UA"/></li>
+                            <li >Ｂ相电压<input class="ups-edit" id="ups_b" value="210.34" title="UPS输入端电压UB"/></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="ups_c" value="211.34" title="UPS输入端电压UC"/></li>
+                            <li >输入频率<input class="ups-edit" id="ups_pl" value="50.1" title="UPS输入端频率"/></li>
                         </div>
                     </div>
                     <script type="text/javascript" src="js/ups.js"></script>
@@ -338,7 +338,7 @@
                                         </td>
                                     </tr>
                                     <tr >
-                                        <td colspan="2"> 
+                                        <td > 
                                             <div style="width: 320px;height: 155px;" id="chart-P" ></div>
                                         </td>
                                         <td>
@@ -384,7 +384,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan=2>
+                                        <td >
                                             <div style="width:320px;height: 160px" id="chart-p"></div>
                                         </td>
                                         <td>
@@ -409,6 +409,7 @@
                             <label>计量点名称：</label>
                         <select id="jcdd" onchange="gradeChange()"  style="border-radius: 5px;">
                         </select >
+                        </span>
                     </div>
                     <div align="center"> 
                         <table id="humiture">
@@ -431,11 +432,12 @@
                     <div class="rowlay" align="center"> 
                         <span class="condition" >
                             <label>计量点名称：</label>
-                        <select id="jcdd" onchange="gradeChange()"  style="border-radius: 5px;">
+                        <select id="jcdd_yaweishui" onchange="gradeChange()"  style="border-radius: 5px;">
                         </select >
+                        </span>
                     </div>
                     <div align="center"> 
-                        <table id="humiture">
+                        <table id="yaliweishui">
                             <tr>
                                 <td class="ht-pointname" >
                                     <p class="ht-pointname">压力微水监测</p>

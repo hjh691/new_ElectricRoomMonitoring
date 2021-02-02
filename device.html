@@ -85,7 +85,7 @@
                 <!--<li style="width:50px"><b>站名：</b></li>
                 <li id="station_name"style="width:100px;margin-right:0px"> </li>-->
                 <li style="width:50px;margin-right:0px"><b>记录数：</b></li>
-                <li id="count_val"style="width:50px;margin-right:0px"> </li>
+                <li id="count_val" style="width:50px;margin-right:0px"> </li>
 				<li style="width:100px;margin-right:0px"><a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('devicetable')">
 					<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
 				</li>
@@ -107,7 +107,7 @@
 					<th onclick="$.sortTable.sort('devicetable',5)">分组</th>	-->
 				</tr>
 			</thead>
-			<tbody id='device-tbody' style="width:990px;height:550px;">
+			<tbody id="device-tbody" style="width:990px;height:550px;">
 			</tbody>
 		</table>
 		<div  style="text-align: center;font-size: 18px;float:bottom;"><!--display: none;-->
@@ -124,7 +124,7 @@
 			<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
 			<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('devicetable')"><!--method5('devicetable')-->
 				<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;" ></a>
-			<span id="pageindex" style='display: none;'></span>
+			<span id="pageindex" style="display: none;"></span>
 		</div>
 		<!--<span id="s"></span>
             <a href="#" onclick="page.firstPage();">首页</a>
@@ -254,6 +254,9 @@
 			$(tr).siblings().css("background","");
 			$(tr).css("background","#85e494");//区分选中行
 		}
+		function refreshpage(){
+			
+		}
 		/*function setPageSize(){
 			pageSize = document.getElementById("pageSize").value;
 			//initdevice();
@@ -345,3 +348,4 @@
 	
 	列表添加表内滚动条。
 -->
+</html>

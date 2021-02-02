@@ -1,4 +1,4 @@
-	var pageSize = 18;    //每页显示的记录条数
+	var pageSize = 16;    //每页显示的记录条数
 	var curPage=0;        //当前页
 	//var lastPage;        //最后页
 	var direct=0;        //方向
@@ -332,10 +332,11 @@
 		if(objS.options.length>0){
 			name=objS.options[objS.selectedIndex].innerText;
 		}*/
-		var type_str=[];
-		count = 0;
-		count_h=0;
-		var count_l=[];
+			document.getElementById("war_caption").innerHTML=sessionStorage.sensorallpathname
+			var type_str=[];
+			count = 0;
+			count_h=0;
+			var count_l=[];
 			$("#warnlogdata-tbody").empty();//显示空了，但实际的行数还在，不过行内容已经变为空了，感觉还是逐条删除比较保险.
 			$table=document.getElementById("warnlogdata-tbody");
 			//for(var j=$table.rows.length-1;j>=0;j--){
@@ -522,6 +523,7 @@
 	function showrealworning(){
 		try{
 		//document.getElementById("jcdd").disabled=true;
+		document.getElementById("war_caption").innerHTML="实时"
 		var sift=false;
 		count=0,count_l=[0,0],count_h=0;
 		//var timedefine=document.getElementById("timedefine");//取得主程序实时数据列表元素内容。

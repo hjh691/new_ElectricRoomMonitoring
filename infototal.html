@@ -52,6 +52,7 @@
             var a=JSON.parse(JSON.stringify(parent.infotreedata))
             updatainfotree1(a);//使用总node和总sensors进行汇总。
             $("#main").height(parent.window.windowHeight-120);
+            $("#main").width(parent.window.windowWidth*0.85);
             var myChar=echarts.init(document.getElementById("main")); 
             var option = {
                 tooltip: {

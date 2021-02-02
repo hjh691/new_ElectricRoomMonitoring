@@ -82,17 +82,17 @@
 				<div class="panel panel-default" style="height:80px;overflow:auto;margin-bottom: 0;" >
 					<div class="condition " >
 						<span><label>查询时间：</label></span>
-						<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" ></input>当天</label> </span>
-						<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"></input>昨天</label></span>
-						<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"></input>当月</label> </span>
-						<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"></input>上月</label></span>
-						<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(this)" name="timeselect"></input>自定义</label></span>
+						<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" />当天</label> </span>
+						<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"/>昨天</label></span>
+						<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"/>当月</label> </span>
+						<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"/>上月</label></span>
+						<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(this)" name="timeselect"/>自定义</label></span>
 						<span id="timedefine" style="display: none;">
 						起止时间
-						<input type="text" onClick="showdate({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_history" 
-						style="width:160px;font-size:16px;height: 30px;"></input>至
-						<input type="text" onClick="showdate({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_history" 
-						style="width:160px;font-size:16px;height: 30px;" ></input>
+						<input type="text" onclick="showdate({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_history" 
+						style="width:160px;font-size:16px;height: 30px;"/>至
+						<input type="text" onclick="showdate({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_history" 
+						style="width:160px;font-size:16px;height: 30px;" />
 						</span>
 					</div>
 					<div class="condition" style="height: 30px;line-height:30px;">
@@ -103,14 +103,14 @@
 							onclick="refreshsensorslist()" ></a>
 						</span>
 						<span><label style="width:70px;"> 类别分组：</label></span>
-						<span id="display_type"class="btn-group"  data-toggle="buttons">
+						<span id="display_type" class="btn-group"  data-toggle="buttons">
 						</span>
 						<span >
 							<!--<input class="button" type="button" id="chaxun" value="查询" onclick="queryhistorydata()" 
-						style="font-size:16px;height: 30px;line-height: 30px;" ></input>-->
+						style="font-size:16px;height: 30px;line-height: 30px;" />-->
 							<button class="selected" id="chaxun" style="width: 60px;" onclick="queryhistorydata()">查询</button>
 						<a href="javascript:void(0)" style="margin-left:20px;" onclick="exporttoexcel('historytable')" >
-								<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"style="width:40px;"></a>
+								<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
 						</span>
 					</div>	
 				</div>		
@@ -120,25 +120,25 @@
 					onclick="seletime(1)">昨天</a> 
 						<li id="station_name"style="width:100px;margin-right:0px"> </li>method5('historytable')<li style="width:100px;margin-right:0px"></li>-->
 						<li style="width:50px;margin-right:0px"><b>标签名称：</b> </li>
-						<li id="normal_count"style="width:100px;margin-right:10px"> </li>
+						<li id="normal_count" style="width:100px;margin-right:10px"> </li>
 						<li style="width:50px;margin-right:0px"><b>记录数：</b></li>
-						<li id="count_val"style="width:50px;margin-right:0px" >  </li>
+						<li id="count_val" style="width:50px;margin-right:0px" >  </li>
 					</ul>
 				</div>
 				<div class="parent panel panel-default" style="text-align: center;">
 					<div class="aside charttab-head" id="tab-head" style="height: 40px">
 						<button id="change" class="selected" onclick="changetype();" 
-							style="width:100px;">>> 数据列表</button>
+							style="width:100px;">&gt&gt 数据列表</button>
 						<fieldset style="text-align: center;margin-top: 50px;">
 							
 							<!--<span id="timedefine" style="display: none;"></span><legend>自主查询：</legend>-->
 								<label style="margin-top: 10px;">分 组：</label><br>
-								<input type="text" onClick=""  id="folder_history" 
-								style="width:100px;font-size:16px;height: 30px;"></input>
+								<input type="text" onclick=""  id="folder_history" 
+								style="width:100px;font-size:16px;height: 30px;"/>
 								<br>
 								<label>类 型：</label><br>
-								<input type="text" onClick=""  id="datatype_history" 
-								style="width:100px;font-size:16px;height: 30px;" ></input>
+								<input type="text" onclick=""  id="datatype_history" 
+								style="width:100px;font-size:16px;height: 30px;" />
 								<br>
 								<button class="selected" id="zizhuchaxun" style="width: 80px;margin-top: 10px;" onclick="queryhistorydataself()">自主查询</button>
 						</fieldset>
@@ -163,7 +163,7 @@
 									<td><b>发生时刻</b></td>
 								</tr>
 							
-							<tbody id='historydata-tbody'  style="width:900px;height:450px; overflow:auto;">
+							<tbody id="historydata-tbody"  style="width:918px;height:450px; overflow:auto;">
 							</tbody>
 						</table>
 					</div>

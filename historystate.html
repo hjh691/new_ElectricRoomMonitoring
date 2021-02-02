@@ -5,6 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/electricroommonitoring.css"/>
+    <title>状态查询</title>
     <style>
         .container{
             width: 99%;
@@ -40,19 +41,19 @@
             <div class="col-xs-12 col-md-12 col-lg-12" style="border:rgb(90, 89, 89) solid 1px;;height: 100%;">
                 <div style="height:45px;overflow:auto;margin-top:5px;">
                     <div class="rowlay" style="text-align: left;background:white;">
-                        <span ><label><input type="radio" value="0" onclick="seltime(this)" name="timeselect" ></input>当天</label> </span>
-                        <span ><label><input type="radio" value="1" onclick="seltime(this)" name="timeselect"></input>昨天</label></span>
-                        <span ><label><input type="radio" value="2" onclick="seltime(this)" name="timeselect"></input>当月</label> </span>
-                        <span ><label><input type="radio" value="3" onclick="seltime(this)" name="timeselect"></input>上月</label></span>
-                        <span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seltime(this)" name="timeselect"></input>自定义</label></span>
+                        <span ><label><input type="radio" value="0" onclick="seltime(this)" name="timeselect" />当天</label> </span>
+                        <span ><label><input type="radio" value="1" onclick="seltime(this)" name="timeselect"/>昨天</label></span>
+                        <span ><label><input type="radio" value="2" onclick="seltime(this)" name="timeselect"/>当月</label> </span>
+                        <span ><label><input type="radio" value="3" onclick="seltime(this)" name="timeselect"/>上月</label></span>
+                        <span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seltime(this)" name="timeselect">自定义</label></span>
                         <span id="timedefine" style="display: none;margin-left: 20px;word-spacing: 5px;">
                         <label>起止时间</label>
-                        <input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_historystate"></input><label style="margin-left: 5px;"> 至</label>
-                        <input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_historystate"></input>
-                        <input class="button" type="button" id="chaxun_historystate" value="查询" onclick="queryhistorystate()"></input></span>
-                        <span id="display_type"class="btn-group"  data-toggle="buttons" style="float: right;right:50px">
-                            <lable class="btn btn-primary active"><input class="catalog" type="radio" name="options" value="Name_p" >abc</lable>
-                            <label class="btn btn-primary"><input class="catalog" type="radio" name="options" value="Name_q" >dfg</label>
+                        <input type="text" oncclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_historystate"/><label style="margin-left: 5px;"> 至</label>
+                        <input type="text" oncclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_historystate"/>
+                        <input class="button" type="button" id="chaxun_historystate" value="查询" onclick="queryhistorystate()"/></span>
+                        <span id="display_type" class="btn-group"  data-toggle="buttons" style="float: right;right:50px">
+                            <lable class="btn btn-primary active"><input class="catalog" type="radio" name="options" value="Name_p" />abc</lable>
+                            <label class="btn btn-primary"><input class="catalog" type="radio" name="options" value="Name_q" />dfg</label>
                         </span>
                     </div>
                 </div>
@@ -62,9 +63,9 @@
                     onclick="seletime(1)">昨天</a> 
                         <li id="station_name"style="width:100px;margin-right:0px"> </li>method5('historytable')-->
                         <li style="width:50px;margin-right:0px"><b>标签名称：</b> </li>
-                        <li id="normal_count"style="width:100px;margin-right:10px"> </li>
+                        <li id="normal_count" style="width:100px;margin-right:10px"> </li>
                         <li style="width:50px;margin-right:0px"><b>记录数：</b></li>
-                        <li id="count_val"style="width:50px;margin-right:0px" >  </li>
+                        <li id="count_val" style="width:50px;margin-right:0px" >  </li>
                         <li style="width:100px;margin-right:0px"><a href="javascript:void(0)" 
                             style="margin-left:20px;" onclick="exporttoexcel('historytable')" >
                             <img src="res/gif_export.gif" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive"></a></li>
@@ -98,7 +99,7 @@
                                 <th>平均值</th>
                                 <th>最小值</th>	
                             </tr>
-                            <tbody id='historystate-tbody'  style="width:823px;height:550px; overflow:auto;">
+                            <tbody id="historystate-tbody"  style="width:823px;height:550px; overflow:auto;">
                             </tbody>
                         </table>
                     </div>

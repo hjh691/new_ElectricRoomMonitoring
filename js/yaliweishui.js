@@ -391,7 +391,7 @@ function refresh_yaliweishui_temp(atime,avalue){
     var min=atime.getMinutes();
     if(min<10){
         min="0"+min;
-    }
+    }//
     data3.push(avalue);//{name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue]});
     //data4.push({name:atime.toString(),value:[[atime.getFullYear(), atime.getMonth() + 1, atime.getDate()].join('/')+" "+atime.getHours()+":"+min,avalue2]});
     chart_line.setOption({series:[{

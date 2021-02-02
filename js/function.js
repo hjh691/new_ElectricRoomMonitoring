@@ -1092,7 +1092,7 @@ function drawmap(arr) {
 				}
 			} /*else {
 				mCanvas.width = document.documentElement.clientWidth - 17;
-				mCanvas.height = document.documentElement.clientHeight;
+				mCanvas.height = document.documentElement.clientHeight;//
 			}*/
 		}
 		mCanvas.width = swidth;

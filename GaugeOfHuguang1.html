@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8"/>
+        <title>弧光保护</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
         <link rel="stylesheet" href="css/electricroommonitoring.css"/>
         <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
@@ -13,7 +14,7 @@
     <body>
         <h2 id="title" align="center">弧光保护数据</h2>
         <div class="tab-head" id="tab-head" style="height: 40px">
-            <div id="h1"><img src="res/lock2.png" style="float:left"></img>仪表显示</div>
+            <div id="h1"><img src="res/lock2.png" style="float:left"/>仪表显示</div>
             <div id="h2" class="selected" ><img src="res/lock2.png" style="float:left">数据列表</div>
             <div id="h3"><img src="res/lock2.png" style="float:left">波形显示</div>
         </div>
@@ -49,7 +50,7 @@
                                 <th style="width:18px;border:0px solid black;"></th>-->
                                 </tr>
                             </thead>
-                            <tbody id='arclist-tbody'>
+                            <tbody id="arclist-tbody">
                             </tbody>
                         </table>
                     </div>
@@ -69,10 +70,10 @@
                         </tr>
                         <tr>
                             <td class="condition" style="width:120px;"> 起 止 时 间  :</td>
-                            <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="kssj_chart" style="width:190px;" ></input></td>
+                            <td class="condition"><input type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="kssj_chart" style="width:190px;" /></td>
                             <td class="condition" style="width:30px;">至</td>
-                            <td class="condition"><input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_chart" style="width:190px;" ></input></td>
-                            <td class="condition"><input class="button"type="button" id="chaxun" value="查询" onclick="initData('chart_bar')" ></input></td>
+                            <td class="condition"><input type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="jssj_chart" style="width:190px;" /></td>
+                            <td class="condition"><input class="button" type="button" id="chaxun" value="查询" onclick="initData('chart_bar')" /></td>
                         </tr>
                     </table>
                     <div id="chart_bar" align="center" style="height:400px;width:800px;">

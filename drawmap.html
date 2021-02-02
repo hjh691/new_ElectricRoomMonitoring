@@ -31,8 +31,8 @@
 		<a id="mapmodule" style="color:red;position:absolute;top:7px;right:20px;text-align:right" href="javascript:void(0)" onclick="showmodule()" ></a>
 		<a id="mapmodule1" style="color:red;position:absolute;top:7px;right:100px;text-align:right" href="javascript:void(0)" onclick="toggleFullScreen(event)" ></a>
 		<div id="maprefresh" style="display:none" onclick="refresh()"></div><!--有告警时刷新图形显示overflow: auto;-->
-		<div id="mycanvasdiv" style="background-color:#cccccc;position: relative; text-align: center; ">
-			<div align="center">
+		<div id="mycanvasdiv" style="background-color:#cccccc;position: relative; text-align: center; overflow: auto;">
+			<div align="center" >
 				<canvas id="mycanvas" align="center" width="900px" height="700px" style="background-color:#000;">
 				</canvas>
 			</div>

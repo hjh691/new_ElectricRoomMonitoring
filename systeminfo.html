@@ -239,12 +239,18 @@
                 else
                     $("#bg_src").val(jfjk_base_config.bg_src);
                 if(localStorage.speed_scroll)
-                    $("#speed_scroll").val(localStorage.speed_scroll);
+                    $("#speed_scroll").val(localStorage.speed_scroll)
+                else
+                    $("#speed_scroll").val(speed_scroll);
                 if(localStorage.speech_rate){
                     $("#speech_rate").val(localStorage.speech_rate);
+                }else{
+                    $("#speech_rate").val(speech_rate);
                 }
                 if(localStorage.speech_pitch){
                     $("#speech_pitch").val(localStorage.speech_pitch);
+                }else{
+                    $("#speech_pitch").val(speech_pitch);
                 }
                 if(localStorage.beteewn_time){
                     $("#between_time").val(localStorage.between_time);
