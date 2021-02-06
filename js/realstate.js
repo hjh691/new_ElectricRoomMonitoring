@@ -149,8 +149,20 @@ function decoderealdata(){
                                     case c:
                                 }
                                 break;
-                            case "room"://动力检测 同上
+                            case "yaliweishui"://压力微水，暂定“yaliweishui”
                                 pt[7]++;
+                                switch(grouptype){
+                                    case a://温度
+                                        refresh_yaliweishui_temp(obj_data.Time,obj_data.Value);
+                                        break;
+                                    case b://湿度
+                                        refresh_yaliweishui_swet(obj_data.Time,obj_data.Value);
+                                        break;
+                                    case c:
+                                }
+                                break;
+                            case "room"://动力检测 同上
+                                pt[8]++;
                                 switch(grouptype){
                                     case a:
                                         refreshchart(obj.data.Value,bondinginfo);//roommonitor.js
@@ -158,6 +170,7 @@ function decoderealdata(){
                                     case c:
                                 }
                                 break;
+                            
                         }
                         atr=document.createElement("tr");
                         for(var k=0;k<tab_head.rows[0].cells.length;k++){

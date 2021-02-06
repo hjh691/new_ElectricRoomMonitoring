@@ -516,65 +516,7 @@ function decoderealdata(obj_realdata) {
                             }
                         }
                     }
-                    /*var xs = 1;//sensors[i].Value.Factor;  //数据结构修改，后台的value数据已经乘上系数，svalue为未乘以系数的原始数据
-                    //if(type_td=="pd"){xs=xs*-1}
-                    if(isbreak){
-                        continue;
-                    }
-                    //添加数据列表项
-                    var tr = document.createElement('tr');
-                    tr.setAttribute("onclick", "tableclick(this)");//ondblclick
-                    var tdename = document.createElement('td');
-                    //var tdsalary=document.createElement('td');
-                    var tdid = document.createElement('td');
-                    var tdtype = document.createElement('td');
-                    var tdtime = document.createElement('td');
-                    var tdvalue = document.createElement('td');
-                    var tdvalue2 = document.createElement('td');
-                    var tdhistory = document.createElement('td');
-                    var tdwarnlog = document.createElement('td');
-                    var tdmessage = document.createElement('td');
-                    tdename.innerHTML = sname;
-                    tdid.innerHTML = sid;
-                    tdid.style.cssText = "display:none";
-                    tdtype.innerHTML = type_td;
-                    tdtype.style.cssText = "display:none";
-                    tdtime.innerHTML = obj_data.Time; //jsonObject[i].color;
-                    kssj = (obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-                    jssj = obj_data.Time;
-                    tdvalue.innerHTML = (obj_data.Value * xs).toFixed(Number_of_decimal);
-                    //tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);//此处应为第二个数值，目前没有意义
-                    tdhistory.setAttribute('backgroundColor', '#ffffff');
-                    tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
-                    tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
-                    tdwarnlog.setAttribute('onclick', 'towarnlog(' + sid + ')');
-                    tdwarnlog.setAttribute('backgroundColor', '#ffffff');
-                    //tdwarnlog.style.cssText="display:none";
-                    tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
-                    var mes = obj_data.Message;
-                    tdmessage.innerHTML = mes;
-                    tdmessage.style.cssText = "display:none";
-                    tr.appendChild(tdename);
-                    tr.appendChild(tdtime);
-                    tr.appendChild(tdvalue);
-                    //tr.appendChild(tdvalue2);
-                    tr.appendChild(tdhistory);
-                    tr.appendChild(tdwarnlog);//z不显示
-                    tr.appendChild(tdid);//不显示
-                    tr.appendChild(tdtype);//不显示
-                    tr.appendChild(tdmessage);//不显示 告警信息
-                    var cl = "#000";
-                    if (mes) {
-                        cl = "#f20";
-                    }
-                    tr.style.color = cl;
-                    pt++;
-                    $table.appendChild(tr);
-                    $(".time").text('');
-                    $(".sensorname").text('');
-                    $(".value1").text('');
-                    $(".value2").text('');
-                    break;*/
+                    
                 }
             }
         }else{//如果没有显示控制项（分组配置项） 20200509 编写，还需测试完善。
@@ -1153,12 +1095,12 @@ function decodedatas(obj_chartdata) {
     function drawchart() {
         //var myChart = echarts.init(document.getElementById('main'));
         var lengenddata1 = [];
-        lengenddata1.push(titlename);//20200518
+        lengenddata1.push(titlename);
         var option2 = {
             color: ['#FF0000', '#FFFF00'],//,'#00ff00'
             backgroundColor: '#d0d0d0',
             title: {
-                text: sname+" "+titlename+' : 24小时变化趋势图',//20200518
+                text: sname+" "+titlename+' : 24小时变化趋势图',
                 x: "center",
             },/**/
             tooltip: {
@@ -1272,7 +1214,7 @@ function decodedatas(obj_chartdata) {
 }
 function initchart2() {
     var option2 = {
-        color: ['#FFFF00', '#FF0000'],//,'#00ff00' complain mountain 
+        color: ['#FFFF00', '#FF0000'],//,'#00ff00' 
         backgroundColor: backgroudcolor,
         title: {
             text: '24h 变化趋势图',

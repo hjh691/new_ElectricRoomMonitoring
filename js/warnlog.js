@@ -40,8 +40,6 @@
 			sel_sensor.remove(0);
 			sel_sensor.options[0] = null;
 		}*/
-		sensors=JSON.parse(localStorage.getItem("sensors"));
-		configs=JSON.parse(localStorage.getItem("Configs"));
 		/*if(sensors!=null){
 			for(var i=0;i<sensors.length;i++){
 				if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
@@ -174,10 +172,12 @@
 	}*/
 	function appenddisplaytype(asensorid){
 		try{
-		var temp=document.getElementById("event_type");
+			sensors=JSON.parse(localStorage.getItem("sensors"));
+			configs=JSON.parse(localStorage.getItem("Configs"));
+			var temp=document.getElementById("event_type");
 		for(var i=temp.childElementCount;i>0;i--)
 			temp.removeChild(temp.children[i-1]);
-		var disply_type=document.getElementById("display_type")
+		var disply_type=document.getElementById("display_type_warnlog")
 		for(var i=disply_type.childElementCount;i>1;i--)
 		disply_type.removeChild(disply_type.childNodes[i-1]);
 		//for(var j=document.getElementById("event_type").childNodes.length;j>0;j--)
@@ -188,7 +188,7 @@
 		}else{
 			sel_str=[];
 		}
-		var lis=$("#display_type label")
+		var lis=$("#display_type_warnlog label")
 		for(var i=0;i<lis.length;i++){
 			lis[i].classList.remove("active");
 		}
@@ -303,7 +303,7 @@
 			var li=document.createElement("li"); 
 			selectText="没有告警事件选项";
 		}
-		$("#select_text").val(selectText);
+		$("#select_text_warnlog").val(selectText);
 		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。 
 		$(".btn").click(function(){// 
 			$(this).button('toggle');
@@ -345,7 +345,7 @@
 			document.getElementById("tj_kssj").innerHTML=sessionStorage.kssj;
 			document.getElementById("tj_zzsj").innerHTML=sessionStorage.jssj;
 			if(obj_data&&obj_data.length>0){
-				var warning_type=sessionStorage.eventTypeSelected;//document.getElementById("select_text").value;
+				var warning_type=sessionStorage.eventTypeSelected;//document.getElementById("select_text_warnlog").value;
 				if(!warning_type){
 					warning_type="";
 				}
@@ -547,7 +547,7 @@
 			 * 在表格中定义一些关键节点（行），采用insertbifore命令时的参考节点。//
 			 * 用于对表格中的数据进行分类插入，并作为分类显示的标题。tr1,tr2...
 			 * **/
-			/*var warning_type=$("#select_text").val();
+			/*var warning_type=$("#select_text_warnlog").val();
 			if(warning_type.length>0){
 				type_str=warning_type.split(",");
 				sift=true;
@@ -574,7 +574,7 @@
 				$table.appendChild(window.eval("tr"+j));
 				//console.log(window.eval("tr"+j));
 			}*/
-			var warning_type=sessionStorage.eventTypeSelected;//document.getElementById("select_text").value;
+			var warning_type=sessionStorage.eventTypeSelected;//document.getElementById("select_text_warnlog").value;
 			if(!warning_type){
 				warning_type="";
 			}
@@ -733,7 +733,7 @@
 		$(document).on("click",".check_box",function(event){
 		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
 		//勾选的项
-		var $selectTextDom=$(this).parent().parent().parent("ul").siblings("label").children(".select_text");
+		var $selectTextDom=$(this).parent().parent().parent("ul").siblings("label").children(".select_text_warnlog");
 		//勾选项的值
 		//var $selectValDom=$(this).parent().parent().parent("ul").siblings(".select_val");
 		//是否有选择项了

@@ -274,14 +274,14 @@ function logout(){
 			localStorage.username = "未登录";
 			sessionStorage.sps="";
 			sessionStorage.islogin = false;
-			top.location.href = "index.html";//使用top代替window，货物最顶层窗口
+			top.location.href = "index.html";//使用top代替window，获取最顶层窗口
 			init_var();
 			return;
 		}
 	});
 	localStorage.username = "未登录";
 	sessionStorage.islogin = false;
-	top.location.href = "index.html";//使用top代替window，货物最顶层窗口
+	top.location.href = "index.html";//使用top代替window，获取最顶层窗口
 	init_var();
 }
 //页面变量复位 use by electricroommonitoring 点击退出或关闭页面时执行此复位程序
@@ -296,7 +296,7 @@ function init_var(){
 	sessionStorage.selNodeId="";//选中的节点
 	sessionStorage.sel_id=-1;//标签树的选择项
 	sessionStorage.pageindex=2;//登录后显示的首页
-	localStorage.setItem("realdata",null);
+	//localStorage.setItem("realdata",null);
 	sessionStorage.setItem("sel_datatypename",[]);
 	delete sessionStorage.kssj;
 	delete sessionStorage.jssj;
@@ -494,7 +494,6 @@ function getrealsbydataid() {
 							var tbody = document.getElementById('realdata-tbody');
 							var trs = tbody.getElementsByTagName("tr");
 							for (var i = 0; i < tmps.length; i++) {
-								
 								//刷新实时数据列表内容
 								for (var j = 0; j < trs.length; j++) {
 									if (trs[j].cells[0].childNodes[0].data == data.Result.Datas.Tmp[i].SensorId) {
@@ -1402,7 +1401,6 @@ function sortarray(arrs){
 	arr.sort(compare);
 }
 /*//进度条
-
  * 显示圆圈加载进度条  used by electricroommonitor
  */
 function ajaxLoadingShow() {

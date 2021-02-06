@@ -68,26 +68,25 @@
                 <li class="tab-label" id="hum"><a href="#tab_room" data-toggle="tab"><i class="glyphicon glyphicon-flash"></i> 动力</a></li>
                 <li class="tab-label" id="room"><a href="#tab_hum" data-toggle="tab"><i class="glyphicon glyphicon-leaf"></i> 环境</a></li>
                 <li class="tab-label" id="weishui"><a href="#tab_yaliweishui" data-toggle="tab"><i class="glyphicon glyphicon-leaf"></i> 微水</a></li>
-                <li class="tab-label" id="air"><a href="#tab_air" data-toggle="tab"><i class="glyphicon glyphicon-random"></i> 空调</a></li>
+                <!--<li class="tab-label" id="air"><a href="#tab_air" data-toggle="tab"><i class="glyphicon glyphicon-random"></i> 空调</a></li>-->
             </ul>
             <div class="modal fade" id="guard_modal" tabindex="-1" role="dialog" aria-labelledby="modal_name" aria-hidden="true" align="center">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-head">
-                                    <buton class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</buton>
-                                    <h4 class="modal-title" id="modal_name">N#门</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div id="modal_details" align="center" style="background-color: rgb(150, 148, 148); color:white">
-            
-                                    </div>
-                                </div>
-                                <div class="modal-foot">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                </div>
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-head">
+                            <buton class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</buton>
+                            <h4 class="modal-title" id="modal_name">N#门</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div id="modal_details" align="center" style="background-color: rgb(150, 148, 148); color:white">
                             </div>
                         </div>
+                        <div class="modal-foot">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
                     </div>
+                </div>
+            </div>
             <div class="tab-content" id="tab-content">
                 <div class="tab-pane fade in active" align="center" id="tab_guard">
                     <img src="res/menjin.png" style="width:300px;height:150px;">
@@ -128,7 +127,6 @@
                             <li id="guard_bind_view">绑定信息：3#视频</li>
                         </div>
                     </div>
-                    
                     <script type="text/javascript" src="js/guard.js"></script>
                     <!-- instrument piece pice -->
                 </div>
@@ -172,9 +170,8 @@
                             <li id="light_bind_view">绑定信息：2#视频</li>
                         </div>
                     </div>
-                    <!----><!---->
                     <script type="text/javascript" src="js/light.js"></script>
-                </div>
+               </div>
                 <div class="tab-pane  fade" id="tab_smoken" align="center">
                     <div>
                         <img src="res/yg001.jpg" style="width:200px;height:150px;">
@@ -453,7 +450,7 @@
                     </div>
                     <script type="text/javascript" src="js/yaliweishui.js"></script>
                 </div>
-                <div class="tab-pane fade" id="tab_air" align="center" >
+                <!--<div class="tab-pane fade" id="tab_air" align="center" >
                     <h3 >精密空调实时参数状态</h3>
                     <div class="container" style="background-color: gray;color:white;border-radius: 5px;width:1050px;margin-top:10px">
                         <div class="row" style="margin-top:10px;">
@@ -586,13 +583,13 @@
                         </div>
                     </div>
                     <script  type="text/javascript" src="js/airconditioning.js"></script>
-                </div>
+                </div>-->
             </div>
         </div>
-        <script>
-        </script>
         <script  type="text/javascript" src="js/realstate.js"></script>
         <!--修改动力监测页面布局，变比居中，去除表格边线，解决精密空调监测页面的部分元素显示不全和格式不正确的问题（样式表定义互相影响），
-            以及表格行颜色不同等，编写动力数据处理程序，页面和变量初始化-->
+            以及表格行颜色不同等，编写动力数据处理程序，页面和变量初始化
+            添加压力微水页面，调整刷新函数；
+        -->
     </body>
 </html>

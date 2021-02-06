@@ -66,18 +66,16 @@
 		<div align="center"></div>-->
 		<div  class="row" >
 			<div class="col-xs-12 col-md-6 col-lg-3" style="border: rgb(90, 89, 89) solid 0px;height: 300px;">
-				<div id="realdata_maxvalOfReal">
-				</div>
+				<div id="realdata_realdata"></div><!--实时值-->
 			</div>
 			<div class="col-xs-12 col-md-6 col-lg-3" style="border: rgb(90, 89, 89) solid 0px;height: 300px;">
-				<div id="realdata_rateOfNormal"></div>
+				<div id="realdata_maxvalOfReal"></div><!--实时极值-->
 			</div>
 			<div class="col-xs-12 col-md-6 col-lg-3" style="border: rgb(90, 89, 89) solid 0px;height: 300px;">
-				<div id="realdata_maxvalOfDay" >
-				</div>
+				<div id="realdata_maxvalOfDay" ></div><!--24h极值-->
 			</div>
 			<div class="col-xs-12 col-md-6 col-lg-3" style="border: rgb(90, 89, 89) solid 0px;height: 300px;">
-				<div id="realdata_realdata"></div>
+				<div id="realdata_rateOfNormal"></div><!--状态统计计算-->
 			</div><!---->
         </div>
         <div class="row" style="margin-top: 20px;">
@@ -87,7 +85,7 @@
             <div class="col-xs-12 col-md-12 col-lg-6" style="border: rgb(90, 89, 89) solid 0px;height: 400px;">
 				<div class="condition" style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: 
 				auto;height:35px;line-height: 35px;"><label> 显示内容:</label>
-					<span id="display_type">
+					<span id="display_type_realdata">
 					</span>
 					<span>
 						<button type="button" id="chaxun" value="刷新" onclick="btn_refresh_click()"

@@ -288,9 +288,10 @@
 					var t1 = window.setInterval(getrealdatabynodeid(realdataid), 60000);//getrealsbydataid
 				}
 				window.setInterval("resetContent()", 200);
-				refreshwindow();
+				//refreshwindow();
+				initwindow();
+				initIndex();
 				isfirstload=false;
-				//initIndex();
 				if(sessionStorage.kssj==undefined){
 					sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
 					sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59" 听力
@@ -335,6 +336,15 @@
 			//var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body; physics
 			//var fdheight =50;// document.getElementById("KeFuDiv").offsetHeight;
 			//var fdwidth =500;// document.getElementById("KeFuDiv").offsetWidth;
+			initwindow();
+			//initIndex();//窗口尺寸变化时是否重画所有内容。
+			refreshiframe(isfirstload);
+			window.speechSynthesis.cancel();
+		}catch(err){
+			showstateinfo(err.message,"mainpage/refreshwindow");
+		}
+		}
+		function initwindow(){
 			var main = document.getElementById("chuangti");
 			//var header = document.getElementById("header");
 			var menu = document.getElementById("aside");
@@ -388,14 +398,9 @@
 				}
 			}
 			windowHeight=height;
-			initIndex();//窗口尺寸变化时是否重画所有内容。
-			window.speechSynthesis.cancel();
-		}catch(err){
-			showstateinfo(err.message,"mainpage/refreshwindow");
 		}
-		}
-		
 		window.onresize = window.onscroll = refreshwindow;//  
+		//浮动告警窗口的刷新过程
 		function resetContent() {
 			var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body;
 			var allw = bodyfrm.clientWidth;// - 10;
@@ -427,7 +432,7 @@
 			//sessionStorage.cxsj = getCurrentDate(2);
 			//sessionStorage.pageindex = 1;
 			//getgraphics();
-			//document.getElementById("iframe_main").src = 'page1.html';
+			//document.getElementById("iframe_main").src = 'page1.html';darpling
 			
 			if (sessionStorage.framepage=="undefined" || sessionStorage.framepage == "" || (typeof sessionStorage.framepage)=="undefined" ) {
 				iframemain.attr('src','newrealdata.html');//infototal.html
@@ -839,7 +844,6 @@
 				sessionStorage.pageindex=7;
 			//}
 		}
-		
 		function decode(adata) {
 			var infotree = [];
 			let data_len=adata.length;
@@ -1090,7 +1094,7 @@
 		}
 		}
 		//刷新iframe所包含的页面内容
-		function refreshiframe() {
+		function refreshiframe(flag) {
 			try{
 			//var frame=document.getElementById("iframe_main");///
 			switch (sessionStorage.pageindex) {
@@ -1103,7 +1107,7 @@
 					break;
 				case '1':
 					//var str_page=(iframemain.attr('src'));
-					if((iframemain.attr('src')).indexOf("drawmap.html")<=0){
+					if((iframemain.attr('src')).indexOf("drawmap.html")<0){
 						iframemain.attr('src', "drawmap.html");
 					}else{		
 						iframemain[0].contentWindow.initpage();
@@ -1111,21 +1115,21 @@
 					break;
 				case '2':
 					//var str_page=(iframemain.attr('src'));
-					if((iframemain.attr('src')).indexOf("newrealdata.html")>0){
+					if((iframemain.attr('src')).indexOf("newrealdata.html")>=0  && flag==undefined){
 						iframemain[0].contentWindow.initrealdata();
 					}else{
 						iframemain.attr('src', "newrealdata.html");
 					}
 					break;
 				case '3':
-					//if((iframemain.attr('src')).indexOf("historydata.html")>=0){
-						//iframemain[0].contentWindow.initpage();
-					//}else{
+					if((iframemain.attr('src')).indexOf("historydata.html")>=0 && flag==undefined){
+						iframemain[0].contentWindow.initpage();
+					}else{
 						iframemain.attr('src',"historydata.html");
-					//}
+					}
 					break;
 				case '4':
-					if((iframemain.attr('src')).indexOf("chart.html")<0){
+					if((iframemain.attr('src')).indexOf("chart.html")<0 || flag==false){
 						iframemain.attr('src',"chart.html");
 					}else{
 						iframemain[0].contentWindow.inithistorychart();
@@ -1135,8 +1139,8 @@
 					if((iframemain.attr('src')).indexOf("warnlog.html")<0){
 						iframemain.attr('src',"warnlog.html");
 					}else{
-						closeloadlayer();
-						//iframemain[0].contentWindow.initwarnlog();
+						//closeloadlayer();
+						iframemain[0].contentWindow.initwarnlog();
 					}
 					break;
 				case "6":
@@ -1427,9 +1431,11 @@
 				let sersors_len=sensors.length;
 				for (var i = 0; i < sersors_len; i++) {
 					var sid = sensors[i].id + "";
-					var nid=sensors[i].Value.nodeId;
-					if((sensors[i].Value.parentId!="-1")&&(sensors[i].Value.parentId!=parentid)){
-						parentid=sensors[i].Value.parentId;
+					let sensor_Value=sensors[i].Value;
+					var nid=sensor_Value.nodeId;
+
+					if((sensor_Value.parentId!="-1")&&(sensor_Value.parentId!=parentid)){
+						parentid=sensor_Value.parentId;
 						for(var j=0;j<sersors_len;j++){
 							if(sensors[j].id==parentid){
 								parentname=sensors[j].Value.name+"_";
@@ -1513,13 +1519,14 @@
 			//refreshData();
 			function showgaojing(){//将告警形象添加到实时告警列表，并添加告警信息到告警信息字符串中供浮动窗口显示。
 				var alert_sys_name=getsysname(mnodes,nid);//站和子系统名称
+				obj_i=sensors[i].Value;
 				alerttime = (dateToString(obj_data.time,2).substr(11));
 				alertinfo = msg;
 				alertvalue = parseFloat(obj_data.value).toFixed(Number_of_decimal);
-				sname =parentname+ sensors[i].Value.name;
+				sname =parentname+ obj_i.name;
 				var xs = 1;//sensors[i].Value.Factor;  数据结构修改，value为已经乘过系数的数值，svalue为未乘以系统的原始值 
 				var type_td =obj_data.name; 
-				var str_type=getname(sensors[i].Value.type);//Catalog
+				var str_type=getname(obj_i.type);//Catalog
 				//添加数据列表项
 				var tr = document.createElement('tr');
 				tr.setAttribute("onlclick","tableclick(this)");

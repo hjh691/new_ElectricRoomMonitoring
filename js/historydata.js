@@ -83,6 +83,7 @@ function initpage(){
     $("#main").height(parent.window.windowHeight-250);
     $("#list").height(parent.window.windowHeight-250);
     myChart = echarts.init(document.getElementById('main'));
+    myChart.clear();
     window.parent.closeloadlayer();
     }catch(err){
         showstateinfo(err.message,"historydata/initpage");
@@ -376,6 +377,7 @@ function decodedatas(obj_data){
             if (i % 2 == 0) {//此处抵消css定义的table隔行变色的显示效果.来显示机房监控的状态列表
                 tr.setAttribute('style', "background-color:#16b9c9");
             }
+            let obj_i=obj_data[i];
             var tdname = document.createElement('td');
             tdname.className="seneorname";// setAttribute('class', 'seneorname');
             var tdtime = document.createElement('td');
@@ -387,11 +389,11 @@ function decodedatas(obj_data){
             var tdvalue3=document.createElement("td");
             tdvalue3.className="value3";// setAttribute("class",'value3');
             tdname.innerHTML=sessionStorage.sensorallpathname;// sessionStorage.SensorName;
-            tdvalue1.innerHTML = obj_data[i].value;
+            tdvalue1.innerHTML = obj_i.value;
             //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
-            tdtime.innerHTML = dateToString(obj_data[i].time,2);; //jsonObject[i].color;
-            tdvalue2.innerHTML = obj_data[i].value;
-            tdvalue3.innerHTML= obj_data[i].value;
+            tdtime.innerHTML = dateToString(obj_i.time,2);; //jsonObject[i].color;
+            tdvalue2.innerHTML = obj_i.value;
+            tdvalue3.innerHTML= obj_i.value;
             //tr.appendChild(tdname);
             tr.appendChild(tdtime);
             tr.appendChild(tdvalue1);
@@ -399,22 +401,22 @@ function decodedatas(obj_data){
             tr.appendChild(tdvalue3);
             //var tbody = document.getElementById('historydata-tbody');
             tbl.appendChild(tr);
-            pa.push([strtodatetime(strtime+":00"), obj_data[i].value, ps]);
-            pb.push([strtodatetime(strtime+":00"), obj_data[i].value, ps]);
-            pc.push([strtodatetime(strtime+":00"),obj_data[i].value , ps]);
+            pa.push([strtodatetime(strtime+":00"), obj_i.value, ps]);
+            pb.push([strtodatetime(strtime+":00"), obj_i.value, ps]);
+            pc.push([strtodatetime(strtime+":00"), obj_i.value , ps]);
             ps++;
         }
         //ps=obj_data.length;
     }else /**/if(Math.ceil(senconds/1000/60)<=1440){
         step=false;
         jiange="按小时统计";
-        var temp=parseFloat(obj_data[0].value);
-        if(isNaN(temp)){
+        var temp_value=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
+        if(isNaN(temp_value)){
             obj_data[0].value=-1;
         }
-        maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
+        maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
         maxval=minval=maxvalue;
-        hourvalue=parseFloat(obj_data[0].value);
+        hourvalue=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
         maxtime=mintime=dateToString(obj_data[0].time,2);//.replace(/T/g," ").substring(0,19);
         var strtime=dateToString(obj_data[0].time,2).replace(/T/g," ").substr(0,13);
         var temp=parseInt(strtime.substr(11));
@@ -440,19 +442,19 @@ function decodedatas(obj_data){
         tdmintime.className="mintime";
         //tdname.innerHTML=sessionStorage.SensorName;
         if(type=="pd"){
-            tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+            tdvalue1.innerHTML = minvalue;
             tdmaxtime.innerHTML=mintime;
-            tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+            tdvalue3.innerHTML = maxvalue;
             tdmintime.innerHTML=maxtime;
         }else{
-            tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+            tdvalue1.innerHTML = maxvalue;
             tdmaxtime.innerHTML=maxtime;
-            tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+            tdvalue3.innerHTML = minvalue;
             tdmintime.innerHTML=mintime;
         }
         //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
         tdtime.innerHTML = strtime+":00"; //jsonObject[i].color;
-        tdhourvalue.innerHTML=hourvalue.toFixed(Number_of_decimal);
+        tdhourvalue.innerHTML=hourvalue;
         tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
         //tr.appendChild(tdname);
         tr.appendChild(tdtime);
@@ -470,13 +472,13 @@ function decodedatas(obj_data){
     }else{
         step=false;
         jiange="按日统计";
-        var temp=parseFloat(obj_data[0].value);
-        if(isNaN(temp)){
+        var temp_value=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
+        if(isNaN(temp_value)){
             obj_data[0].value=-1
         }
-        maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value);
+        maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
         maxval=minval=maxvalue;
-        hourvalue=parseFloat(obj_data[0].value);
+        hourvalue=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
         maxtime=mintime=dateToString(obj_data[0].time,2);//.replace(/T/g," ").substring(0,19);
         var strtime=dateToString(obj_data[0].time,2).replace(/T/g," ").substr(0,10);
         var temp=parseInt(strtime.substr(8));
@@ -502,19 +504,19 @@ function decodedatas(obj_data){
         tdmintime.className="mintime";
         //tdname.innerHTML=sessionStorage.SensorName;
         if(type=="pd"){
-            tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+            tdvalue1.innerHTML = minvalue;
             tdmaxtime.innerHTML=mintime;
-            tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+            tdvalue3.innerHTML = maxvalue;
             tdmintime.innerHTML=maxtime;
         }else{
-            tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+            tdvalue1.innerHTML = maxvalue;
             tdmaxtime.innerHTML=maxtime;
-            tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+            tdvalue3.innerHTML = minvalue;
             tdmintime.innerHTML=mintime;
         }
         //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
         tdtime.innerHTML = strtime; //jsonObject[i].color;
-        tdhourvalue.innerHTML=hourvalue.toFixed(Number_of_decimal);
+        tdhourvalue.innerHTML=hourvalue;
         tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
         //tr.appendChild(tdname);
         tr.appendChild(tdtime);
@@ -531,7 +533,6 @@ function decodedatas(obj_data){
         pc.push([strtodatetime(strtime+":00"),minvalue , ps])
     }
     //表标题
-    
     document.getElementById("his_caption").innerHTML=sessionStorage.sensorallpathname+"  "+jiange+" 报表";//sessionStorage.SensorName
     count =ps+1;//obj_data.length;
     document.getElementById('count_val').innerHTML ="<span class='badge' style='font-size:18px'>"+ count + "条";
@@ -553,7 +554,7 @@ function decodedatas(obj_data){
         //var myChart = echarts.init(document.getElementById('main'));
         var option = {
             color: ['#FFFF00', '#FF0000','#00ff00'],//
-            backgroundColor: '#d0d0d0',
+            backgroundColor: '#b0b0b0',
             title : {
                         text : sessionStorage.SensorName+":"+tname+'    变化趋势图  ',
                         x:"center",
@@ -646,8 +647,8 @@ function decodedatas(obj_data){
                     }
                 },
                 min:minval,
-                max:maxval,
-            }],/**/
+                max:maxval,/**/
+            }],
             dataZoom: [{
                 type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
                 xAxisIndex: 0,
@@ -678,7 +679,7 @@ function decodedatas(obj_data){
                 type: 'line',
                 step: step,
                 showAllSymbol: true,
-                symbolSize: 1,
+                symbolSize: 5,
                 data: pa,
                 smooth: true,
                 smoothMonotone: 'x',
@@ -688,7 +689,7 @@ function decodedatas(obj_data){
                 type: 'line',
                 step: step,
                 showAllSymbol: true,
-                symbolSize: 1,
+                symbolSize: 5,
                 data: pb,
                 smooth: true,
                 smoothMonotone: 'x',
@@ -698,7 +699,7 @@ function decodedatas(obj_data){
                 type: 'line',
                 step: step,
                 showAllSymbol: true,
-                symbolSize: 1,
+                symbolSize: 5,
                 data: pc,
                 smooth: true,
                 smoothMonotone: 'x',
@@ -717,14 +718,15 @@ function decodedatas(obj_data){
             if(isNaN(parseFloat(obj_data[i].value))){
                 obj_data[i].value=-1;
             }
-            if(parseInt(dateToString(obj_data[i].time,2).substr(a1,a2))==temp){
-                if(parseFloat(obj_data[i].value)>maxvalue){
-                    maxvalue=parseFloat(obj_data[i].value);
+            let obj_i=obj_data[i];
+            if(parseInt(dateToString(obj_i.time,2).substr(a1,a2))==temp){
+                if(parseFloat(obj_i.value)>maxvalue){
+                    maxvalue=parseFloat(obj_data[i].value).toFixed(Number_of_decimal);
                     maxtime=dateToString(obj_data[i].time,2);//.replace(/T/g," ").substring(0,19);;
                 }
-                if(parseFloat(obj_data[i].value)<minvalue){
-                    minvalue=parseFloat(obj_data[i].value);
-                    mintime=dateToString(obj_data[i].time,2);//.replace(/T/g," ").substring(0,19);;
+                if(parseFloat(obj_i.value)<minvalue){
+                    minvalue=parseFloat(obj_i.value).toFixed(Number_of_decimal);
+                    mintime=dateToString(obj_i.time,2);//.replace(/T/g," ").substring(0,19);;
                 }
                 /*if(parseFloat(obj_data[i].value)>maxval){
                     maxval=parseFloat(obj_data[i].value);
@@ -732,7 +734,7 @@ function decodedatas(obj_data){
                 if(parseFloat(obj_data[i].value)<minval){
                     minval=parseFloat(obj_data[i].value);
                 }*/
-                avgvalue=(parseFloat(avgvalue)+parseFloat(obj_data[i].value));
+                avgvalue=(parseFloat(avgvalue)+parseFloat(obj_i.value));
                 ct++;
             }else{
                 avgvalue=(avgvalue/ct);
@@ -756,21 +758,21 @@ function decodedatas(obj_data){
                 tdmintime.className="mintime";
                 //tdname.innerHTML=sessionStorage.SensorName;
                 if(type=="pd"){
-                    tdvalue1.innerHTML = minvalue.toFixed(Number_of_decimal);
+                    tdvalue1.innerHTML = minvalue;
                     tdmaxtime.innerHTML=mintime;
-                    tdvalue3.innerHTML = maxvalue.toFixed(Number_of_decimal);
+                    tdvalue3.innerHTML = maxvalue;
                     tdmintime.innerHTML=maxtime;
                 }else{
-                    tdvalue1.innerHTML = maxvalue.toFixed(Number_of_decimal);
+                    tdvalue1.innerHTML = maxvalue;
                     tdmaxtime.innerHTML=maxtime;
-                    tdvalue3.innerHTML = minvalue.toFixed(Number_of_decimal);
+                    tdvalue3.innerHTML = minvalue;
                     tdmintime.innerHTML=mintime;
                 }
                 //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
                 if(a1==11){
                     tdtime.innerHTML = strtime+":00";//
                 }else{tdtime.innerHTML = strtime;}//+":00" //jsonObject[i].color;
-                tdhourvalue.innerHTML=hourvalue.toFixed(Number_of_decimal);
+                tdhourvalue.innerHTML=hourvalue;
                 tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
                 //tr.appendChild(tdname);
                 tr.appendChild(tdtime);
@@ -785,16 +787,16 @@ function decodedatas(obj_data){
                 pa.push([strtodatetime(strtime+":00"), maxvalue, ps]);
                 pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps]);
                 pc.push([strtodatetime(strtime+":00"),minvalue , ps]);
-                maxvalue=minvalue=avgvalue=parseFloat(obj_data[i].value);
-                hourvalue=parseFloat(obj_data[i].value);
-                maxtime=mintime=dateToString(obj_data[i].time,2);//.replace(/T/g," ").substring(0,19);;
-                strtime=dateToString(obj_data[i].time,2).replace(/T/g," ").substr(0,a2);
+                maxvalue=minvalue=avgvalue=parseFloat(obj_i.value).toFixed(Number_of_decimal);
+                hourvalue=parseFloat(obj_i.value).toFixed(Number_of_decimal);
+                maxtime=mintime=dateToString(obj_i.time,2);//.replace(/T/g," ").substring(0,19);;
+                strtime=dateToString(obj_i.time,2).replace(/T/g," ").substr(0,a2);
                 temp=parseInt(strtime.substr(a1));
                 ps++;
                 ct=1;
             }
-            maxval=maxval>maxvalue?maxval:maxvalue;//20200910 append 
-            minval=minval<minvalue?minval:minvalue;
+            maxval=maxval>maxvalue*1?maxval:maxvalue*1;//20200910 append 
+            minval=minval<minvalue*1?minval:minvalue*1;
         }
     }
     }catch(err){
@@ -819,4 +821,6 @@ function gradeChange() {
     解决查询时没有符合条件的数据返回时（返回为空或错误时），图形标题和表标题标签名称不更新的问题 1203
     消除在自定义时间段之前的查询按钮提示改为时间修改后提示。
     调整接收的数据时间格式（替换掉T，去掉后边的毫秒数）；
+    
+    图形的数据视图数据项的小数位数格式化，
 */

@@ -13,6 +13,7 @@
     function inithistorychart() {
         try{
         updatapcnav(7);
+        selectText="";
         //var el=$("[class $= 't']");jquery 选择器 结束、开始、包含、等于
         //保存页面现场，在点击浏览器的刷新按钮刷新时应用
         sessionStorage.framepage="chart.html";
@@ -22,6 +23,7 @@
         ch2=document.getElementById("chart2");
         ch3=document.getElementById("chart3");
         ch4=document.getElementById("chart4");
+        
         //var parentid = -100, parentname = "";
         //var maps = [];
         $("#cxsj").val((sessionStorage.cxsj).substr(0,11));
@@ -68,7 +70,8 @@
             sel_str=[];
         }
         let sel_str_len=sel_str.length;
-        var temp=document.getElementById("display_type");
+        $("#display_type_chart").empty();
+        var temp=document.getElementById("display_type_chart");
         allconfigs=JSON.parse(localStorage.Configs);
         if(allconfigs){
             for(var ac in allconfigs){//如果有，读取其所有配置项
@@ -139,7 +142,7 @@
             temp.removeChild(temp.childNodes[i-1]);
             selectText="没有可选项";
         }
-        document.getElementById("select_text").value=selectText;
+        document.getElementById("select_text_chart").value=selectText;
         showchartview(sel_str);
         }catch(err){
             showstateinfo(err.message,"chart/appenddisplaytype");
@@ -345,22 +348,23 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
 					maxvalue=minvalue=parseFloat(obj_chartdata[0].value);
 					for (var j = 0; j <obj_chartdata.length; j++) {
                         if(obj_chartdata[j].sensorId==sensorid){
-                            let name=obj_chartdata[j].name.toLowerCase();
-                            pb.push([Date.parse(obj_chartdata[j].time), obj_chartdata[j].value, j]);
-							if(isNaN(parseFloat(obj_chartdata[j].value))){
-								obj_chartdata[j].value=-1;
+                            let obj_data_j=obj_chartdata[j];
+                            let name=obj_data_j.name.toLowerCase();
+                            pb.push([Date.parse(obj_data_j.time),obj_data_j.value, j]);
+							if(isNaN(parseFloat(obj_data_j.value))){
+								obj_data_j.value=-1;
 							}
-							if(parseFloat(obj_chartdata[j].value)>maxvalue){
-								maxvalue=parseFloat(obj_chartdata[j].value);
+							if(parseFloat(obj_data_j.value)>maxvalue){
+								maxvalue=parseFloat(obj_data_j.value);
 							}
-							if(parseFloat(obj_chartdata[j].value)<minvalue){
-								minvalue=parseFloat(obj_chartdata[j].value);
+							if(parseFloat(obj_data_j.value)<minvalue){
+								minvalue=parseFloat(obj_data_j.value);
                             }
                             if(i===0){
                                 atr=creatTr();
-                                atr.cells[0].innerHTML=obj_chartdata[j].name.toLowerCase();
-                                atr.cells[1].innerHTML=dateToString(obj_chartdata[j].time,2);//.replace(/T/g," ").substring(0,19);
-                                atr.cells[2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
+                                atr.cells[0].innerHTML=obj_data_j.name.toLowerCase();
+                                atr.cells[1].innerHTML=dateToString(obj_data_j.time,2);//.replace(/T/g," ").substring(0,19);
+                                atr.cells[2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                 tbody.appendChild(atr);
                             }else{
                                 let rows=tbody.rows;
@@ -368,22 +372,22 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                 for(k=2;k<rows_len;k++){
                                     let tname=rows[k].cells[0].outerText;
                                     if(tname==name){
-                                        let jiange=GetDateDiff(rows[k].cells[1].outerText,obj_chartdata[j].time.replace(/T/g," ").substring(0,19),"minute");
+                                        let jiange=GetDateDiff(rows[k].cells[1].outerText,obj_data_j.time.replace(/T/g," ").substring(0,19),"minute");
                                         if(jiange<-1*min_timeInterval){
                                             atr=creatTr();
-                                            atr.cells[0].innerHTML=obj_chartdata[j].name.toLowerCase();
-                                            atr.cells[i].innerHTML=dateToString(obj_chartdata[j].time,2);//.replace(/T/g," ").substring(0,19);
-                                            atr.cells[i+2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
+                                            atr.cells[0].innerHTML=obj_data_j.name.toLowerCase();
+                                            atr.cells[1].innerHTML=dateToString(obj_data_j.time,2);//.replace(/T/g," ").substring(0,19);
+                                            atr.cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                             tbody.insertBefore(atr,rows[k]);
                                             break;
                                         }else if(jiange<min_timeInterval){
-                                            rows[k].cells[i+2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
+                                            rows[k].cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                             break;
                                         } else if(jiange>2 && jiange<=max_timeInterval){
                                             atr=creatTr();
-                                            atr.cells[0].innerHTML=obj_chartdata[j].name.toLowerCase();
-                                            atr.cells[1].innerHTML=dateToString(obj_chartdata[j].time,2);//.replace(/T/g," ").substring(0,19);
-                                            atr.cells[i+2].innerHTML=(obj_chartdata[j].value*1).toFixed(Number_of_decimal);
+                                            atr.cells[0].innerHTML=obj_data_j.name.toLowerCase();
+                                            atr.cells[1].innerHTML=dateToString(obj_data_j.time,2);//.replace(/T/g," ").substring(0,19);
+                                            atr.cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                             tbody.insertBefore(atr,rows[k+1]);
                                             break;
                                         }else{
@@ -395,8 +399,8 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                 }
                                 if(k>rows_len){
                                     atr=creatTr();
-                                    atr.cells[0].innerHTML=dateToString(obj_chartdata[j].time,2);//.replace(/T/g," ").substring(0,19);
-                                    atr.cells[i+1].innerHTML=(obj_chartdata[j].vlaue*1).toFixed(Number_of_decimal);
+                                    atr.cells[0].innerHTML=dateToString(obj_data_j.time,2);//.replace(/T/g," ").substring(0,19);
+                                    atr.cells[i+1].innerHTML=(obj_data_j.vlaue*1).toFixed(Number_of_decimal);
                                     tbody.appendChild(atr);
                                 }
                             }
@@ -590,4 +594,6 @@ function creatTr(){
 
     修改数据报表格式和方法。
     修改图形数据视图格式，去掉多余数据只显示本类型数据,其他列没有数据名称的问题，数据视图不显示。
+
+    图形的数据视图列表的数据项有时放置位置不正确的问题；优化程序性能，用变量取代数组索引。
  */

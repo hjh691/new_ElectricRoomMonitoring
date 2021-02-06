@@ -51,7 +51,7 @@
                         <input type="text" oncclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_historystate"/><label style="margin-left: 5px;"> 至</label>
                         <input type="text" oncclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_historystate"/>
                         <input class="button" type="button" id="chaxun_historystate" value="查询" onclick="queryhistorystate()"/></span>
-                        <span id="display_type" class="btn-group"  data-toggle="buttons" style="float: right;right:50px">
+                        <span id="display_type_history" class="btn-group"  data-toggle="buttons" style="float: right;right:50px">
                             <lable class="btn btn-primary active"><input class="catalog" type="radio" name="options" value="Name_p" />abc</lable>
                             <label class="btn btn-primary"><input class="catalog" type="radio" name="options" value="Name_q" />dfg</label>
                         </span>
@@ -230,7 +230,7 @@
 						}
 						lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
 						//lab.innerHTML=s_des[p].Desc;
-						document.getElementById("display_type").appendChild(lab);
+						document.getElementById("display_type_history").appendChild(lab);
 					}
 				}
 			}
