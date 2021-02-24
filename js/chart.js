@@ -89,6 +89,7 @@
                         for(var j=0;j<sel_str_len;j++){
                             if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
                                 temp.children[i].children[0].checked=true;
+                                ainput.setAttribute("data-is-select",true);
                                 break;
                             }
                         }
@@ -107,6 +108,7 @@
                     for(var j=0;j<sel_str.length;j++){
                         if(sel_str[j]==s_des[p].desc){
                             ainput.setAttribute("checked",true);
+                            //ainput.setAttribute("data-is-select",true);
                             break;
                         }
                     }
@@ -142,7 +144,8 @@
             temp.removeChild(temp.childNodes[i-1]);
             selectText="没有可选项";
         }
-        document.getElementById("select_text_chart").value=selectText;
+        $("#select_text_chart").val(selectText);
+        //document.getElementById("select_text_chart").value=selectText;
         showchartview(sel_str);
         }catch(err){
             showstateinfo(err.message,"chart/appenddisplaytype");
@@ -380,27 +383,28 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                             atr.cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                             tbody.insertBefore(atr,rows[k]);
                                             break;
-                                        }else if(jiange<min_timeInterval){
+                                        }else if(jiange<max_timeInterval){
                                             rows[k].cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                             break;
-                                        } else if(jiange>2 && jiange<=max_timeInterval){
+                                        } /*else if(jiange>2 && jiange<=max_timeInterval){
                                             atr=creatTr();
                                             atr.cells[0].innerHTML=obj_data_j.name.toLowerCase();
                                             atr.cells[1].innerHTML=dateToString(obj_data_j.time,2);//.replace(/T/g," ").substring(0,19);
                                             atr.cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                             tbody.insertBefore(atr,rows[k+1]);
                                             break;
-                                        }else{
+                                        }*/else{
                                             continue;
                                         }
                                     }else{
                                         continue;
                                     }
                                 }
-                                if(k>rows_len){
+                                if(k>=rows_len){
                                     atr=creatTr();
-                                    atr.cells[0].innerHTML=dateToString(obj_data_j.time,2);//.replace(/T/g," ").substring(0,19);
-                                    atr.cells[i+1].innerHTML=(obj_data_j.vlaue*1).toFixed(Number_of_decimal);
+                                    atr.cells[0].innerHTML=obj_data_j.name.toLowerCase();
+                                    atr.cells[1].innerHTML=dateToString(obj_data_j.time,2);
+                                    atr.cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                     tbody.appendChild(atr);
                                 }
                             }
@@ -596,4 +600,6 @@ function creatTr(){
     修改图形数据视图格式，去掉多余数据只显示本类型数据,其他列没有数据名称的问题，数据视图不显示。
 
     图形的数据视图列表的数据项有时放置位置不正确的问题；优化程序性能，用变量取代数组索引。
+
+    类别分组刷新和点击显示提示错误
  */

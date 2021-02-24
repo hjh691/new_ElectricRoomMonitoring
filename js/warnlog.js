@@ -733,7 +733,7 @@
 		$(document).on("click",".check_box",function(event){
 		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
 		//勾选的项
-		var $selectTextDom=$(this).parent().parent().parent("ul").siblings("label").children(".select_text_warnlog");
+		var $selectTextDom=$(this).parent().parent().parent("ul").siblings("label").children(".select_text");
 		//勾选项的值
 		//var $selectValDom=$(this).parent().parent().parent("ul").siblings(".select_val");
 		//是否有选择项了
@@ -841,4 +841,6 @@ function querywarnlog(num) {
 	添加页面现场信息保存，在当前页面点击浏览器刷新按钮时，直接进入当前页面,同时杜绝因早不到页面元素而报错。
 	202101
 	修改在更改筛选条件后实时告警信息不显示的问题；
+	20210206
+	显示类型和告警类型列表不刷新和点击显示重复错误的问题（显示重复错误问题为元素id名称冲突造成 chart history realdata页面都有相同id的元素。）
 */

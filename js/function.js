@@ -1676,12 +1676,12 @@ var sorter=false;
 						isfirst=true;//更改排序项的同时更改显示项，重新获取数据刷新图表；
 						//btn_refresh_click();//刷新图表
 						//return;
-						var jssj = getCurrentDate(2);
-						var yesterdaytime= (new Date(jssj))-(1000*60*60*24);
-						var kssj=dateToString((yesterdaytime),2);
+						//var jssj = getCurrentDate(2);
+						//var yesterdaytime= (new Date(jssj))-(1000*60*60*24);
+						//var kssj=dateToString((yesterdaytime),2);
 						//kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
 						//jssj = (tr.cells[2].innerHTML);
-						decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。
+						//decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，但将抵消排序操作；使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。
 						//gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
 						//refreshData();
 					}
@@ -1691,7 +1691,8 @@ var sorter=false;
 				var tr = tbody.rows;
 				if (tbody.sortCol == Idx){
 					sorter=(!sorter);
-				}else{sorter=false}
+				}else
+				{sorter=false}
                 var trValue = new Array();
 				let tr_len=tr.length;
 				for (var i=0; i<tr_len; i++ ) {

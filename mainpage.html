@@ -1640,17 +1640,22 @@
 					//	var p_node = getThe_level_nodeid(data, i);
 					//	tree1.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 					//}
-					tree1.treeview("revealNode",[currentNode, { levels: 2, silent: true }]);
+					tree1.treeview("revealNode",[data.nodeId, { levels: 2, silent: true }]);
+					
 					//setSelectOption("jcdd", data.id);
                     sessionStorage.jfjk_nodeid=data.nodeId;
 					sessionStorage.SensorId=data.id;
+					var firstSearchResult = tree1.find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
+					if(firstSearchResult.length>0)//避免树形菜单为空时，可能报错
+						tree1.scrollTop(firstSearchResult[0].offsetTop-520);
 					if(!multiselect)//多选时，标签id不被保存；用于恢复所选项
 						sessionStorage.sel_id=data.id;
-					if (sessionStorage.pageindex==2){
+					try{if (sessionStorage.pageindex==2){
 						iframemain[0].contentWindow.localrowbysensorid(data.id);//实时数据页面的点击标签树形菜单进行实时数据列表定位
-					}else{
-						iframemain[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
-					}
+						}else{
+							iframemain[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
+						}
+					}catch(e){}
 					sessionStorage.SensorName=data.text;
 					sessionStorage.sensorallpathname=getSensorAllPathName(data);
 					if(sessionStorage.pageindex==5){
@@ -1694,10 +1699,10 @@
 			});
 			sensorarray=tree1.treeview("getSelected");
 			if(anodes.length>0){
-				tree1.treeview('collapseAll');//关闭展开
-				//if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
+				//tree1.treeview('expandAll');//关闭展开collapseAll
+				if (sessionStorage.jfjk_nodeid == "" || sessionStorage.jfjk_nodeid == null) {
 					sessionStorage.jfjk_nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
-				//}
+				}
 				//$("#tree_chi").treeview('checkAll'  , { silent:   true   });
 				var allnode=tree1.treeview("getUnselected");
 				var currentNode=null;
@@ -1721,14 +1726,14 @@
 				//	var p_node = getThe_level_nodeid(currentNode, i);
 				//	tree1.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
 				//}
-				tree1.treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
+				//tree1.treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
 				//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
-				tree1.treeview('selectNode', [currentNode, { silent: true }]);
+				tree1.treeview('selectNode', currentNode);//, { silent: true }
 				sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
 				sessionStorage.SensorName=currentNode.text;//获取标签名称，用于列表显示用.20201110
 				sessionStorage.sensorallpathname=getSensorAllPathName(currentNode);
-				tree1.treeview("selectNode", currentNode);//将第一个节点设置为选中状态*/**/
-				tree1.treeview("search",[currentNode.text, { ignoreCase: false, exactMatch: true }]);
+				//tree1.treeview("selectNode", currentNode.id);//将第一个节点设置为选中状态*/**/
+				//tree1.treeview("search",[currentNode.text, { ignoreCase: false, exactMatch: true }]);
 				/**/
 			}
 			function getSensorAllPathName(anode){
@@ -1762,26 +1767,28 @@
 		}
 		function treelocationforsensorid(asensorid){//与实时数据页实时数据列表中的当前选择项同步定位于指定标签id下。
 			var tree1=$("#tree_chi");
-			var obj_node=tree1.treeview("getSelected");
-			if(obj_node.length>0)//判断有没有选中项
-			{tree1.treeview("unselectNode",obj_node[0]);}//使选择项为不选中，为下一步选择所有未选择项准备//	$("#sel-sensorname").val("所选标签: "+tree_obj.treeview("getSelected")[0].text);
-			var sensors=tree1.treeview("getUnselected");//选取未选中项
-			if(sensors )
-			var nodeid;
-			let sensors_len=sensors.length;
+			//var obj_node=tree1.treeview("getSelected");
+			//if(obj_node.length>0)//判断有没有选中项
+			//{tree1.treeview("unselectNode",obj_node[0]);}//使选择项为不选中，为下一步选择所有未选择项准备//	$("#sel-sensorname").val("所选标签: "+tree_obj.treeview("getSelected")[0].text);
+			var sensors_tree=tree1.treeview("getUnselected");//选取未选中项
+			if(sensors_tree ){
+				var nodeid;
+				let sensors_len=sensors_tree.length;
 			//for (var i =sel_sersor_len-1 ; i >=0; i--) {//使得最后选中的标签维最靠前面的标签，树形菜单定位到第一个被选中的标签位置；原来（正序）为最后一个
 				for(var j=0;j<sensors_len;j++){
-					if(sensors[j].id==asensorid){
+					if(sensors_tree[j].id==asensorid){
 						//if(i==0)
-						nodeid=sensors[j].nodeId;
-						tree1.treeview("selectNode",sensors[j].nodeId);
-						var firstSearchResult = tree1.find('ul').find('li[data-nodeid='+ nodeid +']');
-						if(firstSearchResult.length>0)//避免树形菜单为空时，可能报错
-							tree1.scrollTop(firstSearchResult[0].offsetTop-520);
+						nodeid=sensors_tree[j].nodeId;
+						tree1.treeview("selectNode",sensors_tree[j].nodeId);
+						//tree1.treeview("revealNode",[nodeid, { levels: 2, silent: true }]);
+						//var firstSearchResult = tree1.find('ul').find('li[data-nodeid='+ nodeid +']');
+						//if(firstSearchResult.length>0)//避免树形菜单为空时，可能报错
+							//tree1.scrollTop(firstSearchResult[0].offsetTop-520);
 						break;
 					}
 				}
 			//}
+			}
 		}
 		function buildnode_level2(data, level) {
 			var tree = [];
@@ -2074,4 +2081,6 @@
 
   浮动窗的告警信息显示变更为两次测量时间不相同时进行浮动窗告警信息显示；在选择标签后对应实时数据的列表进行定位；
   iframemain的刷新由重新加载改成执行页面的初始化函数，减少页面闪烁。
+
+  实时列表与标签树同步时自动展开标签树节点,并定位到当前标签。
 -->

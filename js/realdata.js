@@ -47,7 +47,7 @@ $(function () {
     initrealdata();
 });
 function initchartoption(){//初始化图表选择和显示值；
-    chartOption={chart_type:"",chart_unit:"",chart_max:0,chart_min:0,chart_sigle:"",
+    chartOption={chart_type:"",chart_unit:"",chart_max:100,chart_min:0,chart_sigle:"",
                  chart_main_num:4,chart_chi_num:8,chart_detail_font_size:16,chart_title_font_size:16,
                  start_angle:0,end_angle:180};
     maxval =  minval =  maxvalue =minvalue = value0=maxOfRealdata=0;
@@ -445,14 +445,14 @@ function decoderealdata(obj_realdata,asensorid) {
     var sensors_length=sensors.length;
     var obj_data = new Object();
     var pt = 0;
-    var kssj = getCurrentDate(1) + " 00:00:00";
-    var jssj = getCurrentDate(2);
     var dname;
     var isnew=true,isfind=false;//isbreak=false;
     var atr;
     var parentid=-1,parentname="";
     var isfindtype=false;
     var realdatafolder;
+    var kssj = dateToString((new Date(getCurrentDate(2))-(1000*60*60*24)),2) ;// + " 00:00:00";
+    var jssj = getCurrentDate(2);
     haverealdata=false;
     sid=-1;
     let nodata=true;
@@ -814,6 +814,7 @@ function decoderealdata(obj_realdata,asensorid) {
                 }else{
                     curPage=0;
                 }
+                //tableclick($table.rows[curPage]);
                 $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
                 $table.rows[ppt].style.backgroundColor = color_table_cur;
                 if (isfirst != true) {
@@ -932,7 +933,7 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
             //if(!chartOption.chart_min)
                 chartOption.chart_min = 0;
             //if(!chartOption.chart_max)
-                chartOption.chart_max = 0;
+                chartOption.chart_max = 100;
             //if(!chart_unit)
                 chart_unit = "";
             chartOption.chart_sigle = ""
@@ -1919,4 +1920,6 @@ function jisuanyichangbili(avalue){//一个标签有多个类型的数据报警�
  * 
  * 24h趋势图形中的起止时间与选定标签实时列表不一致的问题（总是取实时数据的最后一个数据的时间，应与选定标签的id进行匹配取值）；
  * 以及退出后重新登录，实时数据不显示的问题0205
+ * 
+ * 首次进入标签定位树形图和实时数据列表选定行同步。
  */
