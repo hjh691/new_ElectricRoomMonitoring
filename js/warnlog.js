@@ -821,11 +821,11 @@ function querywarnlog(num) {
 		sessionStorage.jssj = jssj;
 	}
 	$("#warnlogdata-tbody tr").empty();
-	if (num == 0) {//name 改为dname 20200520 edit;at the options was null,get the all data;
+	//if (num == 0) {//name 改为dname 20200520 edit;at the options was null,get the all data;
 		gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
-	} else {
-		gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
-	}
+	//} else {
+	//	gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+	//}
 }
 
 /*告警类型项目的添加为空时提示，历史状态页添加信息统计显示项 bootstap的组件内容类定义，对代码进行简化

@@ -1,7 +1,7 @@
 var obj_realdata;
 var isfirst=true;
 var temp=0;
-var tabcount=9;
+var tabcount=$("#nav").find("li");
 var pt = [0,0,0,0,0,0,0,0];
 initpage();
 $(function (){$("[data-toggle='popover']").popover();});

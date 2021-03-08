@@ -78,7 +78,10 @@ function initpage(){
     }
     //if(sessionStorage.timeindex==4){//
         stoptimer(timer)                             
-        //queryhistorydata(0);//decodedatas();//
+        if(window.parent.isresize){
+            queryhistorydata(0);//decodedatas();////
+            window.parent.isresize=false;
+        }
     //}
     $("#main").height(parent.window.windowHeight-250);
     $("#list").height(parent.window.windowHeight-250);
@@ -588,16 +591,16 @@ function decodedatas(obj_data){
                             let tdBodys = ''; //数据
                             series.forEach(function (item) {
                                 //组装表头
-                                tdHeads += `<td >${item.name}</td>`;
+                                tdHeads += '<td >'+item.name+'</td>';
                             });
-                            let table = `<table border="1" ><tbody><tr>${tdHeads} </tr>`;
+                            let table = '<table border="1" ><tbody><tr>'+tdHeads+'</tr>';
                             for (let i = 0, l = series[0].data.length; i < l; i++) {
                                 for (let j = 0; j < series.length; j++) {
                                     //组装表数据
                                     strtime=dateToString((series[j].data[i][0]),2);
-                                    tdBodys += `<td>${ series[j].data[i][1]}</td>`;
+                                    tdBodys += '<td>'+ series[j].data[i][1]+'</td>';
                                 }
-                                table += `<tr><td >${strtime}</td>${tdBodys}</tr>`;
+                                table += '<tr><td >'+strtime+'</td>'+tdBodys+'</tr>';
                                 tdBodys = '';
                             }
                             table += '</tbody></table>';

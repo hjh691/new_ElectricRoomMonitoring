@@ -426,7 +426,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
             series.data= pb;
             series.smooth=true;
             series.smoothMonotone='x',
-            //series.itemStyle= {normal: {areaStyle: {type: 'default'}}}; //线下区域
+            //series.itemStyle= {normal: {areaStyle: {type: 'default'}}}; //线下区域 
             seriess.push(series);
 		}
 	}
@@ -470,8 +470,8 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
 					dataView: {
                         show: true,
                         readOnly: false,
-                        optionToContent: function () {
-                            //let axisData = opt.xAxis[0].data; //坐标数据
+                        optionToContent: function (opt) {
+                            /*//let axisData = opt.xAxis[0].data; //坐标数据
                             let table= '<table border="1" ><tbody>';
                             let tbody=$("#comprate-tbody").clone();
                             let rl=tbody[0].rows.length;
@@ -484,7 +484,44 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                 }
                             }
                             table += tbody[0].innerHTML+'</tbody></table>';
-                            return table;
+                            return table;*/
+                            var series = opt.series; //折线图数据
+                                var tdHeads = '<td  >时间</td>'; //表头
+                                var tdBodys = document.createElement('tbody'); //数据
+                                series.forEach(function (item) {
+                                    //组装表头
+                                    tdHeads += '<td >'+item.name+'</td>';
+                                });
+                                var table ='<table border="1" style="text-align:center" ><tbody><tr>'+tdHeads+'</tr>';
+                                for (var j = 0; j < series.length; j++) {
+                                    for (var i = 0, l = series[j].data.length; i < l; i++) {
+                                        //组装表数据
+                                        if(j==0){
+                                            atr=creatTr();
+                                            atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
+                                            atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                            tdBodys.appendChild(atr);
+                                        }else{
+                                            var rows=tdBodys.rows;
+                                            var len=rows.length;
+                                            for(var k=0;k<len;k++){
+                                                var jiange=GetDateDiff(rows[k].cells[1].outerText,dateToString((series[j].data[i][0]),2),"minute");
+                                                if(jiange<=-2){
+                                                    atr=creatTr();
+                                                    atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
+                                                    atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                                    tdBodys.insertBefore(atr,rows[k]);
+                                                    break;
+                                                }else if(jiange<2){
+                                                    rows[k].cells[j+2].innerHTML=series[j].data[i][1];
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                table += tdBodys.innerHTML+'</tbody></table>';
+                                return table;//
                         }
                     },
 					magicType: {

@@ -1668,12 +1668,16 @@ var sorter=false;
         //命名空间
 		sortTable:{
             sort:function(tableId,Idx){
+				var table = document.getElementById(tableId);
+                var tbody = table.tBodies[0];//tBodies[0]取表头thead，tBodies[1]取tbody
+				var tr = tbody.rows;
 				if(tableId=="realtable"){
 					if(Idx>=3){
 						catalog=getCatalog(Idx-3);
 						title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值
-						sessionStorage.realdata_index=Idx;
 						isfirst=true;//更改排序项的同时更改显示项，重新获取数据刷新图表；
+						var head=$("#tab_head")[0].rows[0].cells[Idx-1];
+						head.style.color='blue';
 						//btn_refresh_click();//刷新图表
 						//return;
 						//var jssj = getCurrentDate(2);
@@ -1681,14 +1685,15 @@ var sorter=false;
 						//var kssj=dateToString((yesterdaytime),2);
 						//kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
 						//jssj = (tr.cells[2].innerHTML);
-						//decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，但将抵消排序操作；使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。
+						if(sessionStorage.realdata_index!=Idx){
+							decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，但将抵消排序操作；使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。
+						}
+						sessionStorage.realdata_index=Idx;
 						//gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
 						//refreshData();
 					}
 				}
-				var table = document.getElementById(tableId);
-                var tbody = table.tBodies[0];//tBodies[0]取表头thead，tBodies[1]取tbody
-				var tr = tbody.rows;
+				
 				if (tbody.sortCol == Idx){
 					sorter=(!sorter);
 				}else

@@ -15,7 +15,7 @@ var myChart4=echarts.init(document.getElementById('realdata_realdata'));//实时
 var option,option1,option2,option3,option4;//对应mychart（1-4）的配置项 need speed seed deed
 var chartdataname1="";
 var sname="",sid,type_td,title_index=3,hidden_cells=3;
-let isfirst = "true";
+var isfirst = "true";
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
 var maxvaluetime="",happentime="",maxOfRealdataName="";
 var colors = [];
@@ -40,7 +40,7 @@ var datas = [];
 //var alertconfig=[0,25,"温度过低","温度过高"];
 //var alertcount=[0,0,0,0];//;
 var alert_obj=new Object();
-let haverealdata=false;
+//let haverealdata=false;
 var catalog="Defalt";
 var display_type=document.getElementById("display_type_realdata");
 $(function () {
@@ -97,7 +97,7 @@ function initpage() {
         var t1 = window.setInterval("decoderealdata();", 60000);
     }
     appendalldisplaytype();/*"display_type"*/
-    btn_refresh_click();
+    
     var topTable = $("table").eq(0).offset().top;//获取表格位置
     var c_top =  $('.oa-nav_top').height() ? $('.oa-nav_top').height() : 0;//获取导航高度没有可填0
     $("#datadiv").scroll(function() {
@@ -118,6 +118,7 @@ function initpage() {
     if(sessionStorage.getItem("chartoption")){
         chartOption=JSON.parse(sessionStorage.getItem("chartoption"));
     }
+    btn_refresh_click();
 }
 $(function () {
     $(".btn").click(function(){
@@ -433,7 +434,7 @@ function getCatalog(index){
         showstateinfo(err.message,"realdata/getCatalog")
     }
 }
-function decoderealdata(obj_realdata,asensorid) {
+function decoderealdata(obj_realdata,asensorid,isload) {
     try{
     var v_sel = $('[name="options"]');
     $('#realdata-tbody').empty();
@@ -441,8 +442,10 @@ function decoderealdata(obj_realdata,asensorid) {
     if(!obj_realdata){
         obj_realdata=JSON.parse(localStorage.getItem("realdata"));
     }
+    var sensors_length=0;
     var sensors = JSON.parse(localStorage.getItem("sensors"));
-    var sensors_length=sensors.length;
+    if(sensors)
+        sensors_length=sensors.length;
     var obj_data = new Object();
     var pt = 0;
     var dname;
@@ -453,12 +456,13 @@ function decoderealdata(obj_realdata,asensorid) {
     var realdatafolder;
     var kssj = dateToString((new Date(getCurrentDate(2))-(1000*60*60*24)),2) ;// + " 00:00:00";
     var jssj = getCurrentDate(2);
-    haverealdata=false;
+    //haverealdata=false;
     sid=-1;
     let nodata=true;
     if(!asensorid)
         nodata=false;
-    let realdata_len=obj_realdata.length, tablehead_len=tab_head.rows[0].cells.length;
+    let realdata_len=obj_realdata.length, 
+        tablehead_len=tab_head.rows[0].cells.length;
     if (obj_realdata) {
         refresh_tabhead(v_sel);//根据选项刷新表头的显示内容
         alert_obj={};
@@ -499,7 +503,7 @@ function decoderealdata(obj_realdata,asensorid) {
                         }
                         sname=parentname+sname;
                         isfind=true;
-                        haverealdata=true;
+                        //haverealdata=true;
                         break;
                     }
                 }
@@ -515,11 +519,11 @@ function decoderealdata(obj_realdata,asensorid) {
                         //需要表头标题添加name，所有列表项添加一列（cell）
                         add_displaytype(display_type,dname,realdatafolder,dname,false);
                         v_sel = $('[name="options"]');
-                        tablehead_len++;
+                        //tablehead_len++;//第一次进入统计比例错误的问题，不应该递增。
                     }
-                    if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，
+                    if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，//
                         atr=document.createElement("tr");
-                        atr.setAttribute("onclick", "tableclick(this)");//ondblclick
+                        atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
                         for(var k=0;k<tablehead_len;k++){
                             var atd=document.createElement("td");
                             //atd.setAttribute("width","150px");
@@ -778,6 +782,7 @@ function decoderealdata(obj_realdata,asensorid) {
         }
         if (pt > 0) {
             var tableLength = $table.rows.length;
+            tab_head=document.getElementById("tab_head");
             //alertcount=[0,0,0,0,0]
             maxOfRealdata=($table.rows[0].cells[title_index].innerHTML)*1;
             maxvaluetime=($table.rows[0].cells[2].innerHTML);
@@ -817,6 +822,7 @@ function decoderealdata(obj_realdata,asensorid) {
                 //tableclick($table.rows[curPage]);
                 $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
                 $table.rows[ppt].style.backgroundColor = color_table_cur;
+                //tableclick($table.rows[ppt],true);
                 if (isfirst != true) {
                     var temp_option = myChart2.getOption();
                     if (temp_option.series.length>0) {
@@ -847,18 +853,19 @@ function decoderealdata(obj_realdata,asensorid) {
                             //myChart.setOption(option);//
                             happentime=shottime;
                         }
-                        refreshData();
+                        //refreshData();
                     }
                 } else {
                     isfirst = false; //
                     //myChart2.showLoading();
+                    window.parent.treelocationforsensorid(sensor_Id);
                     gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
                 }
             }//else{	//$table.rows[0].ondblclick();	//}
             //showstateinfo("");
             
         } else {
-            showmsg("没有符合条件的实时数据",info_showtime);
+            //showmsg("没有符合条件的实时数据",info_showtime);
             showstateinfo("没有符合条件的实时数据","realdata");
         }
     } else {
@@ -866,7 +873,7 @@ function decoderealdata(obj_realdata,asensorid) {
         showstateinfo("没有符合条件的实时数据","realdata");
     }
     //$table.rows[t_pt].scrollIntoView();
-    //refreshData();
+    refreshData();
     //display();
     page=new Page(pageSize,'realtable','realdata-tbody','pageindex');
     page.changePage(curPage);
@@ -880,12 +887,12 @@ function decoderealdata(obj_realdata,asensorid) {
     page.setPageSize(pageSize); 
 }*/
 function localrowbysensorid(asensorid){
-    //
-    initchartoption();
-    isfirst=true;
-    decoderealdata(null,asensorid);
+    var isfinded=false;
+    //initchartoption();
+    //isfirst=true;
+    //decoderealdata(null,asensorid);//是否可以用其他函数代替（定位到指定的当前行）
     //btn_refresh_click();
-    /*$table = document.getElementById('realdata-tbody');
+    $table = document.getElementById('realdata-tbody');
     let tablehead_len=$table.rows.length;
     for (var int = 0; int < tablehead_len; int++) {
         if ($table.rows[int].cells[0].innerHTML == (asensorid+"")) {
@@ -893,15 +900,20 @@ function localrowbysensorid(asensorid){
             var row=$table.rows[int];
             tableclick(row);
             var heightpx = $("#realdata-tbody tr").height();// + 1;//加1是网格线的宽度
-                var ppt = +sessionStorage.t_p;
-                if(ppt>pageSize){
-                    curPage=parseInt(ppt/pageSize);
-                }else{
-                    curPage=0;
-                }
-                $("#datadiv").scrollTop((ppt) * heightpx);
+            var ppt = +sessionStorage.t_p;
+            if(ppt>pageSize){
+                curPage=parseInt(ppt/pageSize);
+            }else{
+                curPage=0;
+            }
+            $("#datadiv").scrollTop((ppt) * heightpx);
+            //gethistorydata(asensorid,catalog,typename, kssj, jssj, 1);
+            isfinded=true;
+            break;  
         }
-    }*/
+    }/**/
+    if(!isfinded&&!isfirst)
+        showmsg("没有符合条件的实时数据", info_showtime);
 }
 function updatachart(atype) {//根据不同设备类型，更新图形当中的最大最小值设置以及数值单位
     switch (atype.toLowerCase()) {
@@ -940,7 +952,7 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
     }
 }
-function tableclick(tr) {
+function tableclick(tr,isloadmain) {
     $(tr).siblings("tr[backgroundColor!='#ff0']").css("background", "");
     $(tr).css("background", color_table_cur);//区分选中行
     sessionStorage.t_p = tr.rowIndex - 1;
@@ -950,7 +962,7 @@ function tableclick(tr) {
     if(title_index!=-1)
         value0 = parseFloat(tr.cells[title_index].innerHTML).toFixed(Number_of_decimal);
     //value1=parseFloat(tr.cells[3].innerHTML);
-    if (parseInt(tr.cells[0].innerHTML) != sessionStorage.SensorId) {
+    //if (parseInt(tr.cells[0].innerHTML) != sessionStorage.SensorId) {
         sessionStorage.SensorId = parseInt(tr.cells[0].innerHTML);
         sessionStorage.sel_id=sessionStorage.SensorId;
         //var kssj = getCurrentDate(1) + " 00:00:00";
@@ -961,12 +973,13 @@ function tableclick(tr) {
         //jssj = (tr.cells[2].innerHTML);
         myChart2.showLoading();
         gethistorydata(sessionStorage.SensorId,catalog,typename, kssj, jssj, 1);
-        window.parent.treelocationforsensorid(sessionStorage.SensorId);
-    }
+        if (isloadmain)
+        window.parent.treelocationforsensorid(sessionStorage.SensorId,true);
+    //}
     //maxval=0;
     refreshData();
     //moduletable("realdata-tbody");
-    
+    //btn_refresh_click();
     //var myChart2 = echarts.init(document.getElementById('realdata_chart'));
 }
 function initseries(data) {
@@ -981,7 +994,7 @@ function initseries(data) {
                 color: 'white',
                 //fontStyle: "normal",
                 fontWeight: 'normal',
-                fontSize:14,
+                fontSize:chartOption.chart_detail_font_size,
             },
             text: sname+"--24h 极值",
         },
@@ -1037,7 +1050,7 @@ function initseries(data) {
                         color: '#fff',
                         shadowColor: '#fff', //默认透明
                         shadowBlur: 10,
-                        fontSize:14,
+                        fontSize:chartOption.chart_detail_font_size,
                     },
                 },
                 splitLine: { // 分隔线
@@ -1061,7 +1074,7 @@ function initseries(data) {
                     text: '24h 峰值',
                     textStyle: {
                         color: 'white',
-                        fontSize: chartOption.chart_title_font_size-4,
+                        fontSize: chartOption.chart_title_font_size,
                     }
                 },
                 detail: {
@@ -1816,7 +1829,7 @@ function initecharts(){
     myChart1.setOption(option1);
     option3 = {
         backgroundColor: backgroudcolor,
-        color:['#090','#f75','#055','#b00','#095','#f0f','#444'],
+        //color:['#090','#f75','#055','#b00','#095','#f0f','#444'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {            // 坐标轴指示器，坐标轴触发有效

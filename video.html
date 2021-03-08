@@ -113,7 +113,7 @@
                         <tr>
                             <td class="tt">码流类型</td>
                             <td>
-                                <select id="streamtype" class="tt">
+                                <select id="streamtype" class="tt" onchange="changestreamtype(this.value)">
                                     <option value="0">主码流</option>
                                     <option value="1">子码流</option>
                                     <!--<option value="3">第三码流</option>
@@ -239,7 +239,7 @@
         </div-->
     </div>
     <script>
-        var sel_id,dp,isstop;
+        var sel_id,dp,isstop,isplay=false;
         var va_id="dplayer0",a=0;
         var dparray=[];
         //var player;
@@ -342,6 +342,8 @@
                 if(typeof(sessionStorage.sel_id)=="undefined"||sessionStorage.sel_id<0||sessionStorage.sel_id==null){
                     sel_sensor[0].checked=true;
                 }
+                if(isplay)
+                    clickStartRealPlay();
             }
             /*element.addEventListener("pause",function(){
             showOPInfo("video暂停");
@@ -431,7 +433,8 @@
         });*/
         function clickStartRealPlay(){
             dp=dparray[a];
-            if(typeof(dp)!=="undefined"&&dp!="null"){//解决多次之间点击开始预览按钮造成多播放线程的问题。//
+            if(typeof(dp)!=="undefined"&&dp!="null"&&(!window.parent.isresize)){//解决多次之间点击开始预览按钮造成多播放线程的问题。//
+                isplay=false;
                 dp.pause();
                 dp.destroy();
                 dp=undefined;
@@ -440,6 +443,7 @@
                 if(sessionStorage.sel_id==sel_id)
                   return;
             }
+            window.parent.isresize=false;
             var radio=document.getElementsByName("checks");
             if (typeof(sessionStorage.sel_id) =="undefined"){
                 sel_id=0;
@@ -514,10 +518,12 @@
                                 dp=dparray[a];
                                 dp.on('play',function(){
                                     //console.log("预览成功");
+                                    isplay=true;
                                     showOPInfo("开始预览成功")
                                 });
                                 dp.on("error" ,function(){
                                     showOPInfo("视频预览错误");//播放
+                                    isplay=false;
                                     if(!isstop){
                                         clickStartRealPlay();//解决视频加载失败或播放过程中出现错误而预览停止的问题
                                     }
@@ -589,6 +595,9 @@
         }*/
         function openvideopage(){
             window.open("http://192.168.10.164"); //新窗口打开视频监控网址
+        }
+        function changestreamtype(avalue){
+            sessionStorage.streamtype=avalue;
         }
         function changeWndNum(avalue){
             switch(avalue*1){
