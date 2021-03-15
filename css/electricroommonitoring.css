@@ -241,7 +241,7 @@
 	/* 鼠标移动到选项上修改背景颜色 margin:5px;*/
 	li a:hover {
 		background-color: #555;
-		color: white;
+		/*color: white;*/
 	}
 	table {
 		/*设置相邻单元格的边框间的距离*/

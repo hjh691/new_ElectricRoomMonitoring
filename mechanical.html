@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
+	<title>机械特性</title>
+	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="js/bootstrap.js" ></script>
+	<script  type="text/javascript" src="js/config.js"></script>
+	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
+	<script type="text/javascript" src="js/echarts.js"></script>
+	<!--<script  type="text/javascript" src="js/layer/layer.js"></script>
+	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
+	<script  type="text/javascript" src="js/function.js"></script>-->
+	<style type="text/css">
+	.container{
+			width: 97%;
+			height:650px;
+            margin-left: 15px;
+			margin-right: 5px;
+            margin:15px;
+        }
+    .mechanical{
+        border: rgb(90, 89, 89) solid 0px;
+        height: 300px;
+		/*background-color:rgb(209, 207, 207);*/
+        margin-top: 10px;
+        display: table-cell;
+        vertical-align: middle;
+    }
+    .wather_wind{
+        font-size: 20px;
+		text-align: center;
+		vertical-align: middle;
+    }
+  </style>
+</head>
+<body > <!-- onunload="stopWorker()" onload="getrealdatabynodeid(-1)" 20200408修改，重复调用此函数,提示框不能认为关闭。-->
+	<div class="panel panel-default wather_wind" >
+		<span><label>开关柜选择：</label></span>
+		<span ><label><input type="radio" value="0" onclick="selectid(this)" name="addressselect" checked="true"/>1#高压开关柜</label></span>
+		<span ><label><input type="radio" value="1" onclick="selectid(this)" name="addressselect" /> 2#高压开关柜 </label> </span>
+		<span ><label><input type="radio" value="2" onclick="selectid(this)" name="addressselect"/> 3#高压开关柜 </label></span>
+		<span ><label><input type="radio" value="3" onclick="selectid(this)" name="addressselect"/> 1#低压开关柜 </label> </span>
+		<span ><label><input type="radio" value="4" onclick="selectid(this)" name="addressselect"/> 2#低压开关柜 </label></span>
+        <span ><label><input type="radio" value="5" onclick="selectid(this)" name="addressselect"/> 3#低压开关柜 </label></span>
+	</div>
+	<div class="container" style="overflow: auto;">
+		<div  class="row" align="center" >
+			<div class="col-xs-12 col-md-6 col-lg-4 mechanical"  >
+				<div id="mechanical_volt" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;" ></div>
+			</div>
+			<div class="col-xs-12 col-md-6 col-lg-4 mechanical"  >
+				<div id="mechanical_current" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;" ></div>
+			</div>
+		
+			<div class="col-xs-12 col-md-6 col-lg-4 mechanical"  >
+				<div id="mechanical_lt" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;" ></div>
+			</div>
+			<div class="col-xs-12 col-md-6 col-lg-4 mechanical"  >
+				<div id="mechanical_vt" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;" ></div>
+			</div>
+		
+			<div class="col-xs-12 col-md-6 col-lg-4 "  >
+				<div id="mechanical" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;" >
+					<div class="wather_wind"><i id="illumination" class="glyphicon glyphicon-cog"></i><span> 储能状态： 储能</span></div>
+					<div class="wather_wind"><i id="airpresure" class="glyphicon glyphicon-dashboard"></i><span> 开合状态： 合闸</span></div>
+					<div class="wather_wind"><i id="wind_forward" class="glyphicon glyphicon-tint"></i><span>机械振动：2dB</span></div>
+					<div class="wather_wind"><i id="wind_class" class="glyphicon glyphicon-cloud"></i><span> 开合次数：34次</span></div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-6 col-lg-4" > 
+				<div id="wather_wind" style="display:table-cell;vertical-align: middle;width:400px;height: 300px;">
+					<div class="wather_wind"><i id="wind_forward2" class="glyphicon glyphicon-tint"></i><span>机械振动：2dB</span></div>
+					<div class="wather_wind"><i id="wind_class2" class="glyphicon glyphicon-cloud"></i><span> 开合次数：34次</span></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="js/mechanical.js"></script><!---->
+</body>
+</html>

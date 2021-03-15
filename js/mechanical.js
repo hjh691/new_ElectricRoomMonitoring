@@ -1,48 +1,32 @@
 /**var t1 = window.setInterval("getrealdatabystation(1);",30000);
 //getrealdatabynodeid(-1);
 //当没有数据返回时更新页面造成报某变量未定义的问题value0. 
-//20200709 实时值图表详情显示当天峰值的提示（已修改），数据列表表头刷新可以点击刷新按钮进行刷新（不必有数据);图形配置刷新；（没数不刷新，或限值不匹配原来不正确,标题undfine）
-20200716 针对新实时数据页面添加实时最大值{仪表盘）、统计比例（柱状图）两个图表的数据计算过程，其中比例计算有待进一步完善。修改某标签过去24小时最大值和实时值以及变化趋势图的
-    刷新过程，添加在主页面点击二级菜单时，对历史数据等页面的配置项进行更新显示功能
 **/
 var chart_type = "", chart_unit = "", chart_max = 100, chart_min = 0, chart_sigle = "", is_have = false;
 var start_angle = 0, end_angle = 180;
-var myChartWatherTemp = echarts.init(document.getElementById('wather_temp'));//温度
-var myChartWatherPa = echarts.init(document.getElementById('wather_pa'));//温度趋势
+var myChartMechanicalVolt = echarts.init(document.getElementById('mechanical_volt'));//温度
+var myChartMechanicalVt = echarts.init(document.getElementById('mechanical_vt'));//温度趋势
 //var mychart3=echarts.init(document.getElementById('realdata_rateOfNormal'));//占比统计
-var myChartWatherWater=echarts.init(document.getElementById('wather_water'));//湿度趋势
-var myChartWatherSwet=echarts.init(document.getElementById('wather_swet'));//湿度
-var optionWatherTemp,optionWatherWater,optionWatherPa,option3,optionWatherSwet;//对应mychart（1-4）的配置项 need speed seed deed
+var myChartMechanicalLt=echarts.init(document.getElementById('mechanical_lt'));//湿度趋势
+var myChartMechanicalCurrent=echarts.init(document.getElementById('mechanical_current'));//湿度
+var optionMechanicalVolt,optionMechanicalLt,optionMechanicalVt,option3,optionMechanicalCurren;//对应mychart（1-4）的配置项 need speed seed deed
 var chartdataname1="";
 var sname="",sid,type_td,title_index=3;
-/*var isfirst = "true";
-var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
-var maxvaluetime="",happentime="",maxOfRealdataName="";
-var colors = [];
-var pageSize = 10;    //每页显示的记录条数
-var curPage = 0;        //当前页
-//var lastPage;        //最后页
-var direct = 0;        //方向
-var len;            //总行数
-var page;            //总页数
-var begin;
-var end;
-var count=0;
-var $table;
-var sign = '>';
-var allconfigs;
-var allselect=null;
-var typename="",titlename="";
-var tab_head;
-
+//let isfirst = "true";
+//var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
+//var maxvaluetime="",happentime="",maxOfRealdataName="";
+//var colors = [];
+//var allconfigs;
+//var allselect=null;
+//var typename="",titlename="";
+//var tab_head;
+var backgroudcolor='#aaaaaa';
 //var obj_realdata;
 var datas = [];
-var alertconfig=[70,100,120,140,];
-var alertcount=[0,0,0,0];//;
-var haverealdata=false;
-var catalog="Defalt";
-var display_type=document.getElementById("display_type");*/
-var base = +new Date();var backgroudcolor='#006569';
+//let haverealdata=false;
+//var catalog="Defalt";
+var display_type=document.getElementById("display_type");
+var base = +new Date();
 var oneDay = 24 * 3600 * 1000;
 var oneTime=5*6000;
 var visdata = [[base, Math.random() * 100]];
@@ -63,7 +47,7 @@ function initrealdata(){
     for (var i = 0; i < 1; i++) {
         var value = (Math.random() * 100).toFixed(2) - 0;
         datas.push(JSON.parse('{"name":"","value":' + value + '}'));
-        var value = (Math.random() * 100).toFixed(2) - 0;
+        var value = (Math.random() * 5).toFixed(2) - 0;
         datas.push(JSON.parse('{"name":"","value":' + value + '}'));//
     }
     for (var i = 1; i < 24; i++) {
@@ -73,17 +57,16 @@ function initrealdata(){
             Math.round((Math.random() - 0.5) * 100 )
         ]);
     }
-    //updatachart(chart_type);
-    initWatherSeries(datas);
-    initWatherChart2(visdata);
+    updataMechanicalChart(chart_type);
+    initMechanicalSeries(datas);
+    initMechanicalChart2(visdata);
     //initchart2();
-    //initpage();
+    initMechanicalPage();
     }catch(err){
-        //showstateinfo(err.message.message,"initrealdata");
+        showstateinfo(err.message.message,"initrealdata");
     }
-    var t1 = window.setInterval("refreshDataForWather();", 5000);
 }
-//function initpage() {
+function initMechanicalPage() {
     //updatapcnav(3);
     //保存页面现场，在点击浏览器的刷新按钮刷新时应用
     /*sessionStorage.framepage="newrealdata.html";
@@ -105,10 +88,10 @@ function initrealdata(){
         var t1 = window.setInterval("getrealdatabynodeid(-1);", 60000);
     }*/
     //appendalldisplaytype();/*"display_type"*/
-    //btn_refresh_click();
+    //btn_refresh_click();//210
     //window.parent.closeloadlayer();
-    //var t1 = window.setInterval("refreshData();", 5000);
-//}
+    var t1 = window.setInterval("refreshDataForMechanical();", 5000);
+}
 /*$(function () {
     $(".btn").click(function(){
         $(this).button('toggle');
@@ -116,8 +99,8 @@ function initrealdata(){
         catalog=getcatalog(dname);
         gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
     });
-});
-function appendalldisplaytype(){
+});*/
+/*function appendalldisplaytype(){
     try{
     for(var i=display_type.childNodes.length;i>0;i--)
         display_type.removeChild(display_type.childNodes[i-1]);
@@ -368,8 +351,8 @@ function stopWorker() {
     w1.terminate();
     w1 = undefined;
 };
-/*//根据数据列值获取Catalog。
-function getCatalog(index){
+//根据数据列值获取Catalog。
+/*function getCatalog(index){
     try{
     var catalog="";
     var  catalogsel = $('[name="options"]');
@@ -409,8 +392,8 @@ function getCatalog(index){
     }catch(err){
         showstateinfo(err.message,"realdata/getCatalog")
     }
-}
-function decoderealdata(obj_realdata) {
+}*/
+/*function decoderealdata(obj_realdata) {
     try{
     $("#realdata-tbody").empty();
     var v_sel = $('[name="options"]');
@@ -704,7 +687,7 @@ function decoderealdata(obj_realdata) {
                 //chart_type = $table.rows[sessionStorage.t_p].cells[6].innerHTML;
                 sensor_Id = parseInt($table.rows[sessionStorage.t_p].cells[0].innerHTML);
                 var lasttime = $table.rows[sessionStorage.t_p].cells[2].innerHTML;
-                //var myChartWatherPa = echarts.init(document.getElementById('realdata_chart'));
+                //var myChartMechanicalVt = echarts.init(document.getElementById('realdata_chart'));
                 updatachart(typename);
                 value0 = ($table.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;//字符转实数
                 //happentime=lasttime;
@@ -714,7 +697,7 @@ function decoderealdata(obj_realdata) {
                 $("#realdata-tbody").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行张丽欣
                 $table.rows[ppt].style.backgroundColor = color_table_cur;
                 if (isfirst != true) {
-                    var temp_option = myChartWatherPa.getOption();
+                    var temp_option = myChartMechanicalVt.getOption();
                     if (temp_option.series.length>0) {
                         if (temp_option.series[0].data[temp_option.series[0].data.length - 1][0] < strtodatetime(lasttime)) {
                             temp_option.series[0].data.push([strtodatetime(lasttime), value0, temp_option.series[0].data.length]);
@@ -730,20 +713,20 @@ function decoderealdata(obj_realdata) {
                                 minval = (minvalue - (maxvalue - minvalue) * 0.2).toFixed(Number_of_decimal);
                                 temp_option.yAxis[0].min = minval;
                             }
-                            myChartWatherPa.setOption(temp_option);
+                            myChartMechanicalVt.setOption(temp_option);
                         }
                         if (maxvalue < value0) {
                             maxvalue = value0;
-                            optionWatherTemp.series[0].data[0].value = maxvalue;
-                            //optionWatherTemp.series[1].data[0].value = value0;
-                            //myChartWatherTemp.setOption(optionWatherTemp);//
+                            optionMechanicalVolt.series[0].data[0].value = maxvalue;
+                            //optionMechanicalVolt.series[1].data[0].value = value0;
+                            //myChartMechanicalVolt.setOption(optionMechanicalVolt);//
                             happentime=lasttime
                         }
                         refreshData();
                     }
                 } else {
                     isfirst = false;
-                    //myChartWatherPa.showLoading();
+                    //myChartMechanicalVt.showLoading();
                     gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
                 }
             }//else{	//$table.rows[0].ondblclick();	//}
@@ -758,12 +741,12 @@ function decoderealdata(obj_realdata) {
     }
     //$table.rows[t_pt].scrollIntoView();
     //refreshData();
-    display();
+    //display();
     }catch(err){
         showstateinfo(err.message,"realdata/decoderealdata");
     }
-}
-function updatachart(atype) {//根据不同设备类型，更新图形当中的最大最小值设置以及数值单位
+}*/
+function updataMechanicalChart(atype) {//根据不同设备类型，更新图形当中的最大最小值设置以及数值单位
     switch (atype.toLowerCase()) {
         case "temp":
         case "tmp":
@@ -798,7 +781,7 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
     }
 }
-function tableclick(tr) {
+/*function tableclick(tr) {
     $(tr).siblings("tr[backgroundColor!='#ff0']").css("background", "");
     sessionStorage.t_p = tr.rowIndex - 1;
     sname = tr.cells[1].innerHTML;
@@ -816,87 +799,30 @@ function tableclick(tr) {
         var kssj=dateToString((yesterdaytime),2);
         //kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
         //jssj = (tr.cells[2].innerHTML);
-        myChartWatherPa.showLoading();
+        myChartMechanicalVt.showLoading();
         gethistorydata(sessionStorage.SensorId,catalog,typename, kssj, jssj, 1);
     }
     //maxval=0;
     refreshData();
     //moduletable("realdata-tbody");
     $(tr).css("background", color_table_cur);//区分选中行
-    //var myChartWatherPa = echarts.init(document.getElementById('realdata_chart'));
+    //var myChartMechanicalVt = echarts.init(document.getElementById('realdata_chart'));
 }*/
-function initWatherSeries(data) {//温度计、湿度表。
-    // 刻度使用柱状图模拟，短设置1，长的设置3；构造一个数据
-    for(var i = 0, len = 135; i <= len; i++) {
-        if(i < 10 || i > 130) {
-            kd.push('')
-        } else {
-            if((i - 10) % 20 === 0) {
-                kd.push('-3');
-            } else if((i - 10) % 4 === 0) {
-                kd.push('-1');
-            } else {
-                kd.push('');
-            }
-        }
-    }
-    //中间线的渐变色和文本内容
-		if(TP_value > 80) {
-			TP_txt = '温度偏高';
-			Gradient.push({
-				offset: 0,
-				color: '#93FE94'
-			}, {
-				offset: 0.5,
-				color: '#E4D225'
-			}, {
-				offset: 1,
-				color: '#E01F28'
-			})
-		} else if(TP_value > 10) {
-			TP_txt = '温度正常';
-			Gradient.push({
-				offset: 0,
-				color: '#93FE94'
-			}, {
-				offset: 1,
-				color: '#E4D225'
-			})
-		} else {
-			TP_txt = '温度偏低';
-			Gradient.push({
-				offset: 1,
-				color: '#93FE94'
-			})
-		}
-	   /*  if(TP_value > 62) {
-			showValue = 62
-		} else {
-			if(TP_value < -60) {
-				showValue = -60
-			} else {
-				showValue = TP_value
-			}
-		}
-		if(TP_value < -10) {
-			boxPosition = [65, -120];
-        } */
-        leftColor = Gradient[Gradient.length - 1].color;
-    // 基于准备好的dom，初始化echarts实例
-    // 指定图表的配置项和数据,通过组合echart图表，模拟温度计形象表示。
-    optionWatherTemp = {
-        //backgroundColor: backgroudcolor,
-        backgroundColor: '#006569',
-        title: {
-            //left: '40%',
-            offsetCenter: ['200%', '0'],
-            textStyle: {
-                color: 'white',
-            },
-            text: "--当前温度值",//sname+
-        },
+function initMechanicalSeries(data) {//温度计、湿度表。
+    optionMechanicalVolt= {
+        backgroundColor: '#fff',
         tooltip: {
-            formatter: "{a} <br/>{c} {b}"
+            formatter:  "{a}: <br/>{c} "+"V",
+        },
+        grid:{
+            show:true,
+            bolderColor:'rgba(255,0,0,1)',
+            bolderWidth : 3,
+            bolderType:'dotted',
+            top:'10%',
+            left:'20%',
+            bottom:'27%',
+            right:'17%',
         },
         toolbox: {
             show: false,
@@ -912,222 +838,101 @@ function initWatherSeries(data) {//温度计、湿度表。
                 }
             }
         },
-        yAxis: [{
-            show: false,
-            data: [],
+        series: [{ 
+            name: data[0].name,//'电压',
+            type: 'gauge',
+            center: ['80%', "70%"], // 默认全局居中
+            radius: '100%',//半径
             min: 0,
-            max: 125,
-            axisLine: {
-                show: false
-            }
-        }, {
-            show: false,
-            min: 0,
-            max: 50,
-        }, {
-            type: 'category',
-            data: ['', '', '', '', '', '', '', '', '', '', '°C'],
-            position: 'left',
-            offset: -155,
+            max: 400,
+            startAngle: 180,//起始角度
+            endAngle: 90,//终止角度
+            splitNumber: 4,//
+            axisLine: { // 坐标轴线
+                lineStyle: { // 属性lineStyle控制线条样式
+                    color: [[1, '#000']],//[0.29, 'lime'],[0.86, '#1e90ff']
+                    width: 0,
+                    //shadowColor : '#000', //默认透明
+                    //shadowBlur: 10
+                }
+            },
+            axisTick: { // 坐标轴小标记
+                show: true,
+                splitNumber:5,
+                lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                    width: 1,
+                    color: '#f22',
+                }
+            },
             axisLabel: {
-                fontSize: 10,
-                color: 'white'
+                distance: -30,//控制刻度值的位置
+                textStyle: { // 属性lineStyle控制线条样式
+                    //fontWeight: 'bolder',
+                    color: '#000',
+                    //shadowColor: '#fff', //默认透明
+                    //shadowBlur: 10,
+                    fontSize:12,
+                },
             },
-            axisLine: {
-                show: false
-            },
-            axisTick: {
-                show: false
-            },
-        }], 
-        xAxis: [{
-            show: false,
-            min: -40,
-            max: 80,
-            data: []
-        }, {
-            show: false,
-            min: -40,
-            max: 80,
-            data: []
-        }, {
-            show: false,
-            min: -40,
-            max: 80,
-            data: []
-        }, {
-            show: false,
-            min: -30,
-            max: 80,
-        }],
-        series: [{
-            name: '条',
-            type: 'bar',
-            // 对应上面XAxis的第一个对)象配置
-            xAxisIndex: 0,
-            data: [{
-                value: (TP_value + 20),//这个改带颜色刻度的
-                label: {
-                    normal: {
-                        show: true,
-                        position: boxPosition,
-                        /*backgroundColor: {
-                            image: 'plugin/subway_beijing/images/power/bg5Valuebg.png',//文字框背景图
-                        },*/
-                        width: 40,
-                        height: 90,
-                        formatter: '{back| ' + TP_value + ' }{unit|°C}',//\n{downTxt|' + TP_txt + '}',
-                        rich: {
-                            back: {
-                                align: 'center',
-                                lineHeight: 50,
-                                fontSize: 40,
-                                fontFamily: 'digifacewide',
-                                color: leftColor
-                            },
-                            unit: {
-                                fontFamily: '微软雅黑',
-                                fontSize: 15,
-                                lineHeight: 50,
-                                color: leftColor
-                            },
-                            downTxt: {
-                                lineHeight: 50,
-                                fontSize: 25,
-                                align: 'center',
-                                color: '#fff'
-                            }
-                        }
-                    }
-                }
-            }],
-            barWidth: 18,
-            itemStyle: {
-                normal: {
-                    color: new echarts.graphic.LinearGradient(0, 1, 0, 0, Gradient)
+            splitLine: { // 分隔线
+                length: 12, // 属性length控制线长
+                lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                    width: 2,
+                    color: '#000',
+                    shadowColor: '#000', //默认透明
+                    shadowBlur: 10,
                 }
             },
-            z: 2
-        }, {
-            name: '白框',
-            type: 'bar',
-            xAxisIndex: 1,
-            barGap: '-100%',
-            data: [134],
-            barWidth: 28,
-            itemStyle: {
-                normal: {
-                    color: '#0C2E6D',
-                    barBorderRadius: 50,
+            pointer: {
+                show:true,
+                width: 2,
+                length : '100%',
+                color: '#F00',
+                shadowColor: '#00f', //默认透明
+                shadowBlur: 5,
+            },
+            itemStyle:{
+                color:'#000',
+                bolderColor:"#000",
+                bolderWidth:2,
+                bolderType:'dotted',
+            },
+            title: {
+                show: true,
+                offsetCenter: ['-110%', '-120%'], // x, y，单位px
+                textStyle: {
+                    color: 'black',
+                    fontSize: 16,
+                    fontStyle: 'bolder',
                 }
             },
-            z: 1
-        }, {
-            name: '外框',
-            type: 'bar',
-            xAxisIndex: 2,
-            barGap: '-100%',
-            data: [135],
-            barWidth: 38,
-            itemStyle: {
-                normal: {
-                    color: '#4577BA',
-                    barBorderRadius: 50,
-                }
-            },
-            z: 0
-        }, {
-            name: '圆',
-            type: 'scatter',
-            hoverAnimation: false,
-            data: [0],
-            xAxisIndex: 0,
-            symbolSize: 40,
-            itemStyle: {
-                normal: {
-                    color: '#93FE94',
-                    opacity: 1,
-                }
-            },
-            z: 2
-        }, {
-            name: '白圆',
-            type: 'scatter',
-            hoverAnimation: false,
-            data: [0],
-            xAxisIndex: 1,
-            symbolSize: 60,
-            itemStyle: {
-                normal: {
-                    color: '#0C2E6D',
-                    opacity: 1,
-                }
-            },
-            z: 1
-        }, {
-            name: '外圆',
-            type: 'scatter',
-            hoverAnimation: false,
-            data: [0],
-            xAxisIndex: 2,
-            symbolSize: 70,
-            itemStyle: {
-                normal: {
-                    color: '#4577BA',
-                    opacity: 1,
-                }
-            },
-            z: 0
-        }, {
-            name: '刻度',
-            type: 'bar',
-            yAxisIndex: 0,
-            xAxisIndex: 3,
-            label: {
-                normal: {
-                    show: true,
-                    position: 'left',
-                    distance: 10,
-                    color: 'white',
+            detail: {
+                show: true,
+                offsetCenter: ['-40%', '30%'],
+                formatter: '{value}'+"V",
+                textStyle: {
                     fontSize: 14,
-                    formatter: function(params) {
-                        if(params.dataIndex > 130 || params.dataIndex < 10) {
-                            return '';
-                        } else {
-                            if((params.dataIndex - 10) % 20 === 0) {
-                                return params.dataIndex - 20;//这个改刻度的，当减70的时候刻度是从-60开始不是从零开始
-                            } else {
-                                return '';
-                            }
-                        }
-                    }
+                    color:'#18343C'
                 }
             },
-            barGap: '-100%',
-            data: kd,
-            barWidth: 1,
-            itemStyle: {
-                normal: {
-                    color: 'white',
-                    barBorderRadius: 120,
-                }
-            },
-            z: 0
+            data:[data[0]],//[{value: 20,name: '电压'}],// renbao pingan taipingyang dadi yangguang fude 
         }]
-    };
-    myChartWatherTemp.setOption(optionWatherTemp);//温度计
-    optionWatherSwet = {
-        backgroundColor: backgroudcolor,
-        title: {
-            //left: '40%',
-            offsetCenter: ['200%', '0'],
-            textStyle: {
-                color: 'white',
-            },
-            text: "-相对湿度",//sname+
-        },
+    }
+    myChartMechanicalVolt.setOption(optionMechanicalVolt);//温度计
+    optionMechanicalCurren = {
+        backgroundColor: '#fff',
         tooltip: {
-            formatter: "{a} <br/>{c} {b}"
+            formatter:  "{a}: <br/>{c} "+"A",
+        },
+        grid:{
+            show:true,
+            bolderColor:'rgba(255,0,0,1)',
+            bolderWidth : 3,
+            bolderType:'dotted',
+            top:'10%',
+            left:'20%',
+            bottom:'27%',
+            right:'17%',
         },
         toolbox: {
             show: false,
@@ -1143,139 +948,144 @@ function initWatherSeries(data) {//温度计、湿度表。
                 }
             }
         },
-        series: [
-            {
-                name: '湿度',
-                type: 'gauge',
-                center: ['50%', "50%"], // 默认全局居中
-                radius: '70%',//半径
-                min: 0,
-                max: 100,
-                //startAngle: 315,//起始角度
-                //endAngle: 225,//终止角度
-                splitNumber: 5,//
-                axisLine: { // 坐标轴线
-                    lineStyle: { // 属性lineStyle控制线条样式
-                        color: [
-                            [0.2, 'green'],
-                            [1, '#1f1f1f']
-                        ],
-                        color: [[0.2, '#0a0'], [0.8, '#CC0'], [1, '#ff4500']],
-                        width: 25,
-                        /* shadowColor: 'yellow', //默认透明
-                         shadowOffsetX:2,
-                         shadowBlur: 10*/
-                    }
+        series: [{ 
+            name: data[0].name,//'电压',
+            type: 'gauge',
+            center: ['80%', "70%"], // 默认全局居中
+            radius: '100%',//半径
+            min: 0,
+            max: 5,
+            startAngle: 180,//起始角度
+            endAngle: 90,//终止角度
+            splitNumber: 5,//
+            axisLine: { // 坐标轴线
+                lineStyle: { // 属性lineStyle控制线条样式
+                    color: [[1, '#000']],//[0.29, 'lime'],[0.86, '#1e90ff']
+                    width: 0,
+                    //shadowColor : '#000', //默认透明
+                    //shadowBlur: 10
+                }
+            },
+            axisTick: { // 坐标轴小标记
+                show: true,
+                splitNumber:5,
+                lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                    width: 1,
+                    color: '#f22',
+                }
+            },
+            axisLabel: {
+                distance: -30,//控制刻度值的位置
+                textStyle: { // 属性lineStyle控制线条样式
+                    //fontWeight: 'bolder',
+                    color: '#000',
+                    //shadowColor: '#fff', //默认透明
+                    //shadowBlur: 10,
+                    fontSize:12,
                 },
-                axisTick: { // 坐标轴小标记
-                    show: true,
-                    splitNumber: 10,
-                    length:10,
-                },
-                axisLabel: {
-                    textStyle: { // 属性lineStyle控制线条样式
-                        fontWeight: 'bolder',
-                        color: '#fff',
-                        shadowColor: '#fff', //默认透明
-                        shadowBlur: 10,
-                        fontSize:14,
-                    },
-                },
-                splitLine: { // 分隔线
-                    length: 18, // 属性length控制线长
-                    lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
-                        width: 2,
-                        color: '#fff',
-                        shadowColor: '#fff', //默认透明
-                        shadowBlur: 10,
-                    }
-                },
-                pointer: {
-                    show: true,
-                    width: 5,
-                    shadowColor: '#fff', //默认透明
-                    shadowBlur: 5
-                },
-                title: {
-                    show: true,
-                    offsetCenter: [0, '-30%'], // x, y，单位px
-                    textStyle: {
-                        color: 'white',
-                        fontSize: 24
-                    }
-                },
-                detail: {
-                    show: true,
-                    offsetCenter: [0, '100%'],
-                    formatter:  '{value}  \n\n' + '当前湿度: ' + ' ',//'实时值:\n\n' + ' ' + ' {value}  ' + chart_unit,
-                    textStyle: {
-                        fontSize: 20,
-                        color: '#F8F43C'
-                    }
-                },
-                data: [data[1],],//[{value: 20,name: '温度'}]
-            }
-        ]
-    };
-    myChartWatherSwet.setOption(optionWatherSwet);
+            },
+            splitLine: { // 分隔线
+                length: 12, // 属性length控制线长
+                lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                    width: 2,
+                    color: '#000',
+                    shadowColor: '#000', //默认透明
+                    shadowBlur: 10,
+                }
+            },
+            pointer: {
+                show:true,
+                width: 2,
+                length : '100%',
+                color: '#F00',
+                shadowColor: '#00f', //默认透明
+                shadowBlur: 5,
+            },
+            itemStyle:{
+                color:'#000',
+                bolderColor:"#000",
+                bolderWidth:2,
+                bolderType:'dotted',
+            },
+            title: {
+                show: true,
+                offsetCenter: ['-110%', '-120%'], // x, y，单位px
+                textStyle: {
+                    color: 'black',
+                    fontSize: 16,
+                    fontStyle: 'bolder',
+                }
+            },
+            detail: {
+                show: true,
+                offsetCenter: ['-40%', '30%'],
+                formatter: '{value}'+"A",
+                textStyle: {
+                    fontSize: 14,
+                    color:'#18343C'
+                }
+            },
+            data:[data[1]],//[{value: 20,name: '电压'}],// renbao pingan taipingyang dadi yangguang fude 
+        }]
+    }
+    myChartMechanicalCurrent.setOption(optionMechanicalCurren);
 }
 //window.setInterval("getrealdatabynodeid(-1)",60000);
-function refreshDataForWather() {
-    TP_value= ((Math.random() * 110 - 10).toFixed(Number_of_decimal))*1;
-    //var refresh_option=myChartWatherTemp.getOption();
-    optionWatherTemp.series[0].data[0].value=TP_value+20;
-    optionWatherTemp.series[0].data[0].label.normal.formatter= '{back| ' + TP_value + ' }{unit|°C}',//\n{downTxt|' + TP_txt + '}',
-    myChartWatherTemp.setOption(optionWatherTemp);
-    /*//optionWatherTemp.series[0].data[0].value = maxvalue;
-    optionWatherTemp.series[0].max = chart_max;
-    optionWatherTemp.series[0].min = chart_min;
-    value = optionWatherTemp.series[0].data[0].value;
-    optionWatherTemp.series[0].detail.formatter = chart_sigle + value + ': \n\n' +"时间："+happentime;//+chart_unit;
-    optionWatherTemp.series[0].data[0].name = chart_unit;//sname;
-    optionWatherTemp.title.text = sname+" : "+titlename+" 24小时峰值";
-    for (var i = 0; i < optionWatherTemp.series.length; i++) {
-        optionWatherTemp.series[i].axisLine.lineStyle.color = colors;
-        optionWatherTemp.series[i].max = chart_max;
-        optionWatherTemp.series[i].min = chart_min;
-        value = optionWatherTemp.series[i].data[0].value;
-        optionWatherTemp.series[i].detail.formatter = chart_sigle + value + ': \n\n' + optionWatherTemp.series[i].name + ' ';//+chart_unit;
-        optionWatherTemp.series[i].data[0].name = chart_unit;//sname;
-        optionWatherTemp.title.text = sname+" : "+titlename;//添加显示项的标题指示；*/
+function refreshDataForMechanical() {
+    TP_value= ((Math.random() * 400).toFixed(Number_of_decimal))*1;
+    //var refresh_option=myChartMechanicalVolt.getOption();
+    optionMechanicalVolt.series[0].data[0].value=TP_value;//+20;
+    //optionMechanicalVolt.series[0].data[0].label.formatter= '{back| ' + TP_value + ' }{unit|°C}',//\n{downTxt|' + TP_txt + '}',
+    myChartMechanicalVolt.setOption(optionMechanicalVolt);
+    /*//optionMechanicalVolt.series[0].data[0].value = maxvalue;
+    optionMechanicalVolt.series[0].max = chart_max;
+    optionMechanicalVolt.series[0].min = chart_min;
+    value = optionMechanicalVolt.series[0].data[0].value;
+    optionMechanicalVolt.series[0].detail.formatter = chart_sigle + value + ': \n\n' +"时间："+happentime;//+chart_unit;
+    optionMechanicalVolt.series[0].data[0].name = chart_unit;//sname;
+    optionMechanicalVolt.title.text = sname+" : "+titlename+" 24小时峰值";
+    for (var i = 0; i < optionMechanicalVolt.series.length; i++) {
+        optionMechanicalVolt.series[i].axisLine.lineStyle.color = colors;
+        optionMechanicalVolt.series[i].max = chart_max;
+        optionMechanicalVolt.series[i].min = chart_min;
+        value = optionMechanicalVolt.series[i].data[0].value;
+        optionMechanicalVolt.series[i].detail.formatter = chart_sigle + value + ': \n\n' + optionMechanicalVolt.series[i].name + ' ';//+chart_unit;
+        optionMechanicalVolt.series[i].data[0].name = chart_unit;//sname;
+        optionMechanicalVolt.title.text = sname+" : "+titlename;//添加显示项的标题指示；*/
         //形成进度条式的填充仪表效果并分段显示不同延时用于指示不同状态。    
         /*if(value<20){
-            optionWatherTemp.series[i].axisLine.lineStyle.color[0]=[value/100,'blue'];
+            optionMechanicalVolt.series[i].axisLine.lineStyle.color[0]=[value/100,'blue'];
         }else if(value<80){
-            optionWatherTemp.series[i].axisLine.lineStyle.color[0]=[value/100,"green"];
+            optionMechanicalVolt.series[i].axisLine.lineStyle.color[0]=[value/100,"green"];
         }else{
-            optionWatherTemp.series[i].axisLine.lineStyle.color[0]=[value/100,"red"];
+            optionMechanicalVolt.series[i].axisLine.lineStyle.color[0]=[value/100,"red"];
         }
     }
-    myChartWatherTemp.setOption(optionWatherTemp);*/
-    optionWatherSwet.series[0].data[0].value = TP_value;
-    optionWatherSwet.series[0].max = chart_max;
-    optionWatherSwet.series[0].min = chart_min;
-    value = optionWatherSwet.series[0].data[0].value;
-    //optionWatherSwet.series[0].detail.formatter = chart_sigle + value + ': \n\n' + optionWatherSwet.series[0].name + ' ';//+chart_unit;
-    //optionWatherSwet.series[0].data[0].name = chart_unit;//sname;
-    //optionWatherSwet.title.text = sname+" : "+titlename;
-    myChartWatherSwet.setOption(optionWatherSwet);
-    optionWatherPa.series[0].data.shift();
+    myChartMechanicalVolt.setOption(optionMechanicalVolt);*/
+    optionMechanicalCurren.series[0].data[0].value = (TP_value/80).toFixed(Number_of_decimal)*1;
+    //optionMechanicalCurren.series[0].max = chart_max;
+    optionMechanicalCurren.series[0].min = chart_min;
+    value = optionMechanicalCurren.series[0].data[0].value;
+    //optionMechanicalCurren.series[0].detail.formatter = chart_sigle + value + ': \n\n' + optionMechanicalCurren.series[0].name + ' ';//+chart_unit;
+    //optionMechanicalCurren.series[0].data[0].name = chart_unit;//sname;
+    //optionMechanicalCurren.title.text = sname+" : "+titlename;
+    myChartMechanicalCurrent.setOption(optionMechanicalCurren);
+    optionMechanicalVt.series[0].data.shift();
     now = new Date(base += oneDay);
-    optionWatherPa.series[0].data.push([
+    optionMechanicalVt.series[0].data.push([
         [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
         TP_value
     ])// maxOfRealdata.toFixed(Number_of_decimal);//54.321;
-    //optionWatherWater.series[0].detail.formatter=maxOfRealdata.toFixed(Number_of_decimal)+ '\n\n 标签名称: '+maxOfRealdataName;//实时极值的标签名称,"发生时刻:"+maxvaluetime+
-    optionWatherPa.series[0].max = chart_max;
-    optionWatherPa.series[0].min = chart_min;
-    //optionWatherPa.series[0].data[0].name = chart_unit;//sname;
-    //optionWatherPa.title.text="实时极值: "+titlename;
-    myChartWatherWater.setOption(optionWatherPa);
-    myChartWatherPa.setOption(optionWatherPa);
+    //optionMechanicalLt.series[0].detail.formatter=maxOfRealdata.toFixed(Number_of_decimal)+ '\n\n 标签名称: '+maxOfRealdataName;//实时极值的标签名称,"发生时刻:"+maxvaluetime+
+    optionMechanicalVt.series[0].max = chart_max;
+    optionMechanicalVt.series[0].min = chart_min;
+    //optionMechanicalVt.series[0].data[0].name = chart_unit;//sname;
+    //optionMechanicalVt.title.text="实时极值: "+titlename;
+    myChartMechanicalLt.setOption(optionMechanicalVt);
+    myChartMechanicalVt.setOption(optionMechanicalVt);
     
 }
-/*
-function decodedatas(obj_chartdata) {
+/*function decodedatas(obj_chartdata) {
     try{
     //maxval=0;
     //var iserror = false,
@@ -1287,13 +1097,13 @@ function decodedatas(obj_chartdata) {
     //pc = [];
     //labels = [],
     //t;
-    myChartWatherPa.clear();
+    myChartMechanicalVt.clear();
     if(obj_chartdata==null){
         obj_chartdata=JSON.parse(localStorage.getItem("historydata"));
     }
     if (obj_chartdata == null) {
         maxvalue=NaN;//20200518
-        myChartWatherPa.hideLoading();
+        myChartMechanicalVt.hideLoading();
         refreshData();//20200518
         return;
         //drawchart();
@@ -1328,18 +1138,18 @@ function decodedatas(obj_chartdata) {
     lengenddata.push("当前温度值");
     lengenddata.push("湿度");
     //lengenddata.push(document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457");
-    optionWatherTemp.series[0].data[0].value = maxvalue;
-    //optionWatherTemp.series[0].data[0]
-    //myChartWatherTemp.setOption(optionWatherTemp);
+    optionMechanicalVolt.series[0].data[0].value = maxvalue;
+    //optionMechanicalVolt.series[0].data[0]
+    //myChartMechanicalVolt.setOption(optionMechanicalVolt);
     refreshData();
     drawchart();
     decoderealdata();//进行一次实时数据刷新，完善图表的指示内容；//20200518
     //绘制图形线条
     function drawchart() {
-        //var myChartWatherTemp = echarts.init(document.getElementById('main'));
+        //var myChartMechanicalVolt = echarts.init(document.getElementById('main'));
         var lengenddata1 = [];
         lengenddata1.push(titlename);//20200518
-        var optionWatherPa = {
+        var optionMechanicalVt = {
             color: ['#FF0000', '#FFFF00'],//,'#00ff00'
             backgroundColor: '#d0d0d0',
             title: {
@@ -1448,19 +1258,19 @@ function decodedatas(obj_chartdata) {
             }
             ]
         };
-        myChartWatherPa.hideLoading();
-        myChartWatherPa.setOption(optionWatherPa);
+        myChartMechanicalVt.hideLoading();
+        myChartMechanicalVt.setOption(optionMechanicalVt);
     }
     }catch(err){
         showstateinfo(err.message.message,"realdata/decodedatas");
     }
 }*/
-function initWatherChart2(adata) {
-    optionWatherPa = {
+function initMechanicalChart2(adata) {
+    optionMechanicalVt = {
         color: ['#FFFF00', '#FF0000'],//,'#00ff00' complain mountain 
         backgroundColor: backgroudcolor,
         title: {
-            text: '24h 变化趋势图',
+            text: '触头行程时间曲线',
             x: "center",
         },/**/
         tooltip: {
@@ -1553,9 +1363,9 @@ function initWatherChart2(adata) {
 			}*/
         ]
     };
-    //myChartWatherPa.hideLoading();
-    myChartWatherPa.setOption(optionWatherPa);
-    myChartWatherWater.setOption(optionWatherPa);
+    //myChartMechanicalVt.hideLoading();
+    myChartMechanicalVt.setOption(optionMechanicalVt);
+    myChartMechanicalLt.setOption(optionMechanicalVt);
 }
 function jisuanyichangbili(avalue){
     if(avalue>alertconfig[3]){
@@ -1570,3 +1380,9 @@ function jisuanyichangbili(avalue){
         alertcount[0]++;
     }
 }
+function selectid(obj){
+    sessionStorage.sensorId=obj.value;
+}
+/**
+ * 
+ */

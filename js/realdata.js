@@ -69,7 +69,7 @@ function initrealdata(){//初始化页面选项
     }
     updatachart(chartOption.chart_type);
     initseries(datas);
-    initchart2();
+    //initchart2();
     initpage();
     }catch(err){
         showstateinfo(err.message.message,"initrealdata");
@@ -434,7 +434,7 @@ function getCatalog(index){
         showstateinfo(err.message,"realdata/getCatalog")
     }
 }
-function decoderealdata(obj_realdata,asensorid,isload) {
+function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数据，asensorid 当前标签id，isload 是否与主菜单标签表同步
     try{
     var v_sel = $('[name="options"]');
     $('#realdata-tbody').empty();
@@ -458,12 +458,12 @@ function decoderealdata(obj_realdata,asensorid,isload) {
     var jssj = getCurrentDate(2);
     //haverealdata=false;
     sid=-1;
-    let nodata=true;
+    var nodata=true;
     if(!asensorid)
         nodata=false;
-    let realdata_len=obj_realdata.length, 
-        tablehead_len=tab_head.rows[0].cells.length;
     if (obj_realdata) {
+        var realdata_len=obj_realdata.length, 
+        tablehead_len=tab_head.rows[0].cells.length;
         refresh_tabhead(v_sel);//根据选项刷新表头的显示内容
         alert_obj={};
         //var title_len=tab_head.rows[0].cells.length;
@@ -507,9 +507,14 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                         break;
                     }
                 }
+                var data_value;
                 if(isfind){//在需要显示的标签列表
                     //isnew=true;
                     obj_data = (obj_realdata)[j];////sid
+                    if(parseFloat(obj_data.value))
+                        data_value=(obj_data.value*1).toFixed(Number_of_decimal)
+                    else
+                        data_value=obj_data.value;
                     for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
                         if(v_sel[k].value==dname){
                             break;
@@ -554,7 +559,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                 atr.cells[k+hidden_cells].style.cssText = "display:none";
                             }
                             if(v_sel[k].value == dname){
-                                atr.cells[k+hidden_cells].innerHTML=(obj_data.value*1).toFixed(Number_of_decimal);
+                                atr.cells[k+hidden_cells].innerHTML=data_value;
                                 if(obj_data.message){
                                     atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
                                 }else{
@@ -582,7 +587,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                         atr.cells[k+hidden_cells].style.cssText = "display:none";
                                     }
                                     if(v_sel[k].value==dname){
-                                        $table.rows[l].cells[k+hidden_cells].innerHTML=(obj_data.value*1).toFixed(Number_of_decimal);
+                                        $table.rows[l].cells[k+hidden_cells].innerHTML=data_value;
                                         //isbreak=true;
                                         if($table.rows[l].cells[1].innerHTML<dateToString(obj_data.time,2).substring(10,19)){//更新最新时间
                                             $table.rows[l].cells[1].innerHTML=dateToString(obj_data.time,2).substring(10,19);
@@ -710,6 +715,10 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 if(isfind){//在需要显示的标签列表
                         //isnew=true;
                     obj_data = (obj_realdata)[j];////sid
+                    if(parseFloat(obj_data.value))
+                        data_value=(obj_data.value*1).toFixed(Number_of_decimal)
+                    else
+                        data_value=obj_data.value;
                     if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，
                         atr=document.createElement("tr");
                         //atr.setAttribute("height","35px");
@@ -735,7 +744,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                         //atr.cells[length-1].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
                         for(var k in tab_head.rows[0].cells){//添加到指定列。
                             if(obj_data.name==tab_head.rows[0].cells[k].innerHTML){
-                                atr.cells[k].innerHTML=obj_data.value.toFixed(Number_of_decimal);
+                                atr.cells[k].innerHTML=data_value;
                                 if(obj_data.message){
                                     atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
                                 }else{
@@ -756,7 +765,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                             if($table.rows[l].cells[0].innerHTML==obj_data.sensorId){
                                 for(var k in tab_head.rows[0].cells){
                                     if(obj_data.name==tab_head.rows[0].cells[k].innerHTML){//添加到指定列
-                                        atr.cells[k].innerHTML=obj_data.Value.toFixed(Number_of_decimal);
+                                        atr.cells[k].innerHTML=data_value;
                                         if(obj_data.message){
                                             atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
                                             if(atr.cells[tablehead_len-1].innerHTML)
@@ -813,12 +822,16 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 //happentime=lasttime;
                 //value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
                 var heightpx = $("#realdata-tbody tr").height();// + 1;//加1是网格线的宽度
-                var ppt = +sessionStorage.t_p;
+                var ppt = parseInt(sessionStorage.t_p);
                 if(ppt>pageSize){
                     curPage=parseInt(ppt/pageSize);
                 }else{
                     curPage=0;
                 }
+                /**安全评价是以实现工程、系统安全为目的，应用安全系统工程原理和方法，对工程、系统中存在的危险、有害因素进行识别与分析、判断工程、系统发生
+                 * 事故和急性职业危害的可能性及其严重程度，提出安全对策建议，从而为工程、系统制定防范措施和管理决策提供科学依据。
+                 * 安全预评价 安全验收评价 安全现状综合评价 安全专项评价  普遍性 客观性 规律性 转换性
+                 */
                 //tableclick($table.rows[curPage]);
                 $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
                 $table.rows[ppt].style.backgroundColor = color_table_cur;
@@ -855,10 +868,12 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                         }
                         //refreshData();
                     }
+                    window.parent.treelocationforsensorid(sensor_Id);
                 } else {
                     isfirst = false; //
                     //myChart2.showLoading();
-                    window.parent.treelocationforsensorid(sensor_Id);
+                    if(!isload)
+                    window.parent.treelocationforsensorid(sensor_Id,true);
                     gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
                 }
             }//else{	//$table.rows[0].ondblclick();	//}
@@ -881,18 +896,13 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         showstateinfo(err.message,"realdata/decoderealdata");
     }
 }
-/*function setPageSize(){
-    pageSize = document.getElementById("pageSize").value;
-    //initdevice();
-    page.setPageSize(pageSize); 
-}*/
 function localrowbysensorid(asensorid){
-    var isfinded=false;
-    //initchartoption();
-    //isfirst=true;
-    //decoderealdata(null,asensorid);//是否可以用其他函数代替（定位到指定的当前行）
+    //var isfinded=false;
+    initchartoption();
+    isfirst=true;
+    decoderealdata(null,asensorid,true);//是否可以用其他函数代替（定位到指定的当前行）
     //btn_refresh_click();
-    $table = document.getElementById('realdata-tbody');
+    /*$table = document.getElementById('realdata-tbody');
     let tablehead_len=$table.rows.length;
     for (var int = 0; int < tablehead_len; int++) {
         if ($table.rows[int].cells[0].innerHTML == (asensorid+"")) {
@@ -911,9 +921,9 @@ function localrowbysensorid(asensorid){
             isfinded=true;
             break;  
         }
-    }/**/
+    }
     if(!isfinded&&!isfirst)
-        showmsg("没有符合条件的实时数据", info_showtime);
+        showmsg("没有符合条件的实时数据", info_showtime);/**/
 }
 function updatachart(atype) {//根据不同设备类型，更新图形当中的最大最小值设置以及数值单位
     switch (atype.toLowerCase()) {
@@ -974,7 +984,7 @@ function tableclick(tr,isloadmain) {
         myChart2.showLoading();
         gethistorydata(sessionStorage.SensorId,catalog,typename, kssj, jssj, 1);
         if (isloadmain)
-        window.parent.treelocationforsensorid(sessionStorage.SensorId,true);
+        window.parent.treelocationforsensorid(sessionStorage.SensorId);
     //}
     //maxval=0;
     refreshData();
@@ -1033,18 +1043,26 @@ function initseries(data) {
                             [1, '#1f1f1f']
                         ],
                         color: colors,//[[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
-                        width: 29,
+                        width: 30,
                         /*shadowColor: 'yellow', //默认透明
                         shadowOffsetX:2,
                         shadowBlur: 10*/
                     }
                 },
                 axisTick: { // 坐标轴小标记
+                    distance: -29,
                     show: true,
                     splitNumber: chartOption.chart_chi_num,
                     length:10,
+                    lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                        width: 1.5,
+                        color: '#fff',
+                        //shadowColor: '#fff', //默认透明
+                        //shadowBlur: 10
+                    }
                 },
                 axisLabel: {
+                    distance:-45,//采用echarts5.0以上，此值为-10，采用V4.6.0以下版本，此值为-45，此时标签正好在园的外围，且数字显示完全。
                     textStyle: { // 属性lineStyle控制线条样式
                         fontWeight: 'bolder',
                         color: '#fff',
@@ -1054,7 +1072,8 @@ function initseries(data) {
                     },
                 },
                 splitLine: { // 分隔线
-                    length: 18, // 属性length控制线长
+                    distance: -29,//与坐标轴的宽度取相对值
+                    length: 20, // 属性length控制线长
                     lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
                         width: 2,
                         color: '#fff',
@@ -1064,9 +1083,10 @@ function initseries(data) {
                 },
                 pointer: {
                     show: true,
-                    width: 5,
+                    width: 6,
                     shadowColor: '#fff', //默认透明
-                    shadowBlur: 0
+                    shadowBlur: 10,
+                    length:'90%',
                 },
                 title: {
                     show: true,
@@ -1091,6 +1111,184 @@ function initseries(data) {
         ]
     };
     myChart.setOption(option);//24小时极值
+    option1 = {
+        backgroundColor: backgroudcolor,
+        title: {
+            //left: '40%',
+            offsetCenter: ['200%', '0'],
+            textStyle: {
+                color: 'white',
+                fontWeight: 'normal',
+                fontSize: chartOption.chart_title_font_size,
+            },
+            text: '实时极值',
+        },
+        tooltip: {
+            formatter: "{a} <br/>{c} {b}"
+        },
+        toolbox: {
+            show: false,
+            feature: {
+                mark: {
+                    show: true
+                },
+                restore: {
+                    show: true
+                },
+                saveAsImage: {
+                    show: true
+                }
+            }
+        },
+        series: [
+            {
+                name: '实时极值',
+                type: 'gauge',
+                center: ['50%', '50%'], // 默认全局居中
+                radius: '70%',//半径
+                min: chartOption.chart_min,
+                max: chartOption.chart_max,
+                //startAngle: 135,//起始角度
+                //endAngle: 35,//终止角度
+                splitNumber: chartOption.chart_main_num,//
+                axisLine: { // 坐标轴线
+                    lineStyle: { // 属性lineStyle控制线条样式
+                        color: [
+                            [0.2, 'green'],
+                            [1, '#1f1f1f']
+                        ],
+                        color: colors,//[[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
+                        width: 30,
+                        /*shadowColor: 'yellow', //默认透明
+                        shadowOffsetX:2,
+                        shadowBlur: 10*/
+                    }
+                },
+                axisTick: { // 坐标轴小标记
+                    distance:-29,
+                    show: true,
+                    splitNumber: chartOption.chart_chi_num,
+                    length:10,
+                    lineStyle:{
+                        color:"#fff",
+                        width:1.5,
+                    }
+                },
+                axisLabel: {
+                    distance:-45,//采用echarts5.0以上，此值为-10，采用V4.6.0以下版本，此值为-45，此时标签正好在园的外围，且数字显示完全。
+                    textStyle: { // 属性lineStyle控制线条样式
+                        fontWeight: 'bolder',
+                        color: '#fff',
+                        shadowColor: '#fff', //默认透明
+                        shadowBlur: 10,
+                        fontSize:14,
+                    },
+                },
+                splitLine: { // 分隔线
+                    distance:-29,
+                    length: 20, // 属性length控制线长
+                    lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                        width: 2,
+                        color: '#fff',
+                        shadowColor: '#fff', //默认透明
+                        shadowBlur: 10
+                    }
+                },
+                pointer: {
+                    show: true,
+                    width: 6,
+                    shadowColor: '#fff', //默认透明
+                    shadowBlur: 0,
+                    length:'90%',
+                },
+                title: {
+                    show: true,
+                    offsetCenter: [0, '-30%'], // x, y，单位px
+                    textStyle: {
+                        color: 'white',
+                        fontSize: chartOption.chart_title_font_size,
+                    }
+                },
+                detail: {
+                    show: true,
+                    offsetCenter: [0, '100%'],
+                    formatter: ' {value}  \n\n' + '发生时刻: ' +maxvaluetime+ '\n\n 标签名称: '+sname,//+chart_unit,
+                    textStyle: {
+                        fontSize: chartOption.chart_detail_font_size,
+                        color: '#F8F43C'
+                    }
+                },
+                data: [{value: 20,name: chartdataname1}],//[data[0]],//
+            },
+        ]
+    };
+    myChart1.setOption(option1);
+    option3 = {
+        backgroundColor: backgroudcolor,
+        //color:['#090','#f75','#055','#b00','#095','#f0f','#444'],
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        title : {
+            text: "状态统计图",
+            textStyle:{
+                color: "#FFF",
+                fontWeight: 'normal',
+                fontSize: chartOption.chart_title_font_size,
+            },
+        },
+
+        series: [
+            {
+                name: '占比统计',
+                type: 'pie',
+                radius: ['20%', '50%'],
+                avoidLabelOverlap: false,
+                itemStyle: {
+                    borderRadius: 5,
+                    borderColor: '#fff',
+                    borderWidth: 2
+                },
+                label: {
+                    formatter: '{b}: {c}\n\n  {{d}%}  ',
+                    show: true,
+                    position: 'outer',
+                    color:"#fff",
+                    alignTo: 'edge',
+                    edgeDistance: 10,
+                    //bleedMargin: 15,
+                    margin: 20
+                },
+                //barWidth: '60%', []
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '16',
+                        //fontWeight: 'bold'
+                    }
+                },/*
+                labelLine: {
+                    show: true
+                },*/
+                data: []//,,{value:90,name:'告警'},{value:0,name:"严重告警"} 
+                    //{value:30,name:'故障'},{value: 20,name: '停运'}]{value:310,name:'正常'}, {value:52,name:'预警'},{value:20,name:'一级告警'} ,
+                    //{value:34,name:'二级告警'}
+            }
+        ]
+    };
+    myChart3.setOption(option3);
+    myChart3.on('click',function(params){//点击事件
+        console.log(params);
+    });
     option4 = {
         backgroundColor: backgroudcolor,
         title: {
@@ -1138,7 +1336,7 @@ function initseries(data) {
                             [1, '#1f1f1f']
                         ],
                         color: colors,//[[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
-                        width: 29,
+                        width: 30,
                         /* shadowColor: 'yellow', //默认透明
                          shadowOffsetX:2,
                          shadowBlur: 10*/
@@ -1148,17 +1346,26 @@ function initseries(data) {
                     show: true,
                     splitNumber: chartOption.chart_chi_num,
                     length:10,
+                    distance: -29,
+                    lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                        width: 1.5,
+                        color: '#fff',
+                        //shadowColor: '#fff', //默认透明
+                        //shadowBlur: 10,
+                    }
                 },
                 axisLabel: {
+                    distance:-45,//采用echarts5.0以上，此值为-10，采用V4.6.0以下版本，此值为-45，此时标签正好在园的外围，且数字显示完全。
                     textStyle: { // 属性lineStyle控制线条样式
                         fontWeight: 'bolder',
                         color: '#fff',
-                        shadowColor: '#fff', //默认透明
-                        shadowBlur: 10,
+                        //shadowColor: '#fff', //默认透明
+                        //shadowBlur: 10,
                         fontSize:14,
                     },
                 },
                 splitLine: { // 分隔线
+                    distance: -29,
                     length: 18, // 属性length控制线长
                     lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
                         width: 2,
@@ -1169,9 +1376,10 @@ function initseries(data) {
                 },
                 pointer: {
                     show: true,
-                    width: 5,
+                    width: 6,
                     shadowColor: '#fff', //默认透明
-                    shadowBlur: 5
+                    shadowBlur: 10,
+                    length:"90%",
                 },
                 title: {
                     show: true,
@@ -1195,7 +1403,7 @@ function initseries(data) {
         ]
     };
     myChart4.setOption(option4);
-    initecharts();
+
 }
 //window.setInterval("getrealdatabynodeid(-1)",60000);
 function refreshData() {
@@ -1524,110 +1732,6 @@ function decodedatas(obj_chartdata) {
         showstateinfo(err.message.message,"realdata/decodedatas");
     }
 }
-function initchart2() {
-    var option2 = {
-        color: ['#FFFF00', '#FF0000'],//,'#00ff00' 
-        title: {
-            text: '24h 变化趋势图',
-            x: "center",
-        },/**/
-        tooltip: {
-            show:false,
-            trigger: 'item',
-            //trigger:"axis",
-            formatter: function (params) {
-                if(params.seriesId){
-                    var date = new Date(params.value[0]);
-                    data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
-                    return data + '<br/>' + params.value[1];
-                }
-            }
-        },
-        toolbox: {
-            show: true,
-            feature: {
-                mark: {
-                    show: true
-                },
-                dataView: {
-                    show: true,
-                    readOnly: false
-                },
-                magicType: {
-                    show: true,
-                    type: ['line']
-                },
-                //, 'bar', 'stack', 'tiled' 
-                restore: {
-                    show: true
-                },
-                saveAsImage: {
-                    show: true
-                }
-            }
-        },
-        dataZoom: {
-            show: false,
-            start: 0
-        },
-        legend: {
-            data: [],//lengenddata,
-            orient: "horizontal",//"vertical",
-            x: 'center',
-            y: '30',
-            //color: 'white',
-        },
-        grid: {
-            y2: 80
-        },
-        xAxis: [{
-            type: 'time',
-            splitNumber: 10,
-            axisLine: {
-                lineStyle: {
-                    color: 'black',
-                    width: 2,
-                },
-                onZero: false,
-            },
-        }],
-        yAxis: [{
-            type: 'value',
-            axisLine: {
-                lineStyle: {
-                    color: 'black',
-                    width: 2
-                }
-            },
-            min: minval,
-            max: maxval,
-        }],
-        series: [/**/{
-            name: '',//lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
-            type: 'line',
-            showAllSymbol: true,
-            symbolSize: 1,
-            data: [0]
-        },
-			/*{
-				name: '',//lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
-				type: 'line',
-				showAllSymbol: true,
-				symbolSize: 1,
-				data: []
-			},
-			{
-				name: document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"457",
-				type: 'line',
-				showAllSymbol: true,
-				symbolSize: 1,
-				data: pc
-			}*/
-        ]
-    };
-    //myChart2.hideLoading();
-    myChart2.setOption(option2);
-}
 /*function display() {
     //var $table=$("#warnlogdata-tbody");
     len = $table.rows.length;// - 1;    // 求这个表的总行数，剔除第一行介绍
@@ -1719,175 +1823,6 @@ function displayPage() {
             $(this).show();
     });
 }*/
-function initecharts(){
-    option1 = {
-        backgroundColor: backgroudcolor,
-        title: {
-            //left: '40%',
-            offsetCenter: ['200%', '0'],
-            textStyle: {
-                color: 'white',
-                fontWeight: 'normal',
-                fontSize: chartOption.chart_title_font_size,
-            },
-            text: '实时极值',
-        },
-        tooltip: {
-            formatter: "{a} <br/>{c} {b}"
-        },
-        toolbox: {
-            show: false,
-            feature: {
-                mark: {
-                    show: true
-                },
-                restore: {
-                    show: true
-                },
-                saveAsImage: {
-                    show: true
-                }
-            }
-        },
-        series: [
-            {
-                name: '实时极值',
-                type: 'gauge',
-                center: ['50%', '50%'], // 默认全局居中
-                radius: '70%',//半径
-                min: chartOption.chart_min,
-                max: chartOption.chart_max,
-                //startAngle: 135,//起始角度
-                //endAngle: 35,//终止角度
-                splitNumber: chartOption.chart_main_num,//
-                axisLine: { // 坐标轴线
-                    lineStyle: { // 属性lineStyle控制线条样式
-                        color: [
-                            [0.2, 'green'],
-                            [1, '#1f1f1f']
-                        ],
-                        color: colors,//[[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
-                        width: 29,
-                        /*shadowColor: 'yellow', //默认透明
-                        shadowOffsetX:2,
-                        shadowBlur: 10*/
-                    }
-                },
-                axisTick: { // 坐标轴小标记
-                    show: true,
-                    splitNumber: chartOption.chart_chi_num,
-                    length:10,
-                    lineStyle:{
-                        color:"#fff",
-                    }
-                },
-                axisLabel: {
-                    textStyle: { // 属性lineStyle控制线条样式
-                        fontWeight: 'bolder',
-                        color: '#fff',
-                        shadowColor: '#fff', //默认透明
-                        shadowBlur: 10,
-                        fontSize:14,
-                    },
-                },
-                splitLine: { // 分隔线
-                    length: 20, // 属性length控制线长
-                    lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
-                        width: 2,
-                        color: '#fff',
-                        shadowColor: '#fff', //默认透明
-                        shadowBlur: 10
-                    }
-                },
-                pointer: {
-                    show: true,
-                    width: 5,
-                    shadowColor: '#fff', //默认透明
-                    shadowBlur: 0
-                },
-                title: {
-                    show: true,
-                    offsetCenter: [0, '-30%'], // x, y，单位px
-                    textStyle: {
-                        color: 'white',
-                        fontSize: chartOption.chart_title_font_size
-                    }
-                },
-                detail: {
-                    show: true,
-                    offsetCenter: [0, '100%'],
-                    formatter: ' {value}  \n\n' + '发生时刻: ' +maxvaluetime+ '\n\n 标签名称: '+sname,//+chart_unit,
-                    textStyle: {
-                        fontSize: chartOption.chart_detail_font_size,
-                        color: '#F8F43C'
-                    }
-                },
-                data: [{value: 20,name: chartdataname1}],//[data[0]],//
-            },
-        ]
-    };
-    myChart1.setOption(option1);
-    option3 = {
-        backgroundColor: backgroudcolor,
-        //color:['#090','#f75','#055','#b00','#095','#f0f','#444'],
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-            }
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        title : {
-            text: "状态统计图",
-            textStyle:{
-                color: "#FFF",
-                fontWeight: 'normal',
-                fontSize: chartOption.chart_title_font_size,
-            },
-        },
-
-        series: [
-            {
-                name: '占比统计',
-                type: 'pie',
-                radius: ['20%', '50%'],
-                //avoidLabelOverlap: false,
-                label: {
-                    formatter: '{b}: {c}\n\n  {{d}%}  ',
-                    show: true,
-                    position: 'outer',
-                    color:"#fff",
-                    alignTo: 'labelLine',
-                    bleedMargin: 5,
-                    //margin: 20
-                },
-                //barWidth: '60%', []
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: '18',
-                        fontWeight: 'bold'
-                    }
-                },/**/
-                labelLine: {
-                    show: true
-                },
-                data: []//,,{value:90,name:'告警'},{value:0,name:"严重告警"} 
-                    //{value:30,name:'故障'},{value: 20,name: '停运'}]{value:310,name:'正常'}, {value:52,name:'预警'},{value:20,name:'一级告警'} ,
-                    //{value:34,name:'二级告警'}
-            }
-        ]
-    };
-    myChart3.setOption(option3);
-    myChart3.on('click',function(params){//点击事件
-        console.log(params);
-    });
-}
 
 function jisuanyichangbili(avalue){//一个标签有多个类型的数据报警时，告警类型的统计可能有问题，有待验证。
     if(!avalue){
@@ -1935,4 +1870,6 @@ function jisuanyichangbili(avalue){//一个标签有多个类型的数据报警�
  * 以及退出后重新登录，实时数据不显示的问题0205
  * 
  * 首次进入标签定位树形图和实时数据列表选定行同步。
+ * 
+ * 标签项目录点击没有当前项的指示、编辑通用多页面显示布局的主页面框架布局
  */

@@ -340,6 +340,14 @@ function initrealdata(){
 	}
 	
 }
+function initotherdata(){
+	if(sessionStorage.pageindex!=17){
+		sessionStorage.pageindex=17;
+		var ifm=$('#iframe_main');
+		ifm.attr('src','realdata.html');
+	}
+	updatapcnav(17);
+}
 //初始化机房监控子系统实时状态页面...used by electricroommonitor
 function initrealstate(){
 	if(sessionStorage.pageindex!=10){
@@ -1612,7 +1620,7 @@ function seletime(obj){
 }
 //导航按钮选中指示标志//20200212 
 function updatapcnav(obj){
-	for(var i=1;i<16;i++){
+	for(var i=1;i<18;i++){
 		var nav=document.getElementById("nav"+i);
 		if(nav==null){//如果为null。就获取父窗口下的元素。 
 			nav=window.parent.document.getElementById("nav"+i);
@@ -1648,6 +1656,7 @@ function updatapcnav(obj){
 		case 7:
 		case 8:
 		case 15:
+		//case 17:
 			if(window.parent.tree2){
 				window.parent.document.getElementById('tree_chi').style.display="block";
 				window.parent.document.getElementById('tree').style.height='60%';
@@ -1671,7 +1680,7 @@ var sorter=false;
 				var table = document.getElementById(tableId);
                 var tbody = table.tBodies[0];//tBodies[0]取表头thead，tBodies[1]取tbody
 				var tr = tbody.rows;
-				if(tableId=="realtable"){
+				if((tableId=="realtable")||(tableId="ohter_realtable")){
 					if(Idx>=3){
 						catalog=getCatalog(Idx-3);
 						title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值
@@ -2162,7 +2171,9 @@ Page.prototype.__init__ = function () {
     this.__oTable__ = document.getElementById(this.tableId); //获取table引用
     this.__oTBody__ = this.__oTable__.tBodies[this.tBodyId]; //获取tBody引用
     this.__pageInnerDiv__ = document.getElementById(this.pageId);
-    this.__dataRows__ = this.__oTBody__.rows;
+    if(!this.__oTBody__)
+		return;
+	this.__dataRows__ = this.__oTBody__.rows;
     this.rowCount = this.__dataRows__.length;
     try {
         this.absolute = (this.absolute <= 0) || (this.absolute > this.rowCount) ? this.rowCount : this.absolute;
@@ -2315,17 +2326,17 @@ function GetDateDiff(startTime, endTime, diffType) {
 	var divNum = 1; 
 	switch (diffType) { 
 	case "second": 
-	divNum = 1000; 
-	break; 
+		divNum = 1000; 
+		break; 
 	case "minute": 
-	divNum = 1000 * 60; 
-	break; 
+		divNum = 1000 * 60; 
+		break; 
 	case "hour": 
-	divNum = 1000 * 3600; 
-	break; 
+		divNum = 1000 * 3600; 
+		break; 
 	case "day": 
-	divNum = 1000 * 3600 * 24; 
-	break; 
+		divNum = 1000 * 3600 * 24; 
+		break; 
 	default: 
 	break; 
 	} 
