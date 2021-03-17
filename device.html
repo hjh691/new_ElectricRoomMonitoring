@@ -270,6 +270,7 @@
 			//模态框和浮动窗口公用
 			document.getElementById("bind_name").innerHTML="设备编号: "+ eid;
 			var detail=document.getElementById("details");
+			var config,type;
 			while(detail.hasChildNodes()) //当div下还存在子节点时 循环继续 卤
 			{ 
 				detail.removeChild(detail.firstChild); 
@@ -277,7 +278,8 @@
 			if(sensors!=null){
 				for(var i=0;i<sensors.length;i++){
 					if(sensors[i].id==eid){
-						var config=sensors[i].Value.config;
+						config=sensors[i].Value.config;
+						type=sensors[i].Value.type;
 						break;
 					}
 				}
@@ -289,7 +291,7 @@
 					//config='wctm'
 					if(typeconfigs)
 					for(var k=0;k<typeconfigs.length;k++){
-						if(typeconfigs[k].name.toLowerCase()==config.toLowerCase()){
+						if(typeconfigs[k].name==type){
 							typeconfig=typeconfigs[k].details;
 							break;
 						}

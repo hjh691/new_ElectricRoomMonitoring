@@ -344,7 +344,7 @@ function initotherdata(){
 	if(sessionStorage.pageindex!=17){
 		sessionStorage.pageindex=17;
 		var ifm=$('#iframe_main');
-		ifm.attr('src','realdata.html');
+		ifm.attr('src','realdata_iot.html');
 	}
 	updatapcnav(17);
 }
@@ -557,6 +557,9 @@ function getrealsbydataid() {
 									//tdid.setAttribute('class','sensorid');
 									//tddiscr.setAttribute('class','tmpvalue');
 									//tdename.setAttribute('class','sensorname');
+									/**关关雎鸠在河之洲窈窕淑女君子好逑参差荇菜左右流之窈窕淑女寤寐求之求之不得寤寐思服悠哉游哉辗转反侧
+									 * 
+									 */
 									var tbody = document.getElementById('realdata-tbody');
 									tbody.appendChild(tr);
 								}
@@ -1680,7 +1683,7 @@ var sorter=false;
 				var table = document.getElementById(tableId);
                 var tbody = table.tBodies[0];//tBodies[0]取表头thead，tBodies[1]取tbody
 				var tr = tbody.rows;
-				if((tableId=="realtable")||(tableId="ohter_realtable")){
+				if((tableId=="realtable")){//||(tableId="ohter_realtable")
 					if(Idx>=3){
 						catalog=getCatalog(Idx-3);
 						title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值

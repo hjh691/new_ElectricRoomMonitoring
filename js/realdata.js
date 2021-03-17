@@ -80,7 +80,7 @@ function initpage() {
     window.parent.closeloadlayer();
     //保存页面现场，在点击浏览器的刷新按钮刷新时应用
     sessionStorage.framepage="newrealdata.html";
-    sessionStorage.pageinfex=2;
+    sessionStorage.pageindex=2;
     tab_head=document.getElementById("tab_head");
     if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。// 
         if (typeof (w1) == "undefined") {
@@ -98,7 +98,7 @@ function initpage() {
     }
     appendalldisplaytype();/*"display_type"*/
     
-    var topTable = $("table").eq(0).offset().top;//获取表格位置
+    //var topTable = $("table").eq(0).offset().top;//获取表格位置
     var c_top =  $('.oa-nav_top').height() ? $('.oa-nav_top').height() : 0;//获取导航高度没有可填0
     $("#datadiv").scroll(function() {
         var table_hd = $("table").eq(0).find('thead'); //浮动的表头
@@ -389,6 +389,7 @@ function getCatalog(index){
     updatachart(typename);//0709 更新图表配置
     refreshData();
     //return catalog;
+    var isfindconfig=false;
     if(allconfigs){
         for(var q in allconfigs){
             for(var l in allconfigs[q].details){
@@ -417,15 +418,21 @@ function getCatalog(index){
                                         //alertconfig[0]=d_config[i].config.Min;
                                         //alertconfig[3]=d_config[i].config.MMax;
                                         //alertconfig[2]=d_config[i].config.MMin;
+                                        isfindconfig=true;
                                         break;
                                     }
                                 }
                             }
+                            if(isfindconfig)
                             break;
                         }
                         catalog= allconfigs[q].details[l].folder;
+                        if(isfindconfig)
+                        break;
                 }
             }
+            if(isfindconfig)
+            break;
         }
     }
     catalog=catalogsel[index].attributes.folder.nodeValue;
@@ -823,10 +830,10 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                 //value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
                 var heightpx = $("#realdata-tbody tr").height();// + 1;//加1是网格线的宽度
                 var ppt = parseInt(sessionStorage.t_p);
-                if(ppt>pageSize){
-                    curPage=parseInt(ppt/pageSize);
-                }else{
+                if(ppt<pageSize){
                     curPage=0;
+                }else{
+                    curPage=parseInt((ppt)/pageSize);
                 }
                 /**安全评价是以实现工程、系统安全为目的，应用安全系统工程原理和方法，对工程、系统中存在的危险、有害因素进行识别与分析、判断工程、系统发生
                  * 事故和急性职业危害的可能性及其严重程度，提出安全对策建议，从而为工程、系统制定防范措施和管理决策提供科学依据。

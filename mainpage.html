@@ -291,7 +291,7 @@
 				} else {
 					var t1 = window.setInterval(getrealdatabynodeid(realdataid), 60000);//getrealsbydataid
 				}
-				window.setInterval("resetContent()", 200);
+				window.setInterval("resetContent()", 200);//随时判断告警信息进行浮动窗口显示
 				//refreshwindow();
 				initwindow();
 				initIndex();
@@ -579,7 +579,7 @@
 							//updatanav(sessionStorage.nodetype);
 							//refreshinfotree(data);
 						}else if ((data.Catalog.indexOf(sysnames[1])>=0 )||(data.Catalog.indexOf(sysnames[2])>=0)||(data.Catalog.indexOf(sysnames[3])>=0)) {//测温局放
-							sessionStorage.nodetype=3;
+							sessionStorage.nodetype=1;
 							/*maps = [];
 							infotreedata = [];
 							infotreeobj = {};
@@ -653,7 +653,7 @@
 							//updatanav(sessionStorage.nodetype);
 							//refreshinfotree(data);
 						}else {//其他或默认
-							isessionStorage.nodetype=-1;
+							sessionStorage.nodetype=3;
 							//updatanav(sessionStorage.nodetype);
 							//updatanav(sessionStorage.nodetype);
 							//sessionStorage.SensorId = data.id;
@@ -1275,7 +1275,7 @@
 					iframemain.attr('src',"historystate.html");//历史状态，目前未使用
 					break;
 				case "17":
-					iframemain.attr('src',"realdata.html");//其他通用数据页面，li.nav=17,
+					iframemain.attr('src',"realdata_iot.html");//其他通用数据页面，li.nav=17,
 					break;
 				case "18":
 					iframemain.attr('src','wather.html');//气象数据
@@ -1524,7 +1524,7 @@
 												if(obj_realdata[loop].sensorId==sid && obj_realdata[loop].name.toLowerCase()==dataname.toLowerCase()
 													&&(obj_realdata[loop].folder.toLowerCase()==datafolder.toLowerCase())){
 													obj_data = (obj_realdata)[loop];////
-													g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
+													g._shape.Text =(obj_data.value);//.toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
 													if(obj_data.message){
 														g._shape.isError=true;
 													}else{
@@ -1581,7 +1581,7 @@
 											let jiange=GetDateDiff(rows[k].cells[2].outerText,(dateToString(obj_data.time,2)),"minute")
 											if(jiange<=between_time){
 											//rows[k].cells[2].innerHTML=((obj_data.time).replace(/T/g," ")).substring(0,19);
-											rows[k].cells[3].innerHTML=(obj_data.value *1).toFixed(Number_of_decimal);
+											rows[k].cells[3].innerHTML=(obj_data.value );//.toFixed(Number_of_decimal);
 											break;
 										}else{
 											tbody.deleteRow(k);
@@ -1636,7 +1636,7 @@
 				obj_i=sensors[i].Value;
 				alerttime = (dateToString(obj_data.time,2).substr(11));
 				alertinfo = msg;
-				alertvalue = parseFloat(obj_data.value).toFixed(Number_of_decimal);
+				alertvalue =obj_data.value;// parseFloat(obj_data.value).toFixed(Number_of_decimal);
 				sname =parentname+ obj_i.name;
 				var xs = 1;//sensors[i].Value.Factor;  数据结构修改，value为已经乘过系数的数值，svalue为未乘以系统的原始值 
 				var type_td =obj_data.name; 
@@ -1659,7 +1659,7 @@
 				tdtype.innerHTML = type_td;
 				tdtype.style.cssText = "display:none";
 				tdtime.innerHTML = (dateToString(obj_data.time,2));//.replace(/T/g," ")).substring(0,19); //jsonObject[i].color;
-				tdvalue.innerHTML = (obj_data.value * xs).toFixed(Number_of_decimal);
+				tdvalue.innerHTML =obj_data.value;// (obj_data.value * xs).toFixed(Number_of_decimal);
 				//tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);
 				//tdhistory.setAttribute('backgroundColor', '#ffffff');
 				//tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
@@ -1683,12 +1683,13 @@
 				//tr.style.backgroundColor = cl;
 				pt++;
 				tbody.appendChild(tr);
-				if ((alertvalue !== null) && (alertvalue !== "NaN")) {
+				let temp=parseFloat(alertvalue);
+				if ((alertvalue !== null) && (parseFloat(alertvalue))) {
 					str_speech = str_speech +alert_sys_name+" "+sname.replace(/_/g,"杠")+" "+ alertinfo + "数值" + alertvalue.replace(/^-/g,"负") +"  ";
 					str_alert = str_alert + "/" + alerttime + ": " +alert_sys_name+" "+ sname + " "+ alertinfo + " 数值为:" + alertvalue+" "; //+ str_type+" "
 				} else {
 					str_speech =str_speech +alert_sys_name+" "+sname.replace(/_/g,"杠") +" "+ alertinfo ;
-					str_alert = str_alert + "/" + alerttime +": " +alert_sys_name+" "+ sname + " "+ alertinfo + " " + alertvalue+" ";// + str_type+" " + alertvalue;
+					str_alert = str_alert + "/" + alerttime +": " +alert_sys_name+" "+ sname + " "+ alertinfo ;//+ " " + alertvalue+" " + str_type+" " + alertvalue;
 				}
 			}
 		}catch(err){
