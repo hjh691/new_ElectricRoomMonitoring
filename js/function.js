@@ -6,13 +6,7 @@ sessionStorage.dataId = 0;
 //sessionStorage.timeindex=0;
 var maps=[];
 var str_speech = "告警";//告警信息
-if(jfjk_base_config.baseurl.indexOf("localhost")>-1){
-	jfjk_base_config.baseurl=jfjk_base_config.baseurl.replace("localhost",window.location.hostname);
-	jfjk_base_config.speechurl=jfjk_base_config.speechurl.replace("localhost",window.location.hostname);
-}else if(jfjk_base_config.baseurl.indexOf("127.0.0.1")>-1){
-	jfjk_base_config.baseurl=jfjk_base_config.baseurl.replace("127.0.0.1",window.location.hostname);
-	jfjk_base_config.speechurl=jfjk_base_config.speechurl.replace("127.0.0.1",window.location.hostname);
-}
+
 function KeyUp() {
 	if (event.keyCode == 13) {
 		event.keyCode = 9;
@@ -164,7 +158,7 @@ function previewHandle(fileDOM) {
 }
 //判断用户名和密码输入是否符合语法  used by electricroommonitor 
 function LoginOrder(name, ps,flag) {
-	var url = jfjk_base_config.baseurl + "Login?name=" + name + "&pass=" + ps;
+	var url = localStorage.server_url + "Login?name=" + name + "&pass=" + ps;
 	url = encodeURI(url);
 	$.ajax({
 		url: url,
@@ -303,6 +297,7 @@ function init_var(){
 	delete sessionStorage.cxsj;
 	window.speechSynthesis.cancel();
 	sessionStorage.allscreen=false;
+	localStorage.server_url=undefined;
 }
 //获取用户详细信息 used by electricroommonitor
 function GetUserProfile() {
@@ -1057,7 +1052,7 @@ function drawmap(arr) {
 		//mCanvas.width = document.documentElement.clientWidth - 17;
 		//mCanvas.height = document.documentElement.clientHeight;
 		var swidth = cwidth= document.documentElement.clientWidth ;
-		var sheight = cheight=document.documentElement.clientHeight-mheadmap.clientHeight;;
+		var sheight = cheight=document.documentElement.clientHeight-mheadmap.clientHeight;
 		mCanvasDiv.style.width= cwidth  + 'px';
 		mCanvasDiv.style.height= cheight + 'px';
 		var background_color="#cccccc";
@@ -1105,31 +1100,21 @@ function drawmap(arr) {
 				mCanvas.height = document.documentElement.clientHeight;//
 			}*/
 		}
+		if(scaler < 0.01)
+		{
+			scaler = Math.min(cwidth / swidth,cheight / sheight) * 0.98;
+		}
+		swidth *= scaler;
+		sheight *= scaler;
 		mCanvas.width = swidth;
 		mCanvas.height = sheight;
-		//长宽比例对比
-		if(sessionStorage.map_module==0)
-		{
-			if(swidth > 0 && sheight > 0)
-			{
-				var tx = cwidth / swidth;
-				var ty = cheight / sheight;
-				var t = tx > ty ? ty : tx;
-				cwidth = swidth * t;
-				cheight = sheight * t;
-			}
-		}
-		else
-		{//原尺寸时width与style.width设置相同。
-			cwidth = swidth;
-			cheight = sheight;
-		}
-		mCanvas.style.width= cwidth*scaler  + 'px';
-		mCanvas.style.height= cheight*scaler-15 + 'px';
+		mCanvas.style.width= swidth + 'px';
+		mCanvas.style.height= sheight + 'px';
 		var ctx = mCanvas.getContext("2d");
 		ctx.save();
 		ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
 		var pfdp = new Object();
+		var trans = new DOMMatrix().scale(scaler,scaler);
 		for (var i = 0; i < arr_len; i++) {
 			if (!arr[i]) {
 				continue;
@@ -1148,7 +1133,7 @@ function drawmap(arr) {
 					pfdp[key] = str[key];
 				}
 			}
-			ctx.setTransform(1, 0, 0, 1, 0, 0); //还原矩阵，没有此句，图形将在上一次变化的基础上进行变化。
+			ctx.setTransform(trans); //还原矩阵，没有此句，图形将在上一次变化的基础上进行变化。
 			ctx.setLineDash([]);
 			eval(pfdp.type)(ctx, pfdp);//类反射，pfdp.type对应各类图形名称去调用相应的绘图函数。移动至drawmap.js里。
 			for (var key in pfdp) {
@@ -1297,7 +1282,7 @@ function spack() {
 		}
 	});*/
 	//2#方案，使用iframe标签代替audio标签，直接播放，目前能用.
-	var url=jfjk_base_config.speechurl+"GetWav?text="+encodeURIComponent(strText);
+	//var url=jfjk_base_config.speechurl+"GetWav?text="+encodeURIComponent(strText);
 	var audio=$("#spkAudio")[0];
 	if (audio == null) {
 		audio = $("#spkAudio", window.parent.document);
@@ -1679,13 +1664,13 @@ var sorter=false;
     $.extend($,{
         //命名空间
 		sortTable:{
-            sort:function(tableId,Idx){
+            sort:function(tableId,Idx,adatatype){
 				var table = document.getElementById(tableId);
                 var tbody = table.tBodies[0];//tBodies[0]取表头thead，tBodies[1]取tbody
 				var tr = tbody.rows;
 				if((tableId=="realtable")){//||(tableId="ohter_realtable")
 					if(Idx>=3){
-						catalog=getCatalog(Idx-3);
+						catalog=getCatalog(adatatype,Idx-3);
 						title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值
 						isfirst=true;//更改排序项的同时更改显示项，重新获取数据刷新图表；
 						var head=$("#tab_head")[0].rows[0].cells[Idx-1];
@@ -1923,7 +1908,7 @@ function sendorder(order,callback,datas){
 	if(datas){
 		ordertype="POST";
 	}
-	var url = jfjk_base_config.baseurl + order;
+	var url = localStorage.server_url + order;
 	url = encodeURI(url);
 	if (sessionStorage.islogin == "true") {
 		$.ajax({
@@ -2346,6 +2331,153 @@ function GetDateDiff(startTime, endTime, diffType) {
 	return parseInt((eTime.getTime() - sTime.getTime()) / parseInt(divNum)); 
 	} 
 
+	/* utf.js - UTF-8 <=> UTF-16 convertion
+ *
+ * Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>
+ * Version: 1.0
+ * LastModified: Dec 25 1999
+ * This library is free.  You can redistribute it and/or modify it.
+ */
+ /*
+ * Interfaces:
+ * utf8 = utf16to8(utf16);
+ * utf16 = utf8to16(utf8);
+ */
+ function utf16to8(str) {
+	var out, i, len, c;
+	out = "";
+	len = str.length;
+	for(i = 0; i < len; i++) {
+		c = str.charCodeAt(i);
+		if ((c >= 0x0001) && (c <= 0x007F)) {
+			out += str.charAt(i);
+		} else if (c > 0x07FF) {
+			out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+			out += String.fromCharCode(0x80 | ((c >>  6) & 0x3F));
+			out += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+		} else {
+			out += String.fromCharCode(0xC0 | ((c >>  6) & 0x1F));
+			out += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+		}
+	}
+	return out;
+}
+function utf8to16(str) {
+	var out, i, len, c;
+	var char2, char3;
+	out = "";
+	len = str.length;
+	i = 0;
+	while(i < len) {
+		c = str.charCodeAt(i++);
+		switch(c >> 4)
+		{
+		  case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+			// 0xxxxxxx
+			out += str.charAt(i-1);
+			break;
+		  case 12: case 13:
+			// 110x xxxx   10xx xxxx
+			char2 = str.charCodeAt(i++);
+			out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+			break;
+		  case 14:
+			// 1110 xxxx  10xx xxxx  10xx xxxx
+			char2 = str.charCodeAt(i++);
+			char3 = str.charCodeAt(i++);
+			out += String.fromCharCode(((c & 0x0F) << 12) |
+										   ((char2 & 0x3F) << 6) |
+										   ((char3 & 0x3F) << 0));
+			break;
+		}
+	}
+	return out;
+}
+var base64EncodeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+ var base64DecodeChars = new Array(
+     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+     52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1,
+     -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+     15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+     -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+     41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1);
+ function base64encode(str) {
+     var out, i, len;
+     var c1, c2, c3;
+     len = str.length;
+     i = 0;
+     out = "";
+     while(i < len) {
+         c1 = str.charCodeAt(i++) & 0xff;
+         if(i == len)
+         {
+             out += base64EncodeChars.charAt(c1 >> 2);
+             out += base64EncodeChars.charAt((c1 & 0x3) << 4);
+             out += "==";
+             break;
+         }
+         c2 = str.charCodeAt(i++);
+         if(i == len)
+         {
+             out += base64EncodeChars.charAt(c1 >> 2);
+             out += base64EncodeChars.charAt(((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4));
+             out += base64EncodeChars.charAt((c2 & 0xF) << 2);
+             out += "=";
+             break;
+         }
+         c3 = str.charCodeAt(i++);
+         out += base64EncodeChars.charAt(c1 >> 2);
+         out += base64EncodeChars.charAt(((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4));
+         out += base64EncodeChars.charAt(((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6));
+         out += base64EncodeChars.charAt(c3 & 0x3F);
+     }
+     return out;
+ }
+ function base64decode(str) {
+     var c1, c2, c3, c4;
+     var i, len, out;
+     len = str.length;
+     i = 0;
+     out = "";
+     while(i < len) {
+         /* c1 */
+         do {
+             c1 = base64DecodeChars[str.charCodeAt(i++) & 0xff];
+         } while(i < len && c1 == -1);
+         if(c1 == -1)
+             break;
+         /* c2 */
+         do {
+             c2 = base64DecodeChars[str.charCodeAt(i++) & 0xff];
+         } while(i < len && c2 == -1);
+         if(c2 == -1)
+             break;
+         out += String.fromCharCode((c1 << 2) | ((c2 & 0x30) >> 4));
+         /* c3 */
+         do {
+             c3 = str.charCodeAt(i++) & 0xff;
+             if(c3 == 61)
+                 return out;
+             c3 = base64DecodeChars[c3];
+         } while(i < len && c3 == -1);
+         if(c3 == -1)
+             break;
+         out += String.fromCharCode(((c2 & 0XF) << 4) | ((c3 & 0x3C) >> 2));
+         /* c4 */
+         do {
+             c4 = str.charCodeAt(i++) & 0xff;
+             if(c4 == 61)
+                 return out;
+             c4 = base64DecodeChars[c4];
+         } while(i < len && c4 == -1);
+         if(c4 == -1)
+             break;
+         out += String.fromCharCode(((c3 & 0x03) << 6) | c4);
+     }
+     return out;
+ }
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
  * 

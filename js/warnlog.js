@@ -173,7 +173,7 @@
 	function appenddisplaytype(asensorid){
 		try{
 			sensors=JSON.parse(localStorage.getItem("sensors"));
-			configs=JSON.parse(localStorage.getItem("Configs"));
+			configs=JSON.parse(localStorage.getItem("Config"));
 			var temp=document.getElementById("event_type");
 		for(var i=temp.childElementCount;i>0;i--)
 			temp.removeChild(temp.children[i-1]);
@@ -229,7 +229,7 @@
 							
 							if(s_des[p].folder=="event"&&s_des[p].name=="event"){//告警、事件类型 
 								var config=new Object()
-								config=(s_des[p].config);//JSON.parse
+								config=(s_des[p].details);//JSON.parse
 								if(config){
 									for(var c in config){
 										for(var i=0;i<temp.children.length;i++){//0721 edit 判断是否存在配置项，如果存在则跳过继续，不存在则添加;
@@ -254,10 +254,10 @@
 										var ainput=document.createElement("input");
 										ainput.setAttribute("type","checkbox");
 										ainput.setAttribute("name","checkbox");
-										ainput.setAttribute("value",c);
+										ainput.setAttribute("value",config[c].name);
 										ainput.className="check_box";
 										var spn=document.createElement("span");
-										spn.innerHTML=config[c];
+										spn.innerHTML=config[c].value;
 										lab.appendChild(ainput);
 										lab.appendChild(spn);
 										//lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
@@ -288,8 +288,9 @@
 								}
 							}
 						}
+						break;
 					}
-					break;
+					
 				}
 			}else{
 				for(var j=temp.childNodes.length;j>0;j--)

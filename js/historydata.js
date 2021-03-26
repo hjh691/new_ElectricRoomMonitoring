@@ -29,7 +29,7 @@ function initpage(){
         sel_sensor.options[0] = null;
     }*/
     sensors=JSON.parse(localStorage.getItem("sensors"));
-    configs=JSON.parse(localStorage.Configs);
+    configs=JSON.parse(localStorage.Config);
     /*if(sensors!=null){
         for(var i=0;i<sensors.length;i++){
             if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
@@ -111,7 +111,7 @@ function appenddisplaytype(element_id,time){
         if(configs){
             let configs_len=configs.length;
             for(var i=0;i<configs_len;i++){
-                if((configs[i].name.toLowerCase()==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
+                if((configs[i].type.toLowerCase()==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
                     var s_des=configs[i].details;//如果有，读取其所有配置项
                     for(var p in s_des){
                         var lab=document.createElement("label");

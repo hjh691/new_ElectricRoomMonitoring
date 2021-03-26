@@ -51,7 +51,7 @@
         }
         tree_obj.treeview("search",[nodeid+'', { ignoreCase: false, exactMatch: true }]);
         //sensors=JSON.parse(localStorage.getItem("sensors"));//
-        configs=JSON.parse(localStorage.Configs);
+        configs=JSON.parse(localStorage.Config);
         appenddisplaytype();
         //setSelectOption("jcdd", sessionStorage.SensorId);
         oneChoice();
@@ -72,7 +72,7 @@
         let sel_str_len=sel_str.length;
         $("#display_type_chart").empty();
         var temp=document.getElementById("display_type_chart");
-        allconfigs=JSON.parse(localStorage.Configs);
+        allconfigs=JSON.parse(localStorage.Config);
         if(allconfigs){
             for(var ac in allconfigs){//如果有，读取其所有配置项
                 var s_des=allconfigs[ac].details;//如果有，读取其所有配置项

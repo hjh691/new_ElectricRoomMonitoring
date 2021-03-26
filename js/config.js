@@ -2,13 +2,83 @@
 //对web服务运行环境以及后台服务器地址、端口、变量等进行设置
 var jfjk_base_config={};
 // 1. 后台服务器地址：用引号括起来默认："http://localhost";"http://192.168.1.10";"http://www.bdjka.com"等。
+//后台服务器地址列表：
+var secc=-1;
+var server_url_list=[
+    "http://192.168.10.250:20000/",
+    "http://192.168.10.67:20000/",
+    "http://jka.f3322.net:20000/"
+]
+var list_pt=0;
+if(localStorage.server_url!=null && localStorage.server_url!="undefined" && localStorage.server_url!=""){
+    jfjk_base_config.baseurl=localStorage.server_url;
+}else
+{
 
- jfjk_base_config.baseurl="http://192.168.10.250:20000/";//调试时的局域网地址。
+//for(var i=0;i<server_url_list.length;i++){
+    localStorage.server_url=jfjk_base_config.baseurl=server_url_list[list_pt];
+    try{
+        test_url(jfjk_base_config.baseurl);            
+    }catch(err){
+        showstateinfo(err.message);
+    }
+}
+function test_url(url){
+    url = encodeURI(url+"GetProfile");
+    $.ajax({
+        beforeSend: function (request) {
+            request.setRequestHeader("Authorization", "sessionStorage.token");
+        },
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        timeout: 5000,
+        error: function (jqXHR, textStatus, errorThrown) {
+            try{
+                if (errorThrown == "Unauthorized") {
+                    secc=0;
+                }else{
+                    
+                    if (++(list_pt)<server_url_list.length){
+                        //list_pt++;
+                        localStorage.server_url=jfjk_base_config.baseurl=server_url_list[list_pt];
+                        test_url(jfjk_base_config.baseurl);
+                    }
+                } 
+            }catch(err){
+                showstateinfo(err.message,"sendpostorder");
+            }
+        },
+        success: function (data, status) {
+            return secc=0;
+        }
+    });
+    //
+    return secc;
+}
+if(jfjk_base_config.baseurl.indexOf("localhost")>-1){
+    jfjk_base_config.baseurl=jfjk_base_config.baseurl.replace("localhost",window.location.hostname);
+    //jfjk_base_config.speechurl=jfjk_base_config.speechurl.replace("localhost",window.location.hostname);
+}else if(jfjk_base_config.baseurl.indexOf("127.0.0.1")>-1){
+    jfjk_base_config.baseurl=jfjk_base_config.baseurl.replace("127.0.0.1",window.location.hostname);
+    //jfjk_base_config.speechurl=jfjk_base_config.speechurl.replace("127.0.0.1",window.location.hostname);
+}
+function sleep(numberMillis) { 
+    var now = new Date(); 
+    var exitTime = now.getTime() + numberMillis; 
+    while (true) { 
+    now = new Date(); 
+    if (now.getTime() > exitTime) 
+    return; 
+    } 
+}
+ //jfjk_base_config.baseurl=server_url_list[0];//调试时的局域网地址。
  //jfjk_base_config.baseurl="http://192.168.10.67:8020/";
  //jfjk_base_config.baseurl="http://localhost:20000/";//_api与服务器同机时实际运行时采用此地址，如果不是部署在同一台电脑中，则为服务器的实际地址,下同
- jfjk_base_config.speechurl="http://192.168.10.250:20000/_speech/";//"http://192.168.10.67:88/_speech/";
+ //jfjk_base_config.speechurl="http://192.168.10.250:20000/_speech/";//"http://192.168.10.67:88/_speech/";
+
  //服务器地址
-jfjk_base_config.serverurl="http://jka.f3322.net:20000/";
+//jfjk_base_config.serverurl="http://jka.f3322.net:20000/";
 // 手机app存放目录和名称：要求在web的资源目录中，
  jfjk_base_config.app_path_name="/res/cloud.apk";
 //sessionStorage.videourl='';
@@ -22,9 +92,9 @@ jfjk_base_config.bg_src="res/bj011.jpg"
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
- jfjk_base_config.ver_id="Ver 1.3.16";//1.3添加通用页面。
+ jfjk_base_config.ver_id="Ver 2.03.22";//1.3添加通用页面。
  //发布日期
- jfjk_base_config.date="2021-02-06"
+ jfjk_base_config.date="2021-03-22"
 //公司名称
  jfjk_base_config.company="保定金凯澳自动化设备有限公司";
  //版权时间
@@ -85,6 +155,8 @@ if(localStorage.speed_scroll)
     speed_scroll=localStorage.speed_scroll;
 if(localStorage.between_time)
     between_time=localStorage.between_time;
+
+
 //localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
  /**un business
   * 1.2.2 节点树的节点字体颜色变化的问题，告警信息每次都显示的问题（同一节点有不同类型的数据和不一样的告警状态造成），节点目录自动折叠的问题；代码精简。

@@ -14,7 +14,7 @@ function Baseline(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
@@ -41,7 +41,7 @@ function Line(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == "true")) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
@@ -72,7 +72,7 @@ function EllipseArea(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
@@ -117,7 +117,7 @@ function RectArea(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
@@ -149,7 +149,7 @@ function JumpLine(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
@@ -178,7 +178,7 @@ function Breaker(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
@@ -213,7 +213,7 @@ function Isolator(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
@@ -255,7 +255,7 @@ function Transformer(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
@@ -322,7 +322,7 @@ function Ground(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
@@ -366,7 +366,7 @@ function Capacitor(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
@@ -454,7 +454,7 @@ function Outer(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
@@ -488,7 +488,7 @@ function Warning(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	ctx.strokeStyle = "red"; //pfdp.StrokeColor;
 	ctx.fillStyle = "yellow";
@@ -530,7 +530,7 @@ function Area(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
@@ -565,7 +565,7 @@ function Node(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.fillStyle = pfdp.ErrorColor.replace("#FF","#");
@@ -615,8 +615,11 @@ CanvasRenderingContext2D.prototype.fillTextVertical = function(text, x, y) {
 	context.textAlign = 'center';
 	context.textBaseline = 'middle';
 
+	var trans = context.getTransform();
 	// 开始逐字绘制
 	arrText.forEach(function(letter, index) {
+		// 旋转坐标系还原成初始态
+		context.setTransform(trans);
 		// 确定下一个字符的纵坐标位置
 		var letterWidth = arrWidth[index];
 		// 是否需要旋转判断
@@ -631,8 +634,6 @@ CanvasRenderingContext2D.prototype.fillTextVertical = function(text, x, y) {
 			y = y + arrWidth[index - 1] / 2;
 		}
 		context.fillText(letter, x, y);
-		// 旋转坐标系还原成初始态
-		context.setTransform(1, 0, 0, 1, 0, 0);
 		// 确定下一个字符的纵坐标位置
 		var letterWidth = arrWidth[index];
 		y = y + letterWidth;
@@ -655,7 +656,7 @@ function DrawText(ctx, pfdp) {
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 	}
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.fillStyle = "#FFFF00";
@@ -701,14 +702,14 @@ function Picture(ctx,pfdp){
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		//ctx.setTransform(a, b, c, d, e, f);
+		//ctx.transform(a, b, c, d, e, f);
 	}
 	var img=new Image();
 	img.src="data:imgae/jpg;base64,"+pfdp.Datas;
 	img.onload=function(){//等到图像内容加载完成后再显示绘制。此时的ctx的属性已经改变，需重新设置transform。
 		//setTimeout(drawpicture,1000);
 		ctx.globalCompositeOperation="destination-over"; //"destination-atop";//
-		ctx.setTransform(a, b, c, d, e, f);
+		ctx.transform(a, b, c, d, e, f);
 		ctx.drawImage(img, sx,sy,(ex-sx),(ey-sy));
 	}
 }

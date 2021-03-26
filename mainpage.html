@@ -83,9 +83,9 @@
 			<button class="butn" id="showaside" onclick="list()"> &lt&lt </button><!--“<”为特殊字符 60 “>”为 62-->
 			<div class="leftmenu" id="leftmenu" >
 				
-				<div class="tree " id="tree" style="overflow-x:auto;">
+				<div class="tree " id="tree" style="overflow-x:auto;white-space: nowrap;">
 				</div>
-				<div class="tree1 " id="tree_chi" >
+				<div class="tree1 " id="tree_chi" style="overflow-x:auto;white-space: nowrap;">
 				</div>
 			</div>
 		</aside>
@@ -544,6 +544,15 @@
 						GetSensorsByNode(data.id);
 						sessionStorage.t_p = 0;
 						nodeid = data.nodeId;
+						try{
+						if ((sessionStorage.pageindex==2)||(sessionStorage.pageindex==17)){
+							iframemain[0].contentWindow.cleartable();
+							//realdataid=-1;
+							//getrealdatabynodeid(realdataid);
+						}}
+						catch(err){
+
+						}/**/
 					}
 					//sessionStorage.selectText="";
 					if(data.Catalog){//Catalog为空标书为非叶子节点（最终节点）
@@ -1188,6 +1197,7 @@
 					inittreeview_level2(treenode);
 				}
 				refreshiframe();
+				realdataid=-1;
 				getrealdatabynodeid(realdataid);
 			})
 		}catch(err){
@@ -1325,9 +1335,9 @@
 					if(!jQuery.isEmptyObject(result.configs)){//20200428 add
 						var config=new Object();
 						config=result.configs;
-						localStorage.setItem("Config",JSON.stringify(config));
+						localStorage.setItem("Configs",JSON.stringify(config));
 					}else{
-						localStorage.setItem("Config",null);
+						localStorage.setItem("Configs",null);
 					}
 				}else {
 					allsensors = null;
@@ -1560,7 +1570,9 @@
 					if ((obj_realdata)&&(obj_realdata.length>0)) {
 						let obj_length=obj_realdata.length;
 						for(var loop=0;loop<obj_length;loop++){
-						if(obj_realdata[loop].sensorId==sid){
+							if(realdataid<parseInt(obj_realdata[loop].id))
+								realdataid=parseInt(obj_realdata[loop].id);
+							if(obj_realdata[loop].sensorId==sid){
 							obj_data = obj_realdata[loop];////
 							var rows=tbody.rows;
 							var trs = tbody.getElementsByTagName("tr");

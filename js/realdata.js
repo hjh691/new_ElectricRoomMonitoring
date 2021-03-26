@@ -43,11 +43,12 @@ var alert_obj=new Object();
 //let haverealdata=false;
 var catalog="Defalt";
 var display_type=document.getElementById("display_type_realdata");
+var pt = 0;
 $(function () {
     initrealdata();
 });
 function initchartoption(){//初始化图表选择和显示值；
-    chartOption={chart_type:"",chart_unit:"",chart_max:100,chart_min:0,chart_sigle:"",
+    chartOption={chart_type:"",chart_unit:"",chart_max:170,chart_min:0,chart_sigle:"",
                  chart_main_num:4,chart_chi_num:8,chart_detail_font_size:16,chart_title_font_size:16,
                  start_angle:0,end_angle:180};
     maxval =  minval =  maxvalue =minvalue = value0=maxOfRealdata=0;
@@ -57,6 +58,7 @@ function initchartoption(){//初始化图表选择和显示值；
 function initrealdata(){//初始化页面选项
   try{
     initchartoption();
+    cleartable();
     datas = [];
     datas.splice(0, datas.length);//
     if(sessionStorage.pageSize)
@@ -132,7 +134,7 @@ function appendalldisplaytype(){
     try{
     for(var i=display_type.childNodes.length;i>0;i--)
         display_type.removeChild(display_type.childNodes[i-1]);
-    allconfigs=JSON.parse(localStorage.Configs);
+    allconfigs=JSON.parse(localStorage.Config);
     /*var sel_datatypename=[];
     if(sessionStorage.sel_datatypename) 
     {
@@ -162,15 +164,26 @@ function appendalldisplaytype(){
                 ainput.className="catalog";
                 var spn=document.createElement("span");
                 spn.innerHTML=s_des[p].desc;*/
+                allselect = $('[name="options"]');
+                let isrepeat=false;
+                let allselect_len=allselect.length;
+                for(var i=0;i<allselect_len;i++){
+                    if((s_des[p].name==allselect[i].value)&&(allconfigs[ac].type==allselect[i].attributes.datatype.nodeValue)){
+                        isrepeat=true;
+                        break;
+                    }
+                }
+                if(isrepeat)
+                    break;
                 if(p==0){
-                    name=s_des[p].name;
+                    //name=s_des[p].name;
                     catalog=s_des[p].folder;//Catalog;
                     //ainput.checked=true;
                     //lab.className=""
-                    add_displaytype(display_type,s_des[p].name,s_des[p].folder,s_des[p].desc,true);
+                    add_displaytype(display_type,s_des[p].name,s_des[p].folder,s_des[p].desc,allconfigs[ac].type,true);
                 }else{
                     //lab.className="";
-                    add_displaytype(display_type,s_des[p].name,s_des[p].folder,s_des[p].desc,false);
+                    add_displaytype(display_type,s_des[p].name,s_des[p].folder,s_des[p].desc,allconfigs[ac].type,false);
                 }
                 /*lab.appendChild(ainput);//a-
                 lab.appendChild(spn);
@@ -188,7 +201,7 @@ function appendalldisplaytype(){
         showstateinfo(err.message,"realdata/appendalldisplaytype");
     }
 }
-function add_displaytype(parent,name,folder,text,check){
+function add_displaytype(parent,name,folder,text,type,check){
     var lab=document.createElement("label");
     lab.setAttribute("style","margin-left:20px")
     var ainput=document.createElement("input");
@@ -196,6 +209,7 @@ function add_displaytype(parent,name,folder,text,check){
     ainput.setAttribute("name","options");
     ainput.setAttribute("value",name);
     ainput.setAttribute("folder",folder);
+    ainput.setAttribute("datatype",type);
     ainput.className="btn";
     //ainput.setAttribute('onclick','checkboxclick("'+s_des[p].Name+'")')
     ainput.innerText=text
@@ -213,6 +227,18 @@ function add_displaytype(parent,name,folder,text,check){
     lab.appendChild(ainput);
     lab.appendChild(spn);
     parent.appendChild(lab);
+    var tab=$("#realdata-tbody");
+    if(tab[0].rows.length>0){
+        tableaddcell();
+    }    
+}
+function tableaddcell(){
+    var ttd=document.createElement("td");
+    ttd.setAttribute("display","none");
+    var tab_rows=$("#realdata-tbody")[0].rows;
+    var tab_len=tab_rows.length;
+    for(let i=0;i<tab_len;i++)
+        tab_rows[i].appendChild(td);
 }
 //"刷新"按钮点击事件
 function btn_refresh_click(obj){
@@ -230,7 +256,8 @@ function btn_refresh_click(obj){
     }
     sessionStorage.setItem("sel_datatypename",JSON.stringify(allselects));
     refresh_tabhead(allselect);
-    decoderealdata();
+    cleartable();
+    //decoderealdata();
 }
 function refresh_tabhead(sel){
     count=0;
@@ -267,7 +294,8 @@ function refresh_tabhead(sel){
             count++;
             th_th=document.createElement("th");
             th_th.setAttribute("width","180px");
-            th_th.setAttribute("onclick","$.sortTable.sort('realtable',"+(k+hidden_cells)+")");
+            let atype=sel[k].attributes.datatype.value;
+            th_th.setAttribute("onclick","$.sortTable.sort('realtable',"+(k+hidden_cells)+",'"+atype+"',)");
             aa=document.createElement("a");
             aa.setAttribute("href","javascript:");
             aa.innerHTML=sel[k].textContent+'<span class="value"'+(k+1)+'></span>';
@@ -380,7 +408,7 @@ function stopWorker() {
     w1 = undefined;
 };
 //根据数据列值获取Catalog。
-function getCatalog(index){
+function getCatalog(adatatype,index){
     try{
     var catalog="";
     var  catalogsel = $('[name="options"]');
@@ -392,6 +420,7 @@ function getCatalog(index){
     var isfindconfig=false;
     if(allconfigs){
         for(var q in allconfigs){
+            if(allconfigs[q].type===adatatype)
             for(var l in allconfigs[q].details){
                 if(allconfigs[q].details[l].name.toLowerCase()==typename.toLowerCase()){
                     var configname=allconfigs[q].name;
@@ -401,10 +430,23 @@ function getCatalog(index){
                             if(!jQuery.isEmptyObject(jo_config[c].details)){
                                 var d_config=jo_config[c].details; //20200918 获取配置项参数 由allconfigs（typeconfigs）的details里的name找到typename，然后取其
                                 for(var i in d_config){            //name,由name到configs里查找name，找到后从其details里提取config，然后从config中提取所需的配置数值。
-                                    if((d_config[i].name.toLowerCase()==typename.toLowerCase())&&((d_config[i].config))){
-                                        chartOption.chart_unit=d_config[i].config.Unit;
-                                        chartOption.chart_max=d_config[i].config.Top;
-                                        chartOption.chart_min=d_config[i].config.Bot;
+                                    if((d_config[i].name.toLowerCase()==typename.toLowerCase())&&((d_config[i].details))){
+                                        for(var detail in d_config[i].details){
+                                            if(d_config[i].details[detail].name.toLowerCase()=="Unit".toLowerCase()){
+                                                chartOption.chart_unit=d_config[i].details[detail].value;
+                                                continue;
+                                            }
+                                            if(d_config[i].details[detail].name.toLowerCase()=="Top".toLowerCase()){
+                                                chartOption.chart_max=d_config[i].details[detail].value;
+                                                continue;
+                                            }
+                                            if(d_config[i].details[detail].name.toLowerCase()=="Bot".toLowerCase()){
+                                                chartOption.chart_min=d_config[i].details[detail].value;
+                                                continue;
+                                            }
+                                        }
+                                        //chartOption.chart_max=d_config[i].details.Top;
+                                        //chartOption.chart_min=d_config[i].details.Bot;
                                         if((chartOption.chart_max-chartOption.chart_min)%10==0){
                                             chartOption.chart_main_num=4;
                                             chartOption.chart_chi_num=8;
@@ -426,7 +468,7 @@ function getCatalog(index){
                             if(isfindconfig)
                             break;
                         }
-                        catalog= allconfigs[q].details[l].folder;
+                        //catalog= allconfigs[q].details[l].folder;
                         if(isfindconfig)
                         break;
                 }
@@ -441,10 +483,14 @@ function getCatalog(index){
         showstateinfo(err.message,"realdata/getCatalog")
     }
 }
+function cleartable(){
+    $('#realdata-tbody').empty();
+    getrealdatabynodeid(-1);
+}
 function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数据，asensorid 当前标签id，isload 是否与主菜单标签表同步
     try{
     var v_sel = $('[name="options"]');
-    $('#realdata-tbody').empty();
+    //$('#realdata-tbody').empty();
     $table = document.getElementById('realdata-tbody');
     if(!obj_realdata){
         obj_realdata=JSON.parse(localStorage.getItem("realdata"));
@@ -454,7 +500,6 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
     if(sensors)
         sensors_length=sensors.length;
     var obj_data = new Object();
-    var pt = 0;
     var dname;
     var isnew=true,isfind=false;//isbreak=false;
     var atr;
@@ -472,23 +517,38 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
         var realdata_len=obj_realdata.length, 
         tablehead_len=tab_head.rows[0].cells.length;
         refresh_tabhead(v_sel);//根据选项刷新表头的显示内容
-        alert_obj={};
+        //alert_obj={};
         //var title_len=tab_head.rows[0].cells.length;
         if(v_sel){//有显示控制选择项时进行如下操作.
             for (var j=0;j<realdata_len;j++) {
+                if(window.parent.realdataid<parseInt(obj_realdata[j].id))
+                    window.parent.realdataid=parseInt(obj_realdata[j].id);
+                $table = document.getElementById('realdata-tbody');
+                var tab_rows_len=$table.rows.length;
                 dname=obj_realdata[j].name;
                 realdatafolder=obj_realdata[j].folder;
                 isfindtype=false;
                 //grouptype=obj_realdata[j].type;//Catalog;
                 if(obj_realdata[j].sensorId==asensorid)
                     nodata=false;
-                if(obj_realdata[j].sensorId==sid){//是否为新的标签项,相同标签的数据默认连续
+                /*if(obj_realdata[j].sensorId==sid){//是否为新的标签项,相同标签的数据默认连续
                     isnew=false;
                 }else{ 
                     sid=obj_realdata[j].sensorId;
                     isnew=true;
-                }
-                if (sensors&&isnew)
+                }*/
+                sid=obj_realdata[j].sensorId;
+                    for(p=0;p<tab_rows_len;p++){
+                        if($table.rows[p].cells[0].innerHTML==obj_realdata[j].sensorId){
+                            isfindtype=true;
+                            break;
+                        }
+                    }
+                    if(isfindtype)
+                        isnew=false
+                    else
+                        isnew=true;
+                if (sensors)//&&isnew
                 for (var i = 0; i < sensors_length; i++) {//是否在需要显示的标签列表中
                     isfind=false;
                     if(sid==sensors[i].id){
@@ -531,7 +591,9 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         //需要表头标题添加name，所有列表项添加一列（cell）
                         add_displaytype(display_type,dname,realdatafolder,dname,false);
                         v_sel = $('[name="options"]');
-                        //tablehead_len++;//第一次进入统计比例错误的问题，不应该递增。
+                        refresh_tabhead(v_sel);//
+                        tablehead_len++;//第一次进入统计比例错误的问题，不应该递增。
+                        tableaddcell();
                     }
                     if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，//
                         atr=document.createElement("tr");
@@ -542,7 +604,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                             atd.innerHTML= "&nbsp;";
                             atr.appendChild(atd);
                         }
-                        atr.cells[0].innerHTML=sid;//标签id
+                        atr.cells[0].innerHTML=sid;//标签id   1/4 74/270
                         atr.cells[0].style.cssText="display:none";
                         atr.cells[1].innerHTML=sname;//第一列添加标签名称，
                         atr.cells[2].value=dateToString(obj_data.time,2);//用于对下一次的采集时间进行比较计算
@@ -591,23 +653,23 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                             if($table.rows[l].cells[0].innerHTML==obj_data.sensorId){
                                 for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
                                     if(!v_sel[k].checked){
-                                        atr.cells[k+hidden_cells].style.cssText = "display:none";
+                                        $table.rows[l].cells[k+hidden_cells].style.cssText = "display:none";
                                     }
                                     if(v_sel[k].value==dname){
                                         $table.rows[l].cells[k+hidden_cells].innerHTML=data_value;
                                         //isbreak=true;
-                                        if($table.rows[l].cells[1].innerHTML<dateToString(obj_data.time,2).substring(10,19)){//更新最新时间
-                                            $table.rows[l].cells[1].innerHTML=dateToString(obj_data.time,2).substring(10,19);
-                                            $table.rows[l].cells[1].value=dateToString(obj_data.time,2);
+                                        if($table.rows[l].cells[2].innerHTML<dateToString(obj_data.time,2).substring(10,19)){//更新最新时间
+                                            $table.rows[l].cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                            $table.rows[l].cells[2].value=dateToString(obj_data.time,2);
                                         }
                                         if(obj_data.message){
-                                            atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
-                                            if(atr.cells[tablehead_len-1].innerHTML)
-                                                atr.cells[tablehead_len-1].innerHTML+=","+obj_data.message
+                                            $table.rows[l].cells[k+hidden_cells].style.backgroundColor="#ffff00";
+                                            if($table.rows[l].cells[tablehead_len-1].innerHTML&&($table.rows[l].cells[tablehead_len-1].innerHTML.indexOf(obj_data.message)<0))
+                                            $table.rows[l].cells[tablehead_len-1].innerHTML+=","+obj_data.message
                                             else
-                                            atr.cells[tablehead_len-1].innerHTML=obj_data.message;
+                                            $table.rows[l].cells[tablehead_len-1].innerHTML=obj_data.message;
                                         }else{
-                                            atr.cells[k+hidden_cells].style.backgroundColor=""
+                                            $table.rows[l].cells[k+hidden_cells].style.backgroundColor=""
                                         }
                                         break;
                                     }
@@ -793,10 +855,11 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
             }
         }
         if(nodata){
-            showmsg("没有所选标签的实时数据");
+            //showmsg("没有所选标签的实时数据");
             return;
         }
         if (pt > 0) {
+            alert_obj=[];
             var tableLength = $table.rows.length;
             tab_head=document.getElementById("tab_head");
             //alertcount=[0,0,0,0,0]
@@ -835,9 +898,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                 }else{
                     curPage=parseInt((ppt)/pageSize);
                 }
-                /**安全评价是以实现工程、系统安全为目的，应用安全系统工程原理和方法，对工程、系统中存在的危险、有害因素进行识别与分析、判断工程、系统发生
-                 * 事故和急性职业危害的可能性及其严重程度，提出安全对策建议，从而为工程、系统制定防范措施和管理决策提供科学依据。
-                 * 安全预评价 安全验收评价 安全现状综合评价 安全专项评价  普遍性 客观性 规律性 转换性
+                /**
                  */
                 //tableclick($table.rows[curPage]);
                 $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
@@ -897,19 +958,19 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
     //$table.rows[t_pt].scrollIntoView();
     refreshData();
     //display();
-    page=new Page(pageSize,'realtable','realdata-tbody','pageindex');
-    page.changePage(curPage);
+    //page=new Page(pageSize,'realtable','realdata-tbody','pageindex');
+    //page.changePage(curPage);
     }catch(err){
         showstateinfo(err.message,"realdata/decoderealdata");
     }
 }
 function localrowbysensorid(asensorid){
-    //var isfinded=false;
-    initchartoption();
-    isfirst=true;
-    decoderealdata(null,asensorid,true);//是否可以用其他函数代替（定位到指定的当前行）
+    var isfinded=false;
+    //initchartoption();
+    //isfirst=true;
+    //decoderealdata(null,asensorid,true);//是否可以用其他函数代替（定位到指定的当前行）
     //btn_refresh_click();
-    /*$table = document.getElementById('realdata-tbody');
+    $table = document.getElementById('realdata-tbody');
     let tablehead_len=$table.rows.length;
     for (var int = 0; int < tablehead_len; int++) {
         if ($table.rows[int].cells[0].innerHTML == (asensorid+"")) {
@@ -918,19 +979,19 @@ function localrowbysensorid(asensorid){
             tableclick(row);
             var heightpx = $("#realdata-tbody tr").height();// + 1;//加1是网格线的宽度
             var ppt = +sessionStorage.t_p;
-            if(ppt>pageSize){
+            /*if(ppt>pageSize){
                 curPage=parseInt(ppt/pageSize);
             }else{
                 curPage=0;
-            }
+            }*/
             $("#datadiv").scrollTop((ppt) * heightpx);
-            //gethistorydata(asensorid,catalog,typename, kssj, jssj, 1);
+            gethistorydata(asensorid,catalog,typename, kssj, jssj, 1);
             isfinded=true;
             break;  
         }
     }
-    if(!isfinded&&!isfirst)
-        showmsg("没有符合条件的实时数据", info_showtime);/**/
+    if(!isfinded&&!isfirst)//
+        showmsg("没有符合条件的实时数据", info_showtime);/*/**/
 }
 function updatachart(atype) {//根据不同设备类型，更新图形当中的最大最小值设置以及数值单位
     switch (atype.toLowerCase()) {
@@ -1069,7 +1130,7 @@ function initseries(data) {
                     }
                 },
                 axisLabel: {
-                    distance:-45,//采用echarts5.0以上，此值为-10，采用V4.6.0以下版本，此值为-45，此时标签正好在园的外围，且数字显示完全。
+                    distance:-38,//采用echarts5.0以上，此值为-10，采用V4.6.0以下版本，此值为-45，此时标签正好在园的外围，且数字显示完全。
                     textStyle: { // 属性lineStyle控制线条样式
                         fontWeight: 'bolder',
                         color: '#fff',
@@ -1182,7 +1243,7 @@ function initseries(data) {
                     }
                 },
                 axisLabel: {
-                    distance:-45,//采用echarts5.0以上，此值为-10，采用V4.6.0以下版本，此值为-45，此时标签正好在园的外围，且数字显示完全。
+                    distance:-38,//采用echarts5.0以上，此值为-10，采用V4.6.0以下版本，此值为-45，此时标签正好在园的外围，且数字显示完全。
                     textStyle: { // 属性lineStyle控制线条样式
                         fontWeight: 'bolder',
                         color: '#fff',
@@ -1362,7 +1423,7 @@ function initseries(data) {
                     }
                 },
                 axisLabel: {
-                    distance:-45,//采用echarts5.0以上，此值为-10，采用V4.6.0以下版本，此值为-45，此时标签正好在园的外围，且数字显示完全。
+                    distance:-38,//采用echarts5.0以上，此值为-10，采用V4.6.0以下版本，此值为-45，此时标签正好在园的外围，且数字显示完全。
                     textStyle: { // 属性lineStyle控制线条样式
                         fontWeight: 'bolder',
                         color: '#fff',

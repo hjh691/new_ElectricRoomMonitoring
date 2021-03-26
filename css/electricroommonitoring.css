@@ -299,7 +299,7 @@
 		background-color: rgba(0, 101, 105, 1);
 	}
 	.tree1{
-		min-width:200px;
+		/*min-width:200px;*/
 		height:40%;
 		overflow:auto;
 		border-style:solid;

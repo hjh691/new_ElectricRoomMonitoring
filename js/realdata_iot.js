@@ -84,10 +84,10 @@ function initpage() {
         var i = 0;
         w1.onmessage = function (event) {
             i++
-            //if (i % 1 == 0) {
+            if (i % 2 == 0) {
                 //getrealdatabynodeid(-1);rage
                 decoderealdata();
-            //}
+            }
         };
     } else {
         var t1 = window.setInterval("getrealdatabynodeid(-1);", 60000);
@@ -130,7 +130,7 @@ function appendalldisplaytype(){
     try{
         //for(var i=display_type.childNodes.length;i>0;i--)
         //    display_type.removeChild(display_type.childNodes[i-1]);
-        allconfigs=JSON.parse(localStorage.Configs);
+        allconfigs=JSON.parse(localStorage.Config);
         /*var sel_datatypename=[];
         if(sessionStorage.sel_datatypename) 
         {
@@ -198,7 +198,7 @@ function add_displaytype(parent,name,folder,text,check){
 }
 //"刷新"按钮点击事件
 function btn_refresh_click(obj){
-    allselect = $('[name="options"]');
+    /*allselect = $('[name="options"]');
     var allselects=[];
     
     for(var i=0;i<allselect.length;i++){
@@ -214,7 +214,8 @@ function btn_refresh_click(obj){
     //refresh_tabhead(allselect);
     decoderealdata();
     if(haverealdata)
-        decodedatas();
+        decodedatas();*/
+    cleartable();
 }
 function refresh_tabhead(sel){
     count=0;
@@ -362,11 +363,11 @@ function stopWorker() {
     w1 = undefined;
 };
 //根据数据列值获取Catalog。
-function getCatalog(index){
+function getCatalog(atype,aname){
     try{
         //var catalog="";
         //var  catalogsel = $('[name="options"]');
-        typename=index;//catalogsel[index].value;
+        typename=aname;//catalogsel[index].value;
         //initchartoption();
         //titlename=catalogsel[index].textContent;//显示项的标题 //20200518
         var stitlename;;
@@ -375,6 +376,7 @@ function getCatalog(index){
         //return catalog;
         if(allconfigs){
             for(var q in allconfigs){
+                if(allconfigs[q].type===atype)
                 for(var l in allconfigs[q].details){
                     if(allconfigs[q].details[l].name.toLowerCase()==typename.toLowerCase()){
                         stitlename=allconfigs[q].details[l].desc;
@@ -385,12 +387,21 @@ function getCatalog(index){
                                 if(!jQuery.isEmptyObject(jo_config[c].details)){
                                     var d_config=jo_config[c].details; //20200918 获取配置项参数 由allconfigs（typeconfigs）的details里的name找到typename，然后取其
                                     for(var i in d_config){            //name,由name到configs里查找name，找到后从其details里提取config，然后从config中提取所需的配置数值。
-                                        if((d_config[i].name.toLowerCase()==typename.toLowerCase())&&((d_config[i].config))){
-                                            chartOption.chart_unit=d_config[i].config.Unit;
-                                            if(!chartOption.chart_unit)
-                                                chartOption.chart_unit="";
-                                            chartOption.chart_max=d_config[i].config.Top;
-                                            chartOption.chart_min=d_config[i].config.Bot;
+                                        if((d_config[i].name.toLowerCase()==typename.toLowerCase())&&((d_config[i].details))){
+                                            for(var detail in d_config[i].details){
+                                                if(d_config[i].details[detail].name.toLowerCase()=="Unit".toLowerCase()){
+                                                    chartOption.chart_unit=d_config[i].details[detail].value;
+                                                    continue;
+                                                }
+                                                if(d_config[i].details[detail].name.toLowerCase()=="Top".toLowerCase()){
+                                                    chartOption.chart_unit=d_config[i].details[detail].value;
+                                                    continue;
+                                                }
+                                                if(d_config[i].details[detail].name.toLowerCase()=="Bot".toLowerCase()){
+                                                    chartOption.chart_unit=d_config[i].details[detail].value;
+                                                    continue;
+                                                }
+                                            }
                                             /*if((chartOption.chart_max-chartOption.chart_min)%10==0){
                                                 chartOption.chart_main_num=4;
                                                 chartOption.chart_chi_num=8;
@@ -417,16 +428,21 @@ function getCatalog(index){
         showstateinfo(err.message,"realdata_iot/getCatalog")
     }
 }
+function cleartable(){
+    $('#others_realdata_tbody').empty();
+    getrealdatabynodeid(-1);
+}
 function decoderealdata(obj_realdata,asensorid,isload) {
     try{
         var v_sel = $('[name="options"]');
-        $('#others_realdata_tbody').empty();
+        //$('#others_realdata_tbody').empty();
         $table = document.getElementById('others_realdata_tbody');
         if(!obj_realdata){
             obj_realdata=JSON.parse(localStorage.getItem("realdata"));
         }
         var sensors_length=0;
         var sensors = JSON.parse(localStorage.getItem("sensors"));
+        allconfigs=JSON.parse(localStorage.Configs);
         if(sensors)
             sensors_length=sensors.length;
         var obj_data = new Object();
@@ -443,6 +459,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         sid=-1;
         var nodata=true;
         //var sconfig,saddr;
+        
         if(!asensorid)
             nodata=false;
         if (obj_realdata) {
@@ -453,19 +470,34 @@ function decoderealdata(obj_realdata,asensorid,isload) {
             //var title_len=tab_head.rows[0].cells.length;
             //if(v_sel){//有显示控制选择项时进行如下操作.
                 for (var j=0;j<realdata_len;j++) {
+                    if(window.parent.realdataid<parseInt(obj_realdata[j].id))
+                        window.parent.realdataid=parseInt(obj_realdata[j].id);
+                    $table = document.getElementById('others_realdata_tbody');
+                    var tab_rows_len=$table.rows.length;
                     dname=obj_realdata[j].name;
                     realdatafolder=obj_realdata[j].folder;
                     isfindtype=false;
                     //grouptype=obj_realdata[j].type;//Catalog;
-                    if(obj_realdata[j].sensorId==asensorid)
+                    /*if(obj_realdata[j].sensorId==asensorid)
                         nodata=false;
                     if(obj_realdata[j].sensorId==sid){//是否为新的标签项,相同标签的数据默认连续
                         isnew=false;
                     }else{ 
                         sid=obj_realdata[j].sensorId;
                         isnew=true;
+                    }*/
+                    sid=obj_realdata[j].sensorId;
+                    for(p=0;p<tab_rows_len;p++){
+                        if($table.rows[p].cells[1].innerHTML==obj_realdata[j].sensorId){
+                            isfindtype=true;
+                            break;
+                        }
                     }
-                    if (sensors&&isnew)
+                    if(isfindtype)
+                        isnew=false
+                    else
+                        isnew=true;
+                    if (sensors)//&&isnew
                     for (var i = 0; i < sensors_length; i++) {//是否在需要显示的标签列表中
                         isfind=false;
                         if(sid==sensors[i].id){
@@ -540,10 +572,15 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                             atr.cells[4].style.cssText="display:none";
                             atr.cells[5].innerHTML=parentname;
                             titlename=obj_data.name;
-                            if(getCatalog(obj_data.name))
-                                titlename=getCatalog(obj_data.name);
+                            if(getCatalog(type_td,obj_data.name))
+                                titlename=getCatalog(type_td,obj_data.name);
+                            if(obj_data.value.length>=30){
+                                var storagename=sid+"_"+titlename;
+                                localStorage[storagename]=(base64ToArrayBuffer(obj_data.value));
+                                obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
+                            }
                             atr.cells[6].innerHTML=titlename+" : "+obj_data.value+" "+chartOption.chart_unit;
-                            atr.cells[6].style.cssText="padding-left:5px;text-align:left;width:250px";
+                            atr.cells[6].style.cssText="padding-left:5px;text-align:left;width:250px;word-break:break-all;";
                             atr.cells[7].innerHTML=obj_data.message;
                             atr.cells[8].innerHTML=obj_data.folder;
                             /*for(var k=0;k<v_sel.length;k++){//添加到指定列,不同配置项添加到不同的列，由显示控制项控制显示与否
@@ -580,8 +617,13 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                     //    }
                                     //    if(v_sel[k].value==dname){
                                             titlename=obj_data.name;
-                                            if(getCatalog(obj_data.name))
-                                            titlename=getCatalog(obj_data.name);
+                                            if(getCatalog(type_td,obj_data.name))
+                                                titlename=getCatalog(type_td,obj_data.name);
+                                            if(obj_data.value.length>=30){
+                                                var storagename=sid+"_"+titlename;
+                                                localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
+                                                obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
+                                            }
                                             let str_hh=$table.rows[l].cells[6].innerHTML;
                                             if(str_hh.indexOf(titlename+" : ")!=-1){
                                                 exp_str=str_hh.substring(str_hh.indexOf(titlename),(str_hh.indexOf("<br>",str_hh.indexOf(titlename))+4));
@@ -592,22 +634,22 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                             }
                                             $table.rows[l].cells[6].innerHTML=str_hh;
                                             //isbreak=true;
-                                            if($table.rows[l].cells[2].innerHTML<dateToString(obj_data.time,2).substring(10,19)){//更新最新时间
-                                                $table.rows[l].cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);
-                                                $table.rows[l].cells[2].value=dateToString(obj_data.time,2);
+                                            if($table.rows[l].cells[3].innerHTML<dateToString(obj_data.time,2).substring(10,19)){//更新最新时间
+                                                $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                                $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
                                             }
                                             if(obj_data.message){
                                                 //atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
-                                                if(atr.cells[7].innerHTML)
-                                                    atr.cells[7].innerHTML+=","+obj_data.message
+                                                if($table.rows[l].cells[7].innerHTML&&($table.rows[l].cells[7].innerHTML.indexOf(obj_data.message)<0))
+                                                    $table.rows[l].cells[7].innerHTML+=";"+obj_data.message
                                                 else
-                                                    atr.cells[7].innerHTML=obj_data.message;
+                                                    $table.rows[l].cells[7].innerHTML=obj_data.message;
                                             }//else{
                                             //    atr.cells[k+hidden_cells].style.backgroundColor=""
                                             //}
                                             //break;
                                 //        }
-                                            atr.cells[8].innerHTML=obj_data.folder;
+                                            $table.rows[l].cells[8].innerHTML=obj_data.folder;
                                     //}
                                     /*if((k>=v_sel.length)&&(!isbreak)){//如果没有在类型列表中，要如何处置
                                         //需要表头标题添加name，所有列表项添加一列（cell）
@@ -730,7 +772,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 }
             }*/
             if(nodata){
-                showmsg("没有所选标签的实时数据");
+                //showmsg("没有所选标签的实时数据");
                 return;
             }
             /*if (pt > 0) {
@@ -836,6 +878,24 @@ function decoderealdata(obj_realdata,asensorid,isload) {
     }catch(err){
         showstateinfo(err.message,"realdata_iot/decoderealdata");
     }
+}
+function base64ToArrayBuffer (base64) {
+    var arr = base64.split(',')
+    var binaryString = window.atob(arr[0])
+    var len = binaryString.length
+    var bytes = new Uint8Array(len)
+    for (var i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i)
+    }
+    console.log(bytes.buffer)
+    return bytes
+  }
+
+function openmodal(aname){
+    var title=$("#bind_name");
+    title.text(aname+": 数据详细内容")
+    var detail=document.getElementById("details");
+    detail.innerHTML=localStorage[aname];
 }
 function localrowbysensorid(asensorid){
     //var isfinded=false;
