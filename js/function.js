@@ -1481,10 +1481,10 @@ function initsysteminfo(){//used by electricroommonitor 初始化系统设置
 	//$('#add').html(jfjk_base_config.company);
 }
 //以下为新增函数
-//获取实时数据  used by electricroommonitor mainpage.html realdata.html
-function getrealdatabynodeid(nodeid){
-	if (typeof(nodeid)!="undefined"&&nodeid!==null) {
-		sendorder("GetRealsNew?dataId=" + nodeid,function(data){
+//获取实时数据  used by electricroommonitor mainpage.html realdata.html formatting
+function getrealdatabynodeid(anodeid){
+	if (typeof(anodeid)!="undefined"&&anodeid!==null) {
+		sendorder("GetRealsNew?dataId=" + anodeid,function(data){
 			//localStorage.errortime = 0;
 			//sessionStorage.islogin = true;
 			value0=0;value1=0;sname="";
@@ -1644,7 +1644,7 @@ function updatapcnav(obj){
 		case 7:
 		case 8:
 		case 15:
-		//case 17:
+		case 17:
 			if(window.parent.tree2){
 				window.parent.document.getElementById('tree_chi').style.display="block";
 				window.parent.document.getElementById('tree').style.height='60%';

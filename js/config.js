@@ -128,6 +128,9 @@ jfjk_base_config.bg_src="res/bj011.jpg"
  warning_sign_low="越下限";
  warning_sign_hight="越上限";
  info_showtime=1500;
+ jfjk_base_config.refreshtime=2;
+ if(localStorage.refreshtime)
+    jfjk_base_config.refreshtime=localStorage.refreshtime;
  color_table_cur="#adf7b8";//85e494
  color_table_even="#87CEFA";
 ////判断是否由设置的值，没有则取默认值，有则取配置值替代默认值；浏览器清除数据后配置值也被清除；

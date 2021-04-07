@@ -1,4 +1,4 @@
-	var pageSize = 16;    //每页显示的记录条数
+	var pageSize = 999;    //每页显示的记录条数
 	var curPage=0;        //当前页
 	//var lastPage;        //最后页
 	var direct=0;        //方向
@@ -206,7 +206,7 @@
 			}
 			if((configs)){//检查配置中是否有catalog项
 				for(var i=0;i<configs.length;i++){
-					if((configs[i].name.toLowerCase()==allcatalog)){
+					if((configs[i].type.toLowerCase()==allcatalog)){
 						var s_des=configs[i].details//如果有，读取其所有配置项
 						for(var p in s_des){
 							lab=document.createElement("label");

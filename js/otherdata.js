@@ -84,7 +84,7 @@ function initpage() {
         var i = 0;
         w1.onmessage = function (event) {
             i++
-            if (i % 1 == 0) {
+            if (i % jfjk_base_config.refreshtime == 0) {
                 //getrealdatabynodeid(-1);rage
                 decoderealdata();
             }
@@ -568,9 +568,9 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                         if(v_sel[k].value==dname){
                                             $table.rows[l].cells[k+hidden_cells].innerHTML=data_value;
                                             //isbreak=true;
-                                            if($table.rows[l].cells[1].innerHTML<dateToString(obj_data.time,2).substring(10,19)){//更新最新时间
-                                                $table.rows[l].cells[1].innerHTML=dateToString(obj_data.time,2).substring(10,19);
-                                                $table.rows[l].cells[1].value=dateToString(obj_data.time,2);
+                                            if($table.rows[l].cells[2].value<dateToString(obj_data.time,2)){//更新最新时间
+                                                $table.rows[l].cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                                $table.rows[l].cells[2].value=dateToString(obj_data.time,2);
                                             }
                                             if(obj_data.message){
                                                 atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
@@ -686,6 +686,10 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                     for(var k in tab_head.rows[0].cells){
                                         if(obj_data.name==tab_head.rows[0].cells[k].innerHTML){//添加到指定列
                                             atr.cells[k].innerHTML=data_value;
+                                            if($table.rows[l].cells[2].value<dateToString(obj_data.time,2)){//更新最新时间
+                                                $table.rows[l].cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                                $table.rows[l].cells[2].value=dateToString(obj_data.time,2);
+                                            }
                                             if(obj_data.message){
                                                 atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
                                                 if(atr.cells[tablehead_len-1].innerHTML)
@@ -706,7 +710,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 }
             }
             if(nodata){
-                showmsg("没有所选标签的实时数据");
+                //showmsg("没有所选标签的实时数据");
                 return;
             }
             if (pt > 0) {
@@ -801,11 +805,11 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 
             } else {
                 //showmsg("没有符合条件的实时数据",info_showtime);
-                showstateinfo("没有符合条件的实时数据","otherrealdata");
+                showstateinfo("本次获取实时数据为空","otherrealdata-1");
             }
         } else {
-            showmsg("没有符合条件的实时数据", info_showtime);
-            showstateinfo("没有符合条件的实时数据","otherrealdata");
+            //showmsg("没有符合条件的实时数据", info_showtime);
+            showstateinfo("本次获取实时数据为空","otherrealdata-2");
         }
         //$table.rows[t_pt].scrollIntoView();
         refreshData();

@@ -154,7 +154,14 @@
                     <input type="text" style="width:75%;" id="delaytime" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')" title="最多4位整数(毫秒)"/><button  class="btn-hide" onclick="save(4)">保存</button>
                 </div>
             </div>
-            
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set">
+                    <label>实时数据刷新间隔(分钟)</label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4 " >
+                    <input type="text" style="width:75%;" id="refreshtime" maxlength="2" oninput = "value=value.replace(/[^\d]/g,'')" title="最多2位整数(分钟)"/><button  class="btn-hide" onclick="save(6)">保存</button>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-xs-4 col-md-3 system-set">
                     <label>隐藏左侧菜单</label>
@@ -230,6 +237,10 @@
                     $("#delaytime").val(localStorage.delayTime)
                 else
                     $("#delaytime").val(info_showtime);//
+                if(localStorage.refreshtime)
+                    $("#refreshtime").val(localStorage.refreshtime)
+                else
+                    $("#refreshtime").val(jfjk_base_config.refreshtime);
                 if(localStorage.showLeftMenu&&localStorage.showLeftMenu=="true")
                     $("#switch01")[0].src="res/on.png"
                 else
@@ -302,6 +313,10 @@
                         break;
                     case 5:
                         localStorage.speed_scroll=$('#speed_scroll').val();
+                        break;
+                    case 6:
+                        localStorage.refreshtime=$("#refreshtime").val();
+                        jfjk_base_config.refreshtime=localStorage.refreshtime;
                         break;
                     case 7:
                         localStorage.speech_rate=$("#speech_rate").val()*1;

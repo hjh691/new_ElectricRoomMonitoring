@@ -276,7 +276,7 @@
 					w.onmessage = function (event) {//接收定时器返回的消息
 						//document.getElementById("result").innerHTML = event.data;
 						i++;
-						if ((i % 2 == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
+						if ((i % jfjk_base_config.refreshtime == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
 							//sendbeat();
 							getrealdatabynodeid(realdataid);
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);

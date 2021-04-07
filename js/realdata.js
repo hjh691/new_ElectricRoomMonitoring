@@ -19,7 +19,7 @@ var isfirst = "true";
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
 var maxvaluetime="",happentime="",maxOfRealdataName="";
 var colors = [];
-var pageSize = 10;    //每页显示的记录条数
+var pageSize = 999;    //每页显示的记录条数
 var curPage = 0;        //当前页
 //var lastPage;        //最后页
 var direct = 0;        //方向
@@ -93,7 +93,8 @@ function initpage() {
             i++
             if (i<=1) //第一次略过
                 return;
-            decoderealdata();
+            if(i % jfjk_base_config.refreshtime == 0)
+                decoderealdata();
         };
     } else {
         var t1 = window.setInterval("decoderealdata();", 60000);
@@ -658,7 +659,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                                     if(v_sel[k].value==dname){
                                         $table.rows[l].cells[k+hidden_cells].innerHTML=data_value;
                                         //isbreak=true;
-                                        if($table.rows[l].cells[2].innerHTML<dateToString(obj_data.time,2).substring(10,19)){//更新最新时间
+                                        if($table.rows[l].cells[2].value<dateToString(obj_data.time,2)){//更新最新时间
                                             $table.rows[l].cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);
                                             $table.rows[l].cells[2].value=dateToString(obj_data.time,2);
                                         }
@@ -835,6 +836,10 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                                 for(var k in tab_head.rows[0].cells){
                                     if(obj_data.name==tab_head.rows[0].cells[k].innerHTML){//添加到指定列
                                         atr.cells[k].innerHTML=data_value;
+                                        if($table.rows[l].cells[2].value<dateToString(obj_data.time,2)){//更新最新时间
+                                            $table.rows[l].cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                            $table.rows[l].cells[2].value=dateToString(obj_data.time,2);
+                                        }
                                         if(obj_data.message){
                                             atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
                                             if(atr.cells[tablehead_len-1].innerHTML)
@@ -949,11 +954,11 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
             
         } else {
             //showmsg("没有符合条件的实时数据",info_showtime);
-            showstateinfo("没有符合条件的实时数据","realdata");
+            showstateinfo("本次实时数据为空","realdata-1");
         }
     } else {
-        showmsg("没有符合条件的实时数据", info_showtime);
-        showstateinfo("没有符合条件的实时数据","realdata");
+        //showmsg("没有符合条件的实时数据", info_showtime);
+        showstateinfo("本次获取实时数据为空","realdata-2");
     }
     //$table.rows[t_pt].scrollIntoView();
     refreshData();

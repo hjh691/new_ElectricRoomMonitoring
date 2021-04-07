@@ -10,9 +10,12 @@
 	<script type="text/javascript" src="js/bootstrap.js" ></script>
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
+	<script type="text/javascript" src="js/echarts.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@4/dist/echarts.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@1/dist/echarts-gl.min.js"></script>
 	<!--
 	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
-	<script type="text/javascript" src="js/echarts.js"></script>
+	
 	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>-->
 	<script  type="text/javascript" src="js/function.js"></script>
 	<style type="text/css">
@@ -97,6 +100,7 @@
 					</tbody>
 				</table>
 			</div>
+			
 			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
 				aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog" style="text-align:left;width:800px;"><!---->
@@ -113,6 +117,9 @@
 							<div id="details"  style="height:400px;overflow: auto;word-break:break-all;">
 								<!--<div id="bind_addr">安装地址：1#房间</div>
 								<div id="bind_view">绑定信息：3#视频</div>-->
+							</div>
+							<div id="chartdiv" style="height:300px;">
+
 							</div>       
 						</div>
 						<div class="modal-footer">

@@ -84,7 +84,7 @@ function initpage() {
         var i = 0;
         w1.onmessage = function (event) {
             i++
-            if (i % 2 == 0) {
+            if (i % jfjk_base_config.refreshtime == 0) {
                 //getrealdatabynodeid(-1);rage
                 decoderealdata();
             }
@@ -116,14 +116,14 @@ function initpage() {
     if(sessionStorage.getItem("chartoption")){
         chartOption=JSON.parse(sessionStorage.getItem("chartoption"));
     }
-    //btn_refresh_click();
+    btn_refresh_click();
 }
 $(function () {
     $(".btn").click(function(){
         $(this).button('toggle');
         dname= $(".btn:checked").val();
         catalog=getcatalog(dname);
-        gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+        //gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
     });
 });
 function appendalldisplaytype(){
@@ -394,11 +394,11 @@ function getCatalog(atype,aname){
                                                     continue;
                                                 }
                                                 if(d_config[i].details[detail].name.toLowerCase()=="Top".toLowerCase()){
-                                                    chartOption.chart_unit=d_config[i].details[detail].value;
+                                                    chartOption.chart_max=d_config[i].details[detail].value;
                                                     continue;
                                                 }
                                                 if(d_config[i].details[detail].name.toLowerCase()=="Bot".toLowerCase()){
-                                                    chartOption.chart_unit=d_config[i].details[detail].value;
+                                                    chartOption.chart_min=d_config[i].details[detail].value;
                                                     continue;
                                                 }
                                             }
@@ -576,7 +576,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                 titlename=getCatalog(type_td,obj_data.name);
                             if(obj_data.value.length>=30){
                                 var storagename=sid+"_"+titlename;
-                                localStorage[storagename]=(base64ToArrayBuffer(obj_data.value));
+                                localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
                                 obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
                             }
                             atr.cells[6].innerHTML=titlename+" : "+obj_data.value+" "+chartOption.chart_unit;
@@ -634,7 +634,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                             }
                                             $table.rows[l].cells[6].innerHTML=str_hh;
                                             //isbreak=true;
-                                            if($table.rows[l].cells[3].innerHTML<dateToString(obj_data.time,2).substring(10,19)){//更新最新时间
+                                            if($table.rows[l].cells[3].value<dateToString(obj_data.time,2)){//更新最新时间
                                                 $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
                                                 $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
                                             }
@@ -864,11 +864,11 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 
             } else {
                 //showmsg("没有符合条件的实时数据",info_showtime);
-                showstateinfo("没有符合条件的实时数据","otherrealdata");
+                showstateinfo("没有符合条件的实时数据","realdata_iot");
             }*/
         } else {
-            showmsg("没有符合条件的实时数据", info_showtime);
-            showstateinfo("没有符合条件的实时数据","otherrealdata");
+            //showmsg("没有符合条件的实时数据", info_showtime);
+            showstateinfo("本次获取实时数据为空","realdata_iot");
         }
         //$table.rows[t_pt].scrollIntoView();
         //refreshData();
@@ -887,7 +887,7 @@ function base64ToArrayBuffer (base64) {
     for (var i = 0; i < len; i++) {
       bytes[i] = binaryString.charCodeAt(i)
     }
-    console.log(bytes.buffer)
+    //console.log(bytes.buffer)
     return bytes
   }
 
@@ -895,8 +895,75 @@ function openmodal(aname){
     var title=$("#bind_name");
     title.text(aname+": 数据详细内容")
     var detail=document.getElementById("details");
-    detail.innerHTML=localStorage[aname];
+    var temp=(localStorage[aname].split(','));
+    var float=[];
+    var stemp="";
+    for(var i=8;i<temp.length;i=i+4){
+    float[(i/4)-2] = hex2float(bytesarraytofloat(temp,i)).toFixed(Number_of_decimal);
+    //stemp+=float[(i/4)-2]+" ";
+    }
+    //detail.innerHTML=stemp;
+    //var chartdiv=document.createElement("div");
+    //chartdiv.setAttribute('style','width:300px;height:300px;')
+    //var echarts = require('echarts');
+    //require('echarts-gl');
+    var chartDom = document.getElementById('chartdiv');
+    chartDom.style="width:300px;height:300px;"
+    var myChart = echarts.init(detail);
+    var option;
+
+    var data = [];
+// Parametric curve
+for (var t = 0; t < 50; t += 1) {
+    var y = t;//t + 2.0 * Math.sin(75 * t);
+    for(var j=0;j<72;j++){
+        var x = j;//(1 + 0.25 * Math.cos(75 * t)) * Math.cos(t);
+        var z = float[t*72+j];//(1 + 0.25 * Math.cos(75 * t)) * Math.sin(t);
+        
+        data.push([x, y, z]);
+    }
 }
+console.log(data.length);
+
+option = {
+    tooltip: {},
+    backgroundColor: '#fff',
+    visualMap: {
+        show: false,
+        dimension: 2,
+        min: 0,
+        max: 30,
+        inRange: {
+            color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+        }
+    },
+    xAxis3D: {
+        type: 'category'
+    },
+    yAxis3D: {
+        type: 'category'
+    },
+    zAxis3D: {
+        type: 'value'
+    },
+    grid3D: {
+        viewControl: {
+            projection: 'orthographic'
+        }
+    },
+    series: [{
+        type: 'line3D',
+        data: data,
+        lineStyle: {
+            width: 4
+        }
+    }]
+};
+
+    option && myChart.setOption(option);
+    //detail.appendChild(chartdiv); 
+
+    }
 function localrowbysensorid(asensorid){
     //var isfinded=false;
     initchartoption();
@@ -1441,7 +1508,7 @@ function decodedatas(obj_chartdata) {
         myChart2.setOption(option2);
     }
     }catch(err){
-        showstateinfo(err.message.message,"otherrealdata/decodedatas");
+        showstateinfo(err.message.message,"realdata_iot/decodedatas");
     }
 }
 function initchart2() {
@@ -1734,10 +1801,199 @@ function jisuanyichangbili(avalue){
         alertcount[0]++;
     }
 }
+function bytesarraytofloat(bytes,index){
+    var v1=bytes[index];
+    var v2=bytes[index+1];
+    var v3=bytes[index+2];
+    var mfloat = ((bytes[index+3] & 0xFF) << 24) | 
+	((bytes[index+2] & 0xFF) << 16) | 
+	((bytes[index+1] & 0xFF) << 8) | 
+	(bytes[index+0] & 0xFF);
+    return mfloat;
+}
+function hex2float(num) {
+    //符号位    1100 0010 0 100 0000 0000 0000 0000 0000
+  var sign = (num & 0x80000000) ? -1 : 1;
+    //指数位
+  var exponent = ((num >> 23) & 0xff) - 127;
+    //尾数位
+  num=num&0x7fffff
+  var mantissa = 1 + ((num) / 0x7fffff);
+  return sign * mantissa * Math.pow(2, exponent);
+}
+function base64toBlob(base64,type) {  
+    // 将base64转为Unicode规则编码
+	let  bstr = atob(base64, type),  
+	n = bstr.length,  
+    u8arr = new Uint8Array(n);  
+    while (n--) {  
+        u8arr[n] = bstr.charCodeAt(n) // 转换编码后才可以使用charCodeAt 找到Unicode编码
+    }  
+    return new Blob([u8arr], {  
+        type,
+    })
+} 
+
+function getFloatValue(base64Str) {  
+	let blob = base64toBlob(base64Str, "");
+	return blob.arrayBuffer().then(buffer => {
+		let view = new DataView(buffer);
+		if(buffer.byteLength == 4){
+			return view.getFloat32(0, false);
+		} else {
+			return view.getFloat64(0, false);
+		}
+	});
+} 
+function parseFloathex(str) {
+    var float = 0, sign, order, mantissa, exp,
+    int = 0, multi = 1;
+    if (/^0x/.exec(str)) {
+        int = parseInt(str, 16);
+    }
+    else {
+        for (var i = str.length -1; i >=0; i -= 1) {
+            if (str.charCodeAt(i) > 255) {
+                console.log('Wrong string parameter');
+                return false;
+            }
+            int += str.charCodeAt(i) * multi;
+            multi *= 256;
+        }
+    }
+    sign = (int >>> 31) ? -1 : 1;
+    exp = (int >>> 23 & 0xff) - 127;
+    mantissa = ((int & 0x7fffff) + 0x800000).toString(2);
+    for (i=0; i<mantissa.length; i+=1) {
+        float += parseInt(mantissa[i]) ? Math.pow(2, exp) : 0;
+        exp--;
+    }
+    return float*sign;
+}
+//需要用到的函数
+function InsertString(t, c, n) {
+        var r = new Array();
+        for (var i = 0; i * 2 < t.length; i++) {
+            r.push(t.substr(i * 2, n));
+        }
+        return r.join(c);
+    }
+    //需要用到的函数  
+    function FillString(t, c, n, b) {
+        if ((t == "") || (c.length != 1) || (n <= t.length)) {
+            return t;
+        }
+        var l = t.length;
+        for (var i = 0; i < n - l; i++) {
+            if (b == true) {
+                t = c + t;
+            }
+             else {
+                t += c;
+            }
+        }
+        return t;
+    }
+    //16进制转浮点数
+    function HexToSingle(t) {
+        t = t.replace(/\s+/g, "");
+        if (t == "") {
+            return "";
+        }
+        if (t == "00000000") {
+            return "0";
+        }
+        if ((t.length > 8) || (isNaN(parseInt(t, 16)))) {
+            return "Error";
+        }
+        if (t.length < 8) {
+            t = FillString(t, "0", 8, true);
+        }
+        t = parseInt(t, 16).toString(2);
+        t = FillString(t, "0", 32, true);
+        var s = t.substring(0, 1);
+        var e = t.substring(1, 9);
+        var m = t.substring(9);
+        e = parseInt(e, 2) - 127;
+        m = "1" + m;
+        if (e >= 0) {
+            m = m.substr(0, e + 1) + "." + m.substring(e + 1)
+        }
+         else {
+            m = "0." + FillString(m, "0", m.length - e - 1, true)
+        }
+        if (m.indexOf(".") == -1) {
+            m = m + ".0";
+        }
+        var a = m.split(".");
+        var mi = parseInt(a[0], 2);
+        var mf = 0;
+        for (var i = 0; i < a[1].length; i++) {
+            mf += parseFloat(a[1].charAt(i)) * Math.pow(2, -(i + 1));
+        }
+        m = parseInt(mi) + parseFloat(mf);
+        if (s == 1) {
+            m = 0 - m;
+        }
+        return m;
+    }
+    //浮点数转16进制
+    function SingleToHex(t) {
+        if (t == "") {
+            return "";
+        }
+        t = parseFloat(t);
+        if (isNaN(t) == true) {
+            return "Error";
+        }
+        if (t == 0) {
+            return "00000000";
+        }
+        var s,
+        e,
+        m;
+        if (t > 0) {
+            s = 0;
+        }
+         else {
+            s = 1;
+            t = 0 - t;
+        }
+        m = t.toString(2);
+        if (m >= 1) {
+            if (m.indexOf(".") == -1) {
+                m = m + ".0";
+            }
+            e = m.indexOf(".") - 1;
+        }
+         else {
+            e = 1 - m.indexOf("1");
+        }
+        if (e >= 0) {
+            m = m.replace(".", "");
+        }
+         else {
+            m = m.substring(m.indexOf("1"));
+        }
+        if (m.length > 24) {
+            m = m.substr(0, 24);
+        }
+         else {
+            m = FillString(m, "0", 24, false)
+        }
+        m = m.substring(1);
+        e = (e + 127).toString(2);
+        e = FillString(e, "0", 8, true);
+        var r = parseInt(s + e + m, 2).toString(16);
+        r = FillString(r, "0", 8, true);
+        return InsertString(r, " ", 2).toUpperCase();
+    }
 /**
  * 解决在首次登录今日实时数据页面时数据不立即显示的问题，标签名称添加上级名称，区分同名标签；
  * 状态统计添加图形序列的数值显示；
  * 数据列表项控制显示项添加folder属性，并进行页面级存储，在刷新时加载。同时可以在标签没有配置项时可以通过实时数据获取到其folder属性。1224
  * 数据列表显示控制函数合并（告警、设备、实时）
  * 解决在没有数据时的状态比例图形显示错误问题；
+ * 趋势对比的数据表导出excel时的格式以及项目名称；解决实时数据刷新时时间比较不正确的问题；系统设置添加实时数据刷新间隔时间设置；
+ * 学习echarts的3D效果图表的配置和数据表；
  */

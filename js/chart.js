@@ -1,7 +1,7 @@
     //初始化历史数据图形显示页面（在进入趋势图页面时触发）。
     var check_val = [],check_name=[];
     var kssj,jssj;
-    var sensors,configs;
+    var sensors,configs,scatalog;
     var sel_str=[];
     var ch1,ch2,ch3,ch4;
     var cname,catalog;
@@ -35,21 +35,23 @@
         var obj_node=tree_obj.treeview("getSelected");
         if(obj_node.length>0)//判断有没有选中项
         {tree_obj.treeview("unselectNode",obj_node[0]);}//使选择项为不选中，为下一步选择所有未选择项准备//	$("#sel-sensorname").val("所选标签: "+tree_obj.treeview("getSelected")[0].text);
-        var sensors=tree_obj.treeview("getUnselected");//选取未选中项
-        if(sensors && sel_sensor)
-        var nodeid;
-        let sel_sersor_len=sel_sensor.length,sensors_len=sensors.length;
-        for (var i =sel_sersor_len-1 ; i >=0; i--) {//使得最后选中的标签维最靠前面的标签，树形菜单定位到第一个被选中的标签位置；原来（正序）为最后一个
-            for(var j=0;j<sensors_len;j++){
-                if(sel_sensor[i]==sensors[j].id){
-                    //if(i==0)
-                    nodeid=sensors[j].text;
-                    tree_obj.treeview("selectNode",sensors[j].nodeId);
-                    break;
+        var sensor=tree_obj.treeview("getUnselected");//选取未选中项
+        if(sensor && sel_sensor){
+            var nodeid;
+            let sel_sersor_len=sel_sensor.length,sensors_len=sensor.length;
+            for (var i =sel_sersor_len-1 ; i >=0; i--) {//使得最后选中的标签维最靠前面的标签，树形菜单定位到第一个被选中的标签位置；原来（正序）为最后一个
+                for(var j=0;j<sensors_len;j++){
+                    if(sel_sensor[i]==sensor[j].id){
+                        //if(i==0)
+                        nodeid=sensor[j].text;
+                        tree_obj.treeview("selectNode",sensor[j].nodeId);
+                        break;
+                    }
                 }
             }
+            
+            tree_obj.treeview("search",[nodeid+'', { ignoreCase: false, exactMatch: true }]);
         }
-        tree_obj.treeview("search",[nodeid+'', { ignoreCase: false, exactMatch: true }]);
         //sensors=JSON.parse(localStorage.getItem("sensors"));//
         configs=JSON.parse(localStorage.Config);
         appenddisplaytype();
@@ -61,9 +63,21 @@
         }
     }
     //添加类别分组选项
-    function appenddisplaytype(){
+    function appenddisplaytype(element_id){
         try{
-        selectText="";
+            sensors=JSON.parse(localStorage.getItem("sensors"));
+            if(sensors){
+                let sensors_len=sensors.length;
+                for(var k=0;k<sensors_len;k++){
+                    if(sensors[k].Value.id==element_id){
+                        scatalog=sensors[k].Value.type;//catalog;//读取对应的Catalog项1
+                        if(scatalog)
+                            scatalog=scatalog.toLowerCase();
+                        break;
+                    }
+                }
+            }
+            selectText="";
         if(sessionStorage.selectText){
             sel_str=sessionStorage.selectText.split(";");
         }else{
@@ -75,6 +89,7 @@
         allconfigs=JSON.parse(localStorage.Config);
         if(allconfigs){
             for(var ac in allconfigs){//如果有，读取其所有配置项
+                if(allconfigs[ac].type.toLowerCase()==scatalog){
                 var s_des=allconfigs[ac].details;//如果有，读取其所有配置项
                 for(var p in s_des){
                     for(var i=0;i<temp.children.length;i++){//0721 edit 判断是否存在配置项，如果存在则跳过继续，不存在则添加;
@@ -121,6 +136,7 @@
                     //title_th.innerHTML=s_des[p].Desc;
                     //document.getElementById("table_title").appendChild(title_th);
                 }
+            }
             }
             if(sel_str.length==0){
                 temp.children[0].children[0].children[0].checked=true;
@@ -326,16 +342,19 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
 		if(check_val.length>0){
 			var title_tr=document.createElement("tr");
 			var title_th=document.createElement("th");
+            //title_tr.appendChild(title_th);
+            //title_th=document.createElement("th");
 			title_th.setAttribute('colspan','4');//setAttribute('colspan','4')"
 			//title_th.setAttribute('style','text-align: center');
 			title_th.innerHTML=atitle;
 			title_tr.appendChild(title_th);
             tbody.appendChild(title_tr);
-            let atr=creatTr();
+            /*let atr=creatTr();
+            atr.cells[1].innerHTML="测量时间";
             for(i=0;i<check_name.length;i++){
                 atr.cells[i+2].innerHTML=check_name[i];
             }
-            tbody.appendChild(atr);
+            tbody.appendChild(atr);*/
 			for(var i=0;i<check_val.length;i++){
 				var sensorid=check_val[i];
 				var series=new Object();
@@ -352,7 +371,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
 					for (var j = 0; j <obj_chartdata.length; j++) {
                         if(obj_chartdata[j].sensorId==sensorid){
                             let obj_data_j=obj_chartdata[j];
-                            let name=obj_data_j.name.toLowerCase();
+                            let name=atitle;//obj_data_j.name.toLowerCase();
                             pb.push([Date.parse(obj_data_j.time),obj_data_j.value, j]);
 							if(isNaN(parseFloat(obj_data_j.value))){
 								obj_data_j.value=-1;
@@ -365,7 +384,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                             }
                             if(i===0){
                                 atr=creatTr();
-                                atr.cells[0].innerHTML=obj_data_j.name.toLowerCase();
+                                atr.cells[0].innerHTML=atitle;//obj_data_j.name.toLowerCase();
                                 atr.cells[1].innerHTML=dateToString(obj_data_j.time,2);//.replace(/T/g," ").substring(0,19);
                                 atr.cells[2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                 tbody.appendChild(atr);
@@ -374,11 +393,11 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                 let rows_len=rows.length;
                                 for(k=2;k<rows_len;k++){
                                     let tname=rows[k].cells[0].outerText;
-                                    if(tname==name){
+                                    if(tname==name && rows[k].cells[1]){
                                         let jiange=GetDateDiff(rows[k].cells[1].outerText,obj_data_j.time.replace(/T/g," ").substring(0,19),"minute");
                                         if(jiange<-1*min_timeInterval){
                                             atr=creatTr();
-                                            atr.cells[0].innerHTML=obj_data_j.name.toLowerCase();
+                                            atr.cells[0].innerHTML=atitle;//obj_data_j.name.toLowerCase();
                                             atr.cells[1].innerHTML=dateToString(obj_data_j.time,2);//.replace(/T/g," ").substring(0,19);
                                             atr.cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                             tbody.insertBefore(atr,rows[k]);
@@ -402,7 +421,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                 }
                                 if(k>=rows_len){
                                     atr=creatTr();
-                                    atr.cells[0].innerHTML=obj_data_j.name.toLowerCase();
+                                    atr.cells[0].innerHTML=atitle;//obj_data_j.name.toLowerCase();
                                     atr.cells[1].innerHTML=dateToString(obj_data_j.time,2);
                                     atr.cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
                                     tbody.appendChild(atr);
