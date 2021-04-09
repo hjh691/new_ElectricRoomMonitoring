@@ -6,7 +6,6 @@
     刷新过程，添加在主页面点击二级菜单时，对历史数据等页面的配置项进行更新显示功能
 **/
 var chartOption={};
-//var chart_type = "", chart_unit = "", chart_max = 100, chart_min = 0, chart_sigle = "", is_have = false;
 var start_angle = 0, end_angle = 180;
 //var myChart2 = echarts.init(document.getElementById('realdata_chart'));//趋势图
 //var myChart = echarts.init(document.getElementById('realdata_maxvalOfDay'));//24小时极值
@@ -33,9 +32,11 @@ var $table;
 var sign = '>';
 var allconfigs;
 var allselect=null;
-var typename="",titlename="";
+var titlename=""; //typename="",
 var tab_head;
 var backgroudcolor='#999';
+var sensors
+var sensors_length=0;
 //var obj_realdata;
 //var datas = [];
 //var alertconfig=[70,100,120,140,];
@@ -45,7 +46,7 @@ var catalog="Defalt";
 //var display_type=document.getElementById("display_type");
 initrealdata_iot();
 function initchartoption(){//初始化图表选择和显示值；
-    chartOption={chart_type:"",chart_unit:"",chart_max:100,chart_min:0,chart_sigle:"",
+    chartOption={chart_title:"",chart_unit:"",chart_max:100,chart_min:0,chart_sigle:"",child_classname:"",
                  chart_main_num:4,chart_chi_num:8,chart_detail_font_size:16,chart_title_font_size:16,
                  start_angle:0,end_angle:180};
     maxval =  minval =  maxvalue =minvalue = value0=maxOfRealdata=0;
@@ -96,6 +97,47 @@ function initpage() {
     //btn_refresh_click();
     window.parent.closeloadlayer();
     
+    var parentid=-1,parentname="";
+    sensors = JSON.parse(localStorage.getItem("sensors"));
+    $('#others_realdata_tbody').empty();
+    $table = document.getElementById('others_realdata_tbody');
+    //添加所有的标签项
+    if(sensors!=null){
+        sensors_length=sensors.length
+        for(var i=0;i<sensors_length;i++){
+            var tr=document.createElement("tr");
+            tr.setAttribute("onclick","tableclick(this)");
+            var td_did=document.createElement("td");
+            td_did.innerHTML=sensors[i].id;
+            if((sensors[i].Value.parentId!="-1")&&(sensors[i].Value.parentId!=parentid)){
+                parentid=sensors[i].Value.parentId;
+                for(var j=0;j<sensors.length;j++){
+                    if(sensors[j].id==parentid){
+                        parentname=sensors[j].Value.name;
+                        break;
+                    }
+                }
+            }
+            atr=document.createElement("tr");
+            atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
+            for(var k=0;k<10;k++){//tablehead_len
+                var atd=document.createElement("td");
+                //atd.setAttribute("width","150px");
+                //atd.innerHTML= "&nbsp;";
+                atr.appendChild(atd);
+            }
+            atr.cells[0].innerHTML=i;//标签id
+            //atr.cells[0].style.cssText="width:80px";
+            atr.cells[1].innerHTML=sensors[i].id;
+            atr.cells[2].innerHTML=sensors[i].Value.name;//第一列添加标签名称，
+            atr.cells[4].style.cssText="display:none";
+            atr.cells[5].innerHTML=parentname;
+            atr.cells[6].style.cssText="padding-left:5px;text-align:left;width:250px;word-break:break-all;";
+            //atr.style="display:none;"
+            $table.appendChild(atr);
+            
+        }
+    }
     //var topTable = $("table").eq(0).offset().top;//获取表格位置
     var c_top =  $('.oa-nav_top').height() ? $('.oa-nav_top').height() : 0;//获取导航高度没有可填0
     $("#datadiv").scroll(function() {
@@ -363,43 +405,45 @@ function stopWorker() {
     w1 = undefined;
 };
 //根据数据列值获取Catalog。
-function getCatalog(atype,aname){
+function getCatalog(atype,afolder,aname){
     try{
         //var catalog="";
         //var  catalogsel = $('[name="options"]');
-        typename=aname;//catalogsel[index].value;
-        //initchartoption();
+        //typename=aname;catalogsel[index].value;
+        initchartoption();
         //titlename=catalogsel[index].textContent;//显示项的标题 //20200518
-        var stitlename;;
-        updatachart(typename);//0709 更新图表配置
+        //var stitlename;;
+        updatachart(aname);//0709 更新图表配置
         refreshData();
         //return catalog;
         if(allconfigs){
             for(var q in allconfigs){
                 if(allconfigs[q].type===atype)
                 for(var l in allconfigs[q].details){
-                    if(allconfigs[q].details[l].name.toLowerCase()==typename.toLowerCase()){
-                        stitlename=allconfigs[q].details[l].desc;
-                        var configname=allconfigs[q].name;
-                        var jo_config=JSON.parse(localStorage.Config);
-                        for(var c in jo_config)
-                            if(jo_config[c].type.toLowerCase()==configname.toLowerCase()){
-                                if(!jQuery.isEmptyObject(jo_config[c].details)){
-                                    var d_config=jo_config[c].details; //20200918 获取配置项参数 由allconfigs（typeconfigs）的details里的name找到typename，然后取其
+                    if(allconfigs[q].details[l].name.toLowerCase()==aname.toLowerCase()&&(allconfigs[q].details[l].folder==afolder)){
+                        chartOption.chart_title=allconfigs[q].details[l].desc;
+                        //var configname=allconfigs[q].name;
+                        //var jo_config=JSON.parse(localStorage.Config);
+                        //for(var c in jo_config)
+                            //if(jo_config[c].type.toLowerCase()==configname.toLowerCase()){
+                                if(!jQuery.isEmptyObject(allconfigs[q].details)){
+                                    var d_config=allconfigs[q].details; //20200918 获取配置项参数 由allconfigs（typeconfigs）的details里的name找到typename，然后取其
                                     for(var i in d_config){            //name,由name到configs里查找name，找到后从其details里提取config，然后从config中提取所需的配置数值。
-                                        if((d_config[i].name.toLowerCase()==typename.toLowerCase())&&((d_config[i].details))){
+                                        if((d_config[i].name.toLowerCase()==aname.toLowerCase())&&((d_config[i].details))){
                                             for(var detail in d_config[i].details){
-                                                if(d_config[i].details[detail].name.toLowerCase()=="Unit".toLowerCase()){
-                                                    chartOption.chart_unit=d_config[i].details[detail].value;
-                                                    continue;
-                                                }
-                                                if(d_config[i].details[detail].name.toLowerCase()=="Top".toLowerCase()){
-                                                    chartOption.chart_max=d_config[i].details[detail].value;
-                                                    continue;
-                                                }
-                                                if(d_config[i].details[detail].name.toLowerCase()=="Bot".toLowerCase()){
-                                                    chartOption.chart_min=d_config[i].details[detail].value;
-                                                    continue;
+                                                switch(d_config[i].details[detail].name.toLowerCase()){
+                                                    case "Type".toLowerCase():
+                                                        chartOption.child_classname=d_config[i].details[detail].value;
+                                                        break;
+                                                    case "Unit".toLowerCase():
+                                                        chartOption.chart_unit=d_config[i].details[detail].value;
+                                                        break;
+                                                    case "Top".toLowerCase():
+                                                        chartOption.chart_max=d_config[i].details[detail].value;
+                                                        break;
+                                                    case "Bot".toLowerCase():
+                                                        chartOption.chart_min=d_config[i].details[detail].value;
+                                                        break;
                                                 }
                                             }
                                             /*if((chartOption.chart_max-chartOption.chart_min)%10==0){
@@ -413,23 +457,26 @@ function getCatalog(atype,aname){
                                             sessionStorage.setItem("chartoption",JSON.stringify(chartOption));
                                             break;
                                         }
+
                                     }
                                 }
                                 break;
-                            }
+                            //}
                             //catalog= allconfigs[q].details[l].folder;
                     }
                 }
             }
         }
         //catalog=catalogsel[index].attributes.folder.nodeValue;
-        return stitlename;
+        if(chartOption.chart_unit==null ||chartOption.chart_unit==undefined)
+            chartOption.chart_unit="";
+        return chartOption;
     }catch(err){
         showstateinfo(err.message,"realdata_iot/getCatalog")
     }
 }
 function cleartable(){
-    $('#others_realdata_tbody').empty();
+    //$('#others_realdata_tbody').empty();
     getrealdatabynodeid(-1);
 }
 function decoderealdata(obj_realdata,asensorid,isload) {
@@ -440,11 +487,10 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         if(!obj_realdata){
             obj_realdata=JSON.parse(localStorage.getItem("realdata"));
         }
-        var sensors_length=0;
-        var sensors = JSON.parse(localStorage.getItem("sensors"));
+        
         allconfigs=JSON.parse(localStorage.Configs);
-        if(sensors)
-            sensors_length=sensors.length;
+        //if(sensors)
+        //    sensors_length=sensors.length;
         var obj_data = new Object();
         var pt = 0;
         //var dname;
@@ -462,206 +508,136 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         
         if(!asensorid)
             nodata=false;
+        
         if (obj_realdata) {
             var realdata_len=obj_realdata.length;
-            //tablehead_len=tab_head.rows[0].cells.length;
-            //refresh_tabhead(v_sel);//根据选项刷新表头的显示内容
-            //alert_obj={};
-            //var title_len=tab_head.rows[0].cells.length;
-            //if(v_sel){//有显示控制选择项时进行如下操作.
-                for (var j=0;j<realdata_len;j++) {
-                    if(window.parent.realdataid<parseInt(obj_realdata[j].id))
-                        window.parent.realdataid=parseInt(obj_realdata[j].id);
-                    $table = document.getElementById('others_realdata_tbody');
-                    var tab_rows_len=$table.rows.length;
-                    dname=obj_realdata[j].name;
-                    realdatafolder=obj_realdata[j].folder;
-                    isfindtype=false;
-                    //grouptype=obj_realdata[j].type;//Catalog;
-                    /*if(obj_realdata[j].sensorId==asensorid)
-                        nodata=false;
-                    if(obj_realdata[j].sensorId==sid){//是否为新的标签项,相同标签的数据默认连续
-                        isnew=false;
-                    }else{ 
-                        sid=obj_realdata[j].sensorId;
-                        isnew=true;
-                    }*/
-                    sid=obj_realdata[j].sensorId;
-                    for(p=0;p<tab_rows_len;p++){
-                        if($table.rows[p].cells[1].innerHTML==obj_realdata[j].sensorId){
-                            isfindtype=true;
-                            break;
-                        }
-                    }
-                    if(isfindtype)
-                        isnew=false
-                    else
-                        isnew=true;
-                    if (sensors)//&&isnew
-                    for (var i = 0; i < sensors_length; i++) {//是否在需要显示的标签列表中
-                        isfind=false;
-                        if(sid==sensors[i].id){
-                            let sensor_obj = sensors[i].Value;
-                            type_td = sensor_obj.type;//Catalog;//
-                            sname = sensor_obj.name;
-                            //sconfig=sensor_obj.config;
-                            //saddr=sensor_obj.address;
-                            //parentid=sensors[i].Value.parentId;
-                            if(sensor_obj.parentId!="-1"){  
-                                if((sensor_obj.parentId!=parentid)){//20201221
-                                    parentid=sensor_obj.parentId;
-                                    for(var k=0;k<sensors_length;k++){
-                                        if(sensors[k].id==parentid){
-                                            parentname=sensors[k].Value.name;//+"_";
-                                            break;
-                                        }
-                                    }
-                                }
-                                //sensors.splice(i, 1);
-                            }
-                            //sname=parentname+"_"+sname;
-                            isfind=true;
-                            //haverealdata=true;
-                            break;
-                        }
-                    }
-                    var data_value;
-                    if(isfind){//在需要显示的标签列表
-                        //isnew=true;
-                        obj_data = (obj_realdata)[j];////sid
-                        //(isNaN(obj_data.value))
-                            data_value=obj_data.value
-                        //else
-                        //    data_value=parseFloat(obj_data.value);
-                        //for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
-                        //    if(v_sel[k].value==dname){
-                        //        break;
-                        //    }
-                        //}
-                        //if((k>=v_sel.length)&&(!isfindtype)){//如果没有在类型列表中，要如何处置
-                            //需要表头标题添加name，所有列表项添加一列（cell）
-                        //    add_displaytype(display_type,dname,realdatafolder,dname,false);
-                        //    v_sel = $('[name="options"]');
-                            //tablehead_len++;//第一次进入统计比例错误的问题，不应该递增。
-                        //}
-                        if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，//
-                            atr=document.createElement("tr");
-                            atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
-                            for(var k=0;k<10;k++){//tablehead_len
-                                var atd=document.createElement("td");
-                                //atd.setAttribute("width","150px");
-                                atd.innerHTML= "&nbsp;";
-                                atr.appendChild(atd);
-                            }
-                            atr.cells[0].innerHTML=pt;//标签id
-                            //atr.cells[0].style.cssText="width:80px";
-                            atr.cells[1].innerHTML=sid;
-                            atr.cells[2].innerHTML=sname;//第一列添加标签名称，
-                            atr.cells[3].value=dateToString(obj_data.time,2);//用于对下一次的采集时间进行比较计算
-                            atr.cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);//第二列添加测量时间，去掉日期，保留时间。
-                            // 取指定标签过去24小时时间，用于调取历史记录
-                            //if(asensorid===sid){//不加判断会总是取最后一组数据的时间；
-                            //    var ckssj=new Date(dateToString(obj_data.time,2));//(obj_data.Time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
-                            //    var yesterdayend=ckssj-(1000*60*60*24);
-                                //sessionStorage.kssj=dateToString(new Date(yesterdayend),2);
-                            //    kssj = dateToString((yesterdayend),2);//new Date((obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-                            //    jssj = dateToString((ckssj.getTime()+60000*1),2);
-                            //}
-                            //atr.cells[tab_head.rows[0].cells.length-4].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
-                            //atr.cells[tab_head.rows[0].cells.length-3].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
-                            atr.cells[4].style.cssText="display:none";
-                            atr.cells[5].innerHTML=parentname;
-                            titlename=obj_data.name;
-                            if(getCatalog(type_td,obj_data.name))
-                                titlename=getCatalog(type_td,obj_data.name);
-                            if(obj_data.value.length>=30){
-                                var storagename=sid+"_"+titlename;
-                                localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
-                                obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
-                            }
-                            atr.cells[6].innerHTML=titlename+" : "+obj_data.value+" "+chartOption.chart_unit;
-                            atr.cells[6].style.cssText="padding-left:5px;text-align:left;width:250px;word-break:break-all;";
-                            atr.cells[7].innerHTML=obj_data.message;
-                            atr.cells[8].innerHTML=obj_data.folder;
-                            /*for(var k=0;k<v_sel.length;k++){//添加到指定列,不同配置项添加到不同的列，由显示控制项控制显示与否
-                                if(!v_sel[k].checked){
-                                    atr.cells[k+hidden_cells].style.cssText = "display:none";
-                                }
-                                if(v_sel[k].value == dname){
-                                    
-                                    atr.cells[k+hidden_cells].innerHTML=data_value;
-                                    if(obj_data.message){
-                                        atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
-                                    }else{
-                                        atr.cells[k+hidden_cells].style.backgroundColor=""
-                                    }
-                                    isfindtype=true;
-                                    //break;
-                                }
-                            }
-                            if((k>=v_sel.length)&&(!isfindtype)){//如果没有在类型列表中，要如何处置
-                                //需要表头标题添加name，所有列表项添加一列（cell）
-                                add_displaytype(display_type,dname,realdatafolder,dname,false);
-                                v_sel = $('[name="options"]');
-                                tablehead_len++;
-                            }*/
-                            $table.appendChild(atr);
-                            pt++;
-                        }else{//不是新标签
-                            let tab_row_len=$table.rows.length;
-                            for(var l=0;l<tab_row_len;l++){
-                                if($table.rows[l].cells[1].innerHTML==obj_data.sensorId){
-                                    //for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
-                                    //    if(!v_sel[k].checked){
-                                    //        atr.cells[k+hidden_cells].style.cssText = "display:none";
-                                    //    }
-                                    //    if(v_sel[k].value==dname){
-                                            titlename=obj_data.name;
-                                            if(getCatalog(type_td,obj_data.name))
-                                                titlename=getCatalog(type_td,obj_data.name);
-                                            if(obj_data.value.length>=30){
-                                                var storagename=sid+"_"+titlename;
-                                                localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
-                                                obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
-                                            }
-                                            let str_hh=$table.rows[l].cells[6].innerHTML;
-                                            if(str_hh.indexOf(titlename+" : ")!=-1){
-                                                exp_str=str_hh.substring(str_hh.indexOf(titlename),(str_hh.indexOf("<br>",str_hh.indexOf(titlename))+4));
-                                                str_hh.replace(exp_str,titlename+" : "+data_value+" "+chartOption.chart_unit);
-                                            }else{
-                                                str_hh=str_hh+"<br>"+
-                                                titlename+" : "+ data_value+" "+chartOption.chart_unit;
-                                            }
-                                            $table.rows[l].cells[6].innerHTML=str_hh;
-                                            //isbreak=true;
-                                            if($table.rows[l].cells[3].value<dateToString(obj_data.time,2)){//更新最新时间
-                                                $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
-                                                $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
-                                            }
-                                            if(obj_data.message){
-                                                //atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
-                                                if($table.rows[l].cells[7].innerHTML&&($table.rows[l].cells[7].innerHTML.indexOf(obj_data.message)<0))
-                                                    $table.rows[l].cells[7].innerHTML+=";"+obj_data.message
-                                                else
-                                                    $table.rows[l].cells[7].innerHTML=obj_data.message;
-                                            }//else{
-                                            //    atr.cells[k+hidden_cells].style.backgroundColor=""
-                                            //}
-                                            //break;
-                                //        }
-                                            $table.rows[l].cells[8].innerHTML=obj_data.folder;
-                                    //}
-                                    /*if((k>=v_sel.length)&&(!isbreak)){//如果没有在类型列表中，要如何处置
-                                        //需要表头标题添加name，所有列表项添加一列（cell）
-                                        add_displaytype(display_type,dname,realdatafolder,dname,false);
-                                        v_sel = $('[name="options"]');
-                                    }*/
-                                    break;
-                                }
-                            }
-                        }
+            for (var j=0;j<realdata_len;j++) {
+                if(window.parent.realdataid<parseInt(obj_realdata[j].id))
+                    window.parent.realdataid=parseInt(obj_realdata[j].id);
+                $table = document.getElementById('others_realdata_tbody');
+                var tab_rows_len=$table.rows.length;
+                dname=obj_realdata[j].name;
+                realdatafolder=obj_realdata[j].folder;
+                isfindtype=false;
+                sid=obj_realdata[j].sensorId;
+                for(p=0;p<tab_rows_len;p++){
+                    if($table.rows[p].cells[1].innerHTML==obj_realdata[j].sensorId){
+                        isfindtype=true;
+                        break;
                     }
                 }
+                if(isfindtype)
+                    isnew=false
+                else
+                    isnew=true;
+                if (sensors)//&&isnew
+                for (var i = 0; i < sensors_length; i++) {//是否在需要显示的标签列表中
+                    isfind=false;
+                    if(sid==sensors[i].id){
+                        let sensor_obj = sensors[i].Value;
+                        type_td = sensor_obj.type;//Catalog;//
+                        sname = sensor_obj.name;
+                        /*if(sensor_obj.parentId!="-1"){  
+                            if((sensor_obj.parentId!=parentid)){//20201221
+                                parentid=sensor_obj.parentId;
+                                for(var k=0;k<sensors_length;k++){
+                                    if(sensors[k].id==parentid){
+                                        parentname=sensors[k].Value.name;//+"_";
+                                        break;
+                                    }
+                                }
+                            }
+                            //sensors.splice(i, 1);
+                        }*/
+                        //sname=parentname+"_"+sname;
+                        isfind=true;
+                        //haverealdata=true;
+                        break;
+                    }
+                }
+                //var data_value;
+                //if(isfind){//在需要显示的标签列表
+                    
+                    obj_data = (obj_realdata)[j];////sid
+                    //data_value=obj_data.value
+                    
+                    if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，//
+                       /* atr=document.createElement("tr");
+                        atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
+                        for(var k=0;k<10;k++){//tablehead_len
+                            var atd=document.createElement("td");
+                            //atd.setAttribute("width","150px");
+                            atd.innerHTML= "&nbsp;";
+                            atr.appendChild(atd);
+                        }
+                        atr.cells[0].innerHTML=pt;//标签id
+                        //atr.cells[0].style.cssText="width:80px";
+                        atr.cells[1].innerHTML=sid;
+                        atr.cells[2].innerHTML=sname;//第一列添加标签名称，
+                        atr.cells[3].value=dateToString(obj_data.time,2);//用于对下一次的采集时间进行比较计算
+                        atr.cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);//第二列添加测量时间，去掉日期，保留时间。
+                        
+                        atr.cells[4].style.cssText="display:none";
+                        atr.cells[5].innerHTML=parentname;
+                        titlename=obj_data.name;
+                        if(getCatalog(type_td,obj_data.name))
+                            titlename=getCatalog(type_td,obj_data.name);
+                        if(obj_data.value.length>=30){
+                            var storagename=sid+"_"+titlename;
+                            localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
+                            obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
+                        }
+                        atr.cells[6].innerHTML=titlename+" : "+obj_data.value+" "+chartOption.chart_unit;
+                        atr.cells[6].style.cssText="padding-left:5px;text-align:left;width:250px;word-break:break-all;";
+                        atr.cells[7].innerHTML=obj_data.message;
+                        atr.cells[8].innerHTML=obj_data.folder;
+                        $table.appendChild(atr);
+                        pt++;*/
+                    }else{//不是新标签
+                        let tab_row_len=$table.rows.length;
+                        for(var l=0;l<tab_row_len;l++){
+                            if($table.rows[l].cells[1].innerHTML==obj_data.sensorId){
+                                titlename=realdatafolder+"."+obj_data.name;
+                                if(getCatalog(type_td,realdatafolder,obj_data.name))
+                                    titlename=getCatalog(type_td,realdatafolder, obj_data.name).chart_title;
+                                if(chartOption.child_classname=="UHFdata"){
+                                    var storagename=sid+"_"+titlename;
+                                    localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
+                                    obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
+                                }
+                                let str_hh=$table.rows[l].cells[6].innerHTML;
+                                if(!str_hh){
+                                    str_hh=titlename+" : "+ obj_data.value+" "+chartOption.chart_unit;
+                                }else if(str_hh.indexOf(titlename+" : ")!=-1){
+                                    exp_str=str_hh.substring(str_hh.indexOf(titlename),(str_hh.indexOf("<br>",str_hh.indexOf(titlename))+4));
+                                    str_hh.replace(exp_str,titlename+" : "+obj_data.value+" "+chartOption.chart_unit);
+                                }else{
+                                    str_hh=str_hh+"<br>"+
+                                    titlename+" : "+ obj_data.value+" "+chartOption.chart_unit;
+                                }
+                                $table.rows[l].cells[6].innerHTML=str_hh;
+                                //isbreak=true;
+                                if(!$table.rows[l].cells[3].value || ($table.rows[l].cells[3].value<dateToString(obj_data.time,2))){//更新最新时间
+                                    $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                    $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
+                                }
+                                if(obj_data.message){
+                                    //atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
+                                    if($table.rows[l].cells[7].innerHTML&&($table.rows[l].cells[7].innerHTML.indexOf(obj_data.message)<0))
+                                        $table.rows[l].cells[7].innerHTML+=";"+obj_data.message
+                                    else
+                                        $table.rows[l].cells[7].innerHTML=obj_data.message;
+                                }
+                                $table.rows[l].cells[8].innerHTML='运行';//obj_data.folder;
+                                $table.rows[l].style=""
+                                break;
+                            }
+                        }
+                    }
+                //}
+            }
+            
+
             /*}else{//如果没有显示控制项（分组配置项） 20200509 编写，还需测试完善。
                 for (var j=0;j<realdata_len;j++) {
                     dname=obj_realdata[j].name;
@@ -879,22 +855,12 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         showstateinfo(err.message,"realdata_iot/decoderealdata");
     }
 }
-function base64ToArrayBuffer (base64) {
-    var arr = base64.split(',')
-    var binaryString = window.atob(arr[0])
-    var len = binaryString.length
-    var bytes = new Uint8Array(len)
-    for (var i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i)
-    }
-    //console.log(bytes.buffer)
-    return bytes
-  }
 
 function openmodal(aname){
     var title=$("#bind_name");
     title.text(aname+": 数据详细内容")
     var detail=document.getElementById("details");
+    detail.style="width:800px;height:500px;"
     var temp=(localStorage[aname].split(','));
     var float=[];
     var stemp="";
@@ -907,11 +873,10 @@ function openmodal(aname){
     //chartdiv.setAttribute('style','width:300px;height:300px;')
     //var echarts = require('echarts');
     //require('echarts-gl');
-    var chartDom = document.getElementById('chartdiv');
-    chartDom.style="width:300px;height:300px;"
+    //var chartDom = document.getElementById('chartdiv');
+    //chartDom.style="width:300px;height:300px;"
     var myChart = echarts.init(detail);
     var option;
-
     var data = [];
 // Parametric curve
 for (var t = 0; t < 50; t += 1) {
@@ -1801,193 +1766,6 @@ function jisuanyichangbili(avalue){
         alertcount[0]++;
     }
 }
-function bytesarraytofloat(bytes,index){
-    var v1=bytes[index];
-    var v2=bytes[index+1];
-    var v3=bytes[index+2];
-    var mfloat = ((bytes[index+3] & 0xFF) << 24) | 
-	((bytes[index+2] & 0xFF) << 16) | 
-	((bytes[index+1] & 0xFF) << 8) | 
-	(bytes[index+0] & 0xFF);
-    return mfloat;
-}
-function hex2float(num) {
-    //符号位    1100 0010 0 100 0000 0000 0000 0000 0000
-  var sign = (num & 0x80000000) ? -1 : 1;
-    //指数位
-  var exponent = ((num >> 23) & 0xff) - 127;
-    //尾数位
-  num=num&0x7fffff
-  var mantissa = 1 + ((num) / 0x7fffff);
-  return sign * mantissa * Math.pow(2, exponent);
-}
-function base64toBlob(base64,type) {  
-    // 将base64转为Unicode规则编码
-	let  bstr = atob(base64, type),  
-	n = bstr.length,  
-    u8arr = new Uint8Array(n);  
-    while (n--) {  
-        u8arr[n] = bstr.charCodeAt(n) // 转换编码后才可以使用charCodeAt 找到Unicode编码
-    }  
-    return new Blob([u8arr], {  
-        type,
-    })
-} 
-
-function getFloatValue(base64Str) {  
-	let blob = base64toBlob(base64Str, "");
-	return blob.arrayBuffer().then(buffer => {
-		let view = new DataView(buffer);
-		if(buffer.byteLength == 4){
-			return view.getFloat32(0, false);
-		} else {
-			return view.getFloat64(0, false);
-		}
-	});
-} 
-function parseFloathex(str) {
-    var float = 0, sign, order, mantissa, exp,
-    int = 0, multi = 1;
-    if (/^0x/.exec(str)) {
-        int = parseInt(str, 16);
-    }
-    else {
-        for (var i = str.length -1; i >=0; i -= 1) {
-            if (str.charCodeAt(i) > 255) {
-                console.log('Wrong string parameter');
-                return false;
-            }
-            int += str.charCodeAt(i) * multi;
-            multi *= 256;
-        }
-    }
-    sign = (int >>> 31) ? -1 : 1;
-    exp = (int >>> 23 & 0xff) - 127;
-    mantissa = ((int & 0x7fffff) + 0x800000).toString(2);
-    for (i=0; i<mantissa.length; i+=1) {
-        float += parseInt(mantissa[i]) ? Math.pow(2, exp) : 0;
-        exp--;
-    }
-    return float*sign;
-}
-//需要用到的函数
-function InsertString(t, c, n) {
-        var r = new Array();
-        for (var i = 0; i * 2 < t.length; i++) {
-            r.push(t.substr(i * 2, n));
-        }
-        return r.join(c);
-    }
-    //需要用到的函数  
-    function FillString(t, c, n, b) {
-        if ((t == "") || (c.length != 1) || (n <= t.length)) {
-            return t;
-        }
-        var l = t.length;
-        for (var i = 0; i < n - l; i++) {
-            if (b == true) {
-                t = c + t;
-            }
-             else {
-                t += c;
-            }
-        }
-        return t;
-    }
-    //16进制转浮点数
-    function HexToSingle(t) {
-        t = t.replace(/\s+/g, "");
-        if (t == "") {
-            return "";
-        }
-        if (t == "00000000") {
-            return "0";
-        }
-        if ((t.length > 8) || (isNaN(parseInt(t, 16)))) {
-            return "Error";
-        }
-        if (t.length < 8) {
-            t = FillString(t, "0", 8, true);
-        }
-        t = parseInt(t, 16).toString(2);
-        t = FillString(t, "0", 32, true);
-        var s = t.substring(0, 1);
-        var e = t.substring(1, 9);
-        var m = t.substring(9);
-        e = parseInt(e, 2) - 127;
-        m = "1" + m;
-        if (e >= 0) {
-            m = m.substr(0, e + 1) + "." + m.substring(e + 1)
-        }
-         else {
-            m = "0." + FillString(m, "0", m.length - e - 1, true)
-        }
-        if (m.indexOf(".") == -1) {
-            m = m + ".0";
-        }
-        var a = m.split(".");
-        var mi = parseInt(a[0], 2);
-        var mf = 0;
-        for (var i = 0; i < a[1].length; i++) {
-            mf += parseFloat(a[1].charAt(i)) * Math.pow(2, -(i + 1));
-        }
-        m = parseInt(mi) + parseFloat(mf);
-        if (s == 1) {
-            m = 0 - m;
-        }
-        return m;
-    }
-    //浮点数转16进制
-    function SingleToHex(t) {
-        if (t == "") {
-            return "";
-        }
-        t = parseFloat(t);
-        if (isNaN(t) == true) {
-            return "Error";
-        }
-        if (t == 0) {
-            return "00000000";
-        }
-        var s,
-        e,
-        m;
-        if (t > 0) {
-            s = 0;
-        }
-         else {
-            s = 1;
-            t = 0 - t;
-        }
-        m = t.toString(2);
-        if (m >= 1) {
-            if (m.indexOf(".") == -1) {
-                m = m + ".0";
-            }
-            e = m.indexOf(".") - 1;
-        }
-         else {
-            e = 1 - m.indexOf("1");
-        }
-        if (e >= 0) {
-            m = m.replace(".", "");
-        }
-         else {
-            m = m.substring(m.indexOf("1"));
-        }
-        if (m.length > 24) {
-            m = m.substr(0, 24);
-        }
-         else {
-            m = FillString(m, "0", 24, false)
-        }
-        m = m.substring(1);
-        e = (e + 127).toString(2);
-        e = FillString(e, "0", 8, true);
-        var r = parseInt(s + e + m, 2).toString(16);
-        r = FillString(r, "0", 8, true);
-        return InsertString(r, " ", 2).toUpperCase();
-    }
 /**
  * 解决在首次登录今日实时数据页面时数据不立即显示的问题，标签名称添加上级名称，区分同名标签；
  * 状态统计添加图形序列的数值显示；
@@ -1996,4 +1774,5 @@ function InsertString(t, c, n) {
  * 解决在没有数据时的状态比例图形显示错误问题；
  * 趋势对比的数据表导出excel时的格式以及项目名称；解决实时数据刷新时时间比较不正确的问题；系统设置添加实时数据刷新间隔时间设置；
  * 学习echarts的3D效果图表的配置和数据表；
+ * 实现排序后序号更新；实时数据列表的处理过程，全部标签；表格滚动表头固定；趋势对比的项目列表根据标签更新；
  */

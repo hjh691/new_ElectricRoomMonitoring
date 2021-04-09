@@ -158,7 +158,17 @@ if(localStorage.speed_scroll)
     speed_scroll=localStorage.speed_scroll;
 if(localStorage.between_time)
     between_time=localStorage.between_time;
-
+configOption={};
+function initconfigOption(){
+    configOption.optionname="";
+    configOption.unit="";
+    configOption.maxvalue=0;
+    configOption.minvalue=0;
+    configOption.childclassname="";
+    configOption.folder="";
+    configOption.type="";
+    configOption.desc="";
+}
 
 //localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
  /**un business

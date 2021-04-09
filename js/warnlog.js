@@ -215,19 +215,18 @@
 								catalog=s_des[p].Catalog;
 								lab.className="btn btn-primary active"
 							}else{}*/
-							
+							dname=sessionStorage.warnlogname;
+							catalog=s_des[p].folder;// getcatalog(dname);
 							if(s_des[p].name==sessionStorage.warnlogname){
 								lab.className="btn btn-primary active"
-								dname=sessionStorage.warnlogname;
-								catalog=getcatalog(dname);
 							}else{
 								lab.className="btn btn-primary";
 							}
-							lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].name+'" onclick=displaytype(this) >'+s_des[p].desc;
+							lab.innerHTML='<input class="catalog" type="radio" name="options" folder="'+catalog+'" value="'+s_des[p].name+'" onclick=displaytype(this) >'+s_des[p].desc;
 							var other=document.getElementById("type_other");
 							disply_type.insertBefore(lab,other);//类别
 							
-							if(s_des[p].folder=="event"&&s_des[p].name=="event"){//告警、事件类型 
+							if(s_des[p].folder=="event" && s_des[p].name=="event"){//告警、事件类型 
 								var config=new Object()
 								config=(s_des[p].details);//JSON.parse
 								if(config){
@@ -312,7 +311,7 @@
 				return;
 			dname= $(".catalog:checked").val();
 			sessionStorage.warnlogname=dname;
-			catalog=getcatalog(dname);
+			catalog=$(".catalog:checked")[0].getAttribute("folder");//getcatalog(dname);
 			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			//decodedatas(JSON.parse(localStorage.historydata));// 
 		});

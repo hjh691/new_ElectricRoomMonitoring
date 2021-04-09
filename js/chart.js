@@ -94,7 +94,8 @@
                 for(var p in s_des){
                     for(var i=0;i<temp.children.length;i++){//0721 edit 判断是否存在配置项，如果存在则跳过继续，不存在则添加;
                         if((temp.children[i].children[0].children[0].value.toLowerCase()==s_des[p].name.toLowerCase())
-                            &&(temp.children[i].children[0].children[1].innerText.toLowerCase()==s_des[p].desc.toLowerCase())){
+                            &&(temp.children[i].children[0].children[1].innerText.toLowerCase()==s_des[p].desc.toLowerCase())
+                            &&(temp.children[i].children[0].children[0].folder==s_des[p].folder)){
                             isfound=true;
                             break;
                         }
@@ -117,6 +118,7 @@
                     ainput.setAttribute("type","checkbox");
                     ainput.setAttribute("name","checkbox");
                     ainput.setAttribute("value",s_des[p].name);
+                    ainput.setAttribute("folder",s_des[p].folder);
                     ainput.className="check_box";
                     var spn=document.createElement("span");
                     spn.innerHTML=s_des[p].desc;
@@ -194,7 +196,7 @@
                     for(var j=0;j<allobj.length;j++){
                         if(allobj[j].parentElement.outerText==sel_str[i]){
                             cname=allobj[j].value;
-                            catalog=getcatalog(cname);
+                            catalog=allobj[j].getAttribute("folder");//getcatalog(cname);
                             pt++;
                             gethistorybysensors(check_val,catalog,cname,pt,sel_str[i]);
                             break;

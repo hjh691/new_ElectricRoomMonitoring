@@ -11,12 +11,13 @@
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script type="text/javascript" src="js/echarts.js"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@4/dist/echarts.min.js"></script>
-       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@1/dist/echarts-gl.min.js"></script>
-	<!--
+	
+       <script type="text/javascript" src="js/echarts-gl.min.js"></script>
+	<!--<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@4/dist/echarts.min.js"></script>
 	<script  type="text/javascript" src="js/cvi_busy_lib.js"></script>
 	
 	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>-->
+	<script  type="text/javascript" src="js/datatypetransfarm.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	<style type="text/css">
     
@@ -37,7 +38,7 @@
 	}
 	/*关键设置 tbody出现滚动条 height: 500px;overflow-y: scroll;*/
 	/*table tbody {
-		display: block;
+		display: block;display: block;
 	}
 	table thead,
 	tbody tr {
@@ -48,10 +49,10 @@
 	table thead {
 		width: calc( tbody.width )
 		color:#0000ff;
-	}
+	}*/
 	table thead th {
 		background: #ccc;
-	}*/
+	}
 	.container{
 			width: 98%;
 			height:100%;
@@ -63,7 +64,7 @@
 </head>
 <body > <!-- onunload="stopWorker()" 20210316修改onclick="btn_refresh_click()"-->
 	<div class="container">
-		<div class="row">
+		<div>
 		<div class="condition" style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: auto;height:40px;line-height: 40px;"><label> 显示内容:</label>
 			<span id="display_type">
 				
@@ -75,10 +76,10 @@
 			</span>
 		</div>
 		<div style="text-align: center;" >
-			<div style="overflow: auto; margin:auto;font-size:16px;" align="center">
-				<table class="tablesorter" id="other_realtable"  >
-					<thead id="tab_head">
-					<tr >
+			<div id="datadiv" style="text-align: center;overflow: auto;height: 700px;overflow: auto;">
+				<table  id="other_realtable" style="margin: auto;" >
+					<thead id="tab_head" style="display: fixed;">
+					<tr>
 						<th  onclick="$.sortTable.sort('other_realtable',0)"><a href="javascript:">序号 <span class="serial"></span></a></th>
                         <th  onclick="$.sortTable.sort('other_realtable',1)" ><a href="javascript:">设备编号<span class="sensor_id"></span> </a></th>
 						<th  onclick="$.sortTable.sort('other_realtable',2)" ><a href="javascript:">设备名称<span class="sensor_name"></span> </a></th>
@@ -92,11 +93,11 @@
 						<th  onclick="$.sortTable.sort('other_realtable',9)"><a href="javascript:" >关联操作<span class="value1"></span></a></th>
 						<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>display:none-->
 						<!--<th >查看历史数据</th><th  onclick="$.sortTable.sort('realtable',9)"><a href="javascript:">参考值<span class="value1"></span></a></th>
-						<th >查看告警信息</th>onclick="show_divchart()"height:550px;-->
-						<th style="width:18px;border:0px solid black;"></th>
+						<th >查看告警信息</th>onclick="show_divchart()"height:550px;
+						<th style="width:18px;border:0px solid black;"></th>-->
 					</tr>
 					</thead>
-					<tbody id="others_realdata_tbody" >
+					<tbody id="others_realdata_tbody" style="top:35px;">
 					</tbody>
 				</table>
 			</div>
@@ -116,10 +117,9 @@
 							<!--<h3 id="bind_name">1#</h3><br> --> 
 							<div id="details"  style="height:400px;overflow: auto;word-break:break-all;">
 								<!--<div id="bind_addr">安装地址：1#房间</div>
-								<div id="bind_view">绑定信息：3#视频</div>-->
+								<div id="bind_view">绑定信息：3#视频</div>
 							</div>
-							<div id="chartdiv" style="height:300px;">
-
+							<div id="chartdiv" style="height:300px;">-->
 							</div>       
 						</div>
 						<div class="modal-footer">

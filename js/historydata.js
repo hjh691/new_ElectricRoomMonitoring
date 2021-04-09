@@ -4,7 +4,7 @@ var isfirst=true;
 //var sel_sensor=document.getElementById("jcdd");
 var type="",step=true;
 var jssj=getCurrentDate(2);
-var catalog="",dname="",tname="";
+var catalog="",dname,tname="",childclassname="";
 var configs,scatalog;
 var myChart;
 var timer=null;
@@ -15,147 +15,171 @@ $(function () {
 //初始化页面
 function initpage(){
     try{
-    updatapcnav(5);
-    sessionStorage.framepage="historydata.html";
-    sessionStorage.pageindex=3;
-    //var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
-    //var treenode=buildnode(treeseneors,0);
-    //inittreeview(treenode);haoxiangshizhemohuishi conding you
-    document.getElementById("kssj_history").value = sessionStorage.kssj;
-    document.getElementById("jssj_history").value = sessionStorage.jssj;
-    /*for (var i = 0; i < sel_sensor.options.length; i++) {
-        sel_sensor.removeChild(sel_sensor.options[0]);
-        sel_sensor.remove(0);
-        sel_sensor.options[0] = null;
-    }*/
-    sensors=JSON.parse(localStorage.getItem("sensors"));
-    configs=JSON.parse(localStorage.Config);
-    /*if(sensors!=null){
-        for(var i=0;i<sensors.length;i++){
-            if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
-                parentid=sensors[i].Value.ParentId;
-                for(var j=0;j<sensors.length;j++){
-                    if(sensors[j].id==parentid){
-                        parentname=sensors[j].Value.Name+"_";
-                        break;
+        initconfigOption();
+        updatapcnav(5);
+        sessionStorage.framepage="historydata.html";
+        sessionStorage.pageindex=3;
+        //var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+        //var treenode=buildnode(treeseneors,0);
+        //inittreeview(treenode);haoxiangshizhemohuishi conding you
+        document.getElementById("kssj_history").value = sessionStorage.kssj;
+        document.getElementById("jssj_history").value = sessionStorage.jssj;
+        /*for (var i = 0; i < sel_sensor.options.length; i++) {
+            sel_sensor.removeChild(sel_sensor.options[0]);
+            sel_sensor.remove(0);
+            sel_sensor.options[0] = null;
+        }*/
+        sensors=JSON.parse(localStorage.getItem("sensors"));
+        configs=JSON.parse(localStorage.Config);
+        /*if(sensors!=null){
+            for(var i=0;i<sensors.length;i++){
+                if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){
+                    parentid=sensors[i].Value.ParentId;
+                    for(var j=0;j<sensors.length;j++){
+                        if(sensors[j].id==parentid){
+                            parentname=sensors[j].Value.Name+"_";
+                            break;
+                        }
                     }
                 }
+                var map=new Object();
+                map.value=sensors[i].id;
+                map.name=parentname+sensors[i].Value.Name;
+                maps.push(map);
             }
-            var map=new Object();
-            map.value=sensors[i].id;
-            map.name=parentname+sensors[i].Value.Name;
-            maps.push(map);
+            var compare = function (obj1, obj2) {
+                var val1 = obj1.name;
+                var val2 = obj2.name;
+                if (val1 < val2) {
+                    return -1;
+                } else if (val1 > val2) {
+                    return 1;
+                } else {
+                    return 0;
+                }            
+            } 
+            maps.sort(compare);
+            for(var k=0;k<maps.length;k++){
+                var op=document.createElement("option");
+                op.setAttribute("value",maps[k].value);
+                //op.setAttribute('class',"dropdown-menu");
+                op.innerHTML=maps[k].name;
+                sel_sensor.appendChild(op);
+            }
         }
-        var compare = function (obj1, obj2) {
-            var val1 = obj1.name;
-            var val2 = obj2.name;
-            if (val1 < val2) {
-                return -1;
-            } else if (val1 > val2) {
-                return 1;
-            } else {
-                return 0;
-            }            
-        } 
-        maps.sort(compare);
-        for(var k=0;k<maps.length;k++){
-            var op=document.createElement("option");
-            op.setAttribute("value",maps[k].value);
-            //op.setAttribute('class',"dropdown-menu");
-            op.innerHTML=maps[k].name;
-            sel_sensor.appendChild(op);
+        setSelectOption("jcdd", sessionStorage.SensorId);*/
+        appenddisplaytype(sessionStorage.SensorId);
+        if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")||(sessionStorage.timeindex>4)){
+            sessionStorage.timeindex=0;
         }
-    }
-    setSelectOption("jcdd", sessionStorage.SensorId);*/
-    appenddisplaytype(sessionStorage.SensorId);
-    if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")||(sessionStorage.timeindex>4)){
-        sessionStorage.timeindex=0;
-    }
-    $(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
-    seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
-    if(sessionStorage.SensorName==undefined){
-        sessionStorage.SensorName="";
-    }
-    //if(sessionStorage.timeindex==4){//
-        stoptimer(timer)                             
-        if(window.parent.isresize){
-            queryhistorydata(0);//decodedatas();////
-            window.parent.isresize=false;
+        $(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
+        seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
+        if(sessionStorage.SensorName==undefined){
+            sessionStorage.SensorName="";
         }
-    //}
-    $("#main").height(parent.window.windowHeight-250);
-    $("#list").height(parent.window.windowHeight-250);
-    myChart = echarts.init(document.getElementById('main'));
-    myChart.clear();
-    window.parent.closeloadlayer();
+        //if(sessionStorage.timeindex==4){//
+            stoptimer(timer)                             
+            if(window.parent.isresize){
+                queryhistorydata(0);//decodedatas();////
+                window.parent.isresize=false;
+            }
+        //}
+        $("#main").height(parent.window.windowHeight-250);
+        $("#list").height(parent.window.windowHeight-250);
+        myChart = echarts.init(document.getElementById('main'));
+        myChart.clear();
+        window.parent.closeloadlayer();
     }catch(err){
         showstateinfo(err.message,"historydata/initpage");
     }
 }
 function appenddisplaytype(element_id,time){
     try{
-    var display_type=document.getElementById("display_type")
-    for(var i=display_type.childElementCount;i>0;i--)
-    display_type.removeChild(display_type.childNodes[i]);
-    if(element_id>=0){
-        if(sensors){
-        let sensors_len=sensors.length;
-        for(var k=0;k<sensors_len;k++){
-            if(sensors[k].Value.id==element_id){
-                scatalog=sensors[k].Value.type;//catalog;//读取对应的Catalog项1
-                if(scatalog)
-                    scatalog=scatalog.toLowerCase();
-                break;
-            }
-        }}
-        if(configs){
-            let configs_len=configs.length;
-            for(var i=0;i<configs_len;i++){
-                if((configs[i].type.toLowerCase()==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
-                    var s_des=configs[i].details;//如果有，读取其所有配置项
-                    for(var p in s_des){
-                        var lab=document.createElement("label");
-                        if(sessionStorage.datatype){
-                            if(s_des[p].name==sessionStorage.datatype){//如果有原先的选择
-                            //if(p==0){
-                                dname=s_des[p].name;//Name
-                                catalog=s_des[p].folder;//Catalog; //not type
-                                lab.className="btn btn-primary active"
-                                tname=s_des[p].desc;//20201023
-                            }else{
-                                lab.className="btn btn-primary";
-                            }
-                        }else{ //没有选择项，则默认为第一项
-                            if(p==0){
-                            dname=s_des[p].name;//Name
-                            catalog=s_des[p].folder;//Catalog; //not type
-                            lab.className="btn btn-primary active"
-                            tname=s_des[p].desc;//20201023
-                            }else{
-                                lab.className="btn btn-primary";
-                            }
-                        }
-                        lab.innerHTML='<input class="catalog" type="radio" name="options" value="'+s_des[p].name+'" >'+s_des[p].desc;
-                        //lab.innerHTML=s_des[p].Desc;
-                        display_type.appendChild(lab);
-                    }
+        var lcatalog="",ldname="";
+        var display_type=document.getElementById("display_type")
+        for(var i=display_type.childElementCount;i>0;i--)
+        display_type.removeChild(display_type.childNodes[i]);
+        initconfigOption();
+        if(element_id>=0){
+            if(sensors){
+            let sensors_len=sensors.length;
+            for(var k=0;k<sensors_len;k++){
+                if(sensors[k].Value.id==element_id){
+                    scatalog=sensors[k].Value.type;//catalog;//读取对应的Catalog项1
+                    if(scatalog)
+                        scatalog=scatalog.toLowerCase();
                     break;
                 }
-            }
-        }else{
+            }}
+            if(configs){
+                let configs_len=configs.length;
+                for(var i=0;i<configs_len;i++){
+                    if((configs[i].type.toLowerCase()==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
+                        var s_des=configs[i].details;//如果有，读取其所有配置项
+                        for(var p in s_des){
+                            var lab=document.createElement("label");
+                            ldname=s_des[p].name;//Name
+                            lcatalog=s_des[p].folder;//Catalog; //not type
+                            tname=s_des[p].desc;//20201023
+                            if(!jQuery.isEmptyObject(s_des[p].details)){
+                                for(var detail in s_des[p].details){
+                                    switch(s_des[p].details[detail].name.toLowerCase()){
+                                        case "Type".toLowerCase():
+                                            configOption.childclassname=s_des[p].details[detail].value;
+                                            break;
+                                        case "Unit".toLowerCase():
+                                            configOption.unit=s_des[p].details[detail].value;
+                                            break;
+                                        case "Top".toLowerCase():
+                                            configOption.maxvalue=s_des[p].details[detail].value;
+                                            break;
+                                        case "Bot".toLowerCase():
+                                            configOption.minvalue=s_des[p].details[detail].value;
+                                            break;
+                                    }
+                                }
+                            }
+                            
+                            lab.innerHTML='<input class="catalog" type="radio" name="options" childtype="'+configOption.childclassname+'" folder="'+lcatalog+'" value="'+ldname+'" >'+tname;
+                            if(sessionStorage.datatype){
+                                if(s_des[p].name==sessionStorage.datatype){//如果有原先的选择
+                                    lab.className="btn btn-primary active";
+                                    dname=ldname;
+                                    catalog=lcatalog;
+                                    childclassname=configOption.childclassname;
+                                }else{
+                                    lab.className="btn btn-primary";
+                                }
+                            }else{ //没有选择项，则默认为第一项
+                                if(p==0){
+                                    lab.className="btn btn-primary active";
+                                    dname=ldname;
+                                    catalog=lcatalog;
+                                }else{
+                                    lab.className="btn btn-primary";
+                                }
+                            }
+                            //lab.innerHTML=s_des[p].Desc;
+                            display_type.appendChild(lab);
+                        }
+                        break;
+                    }
+                }
+            }else{
 
+            }
         }
-    }
-    $(".btn").click(function(){//用于动态加载的元素的点击响应。
-        $(this).button('toggle');
-        var eobj=$(".catalog:checked")
-        dname= eobj.val();
-        tname= eobj[0].parentNode.innerText;
-        sessionStorage.datatype=dname;//保存选择项的值，用于页面刷新时恢复当前数据。
-        catalog=getcatalog(dname);
-        flashbutton();
-        //gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
-    });
+        $(".btn").click(function(){//用于动态加载的元素的点击响应。
+            $(this).button('toggle');
+            var eobj=$(".catalog:checked")
+            dname= eobj.val();
+            tname= eobj[0].parentNode.innerText;
+            sessionStorage.datatype=dname;//保存选择项的值，用于页面刷新时恢复当前数据。
+            catalog=eobj[0].getAttribute("folder");//getcatalog(dname);
+            childclassname=eobj[0].getAttribute("childtype");
+            flashbutton();
+            //gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
+        });
     }catch(err){
         showstateinfo(err.message,"historydata/appenddisplaytype");
     }
@@ -313,12 +337,14 @@ function queryhistorydataself() {
     let folder=$('#folder_history');
     let datatype=$("#datatype_history");
     if(folder[0].value==null||folder[0].value.trim()==""){//
-        showmsg("请输入数据分组名称");
-        return;
+        catalog="Default";
+        //showmsg("请输入数据分组名称");
+        //return;
     }else{
         catalog=folder[0].value;
     }
     if(datatype[0].value==null||datatype[0].value.trim()==""){//
+        dname="";
         showmsg("请输入查询的数据类型名称");
         return;
     }else{
@@ -357,7 +383,7 @@ function decodedatas(obj_data){
     var senconds=etime-stime;
     var pa = [],pb = [],pc = [];
     var jiange="";
-    
+    var seriess=[];
     myChart.clear();
     $("#historydata-tbody").empty();
     var tbl = document.getElementById('historydata-tbody');
@@ -367,11 +393,56 @@ function decodedatas(obj_data){
     }*/
     document.getElementById("cld_name").innerHTML=sessionStorage.SensorName;
     document.getElementById("tongji_time").innerHTML=sessionStorage.kssj+"—"+sessionStorage.jssj
-    //数据以表格行的形式添加进table中，其实现隔行颜色区分。
+    
     if((obj_data==null)||(obj_data.length<=0)){
         document.getElementById('count_val').innerHTML = count + "条";
         document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
         //return;
+    }else if(childclassname=="UHFdata"){
+        //myChart=echarts.init(document.getElementById('main'));
+        
+        for (var k = 0; k <obj_data.length; k++) {
+            var temp=base64ToArrayBuffer(obj_data[k].value);
+            var float=[];
+            var series=new Object();
+            for(var i=8;i<temp.length;i=i+4){
+                float[(i/4)-2] = hex2float(bytesarraytofloat(temp,i)).toFixed(Number_of_decimal);
+                //stemp+=float[(i/4)-2]+" ";
+                }
+                //detail.innerHTML=stemp;
+                //var chartdiv=document.createElement("div");
+                //chartdiv.setAttribute('style','width:300px;height:300px;')
+                //var echarts = require('echarts');
+                //require('echarts-gl');
+                //var chartDom = document.getElementById('chartdiv');
+                //chartDom.style="width:300px;height:300px;"
+                //var myChart = echarts.init(detail);
+                var option;
+                var data = [];
+            // Parametric curve
+            for (var t = 0; t < 50; t += 1) {
+                var y = t;//t + 2.0 * Math.sin(75 * t);
+                for(var j=0;j<72;j++){
+                    var x = j;//(1 + 0.25 * Math.cos(75 * t)) * Math.cos(t);
+                    var z = parseFloat(float[t*72+j])-(k*5);//(1 + 0.25 * Math.cos(75 * t)) * Math.sin(t);
+                    
+                    data.push([x, y, z]);
+                }
+            }
+            
+            var color=k%2==0 ? 'rgb(200,50,40)' : 'rgb(50,70,240)';
+            series.type="line3D";
+            series.data=data;
+            
+            series.lineStyle={
+                width:4,
+                color:color,
+            }
+            seriess.push(series);
+        }
+        
+        //console.log(data.length);
+        
     }else
     if(sessionStorage.nodetype==2){//Math.ceil(senconds/1000/60)<1430//如果是机房监控，则显示所有数据，并使图形显示为阶梯图，表示开关状态。
         step='end';
@@ -664,18 +735,7 @@ function decodedatas(obj_data){
                 start: 0,      // 左边在 10% 的位置。
                 end: 100,       // 右边在 60% 的位置。 
             },
-            /*{//官网示例正常，此处总是报错，数据位数控制时报非定义函数错误。
-                type: 'slider',
-                yAxisIndex: 0,
-                start: 80,
-                end: 100
-            },
-            {
-                type: 'inside',
-                yAxisIndex: 0,
-                start: 80,
-                end: 100
-            }*/
+
             ],
             series: [{
                 name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
@@ -709,11 +769,44 @@ function decodedatas(obj_data){
             }
             ]
         };/**/
+        option1 = {
+            tooltip: {},
+            backgroundColor: '#fff',
+            color: ['#f46d43','#313695'],//, '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61',  '#d73027', '#a50026'],//
+            visualMap: {
+                show: false,
+                dimension: 2,
+                min: 0,
+                max: 30,
+                inRange: {
+                    //color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+                }
+            },
+            xAxis3D: {
+                type: 'category'
+            },
+            yAxis3D: {
+                type: 'category'
+            },
+            zAxis3D: {
+                type: 'value'
+            },
+            grid3D: {
+                viewControl: {
+                    projection: 'orthographic'
+                }
+            },
+            series: seriess,
+        };
+
         myChart.hideLoading();
-        myChart.setOption(option);
-        myChart.on('click',function(params){
-            if(params.name==""){}
-        });
+        if(childclassname=="UHFdata")
+            myChart.setOption(option1)
+        else
+            myChart.setOption(option);
+        //myChart.on('click',function(params){
+        //    if(params.name==""){}
+        //});
         myChart.resize;
     }
     function jisuan(a1,a2){
