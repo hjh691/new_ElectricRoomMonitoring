@@ -541,6 +541,7 @@
 						sessionStorage.nodeId = data.id;
 						if(!data.hasOwnProperty("nodes"))
 						GetBinariesByType("NodeGraphic", sessionStorage.nodeId);//将GetBinariesByType与GetSensorsByNode顺序颠倒，以便执行refreshiframe
+						sessionStorage.eventTypeSelected="";
 						GetSensorsByNode(data.id);
 						sessionStorage.t_p = 0;
 						nodeid = data.nodeId;
@@ -1426,7 +1427,7 @@
 						var key = $.trim(parentkey);
 						if (v.address && $.trim(v.address) != "") {
 							//key = key ? key + "_" + v.address : v.address;
-							key = key ? key + "." + v.address : v.address;
+							key = key ? key + concat_str + v.address : v.address;
 						}
 						if ((!jQuery.isEmptyObject(s.children))) {
 							buildsensor2(obj, s.children, key);
@@ -1517,12 +1518,12 @@
 										channel=(g._shape.Binding).substring(0,g._shape.Binding.indexOf('：'));
 										datatype=(g._shape.Binding).substr(g._shape.Binding.indexOf('：')+1);
 									}
-									if(datatype.lastIndexOf(".")==-1){
+									if(datatype.lastIndexOf(concat_str)==-1){
 										datafolder="Default";
 										dataname=datatype;
 									}else{
-										var datafolder=datatyep.substring(0,datatype.lastIndexOf("."));
-										var dataname=datatype.substr(datatype.lastIndexOf("."));
+										var datafolder=datatyep.substring(0,datatype.lastIndexOf(concat_str));
+										var dataname=datatype.substr(datatype.lastIndexOf(concat_str));
 									}
 									if(allsensors)
 									if(allsensors[channel]){

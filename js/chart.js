@@ -84,18 +84,19 @@
             sel_str=[];
         }
         let sel_str_len=sel_str.length;
-        $("#display_type_chart").empty();
+        //$("#display_type_chart").empty();
         var temp=document.getElementById("display_type_chart");
         allconfigs=JSON.parse(localStorage.Config);
         if(allconfigs){
             for(var ac in allconfigs){//如果有，读取其所有配置项
-                if(allconfigs[ac].type.toLowerCase()==scatalog){
+                //if(allconfigs[ac].type.toLowerCase()==scatalog){
+                scatalog=allconfigs[ac].name;
                 var s_des=allconfigs[ac].details;//如果有，读取其所有配置项
                 for(var p in s_des){
                     for(var i=0;i<temp.children.length;i++){//0721 edit 判断是否存在配置项，如果存在则跳过继续，不存在则添加;
                         if((temp.children[i].children[0].children[0].value.toLowerCase()==s_des[p].name.toLowerCase())
-                            &&(temp.children[i].children[0].children[1].innerText.toLowerCase()==s_des[p].desc.toLowerCase())
-                            &&(temp.children[i].children[0].children[0].folder==s_des[p].folder)){
+                            &&(temp.children[i].children[0].children[1].innerText==scatalog+concat_str+s_des[p].desc)
+                            &&(temp.children[i].children[0].children[0].getAttribute("folder")==s_des[p].folder)){
                             isfound=true;
                             break;
                         }
@@ -112,6 +113,7 @@
                         continue;
                     }//0721 edit/**/
                     var li=document.createElement("li");
+                    li.setAttribute("style","display:inline-block");
                     var lab=document.createElement("label");
                     //lab.setAttribute("style","margin-left:20px")
                     var ainput=document.createElement("input");
@@ -121,9 +123,9 @@
                     ainput.setAttribute("folder",s_des[p].folder);
                     ainput.className="check_box";
                     var spn=document.createElement("span");
-                    spn.innerHTML=s_des[p].desc;
+                    spn.innerHTML=scatalog+concat_str+s_des[p].desc;
                     for(var j=0;j<sel_str.length;j++){
-                        if(sel_str[j]==s_des[p].desc){
+                        if(sel_str[j]==scatalog+concat_str+s_des[p].desc){
                             ainput.setAttribute("checked",true);
                             //ainput.setAttribute("data-is-select",true);
                             break;
@@ -138,7 +140,7 @@
                     //title_th.innerHTML=s_des[p].Desc;
                     //document.getElementById("table_title").appendChild(title_th);
                 }
-            }
+            //}
             }
             if(sel_str.length==0){
                 temp.children[0].children[0].children[0].checked=true;
@@ -221,7 +223,7 @@
             showstateinfo(err.message,"chart/buttonclick");
         }
     }
-    //获取历史数据
+    //获取历史数据   
     function gethistorybysensors(arr_sensors,folder,aname,apt,atitle){
         sendorder("GetHistoriesBySensors?folder="+folder+"&name="+aname+"&from="+kssj+"&to="+jssj,function(data){
             if (data!= null) {//Result.
@@ -374,10 +376,11 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                         if(obj_chartdata[j].sensorId==sensorid){
                             let obj_data_j=obj_chartdata[j];
                             let name=atitle;//obj_data_j.name.toLowerCase();
-                            pb.push([Date.parse(obj_data_j.time),obj_data_j.value, j]);
-							if(isNaN(parseFloat(obj_data_j.value))){
+                            if(isNaN(parseFloat(obj_data_j.value))){
 								obj_data_j.value=-1;
 							}
+                            pb.push([Date.parse(obj_data_j.time),obj_data_j.value, j]);
+							
 							if(parseFloat(obj_data_j.value)>maxvalue){
 								maxvalue=parseFloat(obj_data_j.value);
 							}
@@ -451,14 +454,18 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
             seriess.push(series);
 		}
 	}
-	
 	if(maxval==minval){
-		maxval=maxval*1.5;
-		minval=minval/2;
-	}else{
-		maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
-		minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
-	}
+        maxval=1.5*maxval;
+        minval=minval/2;
+    }else if(maxval-minval<=1){
+        var disvalue=(maxval-minval);
+        maxval=(maxval*1+disvalue).toFixed(Number_of_decimal);
+        minval=(minval*1-disvalue).toFixed(Number_of_decimal);
+    }else{
+        var disvalue=(maxval-minval);
+        maxval=(maxval*1+disvalue*0.2).toFixed(Number_of_decimal);
+        minval=(minval*1-disvalue*0.2).toFixed(Number_of_decimal);
+    }
 	drawchart();
 	//绘制图形线条
 	function drawchart() {
@@ -495,15 +502,15 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                             /*//let axisData = opt.xAxis[0].data; //坐标数据
                             let table= '<table border="1" ><tbody>';
                             let tbody=$("#comprate-tbody").clone();
-                            let rl=tbody[0].rows.length;
+                            let rl=tbody[0].rows.length;yi
                             tbody[0].rows[0].cells[0].setAttribute("style","display:none");
                             if(!aname)//避免aname为空时造成函数操作错误。
                                 aname="";
                             for(let i=2;i<rl;i++){
                                 if(tbody[0].rows[i].cells[0].outerText!=aname.toLowerCase()){//屏蔽掉其他类型的数据，因为tbody是克隆的所有查询的数据列表.
-                                    tbody[0].rows[i].setAttribute("style","display:none");
+                                    tbody[0].rows[i].setAttribute("style","display:none"); Iran Korea Sweden Canada New sealand
                                 }
-                            }
+                            } 
                             table += tbody[0].innerHTML+'</tbody></table>';
                             return table;*/
                             var series = opt.series; //折线图数据
@@ -660,4 +667,8 @@ function creatTr(){
     图形的数据视图列表的数据项有时放置位置不正确的问题；优化程序性能，用变量取代数组索引。
 
     类别分组刷新和点击显示提示错误
+    类别分组的名称添加type指示以及修改加载模式，多选框有单列改为多列；图形极值差别很小时的上下极值设置；app 类别初始化，趋势对比图表的名称传递，搜索
+    告警页的时间类型位置调整，在类别较多时显示完整
+
+    非数字的项目取值（第二个数之后的错误）
  */

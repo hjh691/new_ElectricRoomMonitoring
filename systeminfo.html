@@ -12,7 +12,7 @@
         <title>系统信息</title>
         <style>
             .container{
-                width: 100%;
+                width: 98%;
                 margin-left: 5px;
                 margin-right: 5px;
             }
@@ -96,7 +96,7 @@
                 <div class="col-xs-12 col-sm-6 col-md-4 " align="center">
                     <img src="res/jka_100.png" style="height: 100px;" />
                     <div style="color:#0000b0;font-size:16px;display:none">
-                        <P id="p1"></p><!---->
+                        <p id="p1"></p><!---->
                         <p id="p2"></p>
                         <p id="p3"></p>
                         <p id="p4"></p>
@@ -156,6 +156,18 @@
             </div>
             <div class="row">
                 <div class="col-xs-4 col-md-3 system-set">
+                    <label>实时数据显示模式</label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4 ">
+                    <select id = "realdatashowmodle" style="width:75%;height:35px;">
+                        <option value= "0">显示全部</option>
+                        <option value= "1">显示在线</option>
+                        <button  class="btn-hide" onclick="save(10)">保存</button>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-3 system-set">
                     <label>实时数据刷新间隔(分钟)</label>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
@@ -167,7 +179,7 @@
                     <label>隐藏左侧菜单</label>
                 </div>
                 <div class="col-xs-4 col-sm-6 col-md-4 " align="left" >
-                    <img id="switch01" src="" style="height:30px;vertical-align: middle;margin-right: 10%;" title="显示/隐藏左侧菜单" onclick="save(15)"/>
+                    <img id="switch01"  style="height:30px;vertical-align: middle;margin-right: 10%;" title="显示/隐藏左侧菜单" onclick="save(15)"/>
                 </div>
             </div>
             <div class="row">
@@ -209,10 +221,8 @@
                 <div class="col-xs-12 col-sm-6 col-md-4 " >
                     <input type="files" style="width:75%;" id="" /><button onclick="save(4)">保存更改</button>
                 </div><br><br>-->
-                
-                <button type="button" class="btn btn-primary btn-lg" sytle="width:550px;height:40px;line-height:40px" onclick='saveall()'>保存修改</button>
+                <button type="button" class="btn btn-primary btn-lg" sytle="width:550px;height:40px;line-height:40px" onclick="saveall()">保存修改</button>
             </div>
-            
         </div>
         <script >
             initsysinfo();
@@ -268,10 +278,14 @@
                 }else{
                     $("#between_time").val(between_time);
                 }
+                if(parseInt(sessionStorage.realdatashowmodle))
+                    $("#realdatashowmodle").val(parseInt(sessionStorage.realdatashowmodle))
+                else
+                    $("#realdatashowmodle").val(jfjk_base_config.realdatashowmodle);
                 window.parent.closeloadlayer();
             }
             function saveall(){
-                for(var i=0;i<10;i++){
+                for(var i=0;i<11;i++){
                     save(i);
                 }
             }
@@ -328,6 +342,9 @@
                         localStorage.between_time=parseInt($("#between_time").val());
                         between_time=localStorage.between_time;
                         break;
+                    case 10:
+                        sessionStorage.realdatashowmodle=parseInt($("#realdatashowmodle").val());
+                        jfjk_base_config.realdatashowmodle=sessionStorage.realdatashowmodle;
                 }
             }
             function selectFile(){  

@@ -417,17 +417,18 @@ function decodedatas(obj_data){
                 //var chartDom = document.getElementById('chartdiv');
                 //chartDom.style="width:300px;height:300px;"
                 //var myChart = echarts.init(detail);
-                var option;
-                var data = [];
+            var option=float.length;
+            var data = [];
             // Parametric curve
-            for (var t = 0; t < 50; t += 1) {
-                var y = t;//t + 2.0 * Math.sin(75 * t);
-                for(var j=0;j<72;j++){
-                    var x = j;//(1 + 0.25 * Math.cos(75 * t)) * Math.cos(t);
-                    var z = parseFloat(float[t*72+j])-(k*5);//(1 + 0.25 * Math.cos(75 * t)) * Math.sin(t);
+            for (var t = 0; t < option; t += 1) {
+                var y = parseInt(t /caiyangcishu);
+                var x= t % caiyangcishu;// 2.0 * Math.sin(75 * t);
+                //for(var j=0;j<72;j++){
+                    //var x = j;//(1 + 0.25 * Math.cos(75 * t)) * Math.cos(t);
+                    var z = parseFloat(float[t])-(k*5);//(1 + 0.25 * Math.cos(75 * t)) * Math.sin(t);
                     
                     data.push([x, y, z]);
-                }
+                //}
             }
             
             var color=k%2==0 ? 'rgb(200,50,40)' : 'rgb(50,70,240)';
@@ -617,11 +618,16 @@ function decodedatas(obj_data){
     lengenddata.push("平均值");
     lengenddata.push("最小值");
     if(maxval==minval){
-        maxval=maxval*1.5;
+        maxval=1.5*maxval;
         minval=minval/2;
+    }else if(maxval-minval<=1){
+        var disvalue=(maxval-minval);
+        maxval=(maxval*1+disvalue).toFixed(Number_of_decimal);
+        minval=(minval*1-disvalue).toFixed(Number_of_decimal);
     }else{
-        maxval=(maxval*1+(maxval-minval)*0.2).toFixed(Number_of_decimal);
-        minval=(minval*1-(maxval-minval)*0.2).toFixed(Number_of_decimal);
+        var disvalue=(maxval-minval);
+        maxval=(maxval*1+disvalue*0.2).toFixed(Number_of_decimal);
+        minval=(minval*1-disvalue*0.2).toFixed(Number_of_decimal);
     }
     drawchart();
     function drawchart() {

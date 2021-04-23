@@ -153,18 +153,6 @@ function appendalldisplaytype(){
         for(var ac in allconfigs){//如果有，读取其所有配置项
             var s_des=allconfigs[ac].details;
             for(var p in s_des){
-                /*var lab=document.createElement("label");
-                lab.setAttribute("style","margin-left:20px")
-                var ainput=document.createElement("input");
-                ainput.setAttribute("type","checkbox");
-                ainput.setAttribute("name","options");
-                ainput.setAttribute("value",s_des[p].name);
-                ainput.className="btn";
-                //ainput.setAttribute('onclick','checkboxclick("'+s_des[p].Name+'")')
-                ainput.innerText=s_des[p].desc;
-                ainput.className="catalog";
-                var spn=document.createElement("span");
-                spn.innerHTML=s_des[p].desc;*/
                 allselect = $('[name="options"]');
                 let isrepeat=false;
                 let allselect_len=allselect.length;
@@ -186,10 +174,6 @@ function appendalldisplaytype(){
                     //lab.className="";
                     add_displaytype(display_type,s_des[p].name,s_des[p].folder,s_des[p].desc,allconfigs[ac].type,false);
                 }
-                /*lab.appendChild(ainput);//a-
-                lab.appendChild(spn);
-                //lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
-                display_type.appendChild(lab);*/
             }
         }
     }
@@ -239,7 +223,7 @@ function tableaddcell(){
     var tab_rows=$("#realdata-tbody")[0].rows;
     var tab_len=tab_rows.length;
     for(let i=0;i<tab_len;i++)
-        tab_rows[i].appendChild(td);
+        tab_rows[i].appendChild(ttd);
 }
 //"刷新"按钮点击事件
 function btn_refresh_click(obj){
@@ -399,11 +383,7 @@ function refresh_tabhead(sel){
     }
     //document.getElementById("realtable").width=150*(count+5)+"px";// 设定数据列表的总宽度
 }
-//var t_pt=0;
-//表格排序使用插件
-/*$(function() {
-    //$("#realtable").tablesort();		
-});*/
+
 function stopWorker() {
     w1.terminate();
     w1 = undefined;
@@ -485,7 +465,33 @@ function getCatalog(adatatype,index){
     }
 }
 function cleartable(){
-    $('#realdata-tbody').empty();
+    var table=$('#realdata-tbody')
+    table.empty();
+    /*var sensors = JSON.parse(localStorage.getItem("sensors"));
+    var sensors_length;
+    if(sensors)
+        sensors_length=sensors.length;
+    allselect = $('[name="options"]');
+    for(var i=0;i<sensors_length;i++){
+        var tr=document.createElement("tr");
+        tr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
+        for(var j=0;j<allselect.length+5;j++){
+            var td=document.createElement("td");
+            switch (j){
+                case 1:
+                    td.innerHTML=sensors[i].Value.name;
+                    break;
+                case 2:
+                case 3:
+                    break;
+                default:
+                    td.style.cssText="display:none;"
+                    break;
+            }
+            tr.appendChild(td);
+        }
+        table[0].appendChild(tr);
+    }*/
     getrealdatabynodeid(-1);
 }
 function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数据，asensorid 当前标签id，isload 是否与主菜单标签表同步
@@ -648,7 +654,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         }*/
                         $table.appendChild(atr);
                         pt++;
-                    }else{//不是新标签
+                    }else{//不是新标签，更新对应的数据栏。 Asia Europe Africa America
                         let tab_row_len=$table.rows.length;
                         for(var l=0;l<tab_row_len;l++){
                             if($table.rows[l].cells[0].innerHTML==obj_data.sensorId){
@@ -659,7 +665,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                                     if(v_sel[k].value==dname){
                                         $table.rows[l].cells[k+hidden_cells].innerHTML=data_value;
                                         //isbreak=true;
-                                        if($table.rows[l].cells[2].value<dateToString(obj_data.time,2)){//更新最新时间
+                                        if($table.rows[l].cells[2].value<dateToString(obj_data.time,2)){//更新测量时间
                                             $table.rows[l].cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);
                                             $table.rows[l].cells[2].value=dateToString(obj_data.time,2);
                                         }
@@ -686,59 +692,11 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         }
                     }
                     /*var xs = 1;//sensors[i].Value.Factor;  //数据结构修改，后台的value数据已经乘上系数，svalue为未乘以系数的原始数据
-                    //if(type_td=="pd"){xs=xs*-1}
+                    
                     if(isbreak){
                         continue;
                     }
-                    //添加数据列表项
-                    var tr = document.createElement('tr');
-                    tr.setAttribute("onclick", "tableclick(this)");//ondblclick
-                    var tdename = document.createElement('td');
-                    //var tdsalary=document.createElement('td');
-                    var tdid = document.createElement('td');
-                    var tdtype = document.createElement('td');
-                    var tdtime = document.createElement('td');
-                    var tdvalue = document.createElement('td');
-                    var tdvalue2 = document.createElement('td');
-                    var tdhistory = document.createElement('td');
-                    var tdwarnlog = document.createElement('td');
-                    var tdmessage = document.createElement('td');
-                    tdename.innerHTML = sname;
-                    tdid.innerHTML = sid;
-                    tdid.style.cssText = "display:none";
-                    tdtype.innerHTML = type_td;
-                    tdtype.style.cssText = "display:none";
-                    tdtime.innerHTML = obj_data.Time; //jsonObject[i].color;
-                    kssj = (obj_data.Time).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-                    jssj = obj_data.Time;
-                    tdvalue.innerHTML = (obj_data.Value * xs).toFixed(Number_of_decimal);
-                    //tdvalue2.innerHTML = (obj_data[0].Value*xs/1.5).toFixed(Number_of_decimal);//此处应为第二个数值，目前没有意义
-                    tdhistory.setAttribute('backgroundColor', '#ffffff');
-                    tdhistory.setAttribute('onclick', 'tohistory(' + sid + ')');
-                    tdhistory.innerHTML = "<button href='javascript:void(0)'>>></button>";
-                    tdwarnlog.setAttribute('onclick', 'towarnlog(' + sid + ')');
-                    tdwarnlog.setAttribute('backgroundColor', '#ffffff');
-                    //tdwarnlog.style.cssText="display:none";
-                    tdwarnlog.innerHTML = '<button href="javascript:void(0)">>></button>';
-                    var mes = obj_data.Message;
-                    tdmessage.innerHTML = mes;
-                    tdmessage.style.cssText = "display:none";
-                    tr.appendChild(tdename);
-                    tr.appendChild(tdtime);
-                    tr.appendChild(tdvalue);
-                    //tr.appendChild(tdvalue2);
-                    tr.appendChild(tdhistory);
-                    tr.appendChild(tdwarnlog);//z不显示
-                    tr.appendChild(tdid);//不显示
-                    tr.appendChild(tdtype);//不显示
-                    tr.appendChild(tdmessage);//不显示 告警信息
-                    var cl = "#000";
-                    if (mes) {
-                        cl = "#f20";
-                    }
-                    tr.style.color = cl;
-                    pt++;
-                    $table.appendChild(tr);
+                    
                     $(".time").text('');
                     $(".sensorname").text('');
                     $(".value1").text('');

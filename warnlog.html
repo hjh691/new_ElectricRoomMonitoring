@@ -64,6 +64,9 @@
 		width: 99%;
 		margin-left: 5px;
 		margin-right: 5px;
+		height: 35px;
+		line-height: 35px;
+		overflow: auto;
 	}
 	</style>
 </head>
@@ -86,25 +89,26 @@
 			<span id="display_type_warnlog" class="btn-group" data-toggle="buttons">
 				<label class="btn btn-primary active" id="type_other"><input type="radio" class="catalog" name="options" value="">全部</label><!---->
 			</span>
-			<span><label>事件类型：</label></span>
-			<span class="dropdown" style="position: relative;">
-			<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
-				<span class="select_text" data-is-select="false">Dro pup</span>
-				<span class="caret"></span> select_multiple
-			</button>-->
-			<label class="dropdown-toggle" data-toggle="dropdown">
-				<input type="text" id="select_text_warnlog" class="select_text " readonly="true" data-is-select="false" style="height:35px;line-height: 30px;color:black;border-radius: 5px;"
-				 placeholder="请选择告警事件，不选为全部告警"/>
-				<button style="width:30px;height:35px; margin-left: -35px;position: relative;z-index: 2;"><i class= "caret" >
-                </i></button>
-			</label>
-			<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="event_type">
-				<!-- 为了方便演示，type设置text了，实际中可以设置成hidden<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
-				<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li> -->
-			</ul>
-			</span>
+			
 			<div class="condition" >
-				<span><label>查询时间：</label></span>
+				<span><label>事件类型：</label></span>
+				<span class="dropdown" style="position: relative;">
+				<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
+					<span class="select_text" data-is-select="false">Dro pup</span>
+					<span class="caret"></span> select_multiple
+				</button>-->
+				<label class="dropdown-toggle" data-toggle="dropdown">
+					<input type="text" id="select_text_warnlog" class="select_text " readonly="true" data-is-select="false" style="height:30px;line-height: 30px;color:black;border-radius: 5px;"
+					placeholder="请选择告警事件，不选为全部告警"/>
+					<button style="width:30px;height:35px; margin-left: -35px;position: relative;z-index: 2;"><i class= "caret" >
+					</i></button>
+				</label>
+				<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="event_type">
+					<!-- 为了方便演示，type设置text了，实际中可以设置成hidden<li><label><input type="checkbox" class="check_box" value="aa" /> <span>越上限</span></label></li>
+					<li><label><input type="checkbox" class="check_box" value="bb" /> <span>越下限</span></label></li> -->
+				</ul>
+				</span>
+				<span><label>时段选择：</label></span>
 				<span ><label><input type="radio" value="5" onclick="seletime(this)" name="timeselect"/>实时</label></span>
 				<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect"/> 当天</label> </span>
 				<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"/>昨天</label></span>

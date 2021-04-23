@@ -987,12 +987,12 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 								channel=(g._shape.Binding).substring(0,g._shape.Binding.indexOf('：'));
 								datatype=(g._shape.Binding).substr(g._shape.Binding.indexOf('：')+1);
 							}
-							if(datatype.lastIndexOf(".")==-1){
+							if(datatype.lastIndexOf(concat_str)==-1){
 								datafolder="Default";
 								dataname=datatype;
 							}else{
-								var datafolder=datatyep.substring(0,datatype.lastIndexOf("."));
-								var dataname=datatype.substr(datatype.lastIndexOf("."));
+								var datafolder=datatyep.substring(0,datatype.lastIndexOf(concat_str));
+								var dataname=datatype.substr(datatype.lastIndexOf(concat_str));
 							}
 							if(window.parent.allsensors)
 							if(window.parent.allsensors[channel]){

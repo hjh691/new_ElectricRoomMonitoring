@@ -124,6 +124,15 @@ jfjk_base_config.bg_src="res/bj011.jpg"
  Number_of_decimal=2;
  //树形目录等级数：
  Levels_of_treeview=3
+ //数据每周期采样频率
+ caiyangcishu=72;
+ //连接字符
+ concat_str=".";
+ //实时数据显示模式
+ if(sessionStorage.realdatashowmodle)
+     jfjk_base_config.realdatashowmodle=sessionStorage.realdatashowmodle
+ else
+     jfjk_base_config.realdatashowmodle=0;
  //告警统计标识
  warning_sign_low="越下限";
  warning_sign_hight="越上限";

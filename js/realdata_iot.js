@@ -109,7 +109,9 @@ function initpage() {
             tr.setAttribute("onclick","tableclick(this)");
             var td_did=document.createElement("td");
             td_did.innerHTML=sensors[i].id;
-            if((sensors[i].Value.parentId!="-1")&&(sensors[i].Value.parentId!=parentid)){
+            if(sensors[i].Value.parentId=="-1"){
+                parentname="";
+            }else if(sensors[i].Value.parentId!=parentid){
                 parentid=sensors[i].Value.parentId;
                 for(var j=0;j<sensors.length;j++){
                     if(sensors[j].id==parentid){
@@ -129,11 +131,13 @@ function initpage() {
             atr.cells[0].innerHTML=i;//标签id
             //atr.cells[0].style.cssText="width:80px";
             atr.cells[1].innerHTML=sensors[i].id;
-            atr.cells[2].innerHTML=sensors[i].Value.name;//第一列添加标签名称，
+            atr.cells[2].innerHTML=sensors[i].Value.name;//第三列添加标签名称，
+            atr.cells[2].style.cssText="text-align:left";
             atr.cells[4].style.cssText="display:none";
             atr.cells[5].innerHTML=parentname;
             atr.cells[6].style.cssText="padding-left:5px;text-align:left;width:250px;word-break:break-all;";
-            //atr.style="display:none;"
+            if(parseInt(jfjk_base_config.realdatashowmodle))
+                atr.style="display:none;"
             $table.appendChild(atr);
             
         }
@@ -481,7 +485,7 @@ function cleartable(){
 }
 function decoderealdata(obj_realdata,asensorid,isload) {
     try{
-        var v_sel = $('[name="options"]');
+        //var v_sel = $('[name="options"]');
         //$('#others_realdata_tbody').empty();
         $table = document.getElementById('others_realdata_tbody');
         if(!obj_realdata){
@@ -492,11 +496,11 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         //if(sensors)
         //    sensors_length=sensors.length;
         var obj_data = new Object();
-        var pt = 0;
+        //var pt = 0;
         //var dname;
         var isnew=true,isfind=false;//isbreak=false;
-        var atr;
-        var parentid=-1,parentname="";
+        //var atr;
+        //var parentid=-1,parentname="";
         //var isfindtype=false;
         var realdatafolder;
         //var kssj = dateToString((new Date(getCurrentDate(2))-(1000*60*60*24)),2) ;// + " 00:00:00";
@@ -505,7 +509,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         sid=-1;
         var nodata=true;
         //var sconfig,saddr;
-        
+        var tab_rows_len;
         if(!asensorid)
             nodata=false;
         
@@ -515,7 +519,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 if(window.parent.realdataid<parseInt(obj_realdata[j].id))
                     window.parent.realdataid=parseInt(obj_realdata[j].id);
                 $table = document.getElementById('others_realdata_tbody');
-                var tab_rows_len=$table.rows.length;
+                tab_rows_len=$table.rows.length;
                 dname=obj_realdata[j].name;
                 realdatafolder=obj_realdata[j].folder;
                 isfindtype=false;
@@ -597,8 +601,8 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                         let tab_row_len=$table.rows.length;
                         for(var l=0;l<tab_row_len;l++){
                             if($table.rows[l].cells[1].innerHTML==obj_data.sensorId){
-                                titlename=realdatafolder+"."+obj_data.name;
-                                if(getCatalog(type_td,realdatafolder,obj_data.name))
+                                titlename=realdatafolder+concat_str+obj_data.name;
+                                if(getCatalog(type_td,realdatafolder,obj_data.name).chart_title)
                                     titlename=getCatalog(type_td,realdatafolder, obj_data.name).chart_title;
                                 if(chartOption.child_classname=="UHFdata"){
                                     var storagename=sid+"_"+titlename;
@@ -747,9 +751,19 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                     }
                 }
             }*/
-            if(nodata){
+            //if(nodata){
                 //showmsg("没有所选标签的实时数据");
-                return;
+            //    return;
+            //}
+            var heightpx = $("#others_realdata_tbody tr").height();// + 1;//加1是网格线的宽度
+            for (var int = 0; int < tab_rows_len; int++) {
+                if ($table.rows[int].cells[1].innerHTML == sessionStorage.SensorId) {
+                    sessionStorage.t_p = int;
+                    var ppt = parseInt(sessionStorage.t_p);
+                    $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
+                    $table.rows[ppt].style.backgroundColor = color_table_cur;
+                    break;
+                }
             }
             /*if (pt > 0) {
                 var tableLength = $table.rows.length;
@@ -860,12 +874,12 @@ function openmodal(aname){
     var title=$("#bind_name");
     title.text(aname+": 数据详细内容")
     var detail=document.getElementById("details");
-    detail.style="width:800px;height:500px;"
+    detail.style="width:500px;height:500px;"
     var temp=(localStorage[aname].split(','));
     var float=[];
     var stemp="";
     for(var i=8;i<temp.length;i=i+4){
-    float[(i/4)-2] = hex2float(bytesarraytofloat(temp,i)).toFixed(Number_of_decimal);
+        float[(i/4)-2] = hex2float(bytesarraytofloat(temp,i)).toFixed(Number_of_decimal);
     //stemp+=float[(i/4)-2]+" ";
     }
     //detail.innerHTML=stemp;
@@ -873,67 +887,101 @@ function openmodal(aname){
     //chartdiv.setAttribute('style','width:300px;height:300px;')
     //var echarts = require('echarts');
     //require('echarts-gl');
-    //var chartDom = document.getElementById('chartdiv');
+    //var chartDom = document.getElementById('chartdiv');甲级 25人，其中一级 20%（5人），二级30%（8人），安全工程师30%（8人） 省级审核国家级审批、发证
+    //乙级16人 一级20%（4人），二级30%（5人），工程师30%（5人） 市级审核，升级审批发证（本省活动）（普遍性、客观性、转变性、规律性）
     //chartDom.style="width:300px;height:300px;"
     var myChart = echarts.init(detail);
     var option;
+    var seriesArray=[];
+    // Parametric curve
+    var float_len=float.length;
+    var y=-1,x=-1;
+    var series=new Object();
+    series.type="line3D";
+    series.lineStyle={width:4};
     var data = [];
-// Parametric curve
-for (var t = 0; t < 50; t += 1) {
-    var y = t;//t + 2.0 * Math.sin(75 * t);
-    for(var j=0;j<72;j++){
-        var x = j;//(1 + 0.25 * Math.cos(75 * t)) * Math.cos(t);
-        var z = float[t*72+j];//(1 + 0.25 * Math.cos(75 * t)) * Math.sin(t);
-        
-        data.push([x, y, z]);
+    for (var t = 0; t < float_len; t ++) {
+        var x = t % caiyangcishu;
+        var z = float[t];
+        if(y!=parseInt(t / caiyangcishu)){//采用变量浮动截取相对的周期和采样值。避免采用固定数值时数据的长短造成错误。
+            var y =parseInt(t / caiyangcishu) ;//t + 2.0 * Math.sin(75 * t);
+            data=[];
+            series=new Object();
+            series.type="line3D";
+            series.lineStyle={width:4};
+            data.push([x, y, z]);
+            series.data=data;
+            seriesArray.push(series);
+        }else{
+            data=series.data;
+            data.push([x,y,z]);
+            series.data=data;
+        }
+        //for(var j=0;j<caiyangcishu;j++){
+            //(1 + 0.25 * Math.cos(75 * t)) * Math.cos(t);
+            //(1 + 0.25 * Math.cos(75 * t)) * Math.sin(t);
+            
+        //}
     }
-}
-console.log(data.length);
-
-option = {
-    tooltip: {},
-    backgroundColor: '#fff',
-    visualMap: {
-        show: false,
-        dimension: 2,
-        min: 0,
-        max: 30,
-        inRange: {
-            color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
-        }
-    },
-    xAxis3D: {
-        type: 'category'
-    },
-    yAxis3D: {
-        type: 'category'
-    },
-    zAxis3D: {
-        type: 'value'
-    },
-    grid3D: {
-        viewControl: {
-            projection: 'orthographic'
-        }
-    },
-    series: [{
-        type: 'line3D',
-        data: data,
-        lineStyle: {
-            width: 4
-        }
-    }]
-};
-
+    option = {
+        tooltip: {},
+        backgroundColor: '#fff',
+        visualMap: {
+            show: false,
+            dimension: 2,
+            min: 0,
+            max: 30,
+            inRange: {
+                //color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+            }
+        },
+        xAxis3D: {
+            type: 'category'
+        },
+        yAxis3D: {
+            type: 'category'
+        },
+        zAxis3D: {
+            type: 'value'
+        },
+        grid3D: {
+            viewControl: {
+                projection: 'orthographic'
+            }
+        },
+        series: seriesArray,/*[{
+            type: 'line3D',
+            data: data,
+            lineStyle: {
+                width: 4
+            }
+        }]*/
+    };
     option && myChart.setOption(option);
     //detail.appendChild(chartdiv); 
-
-    }
+}
 function localrowbysensorid(asensorid){
     //var isfinded=false;
     initchartoption();
     isfirst=true;
-    decoderealdata(null,asensorid,true);//
+    $table = document.getElementById('others_realdata_tbody');
+    let tablehead_len=$table.rows.length;
+    for (var int = 0; int < tablehead_len; int++) {
+        if ($table.rows[int].cells[1].innerHTML == (asensorid+"")) {
+            sessionStorage.t_p = int;
+            var row=$table.rows[int];
+            tableclick(row);
+            var heightpx = $("#others_realdata_tbody tr").height();// + 1;//加1是网格线的宽度
+            var ppt = +sessionStorage.t_p;
+            /*if(ppt>pageSize){
+                curPage=parseInt(ppt/pageSize);
+            }else{
+                curPage=0;
+            }*/
+            $("#datadiv").scrollTop((ppt) * heightpx);
+        }
+    }
+    //decoderealdata(null,asensorid,true);//
 }
 function updatachart(atype) {//根据不同设备类型，更新图形当中的最大最小值设置以及数值单位
     switch (atype.toLowerCase()) {
@@ -993,8 +1041,8 @@ function tableclick(tr,isloadmain) {
         //myChart2.showLoading();
         //gethistorydata(sessionStorage.SensorId,catalog,typename, kssj, jssj, 1);
     }
-    //if (isloadmain)
-       // window.parent.treelocationforsensorid(sessionStorage.SensorId);
+    if (isloadmain)
+        window.parent.treelocationforsensorid(sessionStorage.SensorId);
     //maxval=0;
     //refreshData();
     //moduletable("other_realdata_tbody");
