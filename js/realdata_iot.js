@@ -96,7 +96,6 @@ function initpage() {
     appendalldisplaytype();/*"display_type"*/
     //btn_refresh_click();
     window.parent.closeloadlayer();
-    
     var parentid=-1,parentname="";
     sensors = JSON.parse(localStorage.getItem("sensors"));
     $('#others_realdata_tbody').empty();
@@ -138,8 +137,7 @@ function initpage() {
             atr.cells[6].style.cssText="padding-left:5px;text-align:left;width:250px;word-break:break-all;";
             if(parseInt(jfjk_base_config.realdatashowmodle))
                 atr.style="display:none;"
-            $table.appendChild(atr);
-            
+            $table.appendChild(atr);//we are famly
         }
     }
     //var topTable = $("table").eq(0).offset().top;//获取表格位置
@@ -189,7 +187,6 @@ function appendalldisplaytype(){
             }
         }
         else{
-        
         if(allconfigs){//检查配置中是否有catalog项
             for(var ac in allconfigs){//如果有，读取其所有配置项
                 var s_des=allconfigs[ac].details;
@@ -507,7 +504,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         //var jssj = getCurrentDate(2);
         //haverealdata=false;
         sid=-1;
-        var nodata=true;
+        //var nodata=true;
         //var sconfig,saddr;
         var tab_rows_len;
         if(!asensorid)
@@ -640,8 +637,6 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                     }
                 //}
             }
-            
-
             /*}else{//如果没有显示控制项（分组配置项） 20200509 编写，还需测试完善。
                 for (var j=0;j<realdata_len;j++) {
                     dname=obj_realdata[j].name;
@@ -760,7 +755,9 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 if ($table.rows[int].cells[1].innerHTML == sessionStorage.SensorId) {
                     sessionStorage.t_p = int;
                     var ppt = parseInt(sessionStorage.t_p);
-                    $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
+                    var divheight=$("#datadiv").height();
+                    if(($table.rows[int].offsetTop-30)>(divheight))
+                        $("#datadiv").scrollTop($table.rows[int].offsetTop-30);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
                     $table.rows[ppt].style.backgroundColor = color_table_cur;
                     break;
                 }
@@ -804,7 +801,6 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                     }else{
                         curPage=0;
                     }
-                    
                     //tableclick($table.rows[curPage]);
                     $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
                     $table.rows[ppt].style.backgroundColor = color_table_cur;
@@ -869,7 +865,6 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         showstateinfo(err.message,"realdata_iot/decoderealdata");
     }
 }
-
 function openmodal(aname){
     var title=$("#bind_name");
     title.text(aname+": 数据详细内容")
@@ -971,14 +966,14 @@ function localrowbysensorid(asensorid){
             sessionStorage.t_p = int;
             var row=$table.rows[int];
             tableclick(row);
-            var heightpx = $("#others_realdata_tbody tr").height();// + 1;//加1是网格线的宽度
-            var ppt = +sessionStorage.t_p;
+            var heightpx = $("#others_realdata_tbody tr");//
+            var ppt =heightpx[int].offsetTop-30;//该行的对顶部偏移量。-30是去掉标题。
             /*if(ppt>pageSize){
                 curPage=parseInt(ppt/pageSize);
             }else{
                 curPage=0;
             }*/
-            $("#datadiv").scrollTop((ppt) * heightpx);
+            $("#datadiv").scrollTop((ppt));
         }
     }
     //decoderealdata(null,asensorid,true);//
@@ -1337,8 +1332,6 @@ function refreshData() {
             }
             ratArr.push({name:str_name,value:alertcount[i]});
         }
-        
-        
     }
     option3.series[0].data=ratArr;
     mychart3.setOption(option3);
@@ -1625,7 +1618,6 @@ function initchart2() {
     //myChart2.hideLoading();
     myChart2.setOption(option2);
 }
-
 function initecharts(){
     option1 = {
         backgroundColor: backgroudcolor,

@@ -14,7 +14,6 @@ if(localStorage.server_url!=null && localStorage.server_url!="undefined" && loca
     jfjk_base_config.baseurl=localStorage.server_url;
 }else
 {
-
 //for(var i=0;i<server_url_list.length;i++){
     localStorage.server_url=jfjk_base_config.baseurl=server_url_list[list_pt];
     try{
@@ -38,7 +37,6 @@ function test_url(url){
                 if (errorThrown == "Unauthorized") {
                     secc=0;
                 }else{
-                    
                     if (++(list_pt)<server_url_list.length){
                         //list_pt++;
                         localStorage.server_url=jfjk_base_config.baseurl=server_url_list[list_pt];
@@ -76,7 +74,6 @@ function sleep(numberMillis) {
  //jfjk_base_config.baseurl="http://192.168.10.67:8020/";
  //jfjk_base_config.baseurl="http://localhost:20000/";//_api与服务器同机时实际运行时采用此地址，如果不是部署在同一台电脑中，则为服务器的实际地址,下同
  //jfjk_base_config.speechurl="http://192.168.10.250:20000/_speech/";//"http://192.168.10.67:88/_speech/";
-
  //服务器地址
 //jfjk_base_config.serverurl="http://jka.f3322.net:20000/";
 // 手机app存放目录和名称：要求在web的资源目录中，
@@ -92,9 +89,9 @@ jfjk_base_config.bg_src="res/bj011.jpg"
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
- jfjk_base_config.ver_id="Ver 2.03.22";//1.3添加通用页面。
+ jfjk_base_config.ver_id="Ver 2.04.28";//1.3添加通用页面。
  //发布日期
- jfjk_base_config.date="2021-03-22"
+ jfjk_base_config.date="2021-04-28"
 //公司名称
  jfjk_base_config.company="保定金凯澳自动化设备有限公司";
  //版权时间
@@ -178,13 +175,8 @@ function initconfigOption(){
     configOption.type="";
     configOption.desc="";
 }
-
 //localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
  /**un business
   * 1.2.2 节点树的节点字体颜色变化的问题，告警信息每次都显示的问题（同一节点有不同类型的数据和不一样的告警状态造成），节点目录自动折叠的问题；代码精简。
-  * 
-  * 
-  * 
-  * 
-  * 
+  *
   */

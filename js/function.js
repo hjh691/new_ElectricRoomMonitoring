@@ -2,7 +2,6 @@ var token = "1234567";//后台http认证码
 //localStorage.errortime=0;
 sessionStorage.dataId = 0;
 //sessionStorage.sensors=[];
-
 //sessionStorage.timeindex=0;
 var maps=[];
 var str_speech = "告警";//告警信息
@@ -257,7 +256,6 @@ function login() {
 		}
 	}
 }
-
 //退出登录 used by electricroommonitor
 function logout(){
 	//sessionStorage.SensorId=-1;
@@ -315,7 +313,6 @@ function GetUserProfile() {
 		}
 	});
 }
-
 //初始化信息汇总页面
 function inittotalpage(){  // used by electricroommonitor
 	if(sessionStorage.pageindex!=0){
@@ -383,7 +380,6 @@ function sendbeat(){
 		RefreshToken();
 	}
 }
-
 //主页面显示用户名称  used by electricroommonitor 
 function showusername(flag) {
 	var yhname = document.getElementById('yhname');
@@ -904,7 +900,6 @@ function closewin(ranid) {
 		document.body.removeChild(document.getElementById("alertmsgDiv" + ranid));
 	}
 }
-
 //获取历史数据    used by electricroommonitor 
 function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 	//if (sessionStorage.islogin == "true") {
@@ -928,7 +923,6 @@ function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 	//}
 }
 //showmsg('abc');
-
 //字符串转日期时间函数格式：yyyy-mm-dd hh:mm:ss
 function strtodatetime(str) {
 	var year = str.substring(0, 4);
@@ -946,7 +940,6 @@ function initdrawing() {
 		document.getElementById("iframe_main").src = 'drawmap.html';
 	}
 }
-
 //获取指定编号的图形属性信息，从而来绘制图形。user by electricroommontioring drawmap.html
 function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 	try{
@@ -1012,9 +1005,8 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 											}
 											//obj_rd.splice(loop,1);//找到需要的数据，去除数据后删除，减少循环的次数。
 											break;
-											
 										}
-								}
+									}
 								}
 							}
 						}
@@ -1428,7 +1420,6 @@ function ajaxLoadingHidden() {
 	$("#viewport").removeAttr("style");
 	$("#viewport").hide();
 }
-
 function initrealwarning() {
 	sessionStorage.pageindex = 7;
 	//$("#realwarning-tbody tr").empty();
@@ -1507,7 +1498,6 @@ function getrealdatabynodeid(anodeid){
 		})
 	}
 }
-
 function sleep(numberMillis) {    
 	var now = new Date();    
 	var exitTime = now.getTime() + numberMillis;   
@@ -1648,7 +1638,6 @@ function updatapcnav(obj){
 			if(window.parent.tree2){
 				window.parent.document.getElementById('tree_chi').style.display="block";
 				window.parent.document.getElementById('tree').style.height='60%';
-				
 			}
 			break;			
 		default :
@@ -1690,7 +1679,6 @@ var sorter=false;
 						//refreshData();
 					}
 				}
-				
 				if (tbody.sortCol == Idx){
 					sorter=(!sorter);
 				}else
@@ -1780,7 +1768,6 @@ function jsonKeysToCase(json,type){
 	}else{
 		return json;
 	}
-	
 	function toCase(json){
 		if(typeof json == 'object'){
 			if(Array.isArray(json)){
@@ -1819,7 +1806,6 @@ function jsonKeysToCase(json,type){
 /**与后台服务器的通信函数
  * 说明：参数order: 数据通信的命令字；
  * callback: 回调函数；
-
 function sendorder(order,callback,datas){
 	try{
 	var url = jfjk_base_config.baseurl + order;
@@ -1913,7 +1899,6 @@ function sendorder(order,callback,datas){
 	url = encodeURI(url);
 	if (sessionStorage.islogin == "true") {
 		$.ajax({
-			
 			beforeSend: function (request) {
 				request.setRequestHeader("Authorization", sessionStorage.token);
 			},
@@ -2019,7 +2004,6 @@ function showdate(el){
 	WdatePicker(el);
 	flashbutton();
 }
-
 //------display control------
 /*function display(){   
 	//var $table=$("#warnlogdata-tbody");
@@ -2084,8 +2068,7 @@ function showdate(el){
 			sessionStorage.pageSize=pageSize; 
 			btn_refresh_click();
 		}
-	}
-	
+	}	
 /*function displayPage(){
 	if(curPage <=1 && direct==-1){
 		direct=0;
@@ -2331,15 +2314,13 @@ function GetDateDiff(startTime, endTime, diffType) {
 	} 
 	return parseInt((eTime.getTime() - sTime.getTime()) / parseInt(divNum)); 
 	} 
-
-
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
  * 
  * 连接异常时的报错信息，历史数据和实时数据没有返回值时的异常处理，对多次异常时的处理过程,主页面的登录用户名称和登录状态显示内容。
  * 系统网络连接的状态改变；系统每5-10分钟进行连接判断或重连，每15-30分钟进行一次安全验证码刷新操作，
  * 20201221 将sendorde的get和post两个方法函数合并，判断有无要传输的数据数组，来觉得是使用那种方式。
- * 同时添加在刷新安全认证吗后紧接着重新执行刚才的通信指令；添加一些变量的清除初始化工作；
+ * 同时添加在刷新安全认证吗后紧接着重新执行刚才的通信指令；添加一些变量的清除初始化工作； 黄芪神祗
  * 2021
  * 对所有循环操作进行必要的优化（添加break或删除已找到的元素或直接返回退出，以减少循环次数，优化运行效果）
  */

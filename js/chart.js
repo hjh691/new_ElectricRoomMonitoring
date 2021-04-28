@@ -23,7 +23,6 @@
         ch2=document.getElementById("chart2");
         ch3=document.getElementById("chart3");
         ch4=document.getElementById("chart4");
-        
         //var parentid = -100, parentname = "";
         //var maps = [];
         $("#cxsj").val((sessionStorage.cxsj).substr(0,11));
@@ -49,7 +48,6 @@
                     }
                 }
             }
-            
             tree_obj.treeview("search",[nodeid+'', { ignoreCase: false, exactMatch: true }]);
         }
         //sensors=JSON.parse(localStorage.getItem("sensors"));//
@@ -514,42 +512,42 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                             table += tbody[0].innerHTML+'</tbody></table>';
                             return table;*/
                             var series = opt.series; //折线图数据
-                                var tdHeads = '<td  >时间</td>'; //表头
-                                var tdBodys = document.createElement('tbody'); //数据
-                                series.forEach(function (item) {
-                                    //组装表头
-                                    tdHeads += '<td >'+item.name+'</td>';
-                                });
-                                var table ='<table border="1" style="text-align:center" ><tbody><tr>'+tdHeads+'</tr>';
-                                for (var j = 0; j < series.length; j++) {
-                                    for (var i = 0, l = series[j].data.length; i < l; i++) {
-                                        //组装表数据
-                                        if(j==0){
-                                            atr=creatTr();
-                                            atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
-                                            atr.cells[j+2].innerHTML=series[j].data[i][1];
-                                            tdBodys.appendChild(atr);
-                                        }else{
-                                            var rows=tdBodys.rows;
-                                            var len=rows.length;
-                                            for(var k=0;k<len;k++){
-                                                var jiange=GetDateDiff(rows[k].cells[1].outerText,dateToString((series[j].data[i][0]),2),"minute");
-                                                if(jiange<=-2){
-                                                    atr=creatTr();
-                                                    atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
-                                                    atr.cells[j+2].innerHTML=series[j].data[i][1];
-                                                    tdBodys.insertBefore(atr,rows[k]);
-                                                    break;
-                                                }else if(jiange<2){
-                                                    rows[k].cells[j+2].innerHTML=series[j].data[i][1];
-                                                    break;
-                                                }
+                            var tdHeads = '<td  >时间</td>'; //表头
+                            var tdBodys = document.createElement('tbody'); //数据
+                            series.forEach(function (item) {
+                                //组装表头
+                                tdHeads += '<td >'+item.name+'</td>';
+                            });
+                            var table ='<table border="1" style="text-align:center" ><tbody><tr>'+tdHeads+'</tr>';
+                            for (var j = 0; j < series.length; j++) {
+                                for (var i = 0, l = series[j].data.length; i < l; i++) {
+                                    //组装表数据
+                                    if(j==0){
+                                        atr=creatTr();
+                                        atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
+                                        atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                        tdBodys.appendChild(atr);
+                                    }else{
+                                        var rows=tdBodys.rows;
+                                        var len=rows.length;
+                                        for(var k=0;k<len;k++){
+                                            var jiange=GetDateDiff(rows[k].cells[1].outerText,dateToString((series[j].data[i][0]),2),"minute");
+                                            if(jiange<=-2){
+                                                atr=creatTr();
+                                                atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
+                                                atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                                tdBodys.insertBefore(atr,rows[k]);
+                                                break;
+                                            }else if(jiange<2){
+                                                rows[k].cells[j+2].innerHTML=series[j].data[i][1];
+                                                break;
                                             }
                                         }
                                     }
                                 }
-                                table += tdBodys.innerHTML+'</tbody></table>';
-                                return table;//
+                            }
+                            table += tdBodys.innerHTML+'</tbody></table>';
+                            return table;//
                         }
                     },
 					magicType: {
@@ -660,15 +658,11 @@ function creatTr(){
     20201203 修改在没有数据返回时（返回为空或没有返回时）图形区域的显示已经对应标签的图例显示。 refridgerator 
     多选后提示，消除按钮的闪烁提醒。
     在没有选中参加对比的标签时的提示框自定义jQuery提示框形式，添加底色和动画效果.
-
     修改数据报表格式和方法。
     修改图形数据视图格式，去掉多余数据只显示本类型数据,其他列没有数据名称的问题，数据视图不显示。
-
     图形的数据视图列表的数据项有时放置位置不正确的问题；优化程序性能，用变量取代数组索引。
-
     类别分组刷新和点击显示提示错误
     类别分组的名称添加type指示以及修改加载模式，多选框有单列改为多列；图形极值差别很小时的上下极值设置；app 类别初始化，趋势对比图表的名称传递，搜索
     告警页的时间类型位置调整，在类别较多时显示完整
-
     非数字的项目取值（第二个数之后的错误）
  */

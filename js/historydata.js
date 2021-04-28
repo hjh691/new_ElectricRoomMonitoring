@@ -139,7 +139,6 @@ function appenddisplaytype(element_id,time){
                                     }
                                 }
                             }
-                            
                             lab.innerHTML='<input class="catalog" type="radio" name="options" childtype="'+configOption.childclassname+'" folder="'+lcatalog+'" value="'+ldname+'" >'+tname;
                             if(sessionStorage.datatype){
                                 if(s_des[p].name==sessionStorage.datatype){//如果有原先的选择
@@ -166,7 +165,6 @@ function appenddisplaytype(element_id,time){
                     }
                 }
             }else{
-
             }
         }
         $(".btn").click(function(){//用于动态加载的元素的点击响应。
@@ -183,7 +181,6 @@ function appenddisplaytype(element_id,time){
     }catch(err){
         showstateinfo(err.message,"historydata/appenddisplaytype");
     }
-
 }
 function buildnode(data, level) {//no used
     var tree = [];
@@ -430,26 +427,22 @@ function decodedatas(obj_data){
                     data.push([x, y, z]);
                 //}
             }
-            
             var color=k%2==0 ? 'rgb(200,50,40)' : 'rgb(50,70,240)';
             series.type="line3D";
             series.data=data;
-            
             series.lineStyle={
                 width:4,
                 color:color,
             }
             seriess.push(series);
         }
-        
         //console.log(data.length);
-        
     }else
     if(sessionStorage.nodetype==2){//Math.ceil(senconds/1000/60)<1430//如果是机房监控，则显示所有数据，并使图形显示为阶梯图，表示开关状态。
         step='end';
         for (var i = 0; i <obj_data.length; i++) {
             var tr = document.createElement('tr');
-            if (i % 2 == 0) {//此处抵消css定义的table隔行变色的显示效果.来显示机房监控的状态列表
+            if (i % 2 == 0) {//此处抵消css定义的table隔行变色的显示效果.来显示机房监控的状态列表 
                 tr.setAttribute('style', "background-color:#16b9c9");
             }
             let obj_i=obj_data[i];
@@ -741,7 +734,6 @@ function decodedatas(obj_data){
                 start: 0,      // 左边在 10% 的位置。
                 end: 100,       // 右边在 60% 的位置。 
             },
-
             ],
             series: [{
                 name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
