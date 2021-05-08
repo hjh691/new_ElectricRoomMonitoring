@@ -80,14 +80,14 @@
 				<div class="pagecard" id="pagecard1" style="display: none;">
 					<p style="text-align:center;font-size:20px;" ><b>历史数据</b></p>
 				</div>
-				<div class="panel panel-default" style="height:80px;overflow:auto;margin-bottom: 0;" >
-					<div class="condition " >
+				<div class="panel panel-default" style="height: 80px;overflow:auto;margin-bottom: 0;" >
+					<!--<div class="condition " ></div>-->
 						<span><label>查询时间：</label></span>
-						<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect" />当天</label> </span>
-						<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"/>昨天</label></span>
-						<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"/>当月</label> </span>
-						<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"/>上月</label></span>
-						<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(this)" name="timeselect"/>自定义</label></span>
+						<span ><label><input type="radio" value="0" onclick="seletime(0)" name="timeselect" />当天</label> </span>
+						<span ><label><input type="radio" value="1" onclick="seletime(1)" name="timeselect"/>昨天</label></span>
+						<span ><label><input type="radio" value="2" onclick="seletime(2)" name="timeselect"/>当月</label> </span>
+						<span ><label><input type="radio" value="3" onclick="seletime(3)" name="timeselect"/>上月</label></span>
+						<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(4)" name="timeselect"/>自定义</label></span>
 						<span id="timedefine" style="display: none;">
 						起止时间
 						<input type="text" onclick="showdate({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_history" 
@@ -95,6 +95,12 @@
 						<input type="text" onclick="showdate({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_history" 
 						style="width:160px;font-size:16px;height: 30px;" />
 						</span>
+					
+					<div class="condition" style="display: none;">
+						<span ><label >时间间隔：</label></span>
+						<span><label><input type="radio" value="0" onclick="interval(0)" name="betweentime"/>分钟</label> </span>
+						<span><label><input type="radio" value="1" onclick="interval(1)" name="betweentime"/>小时</label> </span>
+						<span><label><input type="radio" value="2" onclick="interval(2)" name="betweentime"/>日</label> </span>
 					</div>
 					<div class="condition" style="height: 30px;line-height:30px;">
 						<span id="sensor_select" class="condition " style="display:none"><!---->
@@ -132,15 +138,15 @@
 							style="width:100px;">&gt&gt 数据列表</button>
 						<fieldset style="text-align: center;margin-top: 50px;">
 							<!--<span id="timedefine" style="display: none;"></span><legend>自主查询：</legend>-->
-								<label style="margin-top: 10px;">分 组：</label><br>
-								<input type="text" onclick=""  id="folder_history" 
-								style="width:100px;font-size:16px;height: 30px;"/>
-								<br>
-								<label>类 型：</label><br>
-								<input type="text" onclick=""  id="datatype_history" 
-								style="width:100px;font-size:16px;height: 30px;" />
-								<br>
-								<button class="selected" id="zizhuchaxun" style="width: 80px;margin-top: 10px;" onclick="queryhistorydataself()">自主查询</button>
+							<label style="margin-top: 10px;">分 组：</label><br>
+							<input type="text" onclick=""  id="folder_history" 
+							style="width:100px;font-size:16px;height: 30px;"/>
+							<br>
+							<label>类 型：</label><br>
+							<input type="text" onclick=""  id="datatype_history" 
+							style="width:100px;font-size:16px;height: 30px;" />
+							<br>
+							<button class="selected" id="zizhuchaxun" style="width: 80px;margin-top: 10px;" onclick="queryhistorydataself()">自主查询</button>
 						</fieldset>
 					</div>
 					<div class="column" align="center" id="list" style="display: none;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;margin: 10px;">
@@ -175,5 +181,4 @@
 	<script type="text/javascript" src="js/historydata.js"></script>
 </body>
 </html>
-<!--0356202888
--->
+<!-- -->

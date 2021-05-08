@@ -84,7 +84,7 @@
 			sessionStorage.timeindex=0;
 		}
 		$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
-		seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
+		seletime(sessionStorage.timeindex);
 		appenddisplaytype(sessionStorage.SensorId);
 		//if(sessionStorage.timeindex==4){
 		querywarnlog();//decodedatas();
@@ -319,7 +319,6 @@
 			showstateinfo(err.message,"warnlog/appenddisplaytype");
 		}
 	}
-	
 	function displaytype(obj){
 		dname= obj.value;
 		catalog=getcatalog(dname);
@@ -384,7 +383,7 @@
 				let data_len=obj_data.length;
 				for (var i = 0; i <data_len; i++) {
 					if(obj_data[i].message){
-						if((dname!="")&&(obj_data[i].name!=dname)){
+						if((dname!="") && (obj_data[i].name!=dname)){
 							continue;
 						}
 						var tr=document.createElement("tr");
@@ -629,7 +628,7 @@
 		}catch(err){
 			showstateinfo(err.message,"warnlog/showrealworning");
 		}
-		//display();
+		//display(); //it's windy today,with force 8.west-notth forward. 
 		page=new Page(pageSize,'warnlogtable','warnlogdata-tbody','pageindex');
 	}
 	/*function refreshsensorslist(){

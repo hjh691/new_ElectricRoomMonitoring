@@ -74,7 +74,6 @@
 			<input id="nav13" type="button" class="topbar-bigbutton" value="操作指南"
 				style="background:url(res/bar.jpg) no-repeat center top;" onclick="showhelp()"/><!--pageindex:100-->
 		</div>
-		<hr style="display:none" />
 	</div>
 	<!--header-->
 	<!--  内容  -->
@@ -83,7 +82,6 @@
 		<aside class="aside" id="aside">
 			<button class="butn" id="showaside" onclick="list()"> &lt&lt </button><!--“<”为特殊字符 60 “>”为 62-->
 			<div class="leftmenu" id="leftmenu" >
-				
 				<div class="tree " id="tree" style="overflow-x:auto;white-space: nowrap;">
 				</div>
 				<div class="tree1 " id="tree_chi" style="overflow-x:auto;white-space: nowrap;">
@@ -544,6 +542,7 @@
 					sensorstree.treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
 					sessionStorage.selNodeId = data.nodeId;
 					localStorage.setItem("sensor_tree",null);
+					localStorage.setItem("historydata",null);
 					//for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 					//	var p_node = getThe_level_nodeid(data, i);
 					//	sensorstree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
@@ -2228,4 +2227,6 @@
   iframemain的刷新由重新加载改成执行页面的初始化函数，减少页面闪烁。
   实时列表与标签树同步时自动展开标签树节点,并定位到当前标签。
   标签树形目录在跟新系统主站节点时有时不能更新的问题（20210303）
+
+  告警查询，选则全部时显示没有记录的问题。一次图的全屏显示模糊问题，
 -->

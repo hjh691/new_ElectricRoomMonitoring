@@ -89,9 +89,9 @@ jfjk_base_config.bg_src="res/bj011.jpg"
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
- jfjk_base_config.ver_id="Ver 2.04.28";//1.3添加通用页面。
+ jfjk_base_config.ver_id="Ver 2.05.07";//1.3添加通用页面。
  //发布日期
- jfjk_base_config.date="2021-04-28"
+ jfjk_base_config.date="2021-05-07"
 //公司名称
  jfjk_base_config.company="保定金凯澳自动化设备有限公司";
  //版权时间

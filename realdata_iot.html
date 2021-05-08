@@ -59,48 +59,54 @@
 			margin-right: 5px;*/
 			margin:0px;
         }
+	label{
+		margin-left: 20px;
+	}
   </style>
 </head>
-<body > <!-- onunload="stopWorker()" 20210316修改onclick="btn_refresh_click()"-->
+<body > <!-- onunload="stopWorker()" 20210316修改onclick="btn_refresh_click()"风险控制：生产安全事故应急救援预案-->
 	<div class="container">
-		<div>
-		<div class="condition" style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: auto;height:40px;line-height: 40px;"><label> 显示内容:</label>
-			<span id="display_type">
-				
-			</span>
-			<span>
+		<div class="row">
+			<div class="condition col-xs-6 col-lg-3" style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;
+				border-radius: 10px;width: 200px;height:40px;line-height: 40px;margin-left: 10px;display: none;"><label> 显示内容:</label>
+				<span id="display_type"></span>
+			</div>
+			<div class="col-xs-12 col-lg-11" id="chart"  style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: autopx;height:40px;line-height: 40px;margin-left: 10px;padding-left: 0;">
+				<canvas id="canvas"  height="40" style="display: none;"></canvas><!-- 标签状态统计信息 canvas图形化显示有待完善。-->
+				<label > 总数:</label> <label id="total" >0</label><label> 连接在线:</label><label id="yunxing">0</label>
+				<label > （ 其中:  1.正常:</label> <label id="normal" style="color:green;" >0</label><label> 2.告警:</label><label id="warning" style="color:orange">0</label><label style="margin-left: 5px;"> ）</label>
+				<label > 离线:</label> <label id="outline" style="color:red">0</label>	
 				<button type="button" id="chaxun" value="刷新" onclick="btn_refresh_click()"
-						style="font-size:14px;height: 30px;line-height:30px;margin-left: 20px;padding: 0px;">
-						<span class="glyphicon glyphicon-refresh" style="margin:5px"></span>刷新</button>
-			</span>
+					style="font-size:14px;height: 30px;line-height:30px;float:right;margin-top: 3px;">
+				<span class="glyphicon glyphicon-refresh" style="margin:5px"></span>刷新</button>
+			</div>
 		</div>
 		<div style="text-align: center;" >
 			<div id="datadiv" style="text-align: center;overflow: auto;height: 700px;overflow: auto;">
 				<table  id="other_realtable" style="margin: auto;" >
 					<thead id="tab_head" style="display: fixed;">
-					<tr>
-						<th  onclick="$.sortTable.sort('other_realtable',0)"><a href="javascript:">序号 <span class="serial"></span></a></th>
-                        <th  onclick="$.sortTable.sort('other_realtable',1)" ><a href="javascript:">设备编号<span class="sensor_id"></span> </a></th>
-						<th  onclick="$.sortTable.sort('other_realtable',2)" ><a href="javascript:">设备名称<span class="sensor_name"></span> </a></th>
-						<th  onclick="$.sortTable.sort('other_realtable',3)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
-						<th  style="display: none;" onclick="$.sortTable.sort('other_realtable',4)"><a href="javascript:">检测地点<span class="value1"></span></a></th>
-						<th  onclick="$.sortTable.sort('other_realtable',5)"><a href="javascript:">上级分组 <span class="time"></span></a></th>
-						<th  onclick="$.sortTable.sort('other_realtable',6)"><a href="javascript:">实时值 <span class="time"></span></a></th>
-						<th  onclick="$.sortTable.sort('other_realtable',7)"><a href="javascript:">附录信息<span class="time"></span></a></th>
-						<th  onclick="$.sortTable.sort('other_realtable',8)"><a href="javascript:">状态<span class="value1"></span></a></th>
-						
-						<th  onclick="$.sortTable.sort('other_realtable',9)"><a href="javascript:" >关联操作<span class="value1"></span></a></th>
-						<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>display:none-->
-						<!--<th >查看历史数据</th><th  onclick="$.sortTable.sort('realtable',9)"><a href="javascript:">参考值<span class="value1"></span></a></th>
-						<th >查看告警信息</th>onclick="show_divchart()"height:550px;
-						<th style="width:18px;border:0px solid black;"></th>-->
-					</tr>
+						<tr>
+							<th  onclick="$.sortTable.sort('other_realtable',0)"><a href="javascript:">序号 <span class="serial"></span></a></th>
+							<th  onclick="$.sortTable.sort('other_realtable',1)" ><a href="javascript:">设备编号<span class="sensor_id"></span> </a></th>
+							<th  onclick="$.sortTable.sort('other_realtable',2)" ><a href="javascript:">设备名称<span class="sensor_name"></span> </a></th>
+							<th  onclick="$.sortTable.sort('other_realtable',3)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
+							<th  style="display: none;" onclick="$.sortTable.sort('other_realtable',4)"><a href="javascript:">检测地点<span class="value1"></span></a></th>
+							<th  onclick="$.sortTable.sort('other_realtable',5)"><a href="javascript:">上级分组 <span class="time"></span></a></th>
+							<th  onclick="$.sortTable.sort('other_realtable',6)"><a href="javascript:">实时值 <span class="time"></span></a></th>
+							<th  onclick="$.sortTable.sort('other_realtable',7)"><a href="javascript:">附录信息<span class="time"></span></a></th>
+							<th  onclick="$.sortTable.sort('other_realtable',8)"><a href="javascript:">状态<span class="value1"></span></a></th>
+							
+							<th  onclick="$.sortTable.sort('other_realtable',9)"><a href="javascript:" >关联操作<span class="value1"></span></a></th>
+							<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span class="value2"></span></a></th>display:none-->
+							<!--<th >查看历史数据</th><th  onclick="$.sortTable.sort('realtable',9)"><a href="javascript:">参考值<span class="value1"></span></a></th>
+							<th >查看告警信息</th>onclick="show_divchart()"height:550px;
+							<th style="width:18px;border:0px solid black;"></th>-->
+						</tr>
 					</thead>
 					<tbody id="others_realdata_tbody" style="top:35px;">
 					</tbody>
 				</table>
 			</div>
-			
 			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
 				aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog" style="text-align:left;height:800px;"><!---->
@@ -109,8 +115,7 @@
 							<button type="button" class="close" 
 								data-dismiss="modal" aria-hidden="true">
 								&times;           </button>
-							<h4 class="modal-title" id="bind_name">
-								            </h4>
+							<h4 class="modal-title" id="bind_name"></h4>
 						</div>
 						<div class="modal-body">
 							<!--<h3 id="bind_name">1#</h3><br> --> 
@@ -147,7 +152,6 @@
 				</a>
 			</div>
 		</div>
-		</div>
         <div  class="row" id="div_chart" style="top:600px;">
 			<div class="col-xs-12 col-md-6 col-lg-6"  style="border: rgb(90, 89, 89) solid 0px;height: 200px;background-color:rgb(209, 207, 207);">
 				<div id="realdata_realdata" ></div>
@@ -157,13 +161,13 @@
 			</div>
 		</div>
 	</div>
-	<script type="text/javascript" src="js/realdata_iot.js"></script><!---->
+	<script type="text/javascript" src="js/realdata_iot.js"></script>
     <script type="text/javascript">
-    var div_chart=$("#div_chart");
-    div_chart.toggle();
-    function show_divchart(){
-        div_chart.toggle();
-    }
+		var div_chart=$("#div_chart");
+		div_chart.toggle();
+		function show_divchart(){
+			div_chart.toggle();
+		}
     </script>
 </body>
 </html>

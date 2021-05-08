@@ -53,7 +53,6 @@
 	table thead {
 		width: calc( tbody.width )
 	}
-	
 	table thead th {
 		background: #ccc;
 	}*/
@@ -84,15 +83,14 @@
 		<div class="pagecard" id="pagecard1" style="margin-bottom:10px;display: none;">
 			<h3 >告警信息</h3>			
 		</div>
-		<div class="panel panel-default" style="margin-bottom: 0;" >
+		<div class="panel panel-default" style="margin-bottom: 0;overflow: auto;height: 80px;" >
 			<span><label>类别分组：</label></span>
 			<span id="display_type_warnlog" class="btn-group" data-toggle="buttons">
-				<label class="btn btn-primary active" id="type_other"><input type="radio" class="catalog" name="options" value="">全部</label><!---->
+				<label class="btn btn-primary active" id="type_other"><input type="radio" class="catalog" name="options" value="" folder="">全部</label><!---->
 			</span>
-			
 			<div class="condition" >
-				<span><label>事件类型：</label></span>
-				<span class="dropdown" style="position: relative;">
+				<span style="display: none;"><label>事件类型：</label></span>
+				<span class="dropdown" style="position: relative; display:none;">
 				<!--<button class="btn btn-default dropdown-toggle form-control select_multiple" style="width: 90px;margin-left: 0px;" type="button" id="dropdownMenu21" data-toggle="dropdown">
 					<span class="select_text" data-is-select="false">Dro pup</span>
 					<span class="caret"></span> select_multiple
@@ -109,12 +107,12 @@
 				</ul>
 				</span>
 				<span><label>时段选择：</label></span>
-				<span ><label><input type="radio" value="5" onclick="seletime(this)" name="timeselect"/>实时</label></span>
-				<span ><label><input type="radio" value="0" onclick="seletime(this)" name="timeselect"/> 当天</label> </span>
-				<span ><label><input type="radio" value="1" onclick="seletime(this)" name="timeselect"/>昨天</label></span>
-				<span ><label><input type="radio" value="2" onclick="seletime(this)" name="timeselect"/>当月</label> </span>
-				<span ><label><input type="radio" value="3" onclick="seletime(this)" name="timeselect"/>上月</label></span>
-				<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(this)" name="timeselect"/>自定义</label></span>
+				<span ><label><input type="radio" value="5" onclick="seletime(5)" name="timeselect"/>实时</label></span>
+				<span ><label><input type="radio" value="0" onclick="seletime(0)" name="timeselect"/> 当天</label> </span>
+				<span ><label><input type="radio" value="1" onclick="seletime(1)" name="timeselect"/>昨天</label></span>
+				<span ><label><input type="radio" value="2" onclick="seletime(2)" name="timeselect"/>当月</label> </span>
+				<span ><label><input type="radio" value="3" onclick="seletime(3)" name="timeselect"/>上月</label></span>
+				<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(4)" name="timeselect"/>自定义</label></span>
 				<span id="timedefine" style="display: none;">
 				起止时间
 				<input type="text" onclick="showdate({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"/>至
@@ -161,7 +159,7 @@
 						<th style="border:1px solid black;">测量点名称</th>
 						<th style="border:1px solid black;">告警时间</th>
 						<th style="border:1px solid black;">数值</th>	
-						<th style="border:1px solid rgb(221, 101, 101);">告警内容</th>
+						<th style="border:1px solid black;">告警内容</th>
 						<!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>height:520px -->
 					</tr>
 				</thead>

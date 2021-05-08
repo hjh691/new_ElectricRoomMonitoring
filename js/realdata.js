@@ -821,9 +821,10 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
             //showmsg("没有所选标签的实时数据");
             return;
         }
-        if (pt > 0) {
-            alert_obj=[];
-            var tableLength = $table.rows.length;
+        
+        alert_obj=[];
+        var tableLength = $table.rows.length;
+        if (tableLength > 0) {
             tab_head=document.getElementById("tab_head");
             //alertcount=[0,0,0,0,0]
             maxOfRealdata=($table.rows[0].cells[title_index].innerHTML)*1;
@@ -913,10 +914,12 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
         } else {
             //showmsg("没有符合条件的实时数据",info_showtime);
             showstateinfo("本次实时数据为空","realdata-1");
+            decodedatas(null);
         }
     } else {
         //showmsg("没有符合条件的实时数据", info_showtime);
         showstateinfo("本次获取实时数据为空","realdata-2");
+        decodedatas(null);
     }
     //$table.rows[t_pt].scrollIntoView();
     refreshData();
@@ -1524,6 +1527,7 @@ function decodedatas(obj_chartdata) {
     if (obj_chartdata == null) {
         maxvalue=NaN;//20200518
         myChart2.hideLoading();
+        myChart2.clear();
         refreshData();//20200518
         return;
         //drawchart();

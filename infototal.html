@@ -27,8 +27,8 @@
             updatapcnav(1);
             sessionStorage.pageindex = 0;
 		    sessionStorage.framepage = 'infototal.html';
-            /*var isfree="true",maps=[];//,num=0
-            if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。//停止定时刷新
+            var isfree="true",maps=[];//,num=0
+            /*if(typeof(Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。//停止定时刷新
                 if(typeof(w1) == "undefined") {
                     w1 = new Worker("delay_worker.js");
                 }
@@ -88,8 +88,8 @@
                                 position: 'top',
                                 verticalAlign: 'middle',
                                 align: 'right',
-                                fontSize:20,
-                                offset:[0,15],
+                                fontSize:18,
+                                offset:[0,12],
                                 formatter: " {b} \n{c}",
                             },
                         },
@@ -110,17 +110,16 @@
                 ]
             } ;
             myChar.setOption(option);
-            myChar.on('click',function (params){//图表点击事件
+            /*myChar.on('click',function (params){//图表点击事件
                 if(params.data.hasOwnProperty("level") ){
                     var nodes=parent.window.$("#tree").treeview("getUnselected");
                     for(var i=0;i<nodes.length;i++)
                     if(nodes[i].id==params.data.id)
                         parent.window.$("#tree").treeview("selectNode",nodes[i].nodeId);
                 }
-            });/**/
+            });*/
             window.parent.closeloadlayer();
         }
-       
         //})();
     /**function getNode(atree){//解读节点属性，当为第二级时，获取其标签数据进行分类统计
         for(var i=0;i<atree.length;i++){
@@ -143,53 +142,6 @@
         //var option = myChar.getOption();
         //option.series[0].data = atree;
         myChar.setOption(option);
-    }
-    function GetSensorsByNode(anodeid){//,atype
-		var url = jfjk_base_config.baseurl + "/GetSensorsByNode?nodeId="+anodeid;
-		url = encodeURI(url);
-		if (sessionStorage.islogin == "true") {
-			$.ajax({
-				beforeSend: function(request) {
-					request.setRequestHeader("_token", sessionStorage.token);
-				},
-				url: url,
-				type: 'GET',
-				dataType: 'json',
-				timeout: 10000,
-				error: function(jqXHR, textStatus, errorThrown) {
-					//layer.alert('获取系统列表数据失败');
-					sessionStorage.errortime++;
-                    isfree="true";
-                    if(sessionStorage.errortime>3){
-                        sessionStorage.islogin=false;
-                        sessionStorage.errortime=0;
-                    }
-				},
-				success: function(data, status) {
-					//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
-					if (status == "success") {
-						sessionStorage.errortime = 0;
-						if (data.Error == null) {
-							var result=data.Result;
-							if(!jQuery.isEmptyObject(result.Sensors)){
-								var sensors=buildsensor(data.Result.Sensors);//(JSON.parse(localStorage.getItem("sensors")));
-								updatainfotree(parent.infotreedata, anodeid,sensors.length,sensors);
-								//isfree="true";
-                                //myChar.setOption(option);
-							}
-						} else {
-							layer.alert(data.Error);
-							sessionStorage.islogin = ture;
-                        }
-                        //num++;
-                        isfree="true";
-					}
-				}
-			});
-		} else {
-			Alert("用户未登录，您无权完成此次操作", 2000);
-			inittreeview(null,0);
-        }
     }
     function updatainfotree(treedata,tnodeid,tvalue,tsensors){//更新树形列表的数据内容,将标签分类统计结果归入树形列表
 		for(var j=0;j<treedata.length;j++){
@@ -215,22 +167,27 @@
 		}
     }*/
     function updatainfotree1(treedata){//更新树形列表的数据内容,将标签分类统计结果归入树形列表
-        
         for(var j=0;j<treedata.length;j++){
             if((treedata[j].hasOwnProperty("children"))&&(treedata[j].children.length>0)){
                 treedata[j].value=treedata[j].children.length;
                 updatainfotree1(treedata[j].children);
-			}else{
+			}
+            {
             var tnodeid=treedata[j].id;
             var sensors=[];
-                for(var i=0;i<asensors.length;i++){
-                    if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
-                        if(asensors[i].Value.nodeId==tnodeid){
-                            sensors.push(asensors.slice(i,i+1));
-                        }
+            for(var i=0;i<asensors.length;i++){
+                if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
+                    if(asensors[i].Value.nodeId==tnodeid){
+                        sensors.push(asensors.slice(i,i+1));
                     }
                 }
+            }
+            if(treedata[j].hasOwnProperty("children")){
+                treedata[j].value=sensors.length+treedata[j].children.length //对非终端节点下的标签进行统计
+            }
+            else{
                 treedata[j].value=sensors.length;
+            }
             if(sensors.length>0){
                 var sumnode=sumseneor1(sensors);
                 for(var i in sumnode){
@@ -244,30 +201,11 @@
                         treedata[j].children.push(ch1);
                     }
                 }
-				//return;
 			}
         }
 		}
+        return treedata;
     }
- /*   function sumseneor(asensors){//对标签进行分类统计，并存入以对象内。
-		if((typeof(asensors)!="undefined")&&(asensors!=null)){
-			var map1=new Object();
-			for(var i=0;i<asensors.length;i++){
-				if((asensors[i]!=null)&&(!jQuery.isEmptyObject(asensors[i].Value))){
-                    var key=asensors[i].Value.Catalog;//Group;
-                    //if(key){
-                        key=getname(key);
-                    //}
-					if(map1.hasOwnProperty(key)){
-						map1[key]++
-					}else{
-						map1[key]=1;//value++
-					}
-				}
-			}
-		}
-		return map1;
-    }*/
     function sumseneor1(asensors){//对标签进行分类统计，并存入以对象内。
 		if((typeof(asensors)!="undefined")&&(asensors!=null)){
 			var map1=new Object();

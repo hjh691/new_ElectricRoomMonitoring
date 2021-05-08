@@ -73,7 +73,7 @@ function initpage(){
             sessionStorage.timeindex=0;
         }
         $(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
-        seletime($(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']")[0]);
+        seletime(sessionStorage.timeindex);
         if(sessionStorage.SensorName==undefined){
             sessionStorage.SensorName="";
         }
@@ -116,6 +116,7 @@ function appenddisplaytype(element_id,time){
                 for(var i=0;i<configs_len;i++){
                     if((configs[i].type.toLowerCase()==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
                         var s_des=configs[i].details;//如果有，读取其所有配置项
+                        var inside=false;
                         for(var p in s_des){
                             var lab=document.createElement("label");
                             ldname=s_des[p].name;//Name
@@ -146,6 +147,7 @@ function appenddisplaytype(element_id,time){
                                     dname=ldname;
                                     catalog=lcatalog;
                                     childclassname=configOption.childclassname;
+                                    inside=true;
                                 }else{
                                     lab.className="btn btn-primary";
                                 }
@@ -160,6 +162,10 @@ function appenddisplaytype(element_id,time){
                             }
                             //lab.innerHTML=s_des[p].Desc;
                             display_type.appendChild(lab);
+                        }
+                        if(!inside && sessionStorage.datatype){
+                            display_type.childNodes[1].className="btn btn-primary active";
+                            dname=display_type.children[0].children[0].defaultValue;
                         }
                         break;
                     }
@@ -397,7 +403,6 @@ function decodedatas(obj_data){
         //return;
     }else if(childclassname=="UHFdata"){
         //myChart=echarts.init(document.getElementById('main'));
-        
         for (var k = 0; k <obj_data.length; k++) {
             var temp=base64ToArrayBuffer(obj_data[k].value);
             var float=[];
@@ -902,6 +907,9 @@ function gradeChange() {
     var objS = document.getElementById("jcdd");
     sessionStorage.SensorId = objS.options[objS.selectedIndex].value;
     //gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+}
+function interval(index){
+    sessionStorage.interval=parseInt(index);
 }
 /** 
  * 添加在改变标签后自动刷新所对应的配置项内容以及动态添加的配置项的点击响应，时段选取与查询的对应关系，所选节点变化所定义的标签树的更新功能，查询和导出按钮位置

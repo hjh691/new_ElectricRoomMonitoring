@@ -405,7 +405,6 @@ function showusername(flag) {
 function loaduserprofile(){
 	//sessionStorage.pageindex=20;
 	document.getElementById("iframe_main").src="userprofile.html";
-	
 }
 //跳转到历史数据  used by electricroommonitor
 function tohistory(sorid) {
@@ -414,7 +413,6 @@ function tohistory(sorid) {
 }
 //跳转到告警信息查询  used by electricroommonitor
 function towarnlog(sorid) {
-
 	flag_warning = 0;
 	sessionStorage.SensorId = sorid;
 	parent.window.document.getElementById('iframe_main').src = 'warnlog.html';
@@ -922,7 +920,6 @@ function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 		}
 	//}
 }
-//showmsg('abc');
 //字符串转日期时间函数格式：yyyy-mm-dd hh:mm:ss
 function strtodatetime(str) {
 	var year = str.substring(0, 4);
@@ -1538,9 +1535,9 @@ function getname(key){
 }
 //不同时间段的选择响应（obj对应的选项对象)
 function seletime(obj){
-	var timedefine=document.getElementById("timedefine");
-	sessionStorage.timeindex=$('input[name="timeselect"]:checked').val();//obj.value*1;
-	if(obj.value*1==5){
+	//var timedefine=document.getElementById("timedefine");
+	sessionStorage.timeindex=parseInt(obj);//$('input[name="timeselect"]:checked').val();//obj.value*1;
+	if(obj*1==5){
 		timedefine.style.display="none";
 		showrealworning();
 		return;
@@ -1550,7 +1547,7 @@ function seletime(obj){
 	//var today = new Date();
 	var ckssj,cjssj;//ttime;
 	document.getElementById("count_val").innerHTML="";
-	switch(obj.value*1){
+	switch(obj*1){
 		case 0:
 			sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; //"2012-09-03T08:00:00";//;
 			sessionStorage.jssj = getCurrentDate(2) ;

@@ -852,6 +852,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 //showmsg("没有符合条件的实时数据",info_showtime);
                 showstateinfo("没有符合条件的实时数据","realdata_iot");
             }*/
+            jisuanyichangbili();
         } else {
             //showmsg("没有符合条件的实时数据", info_showtime);
             showstateinfo("本次获取实时数据为空","realdata_iot");
@@ -1794,7 +1795,40 @@ function initecharts(){
     //});
 }
 function jisuanyichangbili(avalue){
-    if(avalue>alertconfig[3]){
+    var iyunxing=0,igaojing=0;//,ilixian=0;
+    $table = document.getElementById('others_realdata_tbody');
+    let total=$table.rows.length;
+    for (var int = 0; int < total; int++) {
+        if($table.rows[int].cells[8].innerText=="运行"){
+            iyunxing++;
+            if($table.rows[int].cells[7].innerText!="" && $table.rows[int].cells[7].innerText!=null){
+                igaojing++;
+            }
+        }
+    }
+    $("#total").text(total);
+    $("#yunxing").text(iyunxing);
+    $("#normal").text(iyunxing-igaojing);
+    $("#warning").text(igaojing);
+    $("#outline").text(total-iyunxing);
+    /*var my_canvas=document.getElementById("canvas");
+    my_canvas.width=my_canvas.parentNode.clientWidth;//*0.8;
+    var awidth=my_canvas.width;
+    var x1=awidth*(iyunxing/total);
+    var x2=x1*(igaojing/iyunxing);
+    var y=my_canvas.height*0.95;
+    var ctx=my_canvas.getContext("2d");
+    ctx.clearRect(0,0,x1,y);
+    ctx.strokeStyle="green";
+    ctx.fillStyle="green";
+    ctx.strokeRect(1,1,x1,y);
+    ctx.fillStyle="red";
+    ctx.strokeStyle="red";
+    ctx.strokeRect(x1,1,awidth-x1,y);
+    ctx.fillStyle="orange";
+    ctx.strokeStyle="orange";
+    ctx.strokeRect(0,0,x2,y);
+    /*if(avalue>alertconfig[3]){
         alertcount[4]++;
     }else if(avalue>alertconfig[2]){
         alertcount[3]++;
@@ -1804,8 +1838,10 @@ function jisuanyichangbili(avalue){
         alertcount[1]++;
     }else{
         alertcount[0]++;
-    }
+    }*/
 }
+
+
 /**
  * 解决在首次登录今日实时数据页面时数据不立即显示的问题，标签名称添加上级名称，区分同名标签；
  * 状态统计添加图形序列的数值显示；
