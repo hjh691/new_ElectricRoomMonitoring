@@ -52,7 +52,7 @@
         }
         //sensors=JSON.parse(localStorage.getItem("sensors"));//
         configs=JSON.parse(localStorage.Config);
-        appenddisplaytype();
+        //appenddisplaytype();//重复执行次数太多（3次），故去掉此处的调用。
         //setSelectOption("jcdd", sessionStorage.SensorId);
         oneChoice();
         window.parent.closeloadlayer();

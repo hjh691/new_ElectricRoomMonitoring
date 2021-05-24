@@ -303,7 +303,7 @@ function setactive(aid){
 function initpage() {
     updatapcnav(14);
     sessionStorage.framepage="realstate.html";
-    sessionStorage.pageindex=2;
+    sessionStorage.pageindex=10;
     window.parent.closeloadlayer();
     var parentid=-100,parentname="";
 	var maps=[];
@@ -373,7 +373,7 @@ function stopWorker() {//停止自动刷新数据
     w1.terminate();
     w1 = undefined;
 };
-/**1. duiecharttubiaopeizhicanshujinxingyouhua,xianshixiaoguogenmeiguanheli
+/**
  * 编写页面标签随数据动态变化的实现方法。lazy 
  * 动力监测和空调参数页面超出显示范围，调整，并按bootstrap的网络系统进行调整和布置。
  * 0727-0731 对web程序功能进行调试，对发现的问题进行了修改和完善，同时对页面和交互操作进行了友好性改进。下周还是进行调试和完善

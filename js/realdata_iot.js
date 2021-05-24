@@ -96,6 +96,31 @@ function initpage() {
     appendalldisplaytype();/*"display_type"*/
     //btn_refresh_click();
     window.parent.closeloadlayer();
+    showAllSensors();
+
+    //var topTable = $("table").eq(0).offset().top;//获取表格位置
+    var c_top =  $('.oa-nav_top').height() ? $('.oa-nav_top').height() : 0;//获取导航高度没有可填0
+    $("#datadiv").scroll(function() {
+        var table_hd = $("table").eq(0).find('thead'); //浮动的表头
+        var table_bd = $("table").eq(0).find('tbody'); //表内容
+        //判断
+        if(!table_hd || !table_hd.offset() || !table_bd){
+            return;
+        }
+        var w_scrollTop = $("#datadiv").scrollTop();  //滚动条的垂直位置
+        if(w_scrollTop >5 ){ //当滚动条的 位置大于 表头的位置，开始悬浮topTable
+            var add = w_scrollTop - 0 + c_top;
+            $("table").eq(0).find('thead').attr("style","transform: translateY(" + add + "px);")//固定
+        }else{
+            $("table").eq(0).find('thead').attr("style","transform: translateY(0px);")//复原
+        }
+    });
+    if(sessionStorage.getItem("chartoption")){
+        chartOption=JSON.parse(sessionStorage.getItem("chartoption"));
+    }
+    btn_refresh_click();
+}
+function showAllSensors(){
     var parentid=-1,parentname="";
     sensors = JSON.parse(localStorage.getItem("sensors"));
     $('#others_realdata_tbody').empty();
@@ -104,8 +129,8 @@ function initpage() {
     if(sensors!=null){
         sensors_length=sensors.length
         for(var i=0;i<sensors_length;i++){
-            var tr=document.createElement("tr");
-            tr.setAttribute("onclick","tableclick(this)");
+            //var tr=document.createElement("tr");
+            //tr.setAttribute("onclick","tableclick(this)");
             var td_did=document.createElement("td");
             td_did.innerHTML=sensors[i].id;
             if(sensors[i].Value.parentId=="-1"){
@@ -135,32 +160,36 @@ function initpage() {
             atr.cells[4].style.cssText="display:none";
             atr.cells[5].innerHTML=parentname;
             atr.cells[6].style.cssText="padding-left:5px;text-align:left;width:250px;word-break:break-all;";
+            var aa=document.createElement("a");
+            aa.setAttribute("href","javascript:void(0)");
+            aa.setAttribute("onclick","showdetails("+sensors[i].id+")");
+            aa.innerHTML=">>>";
+            atr.cells[9].appendChild(aa);
+            //atr.cells[9].innerHTML="<a href='javascript:void(0)> >>> </a>"
+            //atr.cells[9].setAttribute("onclick","showdetails("+sensors[i].id+")")
             if(parseInt(jfjk_base_config.realdatashowmodle))
                 atr.style="display:none;"
             $table.appendChild(atr);//we are famly
         }
     }
-    //var topTable = $("table").eq(0).offset().top;//获取表格位置
-    var c_top =  $('.oa-nav_top').height() ? $('.oa-nav_top').height() : 0;//获取导航高度没有可填0
-    $("#datadiv").scroll(function() {
-        var table_hd = $("table").eq(0).find('thead'); //浮动的表头
-        var table_bd = $("table").eq(0).find('tbody'); //表内容
-        //判断
-        if(!table_hd || !table_hd.offset() || !table_bd){
-            return;
-        }
-        var w_scrollTop = $("#datadiv").scrollTop();  //滚动条的垂直位置
-        if(w_scrollTop >5 ){ //当滚动条的 位置大于 表头的位置，开始悬浮topTable
-            var add = w_scrollTop - 0 + c_top;
-            $("table").eq(0).find('thead').attr("style","transform: translateY(" + add + "px);")//固定
-        }else{
-            $("table").eq(0).find('thead').attr("style","transform: translateY(0px);")//复原
-        }
-    });
-    if(sessionStorage.getItem("chartoption")){
-        chartOption=JSON.parse(sessionStorage.getItem("chartoption"));
-    }
-    btn_refresh_click();
+}
+function showdetails(asensorid){//功能接口，显示一个新的页面，用于显示次标签的数据详情和图示
+    sessionStorage.sensorId=parseInt(asensorid);
+     
+    /*var target = "detail.html"; 
+    //判断是否打开 
+    if (objWin == null || objWin.closed) { 
+        objWin = window.open(target); 
+    } else { 
+        objWin.location.replace(target); 
+    } 
+    objWin.focus();*/
+    
+    
+    window.parent.document.getElementById("tree_chi").style.display="none";
+    window.parent.document.getElementById('tree').style.height='100%';
+    window.parent.iframemain.attr("src","detail.html");
+    /**/
 }
 $(function () {
     $(".btn").click(function(){
@@ -209,11 +238,11 @@ function appendalldisplaytype(){
         $.sortTable.sort('other_realtable',sessionStorage.realdata_index)
         else
             $.sortTable.sort("other_realtable",hidden_cells);*/
-        }catch(err){
-            showstateinfo(err.message,"realdata_iot/appendalldisplaytype");
-        }
+    }catch(err){
+        showstateinfo(err.message,"realdata_iot/appendalldisplaytype");
+    }
 }
-function add_displaytype(parent,name,folder,text,check){
+/*function add_displaytype(parent,name,folder,text,check){
     var lab=document.createElement("label");
     lab.setAttribute("style","margin-left:20px")
     var ainput=document.createElement("input");
@@ -238,7 +267,7 @@ function add_displaytype(parent,name,folder,text,check){
     lab.appendChild(ainput);
     lab.appendChild(spn);
     parent.appendChild(lab);
-}
+}*/
 //"刷新"按钮点击事件
 function btn_refresh_click(obj){
     /*allselect = $('[name="options"]');
@@ -527,10 +556,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                         break;
                     }
                 }
-                if(isfindtype)
-                    isnew=false
-                else
-                    isnew=true;
+                isnew=!isfindtype;
                 if (sensors)//&&isnew
                 for (var i = 0; i < sensors_length; i++) {//是否在需要显示的标签列表中
                     isfind=false;
@@ -558,10 +584,8 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 }
                 //var data_value;
                 //if(isfind){//在需要显示的标签列表
-                    
                     obj_data = (obj_realdata)[j];////sid
                     //data_value=obj_data.value
-                    
                     if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，//
                        /* atr=document.createElement("tr");
                         atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
@@ -577,7 +601,6 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                         atr.cells[2].innerHTML=sname;//第一列添加标签名称，
                         atr.cells[3].value=dateToString(obj_data.time,2);//用于对下一次的采集时间进行比较计算
                         atr.cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);//第二列添加测量时间，去掉日期，保留时间。
-                        
                         atr.cells[4].style.cssText="display:none";
                         atr.cells[5].innerHTML=parentname;
                         titlename=obj_data.name;
@@ -618,7 +641,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                 }
                                 $table.rows[l].cells[6].innerHTML=str_hh;
                                 //isbreak=true;
-                                if(!$table.rows[l].cells[3].value || ($table.rows[l].cells[3].value<dateToString(obj_data.time,2))){//更新最新时间
+                                if(!$table.rows[l].cells[2].value || ($table.rows[l].cells[3].value<dateToString(obj_data.time,2))){//更新最新时间
                                     $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
                                     $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
                                 }
@@ -631,6 +654,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                 }
                                 $table.rows[l].cells[8].innerHTML='运行';//obj_data.folder;
                                 $table.rows[l].style=""
+                                /**/
                                 break;
                             }
                         }
@@ -750,7 +774,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 //showmsg("没有所选标签的实时数据");
             //    return;
             //}
-            var heightpx = $("#others_realdata_tbody tr").height();// + 1;//加1是网格线的宽度
+            //var heightpx = $("#others_realdata_tbody tr").height();// + 1;//加1是网格线的宽度
             for (var int = 0; int < tab_rows_len; int++) {
                 if ($table.rows[int].cells[1].innerHTML == sessionStorage.SensorId) {
                     sessionStorage.t_p = int;
@@ -1840,15 +1864,13 @@ function jisuanyichangbili(avalue){
         alertcount[0]++;
     }*/
 }
-
-
 /**
  * 解决在首次登录今日实时数据页面时数据不立即显示的问题，标签名称添加上级名称，区分同名标签；
  * 状态统计添加图形序列的数值显示；
  * 数据列表项控制显示项添加folder属性，并进行页面级存储，在刷新时加载。同时可以在标签没有配置项时可以通过实时数据获取到其folder属性。1224
  * 数据列表显示控制函数合并（告警、设备、实时）
  * 解决在没有数据时的状态比例图形显示错误问题；
- * 趋势对比的数据表导出excel时的格式以及项目名称；解决实时数据刷新时时间比较不正确的问题；系统设置添加实时数据刷新间隔时间设置；
+ * 解决实时数据刷新时时间比较不正确的问题；系统设置添加实时数据刷新间隔时间设置；
  * 学习echarts的3D效果图表的配置和数据表；
  * 实现排序后序号更新；实时数据列表的处理过程，全部标签；表格滚动表头固定；趋势对比的项目列表根据标签更新；
  */

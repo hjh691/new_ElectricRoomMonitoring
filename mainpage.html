@@ -93,7 +93,7 @@
 			<nav role="navigation" class="navbar-static-top"><!--class="navbar navbar-default navbar-fixed-top" role="navigation"border: solid rgba(0, 101, 105, 1) 1px;-->
 			<div class="navigation" >
 				<div class="row-navigation ">
-					<ul class="pc-nav navbar-right" style="background-color: rgba(8, 177, 106, 0.2) ; margin-right: 0;border: solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;height: 40px;">
+					<ul class="pc-nav navbar-right" id="pc-nav" style="background-color: rgba(8, 177, 106, 0.2) ; margin-right: 0;border: solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;height: 40px;">
 						<li><a id="nav1" href="javascript:void(0)" onclick="inittotalpage()" >信息总览</a></li><!--pageindex:0-->
 						<li><a id="nav2" href="javascript:void(0)" onclick="initdrawing()" title="显示系统状态图">状态图</a></li><!--pageindex:1-->
 						<li id="li_realdata"><a id="nav3" href="javascript:void(0)" onclick="initrealdata()" title="实时数据列表">实时数据</a></li><!--pageindex:2-->
@@ -195,6 +195,8 @@
 		var intervaltime=null;
 		var isfirstload=true;
 		var isresize=false;
+		//实时数据列表表头数据项
+ 		var tablehead;
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
@@ -307,8 +309,8 @@
 			}
 		}
 		);
+		//右键菜单绑定
 		context.init({preventDoubleContext: false});
-
 			context.attach('#tree_chi', [
 				{header: 'Compressed Menu'},
 				{text: 'Back', href: '#'},
@@ -543,6 +545,7 @@
 					sessionStorage.selNodeId = data.nodeId;
 					localStorage.setItem("sensor_tree",null);
 					localStorage.setItem("historydata",null);
+					showloadlayer();
 					//for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
 					//	var p_node = getThe_level_nodeid(data, i);
 					//	sensorstree.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
@@ -1163,7 +1166,7 @@
 			sendorder("GetSensorsByNode?nodeId="+anodeid,function(result){
 				if (!jQuery.isEmptyObject(result.sensors)) {
 					localStorage.setItem("sensor_tree",JSON.stringify(result.sensors));
-					var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+					var treeseneors=result.sensors;//JSON.parse(localStorage.getItem("sensor_tree"))
 					var treenode=buildnode_level2(treeseneors,0);
 					tree2=true;
 					maps = [];
@@ -1185,7 +1188,7 @@
 					}else{
 						localStorage.setItem("Config",null);
 					}
-					inittreeview_level2(treenode);
+					//inittreeview_level2(treenode);
 				} else {
 					tree2=false;
 					localStorage.setItem("sensor_tree",null);
@@ -1207,11 +1210,12 @@
 						localStorage.setItem("Config",null);
 					}
 					sessionStorage.SensorId=-1;//清除标签id，避免一些没有标签的节点借用保存的标签id形成错误的查询条件
-					inittreeview_level2(treenode);
+					//inittreeview_level2(treenode);
 				}
 				refreshiframe();
 				realdataid=-1;
 				getrealdatabynodeid(realdataid);
+				inittreeview_level2(treenode);
 			})
 		}catch(err){
 			showstateinfo(err.message,"mainpage/GetSensorsByNode");
@@ -1309,6 +1313,13 @@
 				case "20"://用户信息页面
 					iframemain.attr("src","userprofile.html");
 					break;
+				/*case "21"://温度图形化
+					if((iframemain.attr('src')).indexOf("detail.html")>=0){
+						iframemain[0].contentWindow.initpage()
+					}else{
+						iframemain.attr('src',"detail.html");
+					}
+					break;*/
 				case "100":
 				closeloadlayer();//frame.src="Help.html";
 					break;
@@ -1354,7 +1365,6 @@
 					}
 				}else {
 					allsensors = null;
-					//localStorage.setItem("allsensors",null);
 				}
 			});
 		}catch(err){
@@ -1497,7 +1507,7 @@
 			var sensors=JSON.parse(localStorage.getItem("allsensors"));
 			var obj_data = new Object();
 			var pt = 0;
-			if (sensors != null) {
+			if (sensors != null  && obj_realdata) {//有一个为空对比就没有意义，所以跳过。
 				var str_speech=str_alert = "告警:";
 				var gaojing = document.getElementById("alert_info");
 				if (gaojing == null) {
@@ -1871,9 +1881,10 @@
 				sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
 				sessionStorage.SensorName=currentNode.text;//获取标签名称，用于列表显示用.20201110
 				sessionStorage.sensorallpathname=getSensorAllPathName(currentNode);
-				//tree1.treeview("selectNode", currentNode.id);//将第一个节点设置为选中状态*/**/
-				//tree1.treeview("search",[currentNode.text, { ignoreCase: false, exactMatch: true }]);
-				/**/
+				//tree1.treeview("selectNode", currentNode.id);//将第一个节点设置为选中状态*/**/有毒、粉尘、噪声震动、辐射、机械伤害、易燃易爆、
+				//tree1.treeview("search",[currentNode.text, { ignoreCase: false, exactMatch: true }]);//电伤害、腐蚀、压力容器、焊割、
+				/**///危险化学品、高空坠落、机械加工、宣传管理制度、（生产工艺和物料）安全防护、本质安全、安全管理对策措施、四级教育厂级车间级班组级
+				//岗位培训特种作业
 			}
 			function getSensorAllPathName(anode){
 				var allpathname=anode.text;

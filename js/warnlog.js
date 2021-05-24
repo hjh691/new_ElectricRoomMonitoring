@@ -18,7 +18,6 @@
 	$(function () {
 		initwarnlog();		
 	});
-
 	//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor
 	function initwarnlog() {
 		try{
@@ -28,7 +27,6 @@
 		sessionStorage.pageindex = 5;
 		//var parentid=-100,parentname="";
 		//var maps=[];
-		
 		//var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
 		//var treenode=buildnode(treeseneors,0);
 		//inittreeview(treenode);
@@ -85,7 +83,7 @@
 		}
 		$(":radio[name='timeselect'][value='"+sessionStorage.timeindex+"']").prop("checked","checked");
 		seletime(sessionStorage.timeindex);
-		appenddisplaytype(sessionStorage.SensorId);
+		//appenddisplaytype(sessionStorage.SensorId);//重复执行次数太多（3-4次），故去掉此处的调用。
 		//if(sessionStorage.timeindex==4){
 		querywarnlog();//decodedatas();
 		//}	
@@ -239,29 +237,27 @@
 										}
 										if(isfound){
 											isfound=false;
-											/*for(var j=0;j<sel_str.length;j++){
-												if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
-													temp.children[i].children[0].checked=true;
-													break;  
-												}
-											}*/
 											continue;
-										}//0721 edit what will i be big 
-										var li=document.createElement("li");
-										var lab=document.createElement("label");
-										//lab.setAttribute("style","margin-left:20px")
-										var ainput=document.createElement("input");
-										ainput.setAttribute("type","checkbox");
-										ainput.setAttribute("name","checkbox");
-										ainput.setAttribute("value",config[c].name);
-										ainput.className="check_box";
-										var spn=document.createElement("span");
-										spn.innerHTML=config[c].value;
-										lab.appendChild(ainput);
-										lab.appendChild(spn);
-										//lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
-										li.appendChild(lab);
-										temp.appendChild(li);
+										}
+										var alerttype=config[c].value.split("|");
+										for(var loop=1;loop<alerttype.length;){
+											var li=document.createElement("li");
+											var lab=document.createElement("label");
+											//lab.setAttribute("style","margin-left:20px")
+											var ainput=document.createElement("input");
+											ainput.setAttribute("type","checkbox");
+											ainput.setAttribute("name","checkbox");
+											ainput.setAttribute("value",config[c].name);
+											ainput.className="check_box";
+											var spn=document.createElement("span");
+											spn.innerHTML=alerttype[loop];//.value;
+											lab.appendChild(ainput);
+											lab.appendChild(spn);
+											//lab.innerHTML='<input class="catalog" type="checkbox" name="options" value="'+s_des[p].Name+'" >'+s_des[p].Desc;
+											li.appendChild(lab);
+											temp.appendChild(li);
+											loop =loop+2;
+										}
 									}
 								}
 								for(var i=0;i<temp.children.length;i++){
@@ -289,8 +285,8 @@
 						}
 						break;
 					}
-					
 				}
+				window.parent.closeloadlayer();
 			}else{
 				for(var j=temp.childNodes.length;j>0;j--)
 				temp.removeChild(temp.childNodes[j-1]);
@@ -484,14 +480,11 @@
 		$(tr).siblings().css("background","");
 		$(tr).css("background",color_table_cur);//区分选中行
 	}
-
 	function stopWorker(){ 
 		w1.terminate();
 		w1 = undefined;
 	};
 	function createWarningGroup(atable,atype_str){
-		
-		
 			//sift=true;
 		//}else{
 			//warning_type="越上限;越下限";
@@ -513,7 +506,6 @@
 			window.eval("td"+j+".innerHTML='"+atype_str[j]+"'");
 			window.eval("tr"+j+".appendChild(td"+j+")");
 			window.eval("tr"+j+".setAttribute('style','color:#f20')");
-			
 			atable.appendChild(window.eval("tr"+j));
 			//console.log(window.eval("tr"+j));
 		}
@@ -727,7 +719,6 @@
 				$(this).show();
 		});
 		}*/
-		
 		var selectText
 		$(document).on("click",".check_box",function(event){
 		event.stopPropagation();//阻止事件冒泡，防止触发li的点击事件
@@ -787,7 +778,6 @@
 				break;
 		}
 	});
-
 	//告警信息查询按钮  used by electricroommonitor
 function querywarnlog(num) {
 	/*var sel=document.getElementById("jcdd");
@@ -826,7 +816,6 @@ function querywarnlog(num) {
 	//	gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 	//}
 }
-
 /*告警类型项目的添加为空时提示，历史状态页添加信息统计显示项 bootstap的组件内容类定义，对代码进行简化
 	添加标签目录树，标签目录树的根据节点自动更新，配置项根据标签自动更新，时段与查询的对应，动态按钮组的响应过程，导出到excel按钮位置
 	点击时段选择跳出提示框，更换标签时，告警事件选项重复加载，采用二次树形菜单来选择标签项，标签选择项调整，原隐藏。
@@ -842,4 +831,6 @@ function querywarnlog(num) {
 	修改在更改筛选条件后实时告警信息不显示的问题；
 	20210206
 	显示类型和告警类型列表不刷新和点击显示重复错误的问题（显示重复错误问题为元素id名称冲突造成 chart history realdata页面都有相同id的元素。）
+	20210510
+	历史数据、趋势对比、告警信息页面的标签类别加载工程去掉，优化运行速度。对节点系统切换添加进度条指示功能，避免长时间没有反应造成误解
 */

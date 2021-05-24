@@ -68,7 +68,7 @@ function initpage(){
             }
         }
         setSelectOption("jcdd", sessionStorage.SensorId);*/
-        appenddisplaytype(sessionStorage.SensorId);
+        //appenddisplaytype(sessionStorage.SensorId);//重复执行次数太多（3次），故去掉此处的调用。
         if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")||(sessionStorage.timeindex>4)){
             sessionStorage.timeindex=0;
         }

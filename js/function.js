@@ -1480,18 +1480,19 @@ function getrealdatabynodeid(anodeid){
 				if (jQuery.isEmptyObject(data.datas)) {
 					localStorage.setItem("realdata",null);
 					decoderealdata();
-					if(typeof refreshData === "function"){
-						refreshData();
-					}else{
-						if(sessionStorage.pageindex==2){
-							document.getElementById('iframe_main').contentWindow.refreshData();
-						}
-					};
-					return;
+					//return;
+				}else{
+					var obj_realdata=data.datas;
+					localStorage.setItem("realdata",JSON.stringify(obj_realdata));
+					decoderealdata(obj_realdata);
 				}
-				var obj_realdata=data.datas;
-				localStorage.setItem("realdata",JSON.stringify(obj_realdata));
-				decoderealdata(obj_realdata);
+				if(typeof refreshData === "function"){
+					refreshData();
+				}else{
+					if(sessionStorage.pageindex==2 || sessionStorage.pageindex==17){
+						document.getElementById('iframe_main').contentWindow.refreshData();
+					}
+				};
 		})
 	}
 }

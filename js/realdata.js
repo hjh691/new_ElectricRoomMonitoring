@@ -19,7 +19,7 @@ var isfirst = "true";
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
 var maxvaluetime="",happentime="",maxOfRealdataName="";
 var colors = [];
-var pageSize = 999;    //每页显示的记录条数
+var pageSize = 10;    //每页显示的记录条数
 var curPage = 0;        //当前页
 //var lastPage;        //最后页
 var direct = 0;        //方向
@@ -80,11 +80,11 @@ function initrealdata(){//初始化页面选项
 function initpage() {
     updatapcnav(3);
     window.parent.closeloadlayer();
-    //保存页面现场，在点击浏览器的刷新按钮刷新时应用
+    //保存页面现场，在点击浏览器的刷新按钮刷新时应用//忠诚 敬业 自动自发 负责 注重效率 结果导向 善于沟通 合作 积极进取 低调 节约 感恩。 
     sessionStorage.framepage="newrealdata.html";
     sessionStorage.pageindex=2;
     tab_head=document.getElementById("tab_head");
-    if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。// 
+    if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。// 触电 火灾 灼伤 机械伤害 物体打击
         if (typeof (w1) == "undefined") {
             w1 = new Worker("delay_worker.js");
         }
@@ -121,7 +121,90 @@ function initpage() {
     if(sessionStorage.getItem("chartoption")){
         chartOption=JSON.parse(sessionStorage.getItem("chartoption"));
     }
-    btn_refresh_click();
+    sensors = JSON.parse(localStorage.getItem("sensors"));
+    $('#realdata-tbody').empty();
+    $table = document.getElementById('realdata-tbody');
+    tablehead_len=tab_head.rows[0].cells.length;
+    btn_refresh_click();//showAllSensors();    
+}
+function showAllSensors(){
+    //添加所有的标签项
+    if(sensors!=null){
+        var parentid=-1,parentname="";
+        $table = document.getElementById('realdata-tbody');
+        sensors_length=sensors.length;
+        tablehead_len=tab_head.rows[0].cells.length;
+        for(var i=0;i<sensors_length;i++){
+            var tr=document.createElement("tr");
+            tr.setAttribute("onclick","tableclick(this)");
+            var td_did=document.createElement("td");
+            td_did.innerHTML=sensors[i].id;
+            var sname=sensors[i].Value.name;
+            if(sensors[i].Value.parentId=="-1"){
+                parentname="";
+            }else if(sensors[i].Value.parentId!=parentid){
+                parentid=sensors[i].Value.parentId;
+                for(var j=0;j<sensors.length;j++){
+                    if(sensors[j].id==parentid){
+                        parentname=sensors[j].Value.name+"_";
+                        break;
+                    }
+                }
+            }
+            atr=document.createElement("tr");
+            atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
+            for(var k=0;k<tablehead_len;k++){
+                var atd=document.createElement("td");
+                if(tab_head.rows[0].cells[k].attributes.hasOwnProperty("style")){
+                    atd.setAttribute("style",tab_head.rows[0].cells[k].attributes.style.value);
+                }
+                atd.innerHTML= "";
+                atr.appendChild(atd);
+            }
+            atr.cells[0].innerHTML=sensors[i].id;//标签id   1/4 74/270
+            //atr.cells[0].style.cssText="display:none"
+            atr.cells[1].innerHTML=parentname+sname;//第一列添加标签名称，
+            //atr.cells[1].style.cssText="";
+            //atr.cells[0].style.cssText="width:80px";
+            
+            //atr.cells[2].style.cssText="";
+            //atr.cells[3].style.cssText="";
+            //atr.cells[9].setAttribute("onclick","showdetails("+sensors[i].id+")")
+            //atr.cells[tablehead_len+3].innerHTML=obj_data.name;
+            //atr.cells[tablehead_len-3].style.cssText="display:none";
+            //atr.cells[tablehead_len-2].innerHTML=obj_data.message;
+            //atr.cells[tablehead_len-2].style.cssText="display:none";
+            var aa=document.createElement("a");
+            aa.setAttribute("href","javascript:void(0)");
+            aa.setAttribute("onclick","showdetails("+sensors[i].id+")");
+            aa.innerHTML=">>>";
+            atr.cells[tablehead_len-1].appendChild(aa);
+            //atr.cells[tablehead_len-1].setAttribute("onclick","showdetails("+sensors[i].id+")")
+            //atr.cells[tablehead_len-1].style.cssText="";
+            if(parseInt(jfjk_base_config.realdatashowmodle))
+                atr.style="display:none;"
+            $table.appendChild(atr);//we are famly
+        }
+        //page=new Page(pageSize,'realtable','realdata-tbody','pageindex');
+        //page.changePage(0);
+    }
+}
+var objWin;
+function showdetails(asensorid){//功能接口，显示一个新的页面，用于显示次标签的数据详情和图示
+    sessionStorage.sensorId=parseInt(asensorid);
+    window.parent.tablehead=(allselect);
+    /*var target = "detail.html"; 
+    //判断是否打开 
+    if (objWin == null || objWin.closed) { 
+        objWin = window.open(target); 
+    } else { 
+        objWin.location.replace(target); 
+    } 
+    objWin.focus();*/
+    window.parent.document.getElementById("tree_chi").style.display="none";
+    window.parent.document.getElementById('tree').style.height='100%';
+    window.parent.iframemain.attr("src","detail.html");
+    /**/
 }
 $(function () {
     $(".btn").click(function(){
@@ -242,6 +325,7 @@ function btn_refresh_click(obj){
     sessionStorage.setItem("sel_datatypename",JSON.stringify(allselects));
     refresh_tabhead(allselect);
     cleartable();
+    showAllSensors();//显示所有标签
     //decoderealdata();
 }
 function refresh_tabhead(sel){
@@ -308,6 +392,10 @@ function refresh_tabhead(sel){
         th_th.setAttribute("width","180px");
         th_th.style.cssText="display:none";
         th_th.innerHTML="信息";
+        th_tr.appendChild(th_th);
+        th_th=document.createElement("th");
+        th_th.setAttribute("width","180px");
+        th_th.innerHTML="关联";
         th_tr.appendChild(th_th);
         tab_head.appendChild(th_tr);
     }else{
@@ -379,6 +467,10 @@ function refresh_tabhead(sel){
         th_th.style.cssText="display:none";
         th_th.innerHTML="信息";
         th_tr.appendChild(th_th);
+        th_th=document.createElement("th");
+        th_th.setAttribute("width","180px");
+        th_th.innerHTML="关联";
+        th_tr.appendChild(th_th);
         tab_head.appendChild(th_tr);
     }
     //document.getElementById("realtable").width=150*(count+5)+"px";// 设定数据列表的总宽度
@@ -394,6 +486,7 @@ function getCatalog(adatatype,index){
     var catalog="";
     var  catalogsel = $('[name="options"]');
     typename=catalogsel[index].value;
+    sessionStorage.typename=typename;
     titlename=catalogsel[index].textContent;//显示项的标题 //20200518
     updatachart(typename);//0709 更新图表配置
     refreshData();
@@ -545,16 +638,13 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                     isnew=true;
                 }*/
                 sid=obj_realdata[j].sensorId;
-                    for(p=0;p<tab_rows_len;p++){
-                        if($table.rows[p].cells[0].innerHTML==obj_realdata[j].sensorId){
-                            isfindtype=true;
-                            break;
-                        }
+                for(p=0;p<tab_rows_len;p++){
+                    if($table.rows[p].cells[0].innerHTML==obj_realdata[j].sensorId){
+                        isfindtype=true;
+                        break;
                     }
-                    if(isfindtype)
-                        isnew=false
-                    else
-                        isnew=true;
+                }
+                isnew=!isfindtype
                 if (sensors)//&&isnew
                 for (var i = 0; i < sensors_length; i++) {//是否在需要显示的标签列表中
                     isfind=false;
@@ -608,7 +698,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         for(var k=0;k<tablehead_len;k++){
                             var atd=document.createElement("td");
                             //atd.setAttribute("width","150px");
-                            atd.innerHTML= "&nbsp;";
+                            atd.innerHTML= "";
                             atr.appendChild(atd);
                         }
                         atr.cells[0].innerHTML=sid;//标签id   1/4 74/270
@@ -626,10 +716,12 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         }
                         //atr.cells[tab_head.rows[0].cells.length-4].innerHTML="<button backgroundColor='#fff' onclick=tohistory("+sid+") href='javascript:void(0)'>>></button>";
                         //atr.cells[tab_head.rows[0].cells.length-3].innerHTML="<button backgroundColor='#fff' onclick=towarnlog("+sid+") href='javascript:void(0)'>>></button>";
-                        atr.cells[tablehead_len-2].innerHTML=obj_data.name;
+                        atr.cells[tablehead_len-3].innerHTML=obj_data.name;
+                        atr.cells[tablehead_len-3].style.cssText="display:none";
+                        atr.cells[tablehead_len-2].innerHTML=obj_data.message;
                         atr.cells[tablehead_len-2].style.cssText="display:none";
-                        atr.cells[tablehead_len-1].innerHTML=obj_data.message;
-                        atr.cells[tablehead_len-1].style.cssText="display:none";
+                        atr.cells[tablehead_len-1].innerHTML=">>>";
+                        atr.cells[tablehead_len-1].setAttribute("onclick","showdetails("+sensors[i].id+")")
                         for(var k=0;k<v_sel.length;k++){//添加到指定列,不同配置项添加到不同的列，由显示控制项控制显示与否
                             if(!v_sel[k].checked){
                                 atr.cells[k+hidden_cells].style.cssText = "display:none";
@@ -842,7 +934,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                     maxOfRealdataName=($table.rows[int].cells[1].innerHTML)
                 }
                 //jisuanyichangbili(($table.rows[int].cells[title_index].innerHTML)*1);
-                jisuanyichangbili(($table.rows[int].cells[tab_head.rows[0].cells.length-1].innerHTML));
+                jisuanyichangbili(($table.rows[int].cells[tab_head.rows[0].cells.length-2].innerHTML));
             }
             if (typeof (sessionStorage.t_p) != "undefined") {
                 sname = $table.rows[sessionStorage.t_p].cells[1].innerHTML;
