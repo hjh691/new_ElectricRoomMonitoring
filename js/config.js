@@ -125,6 +125,8 @@ jfjk_base_config.bg_src="res/bj011.jpg"
  caiyangcishu=72;
  //连接字符
  concat_str=".";
+ //实时数据列表隐藏列数
+ hidden_cells=4;
  //实时数据显示模式
  if(sessionStorage.realdatashowmodle)
      jfjk_base_config.realdatashowmodle=sessionStorage.realdatashowmodle

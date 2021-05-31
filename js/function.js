@@ -1656,11 +1656,11 @@ var sorter=false;
                 var tbody = table.tBodies[0];//tBodies[0]取表头thead，tBodies[1]取tbody
 				var tr = tbody.rows;
 				if((tableId=="realtable")){//||(tableId="ohter_realtable")
-					if(Idx>=3){
-						catalog=getCatalog(adatatype,Idx-3);
+					if(Idx>=hidden_cells){
+						catalog=getCatalog(adatatype,Idx-hidden_cells);
 						title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值
 						isfirst=true;//更改排序项的同时更改显示项，重新获取数据刷新图表；
-						var head=$("#tab_head")[0].rows[0].cells[Idx-1];
+						var head=$("#tab_head")[0].rows[0].cells[Idx];
 						head.style.color='blue';
 						//btn_refresh_click();//刷新图表
 						//return;
@@ -2312,6 +2312,15 @@ function GetDateDiff(startTime, endTime, diffType) {
 	} 
 	return parseInt((eTime.getTime() - sTime.getTime()) / parseInt(divNum)); 
 	} 
+
+	function stopPropagation(e) {  
+		e = e || window.event;  
+		if(e.stopPropagation) { //W3C阻止冒泡方法  
+			e.stopPropagation();  
+		} else {  
+			e.cancelBubble = true; //IE阻止冒泡方法  
+		}  
+	}
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
  * 

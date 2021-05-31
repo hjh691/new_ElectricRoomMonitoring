@@ -14,7 +14,7 @@ var start_angle = 0, end_angle = 180;
 //var myChart4=echarts.init(document.getElementById('realdata_realdata'));//实时值
 //var option,option1,option2,option3,option4;//对应mychart（1-4）的配置项 need speed seed deed
 var chartdataname1="";
-var sname="",sid,type_td,title_index=3,hidden_cells=3;
+var sname="",sid,type_td,title_index=3;//,hidden_cells=3
 let isfirst = "true";
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
 var maxvaluetime="",happentime="",maxOfRealdataName="";
@@ -174,7 +174,7 @@ function showAllSensors(){
     }
 }
 function showdetails(asensorid){//功能接口，显示一个新的页面，用于显示次标签的数据详情和图示
-    sessionStorage.sensorId=parseInt(asensorid);
+    sessionStorage.sensorId=parseInt(asensorid);//此处sensorId首字母为小写。
      
     /*var target = "detail.html"; 
     //判断是否打开 
@@ -184,11 +184,10 @@ function showdetails(asensorid){//功能接口，显示一个新的页面，用�
         objWin.location.replace(target); 
     } 
     objWin.focus();*/
-    
-    
     window.parent.document.getElementById("tree_chi").style.display="none";
     window.parent.document.getElementById('tree').style.height='100%';
     window.parent.iframemain.attr("src","detail.html");
+    stopPropagation();
     /**/
 }
 $(function () {
@@ -647,10 +646,11 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                 }
                                 if(obj_data.message){
                                     //atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
-                                    if($table.rows[l].cells[7].innerHTML&&($table.rows[l].cells[7].innerHTML.indexOf(obj_data.message)<0))
-                                        $table.rows[l].cells[7].innerHTML+=";"+obj_data.message
-                                    else
+                                    if($table.rows[l].cells[7].innerHTML&&($table.rows[l].cells[7].innerHTML.indexOf(obj_data.message)<0)){
+                                        $table.rows[l].cells[7].innerHTML+=";"+obj_data.message;
+                                    }else{
                                         $table.rows[l].cells[7].innerHTML=obj_data.message;
+                                    }
                                 }
                                 $table.rows[l].cells[8].innerHTML='运行';//obj_data.folder;
                                 $table.rows[l].style=""

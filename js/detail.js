@@ -1,7 +1,7 @@
 /**以组为单位显示标签实时数据和图片指示
  */
 var list_group=$("#ul_group");
-var sen_id=parseInt(sessionStorage.SensorId);
+var sen_id=parseInt(sessionStorage.sensorId);//此处sensorId首字母为小写。
 var js_sensors=JSON.parse(localStorage.getItem("sensor_tree"));
 var sa=[];
 var chartOption={};
@@ -28,7 +28,6 @@ $(function(){
                     btn.onclick();
                 }
             }
-            
         };
         window.parent.closeloadlayer();
         //var topTable = $("table").eq(0).offset().top;//获取表格位置

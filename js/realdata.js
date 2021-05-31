@@ -14,7 +14,7 @@ var myChart1=echarts.init(document.getElementById('realdata_maxvalOfReal'));//�
 var myChart4=echarts.init(document.getElementById('realdata_realdata'));//实时值
 var option,option1,option2,option3,option4;//对应mychart（1-4）的配置项 need speed seed deed
 var chartdataname1="";
-var sname="",sid,type_td,title_index=3,hidden_cells=3;
+var sname="",sid,type_td,title_index=3;//,hidden_cells=4
 var isfirst = "true";
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
 var maxvaluetime="",happentime="",maxOfRealdataName="";
@@ -161,9 +161,10 @@ function showAllSensors(){
                 atd.innerHTML= "";
                 atr.appendChild(atd);
             }
-            atr.cells[0].innerHTML=sensors[i].id;//标签id   1/4 74/270
+            atr.cells[0].innerHTML=i;
+            atr.cells[1].innerHTML=sensors[i].id;//标签id   1/4 74/270
             //atr.cells[0].style.cssText="display:none"
-            atr.cells[1].innerHTML=parentname+sname;//第一列添加标签名称，
+            atr.cells[2].innerHTML=parentname+sname;//第一列添加标签名称，
             //atr.cells[1].style.cssText="";
             //atr.cells[0].style.cssText="width:80px";
             
@@ -204,6 +205,7 @@ function showdetails(asensorid){//功能接口，显示一个新的页面，用�
     window.parent.document.getElementById("tree_chi").style.display="none";
     window.parent.document.getElementById('tree').style.height='100%';
     window.parent.iframemain.attr("src","detail.html");
+    stopPropagation();
     /**/
 }
 $(function () {
@@ -342,8 +344,13 @@ function refresh_tabhead(sel){
         th_th.setAttribute("width","180px");
         th_th.innerHTML="编号";
         th_tr.appendChild(th_th);
+        var th_th=document.createElement("th");
+        th_th.setAttribute("style","display:none");
+        th_th.setAttribute("width","180px");
+        th_th.innerHTML="标签编号";
+        th_tr.appendChild(th_th);
         th_th=document.createElement("th");
-        th_th.setAttribute("onclick","$.sortTable.sort('realtable',1)");
+        th_th.setAttribute("onclick","$.sortTable.sort('realtable',2)");
         th_th.setAttribute("width","180px");
         var aa=document.createElement("a");
         aa.setAttribute("href","javascript:");
@@ -351,7 +358,7 @@ function refresh_tabhead(sel){
         th_th.appendChild(aa);
         th_tr.appendChild(th_th);
         th_th=document.createElement("th");
-        th_th.setAttribute("onclick","$.sortTable.sort('realtable',2)");
+        th_th.setAttribute("onclick","$.sortTable.sort('realtable',3)");
         aa=document.createElement("a");
         aa.setAttribute("href","javascript:");
         aa.innerHTML='测量时间<span class="time"></span>';
@@ -405,15 +412,18 @@ function refresh_tabhead(sel){
         }
         var th_tr=document.createElement("tr");
         th_tr.setAttribute("id","th_tr");
-        var th_tr=document.createElement("tr");
-        th_tr.setAttribute("id","th_tr");
         var th_th=document.createElement("th");
         th_th.setAttribute("style","display:none");
         th_th.innerHTML="编号";
         th_th.setAttribute("width","150px");
         th_tr.appendChild(th_th);
+        var th_th=document.createElement("th");
+        th_th.setAttribute("style","display:none");
+        th_th.innerHTML="标签编号";
+        th_th.setAttribute("width","150px");
+        th_tr.appendChild(th_th);
         th_th=document.createElement("th");
-        th_th.setAttribute("onclick","$.sortTable.sort('realtable',1)");
+        th_th.setAttribute("onclick","$.sortTable.sort('realtable',2)");
         var aa=document.createElement("a");
         aa.setAttribute("href","javascript:");
         aa.innerHTML='测量点名称<span class="sensorname"></span>';
@@ -421,7 +431,7 @@ function refresh_tabhead(sel){
         th_th.setAttribute("width","150px");
         th_tr.appendChild(th_th);
         th_th=document.createElement("th");
-        th_th.setAttribute("onclick","$.sortTable.sort('realtable',2)");
+        th_th.setAttribute("onclick","$.sortTable.sort('realtable',3)");
         aa=document.createElement("a");
         aa.setAttribute("href","javascript:");
         aa.innerHTML='测量时间<span class="time"></span>';
@@ -639,7 +649,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                 }*/
                 sid=obj_realdata[j].sensorId;
                 for(p=0;p<tab_rows_len;p++){
-                    if($table.rows[p].cells[0].innerHTML==obj_realdata[j].sensorId){
+                    if($table.rows[p].cells[1].innerHTML==obj_realdata[j].sensorId){
                         isfindtype=true;
                         break;
                     }
@@ -701,11 +711,13 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                             atd.innerHTML= "";
                             atr.appendChild(atd);
                         }
-                        atr.cells[0].innerHTML=sid;//标签id   1/4 74/270
+                        atr.cells[0].innerHTML=pt;
                         atr.cells[0].style.cssText="display:none";
-                        atr.cells[1].innerHTML=sname;//第一列添加标签名称，
-                        atr.cells[2].value=dateToString(obj_data.time,2);//用于对下一次的采集时间进行比较计算
-                        atr.cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);//第二列添加测量时间，去掉日期，保留时间。
+                        atr.cells[1].innerHTML=sid;//标签id   1/4 74/270
+                        atr.cells[1].style.cssText="display:none";
+                        atr.cells[2].innerHTML=sname;//第一列添加标签名称，
+                        atr.cells[3].value=dateToString(obj_data.time,2);//用于对下一次的采集时间进行比较计算
+                        atr.cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);//第二列添加测量时间，去掉日期，保留时间。
                         // 取指定标签过去24小时时间，用于调取历史记录
                         if(asensorid===sid){//不加判断会总是取最后一组数据的时间；
                             var ckssj=new Date(dateToString(obj_data.time,2));//(obj_data.Time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
@@ -749,7 +761,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                     }else{//不是新标签，更新对应的数据栏。 Asia Europe Africa America
                         let tab_row_len=$table.rows.length;
                         for(var l=0;l<tab_row_len;l++){
-                            if($table.rows[l].cells[0].innerHTML==obj_data.sensorId){
+                            if($table.rows[l].cells[1].innerHTML==obj_data.sensorId){
                                 for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
                                     if(!v_sel[k].checked){
                                         $table.rows[l].cells[k+hidden_cells].style.cssText = "display:none";
@@ -757,9 +769,9 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                                     if(v_sel[k].value==dname){
                                         $table.rows[l].cells[k+hidden_cells].innerHTML=data_value;
                                         //isbreak=true;
-                                        if($table.rows[l].cells[2].value<dateToString(obj_data.time,2)){//更新测量时间
-                                            $table.rows[l].cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);
-                                            $table.rows[l].cells[2].value=dateToString(obj_data.time,2);
+                                        if($table.rows[l].cells[3].value<dateToString(obj_data.time,2)){//更新测量时间
+                                            $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                            $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
                                         }
                                         if(obj_data.message){
                                             $table.rows[l].cells[k+hidden_cells].style.backgroundColor="#ffff00";
@@ -847,11 +859,13 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                             var atd=document.createElement("td");
                             atr.appendChild(td);
                         }
-                        atr.cells[0].innerHTML=sid;
+                        atr.cells[0].innerHTML=pt;
                         atr.cells[0].style.cssText="display:none";
-                        atr.cells[1].innerHTML=sname;//第一列添加标签名称，
-                        atr.cells[2].value=dateToString(obj_data.time,2);
-                        atr.cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);//第二列添加测量时间
+                        atr.cells[1].innerHTML=sid;
+                        atr.cells[1].style.cssText="display:none";
+                        atr.cells[2].innerHTML=sname;//第一列添加标签名称，
+                        atr.cells[3].value=dateToString(obj_data.time,2);
+                        atr.cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);//第二列添加测量时间
                         // 取指定标签过去24小时时间，用于调取历史记录
                         if(asensorid===sid){
                             var ckssj=new Date(dateToString(obj_data.time,2));//(obj_data.Time.replace(/-/g,"/")).substring(0,19));//.replace(/-/g,"/"));
@@ -882,13 +896,13 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                     }else{//不是新标签
                         let tab_row_len=$table.rows.length;
                         for(var l=0;l<tab_row_len;l++){//定位到指定行
-                            if($table.rows[l].cells[0].innerHTML==obj_data.sensorId){
+                            if($table.rows[l].cells[1].innerHTML==obj_data.sensorId){
                                 for(var k in tab_head.rows[0].cells){
                                     if(obj_data.name==tab_head.rows[0].cells[k].innerHTML){//添加到指定列
                                         atr.cells[k].innerHTML=data_value;
-                                        if($table.rows[l].cells[2].value<dateToString(obj_data.time,2)){//更新最新时间
-                                            $table.rows[l].cells[2].innerHTML=dateToString(obj_data.time,2).substring(10,19);
-                                            $table.rows[l].cells[2].value=dateToString(obj_data.time,2);
+                                        if($table.rows[l].cells[3].value<dateToString(obj_data.time,2)){//更新最新时间
+                                            $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                            $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
                                         }
                                         if(obj_data.message){
                                             atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
@@ -920,18 +934,18 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
             tab_head=document.getElementById("tab_head");
             //alertcount=[0,0,0,0,0]
             maxOfRealdata=($table.rows[0].cells[title_index].innerHTML)*1;
-            maxvaluetime=($table.rows[0].cells[2].innerHTML);
-            maxOfRealdataName=($table.rows[0].cells[1].innerHTML)
+            maxvaluetime=($table.rows[0].cells[3].innerHTML);
+            maxOfRealdataName=($table.rows[0].cells[2].innerHTML)
             if(!maxOfRealdata)
                 maxOfRealdata=0;
             for (var int = 0; int < tableLength; int++) {
-                if ($table.rows[int].cells[0].innerHTML == sessionStorage.SensorId) {
+                if ($table.rows[int].cells[1].innerHTML == sessionStorage.SensorId) {
                     sessionStorage.t_p = int;
                 }
                 if(($table.rows[int].cells[title_index].innerHTML)*1>maxOfRealdata){
                     maxOfRealdata=($table.rows[int].cells[title_index].innerHTML)*1
-                    maxvaluetime=($table.rows[int].cells[2].innerHTML);
-                    maxOfRealdataName=($table.rows[int].cells[1].innerHTML)
+                    maxvaluetime=($table.rows[int].cells[3].innerHTML);
+                    maxOfRealdataName=($table.rows[int].cells[2].innerHTML)
                 }
                 //jisuanyichangbili(($table.rows[int].cells[title_index].innerHTML)*1);
                 jisuanyichangbili(($table.rows[int].cells[tab_head.rows[0].cells.length-2].innerHTML));
@@ -939,9 +953,9 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
             if (typeof (sessionStorage.t_p) != "undefined") {
                 sname = $table.rows[sessionStorage.t_p].cells[1].innerHTML;
                 //chartOption.chart_type = $table.rows[sessionStorage.t_p].cells[6].innerHTML;
-                sensor_Id = parseInt($table.rows[sessionStorage.t_p].cells[0].innerHTML);
-                var lasttime = $table.rows[sessionStorage.t_p].cells[2].value;
-                var shottime=$table.rows[sessionStorage.t_p].cells[2].innerHTML;
+                sensor_Id = parseInt($table.rows[sessionStorage.t_p].cells[1].innerHTML);
+                var lasttime = $table.rows[sessionStorage.t_p].cells[3].value;
+                var shottime=$table.rows[sessionStorage.t_p].cells[3].innerHTML;
                 //var myChart2 = echarts.init(document.getElementById('realdata_chart'));
                 updatachart(typename);
                 value0 = ($table.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;//字符转实数
@@ -1031,7 +1045,7 @@ function localrowbysensorid(asensorid){
     $table = document.getElementById('realdata-tbody');
     let tablehead_len=$table.rows.length;
     for (var int = 0; int < tablehead_len; int++) {
-        if ($table.rows[int].cells[0].innerHTML == (asensorid+"")) {
+        if ($table.rows[int].cells[1].innerHTML == (asensorid+"")) {
             sessionStorage.t_p = int;
             var row=$table.rows[int];
             tableclick(row);
@@ -1092,14 +1106,14 @@ function tableclick(tr,isloadmain) {
     $(tr).siblings("tr[backgroundColor!='#ff0']").css("background", "");
     $(tr).css("background", color_table_cur);//区分选中行
     sessionStorage.t_p = tr.rowIndex - 1;
-    sname = tr.cells[1].innerHTML;
+    sname = tr.cells[2].innerHTML;
     //chartOption.chart_type = tr.cells[tr.cells.length-2].innerHTML;
     updatachart(typename);
     if(title_index!=-1)
         value0 = parseFloat(tr.cells[title_index].innerHTML).toFixed(Number_of_decimal);
     //value1=parseFloat(tr.cells[3].innerHTML);
     //if (parseInt(tr.cells[0].innerHTML) != sessionStorage.SensorId) {
-        sessionStorage.SensorId = parseInt(tr.cells[0].innerHTML);
+        sessionStorage.SensorId = parseInt(tr.cells[1].innerHTML);
         sessionStorage.sel_id=sessionStorage.SensorId;
         //var kssj = getCurrentDate(1) + " 00:00:00";
         var jssj = dateToString((new Date(getCurrentDate(2))).getTime()+60000*1,2);

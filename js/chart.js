@@ -104,7 +104,7 @@
                         for(var j=0;j<sel_str_len;j++){
                             if(temp.children[i].children[0].children[1].innerText==sel_str[j]){
                                 temp.children[i].children[0].checked=true;
-                                ainput.setAttribute("data-is-select",true);
+                                sel_str[j].setAttribute("data-is-select",true);
                                 break;
                             }
                         }
@@ -295,37 +295,42 @@ $(document).on("click",".check_box",function (event){
     flashbutton();
 });
 function showchartview(asel_str) {
+    ch1=document.getElementById("chart1");
+    ch2=document.getElementById("chart2");
+    ch3=document.getElementById("chart3");
+    ch4=document.getElementById("chart4");
     switch(asel_str.length){
-        case 1:
-            ch1.className="col-xs-11 col-sm-11 displaytype1";
-            ch2.setAttribute("style","display:none");
-            ch3.setAttribute("style","display:none");
-            ch4.setAttribute("style","display:none");
-            break;
-        case 2:
-            ch1.className="col-xs-11 col-sm-11 displaytype2";
-            ch2.className="col-xs-11 col-sm-11 displaytype2";
-            ch2.setAttribute("style","display:block");
-            ch3.setAttribute("style","display:none");
-            ch4.setAttribute("style","display:none");
-            break;
-        case 3:
-            ch1.className="col-xs-11 col-sm-5 displaytype2";
-            ch3.className="col-xs-11 col-sm-5 displaytype2";
-            ch3.setAttribute("style","display:block");
-            ch2.className="col-xs-11 col-sm-5 displaytype2";
-            ch2.setAttribute("style","display:block");
-            ch4.setAttribute("style","display:none");
-            break;
-        case 4:
-            ch1.className="col-xs-11 col-sm-5 displaytype2";
-            ch3.className="col-xs-11 col-sm-5 displaytype2";
-            ch3.setAttribute("style","display:block");
-            ch2.className="col-xs-11 col-sm-5 displaytype2";
-            ch2.setAttribute("style","display:block");
-            ch4.className="col-xs-11 col-sm-5 displaytype2";
-            ch4.setAttribute("style","display:block");
-            break;
+    case 1:
+        ch1.className="col-xs-11 col-sm-11 displaytype1";
+        ch2.setAttribute("style","display:none");
+        ch3.setAttribute("style","display:none");
+        ch4.setAttribute("style","display:none");
+        break;
+    case 2:
+        ch1.className="col-xs-11 col-sm-11 displaytype2";
+        ch2.className="col-xs-11 col-sm-11 displaytype2";
+
+        ch2.setAttribute("style","display:block");
+        ch3.setAttribute("style","display:none");
+        ch4.setAttribute("style","display:none");
+        break;
+    case 3:
+        ch1.className="col-xs-11 col-sm-5 displaytype2";
+        ch3.className="col-xs-11 col-sm-5 displaytype2";
+        ch3.setAttribute("style","display:block");
+        ch2.className="col-xs-11 col-sm-5 displaytype2";
+        ch2.setAttribute("style","display:block");
+        ch4.setAttribute("style","display:none");
+        break;
+    case 4:
+        ch1.className="col-xs-11 col-sm-5 displaytype2";
+        ch3.className="col-xs-11 col-sm-5 displaytype2";
+        ch3.setAttribute("style","display:block");
+        ch2.className="col-xs-11 col-sm-5 displaytype2";
+        ch2.setAttribute("style","display:block");
+        ch4.className="col-xs-11 col-sm-5 displaytype2";
+        ch4.setAttribute("style","display:block");
+        break;
     }
 }
 //绘图变化趋势图   used by electricroommonitor chart.html
@@ -340,50 +345,50 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
 	var step=false;
 	var myChart = echarts.init(document.getElementById('chart'+apt));
 	myChart.clear();
-        var tbody=document.getElementById("comprate-tbody");
-		if(check_val.length>0){
-			var title_tr=document.createElement("tr");
-			var title_th=document.createElement("th");
-            //title_tr.appendChild(title_th);
-            //title_th=document.createElement("th");
-			title_th.setAttribute('colspan','4');//setAttribute('colspan','4')"
-			//title_th.setAttribute('style','text-align: center');
-			title_th.innerHTML=atitle;
-			title_tr.appendChild(title_th);
-            tbody.appendChild(title_tr);
-            /*let atr=creatTr();
-            atr.cells[1].innerHTML="测量时间";
-            for(i=0;i<check_name.length;i++){
-                atr.cells[i+2].innerHTML=check_name[i];
-            }
-            tbody.appendChild(atr);*/
-			for(var i=0;i<check_val.length;i++){
-				var sensorid=check_val[i];
-				var series=new Object();
-				series.name=check_name[i];//+"["+sensorid+"]"
-				lengenddata.push(check_name[i]);//+"["+sensorid+"]"
+    var tbody=document.getElementById("comprate-tbody");
+    if(check_val.length>0){
+        var title_tr=document.createElement("tr");
+        var title_th=document.createElement("th");
+        //title_tr.appendChild(title_th);
+        //title_th=document.createElement("th");
+        title_th.setAttribute('colspan','4');//setAttribute('colspan','4')"
+        //title_th.setAttribute('style','text-align: center');
+        title_th.innerHTML=atitle;
+        title_tr.appendChild(title_th);
+        tbody.appendChild(title_tr);
+        /*let atr=creatTr();
+        atr.cells[1].innerHTML="测量时间";
+        for(i=0;i<check_name.length;i++){
+            atr.cells[i+2].innerHTML=check_name[i];
+        }
+        tbody.appendChild(atr);*/
+        for(var i=0;i<check_val.length;i++){
+            var sensorid=check_val[i];
+            var series=new Object();
+            series.name=check_name[i];//+"["+sensorid+"]"
+            lengenddata.push(check_name[i]);//+"["+sensorid+"]"
             if(obj_chartdatas.length>0){
                 obj_chartdata=obj_chartdatas;//[sensorid];
-				if(obj_chartdata){
-					pb= new Array();
-					if(isNaN(parseFloat(obj_chartdata[0].value))){
-						obj_chartdata[0].value=-1;
-					}
-					maxvalue=minvalue=parseFloat(obj_chartdata[0].value);
-					for (var j = 0; j <obj_chartdata.length; j++) {
+                if(obj_chartdata){
+                    pb= new Array();
+                    if(isNaN(parseFloat(obj_chartdata[0].value))){
+                        obj_chartdata[0].value=-1;
+                    }
+                    maxvalue=minvalue=parseFloat(obj_chartdata[0].value);
+                    for (var j = 0; j <obj_chartdata.length; j++) {
                         if(obj_chartdata[j].sensorId==sensorid){
                             let obj_data_j=obj_chartdata[j];
                             let name=atitle;//obj_data_j.name.toLowerCase();
                             if(isNaN(parseFloat(obj_data_j.value))){
-								obj_data_j.value=-1;
-							}
+                                obj_data_j.value=-1;
+                            }
                             pb.push([Date.parse(obj_data_j.time),obj_data_j.value, j]);
-							
-							if(parseFloat(obj_data_j.value)>maxvalue){
-								maxvalue=parseFloat(obj_data_j.value);
-							}
-							if(parseFloat(obj_data_j.value)<minvalue){
-								minvalue=parseFloat(obj_data_j.value);
+                            
+                            if(parseFloat(obj_data_j.value)>maxvalue){
+                                maxvalue=parseFloat(obj_data_j.value);
+                            }
+                            if(parseFloat(obj_data_j.value)<minvalue){
+                                minvalue=parseFloat(obj_data_j.value);
                             }
                             if(i===0){
                                 atr=creatTr();
@@ -430,16 +435,16 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                     tbody.appendChild(atr);
                                 }
                             }
-						}
-					}
-					if(i==0){
-						maxval=maxvalue;
-						minval=minvalue;
-					}else{
-						maxval=maxval>maxvalue?maxval:maxvalue;
-						minval=minval<minvalue?minval:minvalue;
-					}
-				}
+                        }
+                    }
+                    if(i==0){
+                        maxval=maxvalue;
+                        minval=minvalue;
+                    }else{
+                        maxval=maxval>maxvalue?maxval:maxvalue;
+                        minval=minval<minvalue?minval:minvalue;
+                    }
+                }
             }	
             series.type='line';
             series.step= step;
@@ -450,7 +455,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
             series.smoothMonotone='x',
             //series.itemStyle= {normal: {areaStyle: {type: 'default'}}}; //线下区域 
             seriess.push(series);
-		}
+        }
 	}
 	if(maxval==minval){
         maxval=1.5*maxval;
@@ -472,13 +477,13 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
 			color: ['#ff6c00', '#FF0000','#228B22',"#9400D3","#00BFFF","#3B30f2"],//,"#20B2AA","#0000CD"," #FF4500 "
 			backgroundColor: '#dcdcdc',
 			title : {
-						text : atitle+": "+' 变化趋势比对  ',//标题 标签名称+项目名称；
-						x:"center",
-						subtext:jiange+"   "+kssj+"——"+jssj,
-						subtextStyle:{
-							color: "#000",
-						}
-					},/**/
+                text : atitle+": "+' 变化趋势比对  ',//标题 标签名称+项目名称；
+                x:"center",
+                subtext:jiange+"   "+kssj+"——"+jssj,
+                subtextStyle:{
+                    color: "#000",
+                }
+            },/**/
 			tooltip: {
 				trigger: 'item',
 				formatter: function(params) {
@@ -530,18 +535,31 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                     }else{
                                         var rows=tdBodys.rows;
                                         var len=rows.length;
-                                        for(var k=0;k<len;k++){
-                                            var jiange=GetDateDiff(rows[k].cells[1].outerText,dateToString((series[j].data[i][0]),2),"minute");
-                                            if(jiange<=-2){
+                                        if(len!=0){
+                                            for(var k=0;k<len;k++){
+                                                var jiange=GetDateDiff(rows[k].cells[1].outerText,dateToString((series[j].data[i][0]),2),"minute");
+                                                if(jiange<=-2){
+                                                    atr=creatTr();
+                                                    atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
+                                                    atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                                    tdBodys.insertBefore(atr,rows[k]);
+                                                    break;
+                                                }else if(jiange<2){
+                                                    rows[k].cells[j+2].innerHTML=series[j].data[i][1];
+                                                    break;
+                                                }
+                                            }
+                                            if(k>=len){
                                                 atr=creatTr();
                                                 atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
                                                 atr.cells[j+2].innerHTML=series[j].data[i][1];
                                                 tdBodys.insertBefore(atr,rows[k]);
-                                                break;
-                                            }else if(jiange<2){
-                                                rows[k].cells[j+2].innerHTML=series[j].data[i][1];
-                                                break;
                                             }
+                                        }else{
+                                            atr=creatTr();
+                                            atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
+                                            atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                            tdBodys.insertBefore(atr,rows[k]);
                                         }
                                     }
                                 }
@@ -642,7 +660,7 @@ function creatTr(){
     let atr=document.createElement("tr");
     for(var i=0;i<=check_val.length+1;i++){
         let atd=document.createElement("td");
-        atd.innerHTML= "&nbsp;";
+        atd.innerHTML= "";
         if(i===0)
             atd.setAttribute("style",'display:none');
         atr.appendChild(atd);
