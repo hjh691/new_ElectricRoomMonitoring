@@ -1,4 +1,3 @@
-
 //对web服务运行环境以及后台服务器地址、端口、变量等进行设置
 var jfjk_base_config={};
 // 1. 后台服务器地址：用引号括起来默认："http://localhost";"http://192.168.1.10";"http://www.bdjka.com"等。
@@ -51,7 +50,6 @@ function test_url(url){
             return secc=0;
         }
     });
-    //
     return secc;
 }
 if(jfjk_base_config.baseurl.indexOf("localhost")>-1){

@@ -5,7 +5,6 @@ sessionStorage.dataId = 0;
 //sessionStorage.timeindex=0;
 var maps=[];
 var str_speech = "告警";//告警信息
-
 function KeyUp() {
 	if (event.keyCode == 13) {
 		event.keyCode = 9;
@@ -96,11 +95,6 @@ function showmsg(msg){
 	});
 	/*Alert(msg,info_showtime);*/
 }
-//获取区间的随机整数   used by electricroommonitor 
-function rnd(n, m) {
-	var random = Math.floor(Math.random() * (m - n + 1) + n);
-	return random;
-}
 //初始化登录页面： used by electricroommonitor 
 function initlogin() {
 	//localStorage.backfile="E:\ElectricRoomMonitoring\res";
@@ -116,12 +110,10 @@ function initlogin() {
 	var height_screen = $(window).height();
 	var wh = width_screen / height_screen;
 	var bgurl = 1.2;//背景图宽高比
-	if (bgurl > wh)
-	{
-	$("body").css("background-size","auto 100%");
-	}
-	else {
-	$("body").css("background-size","100% auto");
+	if (bgurl > wh){
+		$("body").css("background-size","auto 100%");
+	}else {
+		$("body").css("background-size","100% auto");
 	}
 	//localStorage.backfile="res/bj03.jpg";
 	$("#username").focus();
@@ -156,7 +148,7 @@ function previewHandle(fileDOM) {
     reader.readAsDataURL(file);
 }
 //判断用户名和密码输入是否符合语法  used by electricroommonitor 
-function LoginOrder(name, ps,flag) {
+function LoginOrder(name, ps,flag,order,callback,datas) {
 	var url = localStorage.server_url + "Login?name=" + name + "&pass=" + ps;
 	url = encodeURI(url);
 	$.ajax({
@@ -204,6 +196,8 @@ function LoginOrder(name, ps,flag) {
 						sessionStorage.errortime = 0;
 						showusername();
 						showstateinfo(localStorage.username+"用户重新登录成功!");
+						if(order!=null)
+							sendorder(order,callback,datas);
 					}
 				} else {
 					sessionStorage.islogin = false;
@@ -228,9 +222,11 @@ function RefreshToken(order,callback,datas){
 			sendorder(order,callback,datas);
 			sessionStorage.islogin = true;
 			showstateinfo("认证码刷新成功");
+		}else{
+			LoginOrder(localStorage.username,sessionStorage.password,1,order,callback,datas);
 		}
 		}catch(err){
-			showstateinfo(err,"RefreshToken");
+			showstateinfo(err+" reLogin","RefreshToken");
 		}
 	});
 }
@@ -330,7 +326,6 @@ function initrealdata(){
 		//}
 		sessionStorage.pageindex=2;
 	}
-	
 }
 function initotherdata(){
 	if(sessionStorage.pageindex!=17){
@@ -1024,7 +1019,7 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 	}
 }
 //绘图函数 in used by electricroommonitoring
-function drawmap(arr) {
+function drawmap(arr,ctx) {
 	try{
 		var mCanvasDiv=document.getElementById("mycanvasdiv");
 		var mCanvas = document.getElementById("mycanvas");
@@ -1040,6 +1035,8 @@ function drawmap(arr) {
 		}
 		//mCanvas.width = document.documentElement.clientWidth - 17;
 		//mCanvas.height = document.documentElement.clientHeight;
+		if(ctx==null || ctx==undefined)
+			ctx = mCanvas.getContext("2d");
 		var swidth = cwidth= document.documentElement.clientWidth ;
 		var sheight = cheight=document.documentElement.clientHeight-mheadmap.clientHeight;
 		mCanvasDiv.style.width= cwidth  + 'px';
@@ -1047,7 +1044,6 @@ function drawmap(arr) {
 		var background_color="#cccccc";
 		mCanvasDiv.style.backgroundColor = mCanvas.style.backgroundColor =background_color;
 		if(arr==null){
-			var ctx = mCanvas.getContext("2d");
 			ctx.save();
 			ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
 			return;
@@ -1089,21 +1085,21 @@ function drawmap(arr) {
 				mCanvas.height = document.documentElement.clientHeight;//
 			}*/
 		}
-		if(scaler < 0.01)
+		if((parseFloat(sessionStorage.scaler)<0.01 && parseInt(sessionStorage.map_module)!=1 )||sessionStorage.scaler=="undefined")//
 		{
-			scaler = Math.min(cwidth / swidth,cheight / sheight) * 0.98;
+			sessionStorage.scaler = Math.min(cwidth / swidth,cheight / sheight) * 0.98;
 		}
-		swidth *= scaler;
-		sheight *= scaler;
+		swidth *= parseFloat(sessionStorage.scaler);
+		sheight *= parseFloat(sessionStorage.scaler);
 		mCanvas.width = swidth;
 		mCanvas.height = sheight;
 		mCanvas.style.width= swidth + 'px';
 		mCanvas.style.height= sheight + 'px';
-		var ctx = mCanvas.getContext("2d");
+		//var ctx = mCanvas.getContext("2d");
 		ctx.save();
 		ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
 		var pfdp = new Object();
-		var trans = new DOMMatrix().scale(scaler,scaler);
+		var trans = new DOMMatrix().scale(parseFloat(sessionStorage.scaler),parseFloat(sessionStorage.scaler));
 		for (var i = 0; i < arr_len; i++) {
 			if (!arr[i]) {
 				continue;
@@ -1265,7 +1261,6 @@ function spack() {
 			//setInterval("toggleSound()",1);
 			//audio.play();
 		},
-
 		failure: function(result) {
 			layer.alert(result);
 		}
@@ -1289,7 +1284,6 @@ function spack() {
 	audio.autoplay=true;// 
 	audio.play();*/
 }
-
 /*var ij =0;
 function sortt(className) {
 	var listName=new Array();
@@ -1359,7 +1353,6 @@ function sortt(className) {
 		//b=true;
 		}
 	}
-
 	if (ij % 2 == 0) {
 		$(className).text('▲');
 		ij++;
@@ -1520,7 +1513,7 @@ function getname(key){
 		}
 	}
 	if(key==null||key==''||key.trim()==''||key=="null"){//空、空字符、空格都按空对待，提示未分组。
-		key="未分组";
+		key="未定义";
 	}/*else if(key=="temp"||key=="tmp"){
 		key="温度";
 	}else if(key=="pd"){
@@ -1534,7 +1527,7 @@ function getname(key){
 	}*/
 	return key;
 }
-//不同时间段的选择响应（obj对应的选项对象)
+//不同时间段的选择响应（obj对应的选项对象) 一分、二分、三分、十三中、乐凯、育德、七中、十七中、二十六中、冀英、南奇、
 function seletime(obj){
 	//var timedefine=document.getElementById("timedefine");
 	sessionStorage.timeindex=parseInt(obj);//$('input[name="timeselect"]:checked').val();//obj.value*1;
@@ -1690,16 +1683,46 @@ var sorter=false;
                  {
 					//trValue.reverse(); //如果该列已经进行排序过了，则直接对其反序排列 
 					trValue.sort(function(tr1, tr2){
-                        var value1 = tr1.cells[Idx].innerHTML;
-                        var value2 = tr2.cells[Idx].innerHTML;
-                        return value2.localeCompare(value1);
+                        var a=(tr1.cells[Idx].innerHTML).toString();
+						if(!isNumber(a)){
+							var value1 = tr1.cells[Idx].innerHTML;
+							var value2 = tr2.cells[Idx].innerHTML;
+							return value2.localeCompare(value1);
+						}else{
+							var value1 = parseFloat(tr1.cells[Idx].innerHTML);
+							var value2 = parseFloat(tr2.cells[Idx].innerHTML);
+							if(value1 && value2){
+								if (value2 < value1) {
+									return -1;
+								} else if (value2 > value1) {
+									return 1;
+								} else {
+									return 0;
+								}
+							}
+						}
                     });
                 } else {
-                    //trValue.sort(compareTrs(Idx));  //进行排序
+                    //trValue.sort(compareTrs(Idx));  //进行排序 
                     trValue.sort(function(tr1, tr2){
-                        var value1 = tr1.cells[Idx].innerHTML;
-                        var value2 = tr2.cells[Idx].innerHTML;
-                        return value1.localeCompare(value2);
+                        var a=(tr1.cells[Idx].innerHTML).toString();
+						if(!isNumber(a)){
+							var value1 = tr1.cells[Idx].innerHTML;
+							var value2 = tr2.cells[Idx].innerHTML;
+							return value1.localeCompare(value2);
+						}else{
+							var value1 = parseFloat(tr1.cells[Idx].innerHTML);
+							var value2 = parseFloat(tr2.cells[Idx].innerHTML);
+							if(value1 && value2){
+								if (value1 < value2) {
+									return -1;
+								} else if (value1 > value2) {
+									return 1;
+								} else {
+									return 0;
+								}
+							}
+						}
                     });
                 }
                 var fragment = document.createDocumentFragment();  //新建一个代码片段，用于保存排序后的结果
@@ -1911,21 +1934,22 @@ function sendorder(order,callback,datas){
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
 					//layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
-					RefreshToken(order,callback,datas);
+					RefreshToken(order,callback,datas);//此命令返回Bad Request（后台需处理） 於
+					
 				}else if(jqXHR.hasOwnProperty("responseJSON")&&jqXHR.responseJSON==undefined){//0928修改，判断是否由此项
 					showmsg("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试",order);
-				} else {
+				}	else{
 					showmsg(' 数据获取失败',info_showtime);
 				}
 				sessionStorage.errortime++;
 				if(sessionStorage.errortime<3){
 					//getNodes();//video.html mainpage.html function.js userprofile 
 				}else if(sessionStorage.errortime<4){
-						LoginOrder(localStorage.username,sessionStorage.password,1);
+						LoginOrder(localStorage.username,sessionStorage.password,1,order,callback,datas);
 					}else{
 					sessionStorage.islogin=false;
-					sessionStorage.errortime=0;
+					//sessionStorage.errortime=0;
 					//localStorage.username="未登录";
 					showusername(true);
 				}
@@ -2105,8 +2129,6 @@ function showdate(el){
 	});
 	}*/
 //-----------------------display contral-----------------------------
-
-
 // JavaScript Document
 /**
 * js分页类
@@ -2225,13 +2247,11 @@ Page.prototype.__updateTableRows__ = function () {
 		if((i>begin && i<=end) || i==0 )//显示begin<=x<=end的记录
 			$(this).show();
 	});*/
-
     for (var i = iCurrentRowCount; i < this.absolute + iCurrentRowCount - iMoreRow; i++) {
         newTBody.appendChild(tempRows[i]);
 	}
 	this.__oTable__.appendChild(newTBody);
     /*
-    
     this.dataRows为this.oTBody的一个引用，
     移除this.oTBody那么this.dataRows引用将销失,
     code:this.dataRows = tempRows;恢复原始操作行集合.
@@ -2278,7 +2298,6 @@ Page.prototype.__cloneRows__ = function () {
     }
     return tempRows;
 };
-
 /* 
 * 获得时间差,时间格式为 年-月-日 小时:分钟:秒 或者 年/月/日 小时：分钟：秒 
 * 其中，年月日为全格式，例如 ： 2010-10-12 01:00:00 
@@ -2311,16 +2330,31 @@ function GetDateDiff(startTime, endTime, diffType) {
 	break; 
 	} 
 	return parseInt((eTime.getTime() - sTime.getTime()) / parseInt(divNum)); 
-	} 
-
-	function stopPropagation(e) {  
-		e = e || window.event;  
-		if(e.stopPropagation) { //W3C阻止冒泡方法  
-			e.stopPropagation();  
-		} else {  
-			e.cancelBubble = true; //IE阻止冒泡方法  
-		}  
+} 
+//阻止事件冒泡
+function stopPropagation(e) {  
+	e = e || window.event;  
+	if(e.stopPropagation) { //W3C阻止冒泡方法  
+		e.stopPropagation();  
+	} else {  
+		e.cancelBubble = true; //IE阻止冒泡方法  
+	}  
+}
+//判断是否为数值型字符串
+function isNumber(val) {
+	var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+	var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+	if(regPos.test(val) || regNeg.test(val)) {
+		return true;
+		} else {
+		return false;
 	}
+}
+//获取区间的随机整数   used by electricroommonitor 
+function rnd(n, m) {
+	var random = Math.floor(Math.random() * (m - n + 1) + n);
+	return random;
+}
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
  * 
@@ -2330,4 +2364,7 @@ function GetDateDiff(startTime, endTime, diffType) {
  * 同时添加在刷新安全认证吗后紧接着重新执行刚才的通信指令；添加一些变量的清除初始化工作； 黄芪神祗
  * 2021
  * 对所有循环操作进行必要的优化（添加break或删除已找到的元素或直接返回退出，以减少循环次数，优化运行效果）
+ * 
+ * 排序对数字字符串的判断，解决时间等字符串错误判断成数字的问题；解决首次今日状态图页面状态图由于显示比例未知而不显示的问题；
+ * 告警列表添加按列标题排序功能；设备列表添加序号列，解决将标签编号显示成序号的问题。
  */

@@ -97,7 +97,6 @@ function initpage() {
     //btn_refresh_click();
     window.parent.closeloadlayer();
     showAllSensors();
-
     //var topTable = $("table").eq(0).offset().top;//获取表格位置
     var c_top =  $('.oa-nav_top').height() ? $('.oa-nav_top').height() : 0;//获取导航高度没有可填0
     $("#datadiv").scroll(function() {
@@ -175,7 +174,6 @@ function showAllSensors(){
 }
 function showdetails(asensorid){//功能接口，显示一个新的页面，用于显示次标签的数据详情和图示
     sessionStorage.sensorId=parseInt(asensorid);//此处sensorId首字母为小写。
-     
     /*var target = "detail.html"; 
     //判断是否打开 
     if (objWin == null || objWin.closed) { 
@@ -183,12 +181,11 @@ function showdetails(asensorid){//功能接口，显示一个新的页面，用�
     } else { 
         objWin.location.replace(target); 
     } 
-    objWin.focus();*/
+    objWin.focus();*///deinn  
     window.parent.document.getElementById("tree_chi").style.display="none";
     window.parent.document.getElementById('tree').style.height='100%';
     window.parent.iframemain.attr("src","detail.html");
-    stopPropagation();
-    /**/
+    stopPropagation();/**/
 }
 $(function () {
     $(".btn").click(function(){
@@ -201,7 +198,7 @@ $(function () {
 function appendalldisplaytype(){
     try{
         //for(var i=display_type.childNodes.length;i>0;i--)
-        //    display_type.removeChild(display_type.childNodes[i-1]);
+        //    display_type.removeChild(display_type.childNodes[i-1]);//Joyfen
         allconfigs=JSON.parse(localStorage.Config);
         /*var sel_datatypename=[];
         if(sessionStorage.sel_datatypename) 
@@ -486,7 +483,6 @@ function getCatalog(atype,afolder,aname){
                                             sessionStorage.setItem("chartoption",JSON.stringify(chartOption));
                                             break;
                                         }
-
                                     }
                                 }
                                 break;
@@ -516,7 +512,6 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         if(!obj_realdata){
             obj_realdata=JSON.parse(localStorage.getItem("realdata"));
         }
-        
         allconfigs=JSON.parse(localStorage.Configs);
         //if(sensors)
         //    sensors_length=sensors.length;
@@ -537,7 +532,6 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         var tab_rows_len;
         if(!asensorid)
             nodata=false;
-        
         if (obj_realdata) {
             var realdata_len=obj_realdata.length;
             for (var j=0;j<realdata_len;j++) {
@@ -871,7 +865,6 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                     }
                 }//else{	//$table.rows[0].ondblclick();	//}
                 //showstateinfo("");
-                
             } else {
                 //showmsg("没有符合条件的实时数据",info_showtime);
                 showstateinfo("没有符合条件的实时数据","realdata_iot");
@@ -937,11 +930,6 @@ function openmodal(aname){
             data.push([x,y,z]);
             series.data=data;
         }
-        //for(var j=0;j<caiyangcishu;j++){
-            //(1 + 0.25 * Math.cos(75 * t)) * Math.cos(t);
-            //(1 + 0.25 * Math.cos(75 * t)) * Math.sin(t);
-            
-        //}
     }
     option = {
         tooltip: {},

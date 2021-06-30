@@ -59,7 +59,7 @@
 <body > <!-- onunload="stopWorker()" onload="getrealdatabynodeid(-1)" 20200408修改，重复调用此函数,提示框不能认为关闭。-->
 	<div class="container">
 		<div  class="row" >
-			<div class="col-xs-12 col-md-6 col-lg-6"  style="border: rgb(90, 89, 89) solid 0px;height: 300px;background-color:rgb(209, 207, 207);">
+			<div class="col-xs-12 col-md-6 col-lg-6"  style="border: rgb(90, 89, 89) solid 0px;height: 300px;background-color:rgb(255, 255, 255);">
 				<div id="realdata_realdata" ></div>
 			</div>
 			<div class="col-xs-12 col-md-6 col-lg-6"  style="border: rgb(90, 89, 89) solid 0px;height: 300px;background-color:rgb(209, 207, 207);">
@@ -86,20 +86,21 @@
 		<div class="row">
 		<div class="condition" style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: auto;height:auto;line-height: 40px;"><label> 显示内容:</label>
 			<span id="display_type">
-				
 			</span>
 			<span>
 				<button type="button" id="chaxun" value="刷新" onclick="btn_refresh_click()"
 						style="font-size:14px;height: 30px;line-height:30px;margin-left: 20px;padding: 0px;">
 						<span class="glyphicon glyphicon-refresh" style="margin:5px"></span>刷新</button>
 			</span>
+
+			
 		</div>
 		<div style="text-align: center;" >
 			<div style="width:1000px;overflow: auto;height:350px; margin:auto;" align="center">
 				<table class="tablesorter" id="other_realtable"  >
 					<thead id="tab_head">
 					<tr >
-						<th  onclick="$.sortTable.sort('realtable',0)"><a href="javascript:">序号 <span class="time"></span></a></th>
+						<th  ><a href="javascript:">序号 <span class="time"></span></a></th>
 						<th  onclick="$.sortTable.sort('realtable',1)" ><a href="javascript:">监测点名称<span class="sensorname"></span> </a></th>
 						<th  onclick="$.sortTable.sort('realtable',2)"><a href="javascript:">测量时间 <span class="time"></span></a></th>
 						<th  onclick="$.sortTable.sort('realtable',3)"><a href="javascript:">检测地点<span class="value1"></span></a></th>

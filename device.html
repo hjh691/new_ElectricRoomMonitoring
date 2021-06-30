@@ -76,7 +76,7 @@
 	</style>
 </head>
 <body >
-	<div style="width:100%;height:600px;"><button class="selected" onclick="javascript:history.go(-1)" style="float:right;margin-right:20px;">返回</button>
+	<div style="width:100%;height:600px;"><button class="selected" onclick="javascript:history.go(-1)" style="float:right;margin-right:20px;display:none">返回</button>
 		<div class="pagecard" id="pagecard1" style="margin-bottom:10px">
 			<h3 >设备信息</h3>
         </div>
@@ -97,12 +97,13 @@
 			<caption style="text-align: center;font-size:20px;">设备信息汇总表</caption>
 			<thead>
 				<tr >
-					<th onclick="$.sortTable.sort('devicetable',0)">设备编号</th>
-					<th onclick="$.sortTable.sort('devicetable',1)">设备名称</th>
-					<th onclick="$.sortTable.sort('devicetable',2)">安装时间</th>
-					<th onclick="$.sortTable.sort('devicetable',3)">地址</th>
-					<th onclick="$.sortTable.sort('devicetable',4)">类型</th>
-					<th onclick="$.sortTable.sort('devicetable',6)">配置信息</th>
+					<th style="width:80px">序号</th>
+					<th onclick="$.sortTable.sort('devicetable',1)">设备编号</th>
+					<th onclick="$.sortTable.sort('devicetable',2)">设备名称</th>
+					<th onclick="$.sortTable.sort('devicetable',3)">安装时间</th>
+					<th onclick="$.sortTable.sort('devicetable',4)">地址</th>
+					<th onclick="$.sortTable.sort('devicetable',5)">类型</th>
+					<th >配置信息</th>
 				<!--<th style="width:18px;border:0px solid black;"></th><th style="width:17px;display:none"></th>
 					<th onclick="$.sortTable.sort('devicetable',5)">分组</th>	-->
 				</tr>
@@ -202,7 +203,11 @@
 				for(var i=0;i<sensors.length;i++){
 					var tr=document.createElement("tr");
 					tr.setAttribute("onclick","tableclick(this)");
-                    var td_did=document.createElement("td");
+                    var td_id=document.createElement("td");
+					td_id.setAttribute("style","width:80px")
+					td_id.innerHTML=i;
+
+					var td_did=document.createElement("td");
 					td_did.innerHTML=sensors[i].id;
 					if((sensors[i].Value.parentId!="-1")&&(sensors[i].Value.parentId!=parentid)){
 						parentid=sensors[i].Value.parentId;
@@ -229,7 +234,8 @@
 					td_serial.innerHTML = '<button data-toggle="modal" data-target="#myModal">>>></button>';//采用模态对话框形式
 					//td_serial.innerHTML='<button herf="javascript:void(0)">>>></button';//浮动窗口模式
 					//td_serial.innerHTML=sensors[i].Value.serial;
-                    tr.appendChild(td_did);
+                    tr.appendChild(td_id);
+					tr.appendChild(td_did);
                     tr.appendChild(td_dname);
                     tr.appendChild(td_dtime);
                     tr.appendChild(td_dadr);
@@ -240,17 +246,17 @@
 				}
 				document.getElementById("count_val").innerHTML=sensors.length;
 			}
-			$.sortTable.sort('devicetable',0);
+			$.sortTable.sort('devicetable',1);
 			//display();//分页显示功能。 
 			page=new Page(pageSize,'devicetable','device-tbody','pageindex');
 			window.parent.closeloadlayer();
         }
 		function tableclick(tr){
 			$(tr).siblings().css("background","");
-			$(tr).css("background","#85e494");//区分选中行
+			$(tr).css("background",color_table_cur);//区分选中行
+			//math_99();
 		}
 		function refreshpage(){
-			
 		}
 		/*function setPageSize(){
 			pageSize = document.getElementById("pageSize").value;
@@ -333,17 +339,21 @@
 		function hideself(obj){
 			obj.style.display="none"
 		}
-        
+        function math_99(){
+			for(var i=1;i<20;i++){
+				var s=""
+				for(var j=1;j<=i;j++){
+					s=s+" "+j+"*"+i+"="+i*j;
+					console.timeStamp();
+				}
+				console.log(s);
+			}
+		}
     </script>
 </body>
 <!--
-	数据列表标题和数据体由于滚动条的原因不能对齐的问题，根据标签配置显示详细配置信息。
-	1124由于table没有<thead>标签，所以排序时的table.tBodies[0]取出的只是表头，
-	实际的tbody在table.tBodies[1]中，所以排序失效，将表头tr放入<thead>标签中，在tabler.tBodies[0]
-	取出的就是tbody.
 	2021
 	绑定信息信息添加类型以及配置项名称和序号。
-	
 	列表添加表内滚动条。
 -->
 </html>

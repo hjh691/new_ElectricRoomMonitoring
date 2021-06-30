@@ -22,9 +22,15 @@ function Baseline(ctx, pfdp) {
 		ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	}
 	ctx.lineWidth = pfdp.StrokeThinkness;
+	var path=new Path2D();
+	//path.beginPath();
+	path.moveTo(sx, sy);
+	path.lineTo(ex, ey);
+	ctx.stroke(path);
 	ctx.beginPath();
-	ctx.moveTo(sx, sy);
-	ctx.lineTo(ex, ey);
+	ctx.lineWidth=1;
+	ctx.strokeStyle="#000000"
+	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 	ctx.stroke();
 }
 //绘制线；
@@ -52,6 +58,11 @@ function Line(ctx, pfdp) {
 	ctx.beginPath();
 	ctx.moveTo(sx, sy);
 	ctx.lineTo(ex, ey);
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.lineWidth=1;
+	ctx.strokeStyle="#000000"
+	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 	ctx.stroke();
 }
 //绘制椭圆形区域
@@ -128,15 +139,17 @@ function RectArea(ctx, pfdp) {
 		ctx.fillStyle = pfdp.FillColor;
 	}
 	ctx.lineWidth = pfdp.StrokeThinkness;
+	ctx.beginPath();
 	if (pfdp.IsFill == true) {
-		ctx.fillRect(sx, sy, parseFloat(ex) - parseFloat(sx), parseFloat(ey) - parseFloat(sy));
+		ctx.rect(sx, sy, parseFloat(ex) - parseFloat(sx), parseFloat(ey) - parseFloat(sy));
+		ctx.fill();
 	} else {
-		ctx.strokeRect(sx, sy, parseFloat(ex) - parseFloat(sx), parseFloat(ey) - parseFloat(sy));
+		ctx.rect(sx, sy, parseFloat(ex) - parseFloat(sx), parseFloat(ey) - parseFloat(sy));
+		ctx.stroke();
 	}
 }
 //绘制虚线（跳线）；
 function JumpLine(ctx, pfdp) {
-
 	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
@@ -151,7 +164,6 @@ function JumpLine(ctx, pfdp) {
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
 		ctx.transform(a, b, c, d, e, f);
 	}
-
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
@@ -162,6 +174,11 @@ function JumpLine(ctx, pfdp) {
 	ctx.setLineDash([10, 15]);
 	ctx.moveTo(sx, sy);
 	ctx.lineTo(ex, ey);
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.lineWidth=1;
+	ctx.strokeStyle="#000000"
+	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 	ctx.stroke();
 }
 //画断路器
@@ -195,9 +212,11 @@ function Breaker(ctx, pfdp) {
 	} else {
 		ctx.fillStyle = "green";
 	}
-	ctx.fillRect(sx, y1, parseFloat(ex) - parseFloat(sx), y2 - y1);
-	ctx.strokeRect(sx, y1, parseFloat(ex) - parseFloat(sx), y2 - y1);
 	ctx.stroke();
+	ctx.strokeRect(sx, y1, parseFloat(ex) - parseFloat(sx), y2 - y1);
+	ctx.rect(sx, y1, parseFloat(ex) - parseFloat(sx), y2 - y1);
+	ctx.fill();
+	
 }
 //画开关（隔离）
 function Isolator(ctx, pfdp) {
@@ -225,21 +244,24 @@ function Isolator(ctx, pfdp) {
 	var y1 = parseFloat(mtop) + parseFloat((parseFloat(mbottom) - parseFloat(mtop)) / 6);
 	var y2 = parseFloat(mtop) + parseFloat((parseFloat(mbottom) - parseFloat(mtop)) / 4);
 	var y3 = parseFloat(mbottom) - parseFloat((parseFloat(mbottom) - parseFloat(mtop)) / 6);
+	var path=new Path2D();
 	ctx.beginPath();
-	ctx.moveTo(mleft, mtop);
-	ctx.lineTo(mleft, parseFloat(y1) - parseFloat(r));
-	ctx.arc(mleft, y1, r, 0, Math.PI * 2, false);
-	ctx.moveTo(mleft, mbottom);
-	ctx.lineTo(mleft, parseFloat(y3) + parseFloat(r));
-	ctx.arc(mleft, y3, r, 0, Math.PI * 2, false);
-	ctx.moveTo((parseFloat(mleft) + r), y3);
+	path.moveTo(mleft, mtop);
+	path.lineTo(mleft, parseFloat(y1) - parseFloat(r));
+	path.arc(mleft, y1, r, 0, Math.PI * 2, false);
+	path.moveTo(mleft, mbottom);
+	path.lineTo(mleft, parseFloat(y3) + parseFloat(r));
+	path.arc(mleft, y3, r, 0, Math.PI * 2, false);
+	path.moveTo((parseFloat(mleft) + r), y3);
+	path.closePath();
 	if (pfdp.IsClosed == true) {
-		ctx.lineTo((parseFloat(mleft) + r), y1);
+		path.lineTo((parseFloat(mleft) + r), y1);
 	} else {
-		ctx.lineTo(mright, y2);
+		path.lineTo(mright, y2);
 	}
-
-	ctx.stroke();
+	ctx.stroke(path);
+	ctx.rect(sx,sy,(ex-sx),(ey-sy))
+	//return path;
 }
 //画变压器
 function Transformer(ctx, pfdp) {
@@ -283,9 +305,7 @@ function Transformer(ctx, pfdp) {
 	ctx.lineTo(x2, y12);
 	ctx.closePath();
 	ctx.stroke();
-	ctx.beginPath();
-	ctx.arc(mx, r2, r, 0, Math.PI * 2, false);
-	ctx.stroke();
+	
 	ctx.beginPath();
 	ctx.moveTo(x1, y21);
 	ctx.lineTo(mx, y22);
@@ -295,6 +315,10 @@ function Transformer(ctx, pfdp) {
 	ctx.moveTo(mx, y22);
 	ctx.lineTo(mx, y23);
 	ctx.stroke();
+	ctx.beginPath();
+	ctx.arc(mx, r2, r, 0, Math.PI * 2, false);
+	ctx.stroke();
+	ctx.rect(sx,sy,(ex-sx),(ey-sy))
 }
 //画根节点
 function RootNode(ctx, pfdp) {
@@ -350,6 +374,11 @@ function Ground(ctx, pfdp) {
 	ctx.beginPath();
 	ctx.moveTo(mleft + mwidth / 8.0 * 3, mbottom);
 	ctx.lineTo(mright - mwidth / 8.0 * 3, mbottom);
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.lineWidth=1;
+	ctx.strokeStyle="#000000"
+	ctx.rect(mleft-3,mtop-3,(mright-mleft+6),(mbottom-mtop+6));
 	ctx.stroke();
 }
 //画电容
@@ -439,6 +468,11 @@ function Capacitor(ctx, pfdp) {
 		ctx.lineTo(mx, mbottom);
 		ctx.stroke();
 	}
+	ctx.beginPath();
+	ctx.lineWidth=1;
+	ctx.strokeStyle="#000000"
+	ctx.rect(mleft-3,mtop-3,(mright-mleft+6),(mbottom-mtop+6));
+	ctx.stroke();
 }
 //画出线
 function Outer(ctx, pfdp) {
@@ -459,7 +493,7 @@ function Outer(ctx, pfdp) {
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
 	var mleft = sx < ex ? sx: ex; //左侧坐标
-	var mright = sx < ex ? ex: sx; //右侧坐标
+	//var mright = sx < ex ? ex: sx; //右侧坐标
 	var mtop = sy < ey ? sy: ey; //顶端坐标
 	var mbottom = sy < ey ? ey: sy; //底边坐标
 	var mheight = mbottom - mtop;
@@ -472,7 +506,6 @@ function Outer(ctx, pfdp) {
 	ctx.moveTo(mleft, mbottom - mhead);
 	ctx.lineTo(mleft, mtop);
 	ctx.stroke();
-
 }
 //画告警图形
 function Warning(ctx, pfdp) {
@@ -514,7 +547,6 @@ function Warning(ctx, pfdp) {
 	ctx.closePath();
 	ctx.stroke();
 	ctx.fill();
-
 }
 //画自定义区域
 function Area(ctx, pfdp) {
@@ -532,7 +564,6 @@ function Area(ctx, pfdp) {
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
 		ctx.transform(a, b, c, d, e, f);
 	}
-
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
 	var pt;
@@ -549,7 +580,6 @@ function Area(ctx, pfdp) {
 	}
 	ctx.closePath();
 	ctx.stroke();
-
 }
 //画节点
 function Node(ctx, pfdp) {
@@ -575,13 +605,12 @@ function Node(ctx, pfdp) {
 	ctx.lineWidth = pfdp.StrokeThinkness;
 	var r = parseFloat(pfdp.Size) / 2;
 	if (pfdp.NodeType == "方形") {
-		ctx.fillRect(sx, sy, (ex - sx), (ey - sy));
+		ctx.Rect(sx, sy, (ex - sx), (ey - sy));
 	} else {
 		ctx.beginPath();
 		ctx.arc(sx + r, sy + r, r, 0, Math.PI * 2, false);
-		ctx.fill();
 	}
-
+	ctx.fill();
 }
 /**
 	*绘制竖排文本（英语直接旋转，中文竖排）
@@ -591,16 +620,13 @@ function Node(ctx, pfdp) {
 	*/
 CanvasRenderingContext2D.prototype.fillTextVertical = function(text, x, y) {
 	var context = this;
-	var canvas = context.canvas;
-
+	//var canvas = context.canvas;
 	var arrText = text.split('');
 	var arrWidth = arrText.map(function(letter) {
 		return context.measureText(letter).width;
 	});
-
 	var align = context.textAlign;
 	var baseline = context.textBaseline;
-
 	if (align == 'left') {
 		x = x + Math.max.apply(null, arrWidth) / 2;
 	} else if (align == 'right') {
@@ -611,10 +637,8 @@ CanvasRenderingContext2D.prototype.fillTextVertical = function(text, x, y) {
 	} else if (baseline == 'top' || baseline == 'hanging') {
 		y = y + arrWidth[0] / 2;
 	}
-
 	context.textAlign = 'center';
 	context.textBaseline = 'middle';
-
 	var trans = context.getTransform();
 	// 开始逐字绘制
 	arrText.forEach(function(letter, index) {
@@ -683,11 +707,15 @@ function DrawText(ctx, pfdp) {
 	} else {
 		ctx.fillText(pfdp.Text, sx, sy);
 	}
+	ctx.beginPath();//开始一个新路径，用于保存绘制的区域，从而与鼠标所在位置进行对比匹配。
+	ctx.lineWidth=1;
+	ctx.strokeStyle="#000000"
+	ctx.rect(sx-2,sy-pfdp.FontSize-2,(ex-sx+4),(ey-sy+pfdp.FontSize+4));
+	ctx.stroke();
 }
 function Selection(ctx, pfdp) {
 
 }
-
 function Picture(ctx,pfdp){
 	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
@@ -713,7 +741,4 @@ function Picture(ctx,pfdp){
 		ctx.drawImage(img, sx,sy,(ex-sx),(ey-sy));
 	}
 }
-
-
-
 /** 图元绘制函数完成*/

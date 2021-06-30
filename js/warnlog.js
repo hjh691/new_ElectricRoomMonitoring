@@ -213,7 +213,9 @@
 								catalog=s_des[p].Catalog;
 								lab.className="btn btn-primary active"
 							}else{}*/
-							dname=sessionStorage.warnlogname;
+							if(sessionStorage.warnlogname && sessionStorage.warnlogname!=undefined){
+								dname=sessionStorage.warnlogname;
+							}
 							catalog=s_des[p].folder;// getcatalog(dname);
 							if(s_des[p].name==sessionStorage.warnlogname){
 								lab.className="btn btn-primary active"
@@ -300,7 +302,7 @@
 			selectText="没有告警事件选项";
 		}
 		$("#select_text_warnlog").val(selectText);
-		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。 
+		//下面时按钮的点击响应函数，如果放在初始化过程，对后来动态添加的按钮不起作用。 270-128=142
 		$(".btn").click(function(){// 
 			$(this).button('toggle');
 			if(sessionStorage.timeindex==5)
@@ -513,110 +515,110 @@
 	//显示实时告警信息
 	function showrealworning(){
 		try{
-		//document.getElementById("jcdd").disabled=true;
-		document.getElementById("war_caption").innerHTML="实时"
-		var sift=false;
-		count=0,count_l=[0,0],count_h=0;
-		//var timedefine=document.getElementById("timedefine");//取得主程序实时数据列表元素内容。
-		var warningtab = window.parent.document.getElementById("realwarningdata-tbody");
-		var trs = warningtab.getElementsByTagName("tr");
-		document.getElementById("tj_kssj").innerHTML="";
-		document.getElementById("tj_zzsj").innerHTML="";
-		$("#warnlogdata-tbody").empty();
-		$table = document.getElementById("warnlogdata-tbody");
-		//var trl = document.createElement('tr');
-		if ($table == null) {
-			$table = iframe_main.document.getElementById("warnlogdata-tbody");
-		}
-		/*var rowNum = $table.rows.length;
-		for (var i = 0; i < rowNum; i++) {
-			
-			$table.removeChild($table.rows[0]);
-		}*/
-		if(trs.length>0){
-			/**
-			 * 在表格中定义一些关键节点（行），采用insertbifore命令时的参考节点。//
-			 * 用于对表格中的数据进行分类插入，并作为分类显示的标题。tr1,tr2...
-			 * **/
-			/*var warning_type=$("#select_text_warnlog").val();
-			if(warning_type.length>0){
-				type_str=warning_type.split(",");
-				sift=true;
-			}else{
-				warning_type="越上限,越下限";
-				type_str=warning_type.split(",");
-				sift=false;
+			//document.getElementById("jcdd").disabled=true;
+			document.getElementById("war_caption").innerHTML="实时"
+			var sift=false;
+			count=0,count_l=[0,0],count_h=0;
+			//var timedefine=document.getElementById("timedefine");//取得主程序实时数据列表元素内容。
+			var warningtab = window.parent.document.getElementById("realwarningdata-tbody");
+			var trs = warningtab.getElementsByTagName("tr");
+			document.getElementById("tj_kssj").innerHTML="";
+			document.getElementById("tj_zzsj").innerHTML="";
+			$("#warnlogdata-tbody").empty();
+			$table = document.getElementById("warnlogdata-tbody");
+			//var trl = document.createElement('tr');
+			if ($table == null) {
+				$table = iframe_main.document.getElementById("warnlogdata-tbody");
 			}
-			let type_str_len=type_str.length;
-			for(var j=0;j<=type_str_len;j++){
-				count_l[j]=0;
-				window.eval("var tr"+j+"=document.createElement('tr');");
-				window.eval("tr"+j+'.setAttribute("id","tr'+j+'")');
-				window.eval("var td"+j+"=document.createElement('td');");
-				window.eval("td"+j+".setAttribute('id','td"+j+"')");
-				window.eval("td"+j+".setAttribute('colspan','4')");
-				if(j==type_str_len){
-					window.eval("td"+j+".setAttribute('style','display:none')");
-					window.eval("tr"+j+".setAttribute('style','display:none')");
-				}
-				window.eval("td"+j+".innerHTML='"+type_str[j]+"'");
-				window.eval("tr"+j+".appendChild(td"+j+")");
-				window.eval("tr"+j+".setAttribute('style','color:#f20')");
-				$table.appendChild(window.eval("tr"+j));
-				//console.log(window.eval("tr"+j));
+			/*var rowNum = $table.rows.length;
+			for (var i = 0; i < rowNum; i++) {
+				
+				$table.removeChild($table.rows[0]);
 			}*/
-			var warning_type=sessionStorage.eventTypeSelected;//document.getElementById("select_text_warnlog").value;
-			if(!warning_type){
-				warning_type="";
-			}
-			type_str=warning_type.split(";");
-			let type_str_len=type_str.length;
-			createWarningGroup($table,type_str);
-			let trs_len=trs.length;
-			for (var i = 0; i < trs_len; i++) {//
-				//warning_sign_low、warning_sign_hight为判断标准，在config.js里定义内容，
-				/*if(trs[i].cells[5].innerText==warning_sign_low){
-					$table.insertBefore($(trs[i].outerHTML)[0],tr3);
-					count_l++;
-				}else if(trs[i].cells[5].innerText==warning_sign_hight){
-					$table.insertBefore($(trs[i].outerHTML)[0],tr2);
-					count_h++;
-				}*///1/6=45 1/4.5=60 1/3=90
-				for(var j=0;j<type_str_len;j++){
-					if(trs[i].cells[4].innerText.indexOf(type_str[j])>=0){
-						//var tr=document.createElement("tr");
-						//tr=$(trs[i].outerHTML)[0];
-						var tr=(trs[i]).cloneNode(true);//克隆行
-						tr.setAttribute("onclick","tableclick(this)");
-						$table.insertBefore(tr,window.eval("tr"+(j+1)));
-						count_l[j]=count_l[j]+1;
-						count++;
-						break;
+			if(trs.length>0){
+				/**
+				 * 在表格中定义一些关键节点（行），采用insertbifore命令时的参考节点。//
+				 * 用于对表格中的数据进行分类插入，并作为分类显示的标题。tr1,tr2...
+				 * **/
+				/*var warning_type=$("#select_text_warnlog").val();
+				if(warning_type.length>0){
+					type_str=warning_type.split(",");
+					sift=true;
+				}else{
+					warning_type="越上限,越下限";
+					type_str=warning_type.split(",");
+					sift=false;
+				}
+				let type_str_len=type_str.length;
+				for(var j=0;j<=type_str_len;j++){
+					count_l[j]=0;
+					window.eval("var tr"+j+"=document.createElement('tr');");
+					window.eval("tr"+j+'.setAttribute("id","tr'+j+'")');
+					window.eval("var td"+j+"=document.createElement('td');");
+					window.eval("td"+j+".setAttribute('id','td"+j+"')");
+					window.eval("td"+j+".setAttribute('colspan','4')");
+					if(j==type_str_len){
+						window.eval("td"+j+".setAttribute('style','display:none')");
+						window.eval("tr"+j+".setAttribute('style','display:none')");
 					}
-					count++
+					window.eval("td"+j+".innerHTML='"+type_str[j]+"'");
+					window.eval("tr"+j+".appendChild(td"+j+")");
+					window.eval("tr"+j+".setAttribute('style','color:#f20')");
+					$table.appendChild(window.eval("tr"+j));
+					//console.log(window.eval("tr"+j));
+				}*/
+				var warning_type=sessionStorage.eventTypeSelected;//document.getElementById("select_text_warnlog").value;
+				if(!warning_type){
+					warning_type="";
 				}
-				if((j>=type_str_len)&&(!sift)){
-					$table.appendChild((trs[i]).cloneNode(true));//.outerHTML)[0]);
-					count++;
+				type_str=warning_type.split(";");
+				let type_str_len=type_str.length;
+				createWarningGroup($table,type_str);
+				let trs_len=trs.length;
+				for (var i = 0; i < trs_len; i++) {//
+					//warning_sign_low、warning_sign_hight为判断标准，在config.js里定义内容，
+					/*if(trs[i].cells[5].innerText==warning_sign_low){
+						$table.insertBefore($(trs[i].outerHTML)[0],tr3);
+						count_l++;
+					}else if(trs[i].cells[5].innerText==warning_sign_hight){
+						$table.insertBefore($(trs[i].outerHTML)[0],tr2);
+						count_h++;
+					}*///1/6=45 1/4.5=60 1/3=90
+					for(var j=0;j<type_str_len;j++){
+						if(trs[i].cells[4].innerText.indexOf(type_str[j])>=0){
+							//var tr=document.createElement("tr");
+							//tr=$(trs[i].outerHTML)[0];
+							var tr=(trs[i]).cloneNode(true);//克隆行
+							tr.setAttribute("onclick","tableclick(this)");
+							$table.insertBefore(tr,window.eval("tr"+(j+1)));
+							count_l[j]=count_l[j]+1;
+							count++;
+							break;
+						}
+						count++
+					}
+					if((j>=type_str_len)&&(!sift)){
+						$table.appendChild((trs[i]).cloneNode(true));//.outerHTML)[0]);
+						count++;
+					}
 				}
+				for(var i=0;i<=type_str_len;i++){
+					//if(count_l[i]==0){
+						//document.getElementById(window.eval("'td"+i+"'")).style.display="none";//neighbourhood
+						var dtr=document.getElementById(window.eval("'tr"+i+"'"));//;//.style.display="none";
+						$table.removeChild(dtr);//去掉统计为零的标题行
+						//count_h++; 
+					//}
+				}
+				//count_h=type_str_len+1-count_h;//统计告警类型项的数量，数据表总量要减去告警类型统计项的标题行。
+				//var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));//20200403
+				//$table.removeChild(dtr);//去掉最后一行（插入的参考行）
+			}else{
+				showmsg("当前没有告警!",info_showtime);
+				showstateinfo("当前没有告警信息");
 			}
-			for(var i=0;i<=type_str_len;i++){
-				//if(count_l[i]==0){
-					//document.getElementById(window.eval("'td"+i+"'")).style.display="none";//neighbourhood
-					var dtr=document.getElementById(window.eval("'tr"+i+"'"));//;//.style.display="none";
-					$table.removeChild(dtr);//去掉统计为零的标题行
-					//count_h++; 
-				//}
-			}
-			//count_h=type_str_len+1-count_h;//统计告警类型项的数量，数据表总量要减去告警类型统计项的标题行。
-			//var dtr=document.getElementById(window.eval("'tr"+type_str.length+"'"));//20200403
-			//$table.removeChild(dtr);//去掉最后一行（插入的参考行）
-		}else{
-			showmsg("当前没有告警!",info_showtime);
-			showstateinfo("当前没有告警信息");
-		}
-		//document.getElementById("count_first").innerHTML=count_l[0];
-		//document.getElementById("count_third").innerHTML=count_l[1];
+			//document.getElementById("count_first").innerHTML=count_l[0];
+			//document.getElementById("count_third").innerHTML=count_l[1];
 		}catch(err){
 			showstateinfo(err.message,"warnlog/showrealworning");
 		}
@@ -626,7 +628,6 @@
 	/*function refreshsensorslist(){
 		window.parent.GetSensorsByNode(sessionStorage.nodeId);
 	}*/
-
 	/*function display(){   
 		//var $table=$("#warnlogdata-tbody");
 		if(!$table){
@@ -816,18 +817,7 @@ function querywarnlog(num) {
 	//	gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 	//}
 }
-/*告警类型项目的添加为空时提示，历史状态页添加信息统计显示项 bootstap的组件内容类定义，对代码进行简化
-	添加标签目录树，标签目录树的根据节点自动更新，配置项根据标签自动更新，时段与查询的对应，动态按钮组的响应过程，导出到excel按钮位置
-	点击时段选择跳出提示框，更换标签时，告警事件选项重复加载，采用二次树形菜单来选择标签项，标签选择项调整，原隐藏。
-	按钮样式（选中、颜色）选项记忆和获取共以及显示内容。下载页结构调整，去除多余关联文件。按钮组样式
-	1019 类型名称的忽略大小写，
-	选择实时告警时不能自动关闭时段选择控件的问题，实时数据页面导出图标和导出功能函数。
-	添加根据类别分组选择来对告警信息进行筛选的古城函数，
-	1123 修改导出操excel时的表头格式，修改列表时非数字的数值显示内容“-”取代NaN形式，防止误解。
-	1126 去掉二次菜单
-	1211 登录页面在登录失败时控制台报错问题（元素未找到）；对其他页面进行现场保存处理，
-	添加页面现场信息保存，在当前页面点击浏览器刷新按钮时，直接进入当前页面,同时杜绝因早不到页面元素而报错。
-	202101
+/*	202101
 	修改在更改筛选条件后实时告警信息不显示的问题；
 	20210206
 	显示类型和告警类型列表不刷新和点击显示重复错误的问题（显示重复错误问题为元素id名称冲突造成 chart history realdata页面都有相同id的元素。）

@@ -130,6 +130,7 @@ function initpage() {
 function showAllSensors(){
     //添加所有的标签项
     if(sensors!=null){
+        alert_obj=[];
         var parentid=-1,parentname="";
         $table = document.getElementById('realdata-tbody');
         sensors_length=sensors.length;
@@ -182,17 +183,18 @@ function showAllSensors(){
             atr.cells[tablehead_len-1].appendChild(aa);
             //atr.cells[tablehead_len-1].setAttribute("onclick","showdetails("+sensors[i].id+")")
             //atr.cells[tablehead_len-1].style.cssText="";
-            if(parseInt(jfjk_base_config.realdatashowmodle))
+            if(parseInt(jfjk_base_config.realdatashowmodle))//是否显示全部标签还是只显示有读数的标签
                 atr.style="display:none;"
             $table.appendChild(atr);//we are famly
+            jisuanyichangbili("离线");
         }
         //page=new Page(pageSize,'realtable','realdata-tbody','pageindex');
         //page.changePage(0);
     }
 }
-var objWin;
+//var objWin;
 function showdetails(asensorid){//功能接口，显示一个新的页面，用于显示次标签的数据详情和图示
-    sessionStorage.sensorId=parseInt(asensorid);
+    sessionStorage.sensorId=parseInt(asensorid);//此处sessionStorage.sensorId首字母为小写。
     window.parent.tablehead=(allselect);
     /*var target = "detail.html"; 
     //判断是否打开 
@@ -233,7 +235,6 @@ function appendalldisplaytype(){
         }
     }
     else*/{
-    
     if(allconfigs){//检查配置中是否有catalog项
         for(var ac in allconfigs){//如果有，读取其所有配置项
             var s_des=allconfigs[ac].details;
@@ -402,7 +403,7 @@ function refresh_tabhead(sel){
         th_tr.appendChild(th_th);
         th_th=document.createElement("th");
         th_th.setAttribute("width","180px");
-        th_th.innerHTML="关联";
+        th_th.innerHTML="分组";
         th_tr.appendChild(th_th);
         tab_head.appendChild(th_tr);
     }else{
@@ -479,13 +480,12 @@ function refresh_tabhead(sel){
         th_tr.appendChild(th_th);
         th_th=document.createElement("th");
         th_th.setAttribute("width","180px");
-        th_th.innerHTML="关联";
+        th_th.innerHTML="分组";
         th_tr.appendChild(th_th);
         tab_head.appendChild(th_tr);
     }
     //document.getElementById("realtable").width=150*(count+5)+"px";// 设定数据列表的总宽度
 }
-
 function stopWorker() {
     w1.terminate();
     w1 = undefined;
@@ -621,7 +621,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
     //haverealdata=false;
     sid=-1;
     var nodata=true;
-    if(!asensorid)
+    if(!asensorid)//
         nodata=false;
     if (obj_realdata) {
         var realdata_len=obj_realdata.length, 
@@ -927,7 +927,6 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
             //showmsg("没有所选标签的实时数据");
             return;
         }
-        
         alert_obj=[];
         var tableLength = $table.rows.length;
         if (tableLength > 0) {
@@ -947,7 +946,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                     maxvaluetime=($table.rows[int].cells[3].innerHTML);
                     maxOfRealdataName=($table.rows[int].cells[2].innerHTML)
                 }
-                //jisuanyichangbili(($table.rows[int].cells[title_index].innerHTML)*1);
+                //jisuanyichangbili(($table.rows[int].cells[title_index].innerHTML)*1);//
                 jisuanyichangbili(($table.rows[int].cells[tab_head.rows[0].cells.length-2].innerHTML));
             }
             if (typeof (sessionStorage.t_p) != "undefined") {
@@ -1077,7 +1076,7 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
             if(!chart_unit || chart_unit=="度")
                 chart_unit = "℃"
             chartOption.chart_sigle = "";
-            colors = [[0.2, '#1e90ff'], [0.7, '#090'], [0.8, '#ffa500'], [0.9, '#ff4500'], [1, '#ff0000']];
+            colors = [[0.1, '#1e90ff'], [0.6, '#090'], [0.8, '#ffa500'], [0.9, '#ff4500'], [1, '#ff0000']];
             break;
         case "pd":
         case "max":
@@ -1399,7 +1398,7 @@ function initseries(data) {
                     borderWidth: 2
                 },
                 label: {
-                    formatter: '{b}: {c}\n\n  {{d}%}  ',
+                    formatter: '{b}: {c}\n\n  {{d}%} ',
                     show: true,
                     position: 'outer',
                     color:"#fff",
@@ -1426,9 +1425,27 @@ function initseries(data) {
         ]
     };
     myChart3.setOption(option3);
-    myChart3.on('click',function(params){//点击事件
-        console.log(params);
-    });
+    //myChart3.on('click',function(params){//点击事件
+    //    console.log(params);
+    //});
+    myChart3.on("click", pieConsole);
+    function pieConsole(param) {
+        //     获取data长度
+        //alert(option3.series[0].data.length);
+        //      获取地N个data的值
+        // 　　alert(option.series[0].data[i]);
+        //     获取series中param.dataIndex事件对应的值
+        //alert(param.value);
+        //alert(param.name);
+        //alert(option3.series[param.seriesIndex].data[param.dataIndex].value);
+        alert(option3.series[param.seriesIndex].data[param.dataIndex].name);
+        // 　　clickFunc(param.dataIndex);//执行点击效果,触发相应js函数
+        //param具体包含的方法见 https://blog.csdn.net/allenjay11/article/details/76033232
+
+        //刷新页面
+        // location.reload();
+        // window.location.reload();
+    }
     option4 = {
         backgroundColor: backgroudcolor,
         title: {
@@ -1613,6 +1630,7 @@ function refreshData() {
     }
     option3.series[0].data=ratArr;
     myChart3.setOption(option3);
+    
 }
 function decodedatas(obj_chartdata) {
     try{
@@ -1640,7 +1658,7 @@ function decodedatas(obj_chartdata) {
     }
     minval = maxval = obj_chartdata[0].value;//value0;
     //var zero=getCurrentDate(1) + " 00:00:00";
-    happentime=dateToString(obj_chartdata[0].time,2);//发生时刻
+    happentime=dateToString(obj_chartdata[0].time,2);//发生时刻 how is excited the boy
     let chartdata_len=obj_chartdata.length;
     for (var i = 0; i < chartdata_len; i++) {
         //if((obj_chartdata[i].time).replace(/T/g," ").substring(0,19)>=zero)//取当天零点以后的值，obj_chartdata保存24小时以内的值

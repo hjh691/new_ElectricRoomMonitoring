@@ -295,7 +295,7 @@
 				isfirstload=false;
 				if(sessionStorage.kssj==undefined){
 					sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
-					sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59" 听力
+					sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59" 
 					sessionStorage.cxsj = getCurrentDate(2);
 				}
 				if (sessionStorage.islogin) {
@@ -1150,6 +1150,7 @@
 		}
 		//获取指定节点的一次图形列表  //Fresh strawberries tastes good;
 		function GetBinariesByType(atype, anodeid){
+			sessionStorage.scaler=sessionStorage.map_module;//
 			sendorder("GetNodeGraphicsByNode?nodeId="+ anodeid,function(data){
 				if(!jQuery.isEmptyObject(data)){//.Result
 					obj_Binaries = data;//.Result;
@@ -1503,7 +1504,7 @@
 			//	tbody.deleteRow(0);
 			//}
 			//obj_realdata=JSON.parse(localStorage.getItem("realdata"));//考虑使用此方法去掉调用的参数，20200408修改。暂时不用。
-			var sensors = allsensors;
+			//var sensors = allsensors;
 			var sensors=JSON.parse(localStorage.getItem("allsensors"));
 			var obj_data = new Object();
 			var pt = 0;
@@ -1717,7 +1718,7 @@
 				//tr.style.backgroundColor = cl;
 				pt++;
 				tbody.appendChild(tr);
-				let temp=parseFloat(alertvalue);
+				//let temp=parseFloat(alertvalue);
 				if ((alertvalue !== null) && (parseFloat(alertvalue))) {
 					str_speech = str_speech +alert_sys_name+" "+sname.replace(/_/g,"杠")+" "+ alertinfo + "数值" + alertvalue.replace(/^-/g,"负") +"  ";
 					str_alert = str_alert + "/" + alerttime + ": " +alert_sys_name+" "+ sname + " "+ alertinfo + " 数值为:" + alertvalue+" "; //+ str_type+" "
@@ -1962,68 +1963,68 @@
             if (data == null || typeof(data) == "undefined") {
             }else
             for (var j = 0; j < data.length; j++) {
-					var anodes = new Object();
-					anodes.text = data[j].value.name;//20201021+"[Id:"+data[j].value.id+"]"
-					anodes.id = data[j].value.id;
-                    anodes.ParentId=data[j].value.parentId;
-                    anodes.NodeId=data[j].value.nodeId;//----
-                    anodes.Catalog = data[j].value.type;//Catalog;
-                    anodes.Address=data[j].value.address//----
-                    //anodes.Group=data[j].value.group;//----
-                    anodes.Serial=data[j].value.serial;//----
-                    anodes.Location=data[j].value.location;//----
-					anodes.Config = data[j].value.config;
-					anodes.Time = data[j].value.time;
-					anodes.level = level;
-					if (data[j].value.hasOwnProperty("nodeId")) {
-						anodes.NodeId = data[j].value.nodeId;
-					}
-					var icon = 'glyphicon glyphicon-user';
-					switch (data[j].value.name.toLowerCase()) {
-						case "机房监控":
-							icon = 'glyphicon glyphicon-inbox';//
-							break;
-						case "门禁":
-							icon = 'glyphicon glyphicon-lock';//
-							break;
-						case "灯光":
-							icon = 'glyphicon glyphicon-cog';
-							break;
-						case "红外":
-							icon = 'glyphicon glyphicon-signal';
-							break;
-						case "动力":
-							icon = 'glyphicon glyphicon-retweet';
-							break;
-						case "环境":
-							icon = "glyphicon glyphicon-leaf";//
-							break;
-						case "水浸":
-							icon = "glyphicon glyphicon-tint";//
-					}
-					if (level == 0) {
-						icon = "glyphicon glyphicon-home";
-					}
-					anodes.icon = icon;
-					//var chi_len = data[j].Children.length; 
-					if (data[j].children&&data[j].children.length != 0) {
-						anodes.nodes = [];
-						anodes.nodes = buildnode_level2(data[j].children, level + 1)
-					}
-					tree.push(anodes);
+				var anodes = new Object();
+				anodes.text = data[j].value.name;//20201021+"[Id:"+data[j].value.id+"]"
+				anodes.id = data[j].value.id;
+				anodes.ParentId=data[j].value.parentId;
+				anodes.NodeId=data[j].value.nodeId;//----
+				anodes.Catalog = data[j].value.type;//Catalog;
+				anodes.Address=data[j].value.address//----
+				//anodes.Group=data[j].value.group;//----
+				anodes.Serial=data[j].value.serial;//----
+				anodes.Location=data[j].value.location;//----
+				anodes.Config = data[j].value.config;
+				anodes.Time = data[j].value.time;
+				anodes.level = level;
+				if (data[j].value.hasOwnProperty("nodeId")) {
+					anodes.NodeId = data[j].value.nodeId;
 				}
+				var icon = 'glyphicon glyphicon-user';
+				switch (data[j].value.name.toLowerCase()) {
+					case "机房监控":
+						icon = 'glyphicon glyphicon-inbox';//
+						break;
+					case "门禁":
+						icon = 'glyphicon glyphicon-lock';//
+						break;
+					case "灯光":
+						icon = 'glyphicon glyphicon-cog';
+						break;
+					case "红外":
+						icon = 'glyphicon glyphicon-signal';
+						break;
+					case "动力":
+						icon = 'glyphicon glyphicon-retweet';
+						break;
+					case "环境":
+						icon = "glyphicon glyphicon-leaf";//
+						break;
+					case "水浸":
+						icon = "glyphicon glyphicon-tint";//
+				}
+				if (level == 0) {
+					icon = "glyphicon glyphicon-home";
+				}
+				anodes.icon = icon;
+				//var chi_len = data[j].Children.length; 
+				if (data[j].children&&data[j].children.length != 0) {
+					anodes.nodes = [];
+					anodes.nodes = buildnode_level2(data[j].children, level + 1)
+				}
+				tree.push(anodes);
+			}
 			var compare = function (obj1, obj2) {
 				if(obj1 && obj2){
-				var val1 = obj1.text;
-				var val2 = obj2.text;
-				if (val1 < val2) {
-					return -1;
-				} else if (val1 > val2) {
-					return 1;
-				} else {
-					return 0;
+					var val1 = obj1.text;
+					var val2 = obj2.text;
+					if (val1 < val2) {
+						return -1;
+					} else if (val1 > val2) {
+						return 1;
+					} else {
+						return 0;
+					}
 				}
-			}
 			}
 			/*for(var i=0;i<tree.length-1;i++){
 				for(var j=i+1;j<tree.length;j++){
@@ -2034,8 +2035,7 @@
 					}	
 				}
 			}*/
-			tree.sort(compare
-			)
+			tree.sort(compare)
             return tree;
         }
 		function clickNode(event, data) {
@@ -2053,8 +2053,7 @@
 			lastSelectTime = new Date().getTime();
 		}
 		//监控鼠标的移动和位置
-		function mouseMove(ev) 
-		{ 
+		function mouseMove(ev){ 
 			//containerdiv = document.getElementById("temp1-1");       
 			//containerdiv.style.display = "none";
 			Ev= ev || window.event; 

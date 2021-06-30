@@ -1147,7 +1147,7 @@ function initWatherSeries(data) {//温度计、湿度表。
             {
                 name: '湿度',
                 type: 'gauge',
-                center: ['50%', "50%"], // 默认全局居中
+                center: ['50%', "50%"], // 默认全局居中 
                 radius: '70%',//半径
                 min: 0,
                 max: 100,
@@ -1160,8 +1160,8 @@ function initWatherSeries(data) {//温度计、湿度表。
                             [0.2, 'green'],
                             [1, '#1f1f1f']
                         ],
-                        color: [[0.2, '#0a0'], [0.8, '#CC0'], [1, '#ff4500']],
-                        width: 25,
+                        color: [[0.1,'#ff4500' ], [0.3, '#CC0'], [0.7, '#0a0'],[1,'#00a']],
+                        width: 20,
                         /* shadowColor: 'yellow', //默认透明
                          shadowOffsetX:2,
                          shadowBlur: 10*/
@@ -1171,6 +1171,12 @@ function initWatherSeries(data) {//温度计、湿度表。
                     show: true,
                     splitNumber: 10,
                     length:10,
+                    lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                        width: 1,
+                        color: '#0',
+                        shadowColor: '#0', //默认透明
+                        shadowBlur: 10,
+                    }
                 },
                 axisLabel: {
                     textStyle: { // 属性lineStyle控制线条样式
@@ -1186,7 +1192,7 @@ function initWatherSeries(data) {//温度计、湿度表。
                     lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
                         width: 2,
                         color: '#fff',
-                        shadowColor: '#fff', //默认透明
+                        shadowColor: '#0', //默认透明
                         shadowBlur: 10,
                     }
                 },
@@ -1251,7 +1257,7 @@ function refreshDataForWather() {
         }
     }
     myChartWatherTemp.setOption(optionWatherTemp);*/
-    optionWatherSwet.series[0].data[0].value = TP_value;
+    optionWatherSwet.series[0].data[0].value = Math.abs(TP_value);
     optionWatherSwet.series[0].max = chart_max;
     optionWatherSwet.series[0].min = chart_min;
     value = optionWatherSwet.series[0].data[0].value;

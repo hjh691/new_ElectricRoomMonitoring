@@ -1103,10 +1103,10 @@ function initseries(data) {
             }
         ]
     };
-    myChart4.setOption(option4);
+    myChart4.setOption(option4);// 
     //initecharts();
 }
-//window.setInterval("getrealdatabynodeid(-1)",60000);
+//window.setInterval("getrealdatabynodeid(-1)",60000); 
 function refreshData() {
     //var myChart = echarts.init(document.getElementById('realdata_gaugechart'));
     /*if (chart_type == "pd") {

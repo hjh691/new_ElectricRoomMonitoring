@@ -1,20 +1,35 @@
-/**以组为单位显示标签实时数据和图片指示
+/**以组为单位显示标签实时数据和图片指示 
+ * 分组名称添加按名称排序功能；标签列表添加点击世界与图形的匹配关系；数据列表（table）的列排序过程，
+ * 将数值列和字符串列分开排序，避免数值也按字符顺序排序造成的混乱，图形添加名称指示项。蓬勃 磅礴 滂沱 撺掇 
  */
 var list_group=$("#ul_group");
-var sen_id=parseInt(sessionStorage.sensorId);//此处sensorId首字母为小写。
+var sen_id=parseInt(sessionStorage.sensorId);//此处sensorId首字母为小写。//飛
 var js_sensors=JSON.parse(localStorage.getItem("sensor_tree"));
 var sa=[];
 var chartOption={};
-var type_td="";
+var type_td="",group_name="";
 var sensors;
 var allconfigs;
 $(function(){
     initpage();
-
     function initpage(){
         //sessionStorage.pageindex=21;
         list_group.empty();
-        sa=findsensorbyid(js_sensors,sen_id)
+        sa=findsensorbyid(js_sensors,sen_id);
+        var compare = function (obj1, obj2) {
+            if(obj1 && obj2){
+                var val1 = obj1.value.name;
+                var val2 = obj2.value.name;
+                if (val1 < val2) {
+                    return -1;
+                } else if (val1 > val2) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        }
+        sa.sort(compare);
         if(sa!=null){
             for(var i=0;i<sa.length;i++){
                 var btn=document.createElement("button");
@@ -22,7 +37,8 @@ $(function(){
                 btn.setAttribute("style","width:70%;height:30px;background-color:rgba(8, 177, 106, 0.2);");
                 btn.setAttribute("class","btn_group");
                 btn.setAttribute("onclick","refreshgroup("+i+")");
-                btn.innerHTML=sa[i].value.name;
+                group_name=sa[i].value.name;
+                btn.innerHTML=group_name;
                 list_group[0].appendChild(btn);
                 if(sa[i].value.id==sen_id){
                     btn.onclick();
@@ -109,18 +125,18 @@ function refreshgroup(sid){
     for(var i=0;i<btn_group[0].children.length;i++){
         if(i==sid){
             btn_group[0].children[i].attributes.style.value="width:70%;height:30px;background-color:rgba(8, 177, 106, 0.2);border-color:rgba(8, 8, 106, 0.8)";
+            group_name=btn_group[0].children[i].innerHTML;
         }else{
             btn_group[0].children[i].attributes.style.value="width:70%;height:30px;background-color:rgba(8, 177, 106, 0.2);";
         }
     }
-    
     if(sa[sid].children.length>0){
         sensors=sa[sid].children;
     }else{
         sensors=[sa[sid]];
     }
     showAllSensors(sensors);
-    refreshpicture(sid,sensors)
+    refreshpicture(sid)//,sensors
 }
 function showAllSensors(sensors){
     //var parentid=-1,parentname="";
@@ -206,17 +222,24 @@ function sumtotal(){//对列表中的数据进行简单统计分析
 }
 function tableclick(tr,isloadmain) {
     $(tr).siblings("tr[backgroundColor!='#ff0']").css("background", "");
-    sessionStorage.t_p = tr.rowIndex - 1;
-    if (parseInt(tr.cells[4].innerHTML) != sessionStorage.SensorId) {
-        sessionStorage.SensorId = parseInt(tr.cells[4].innerHTML);
+    sessionStorage.sel_id = tr.rowIndex - 1;
+    if (parseInt(tr.cells[5].innerHTML) != sessionStorage.SensorId) {
+        sessionStorage.SensorId = parseInt(tr.cells[5].innerHTML);
         sessionStorage.sel_id=sessionStorage.SensorId;
     }
     //if (isloadmain)
     //    window.parent.treelocationforsensorid(sessionStorage.SensorId);
+    refreshpicture(tr.rowIndex,tr.cells[1].innerHTML);
     $(tr).css("background", color_table_cur);//区分选中行
 }
 function refreshpicture(aid,asensors){
-    type=sa[aid].value.type;//[id,parentId,nodeId,type,address,company=null,serial=null,config,location=null,name,time,]
+    //type=sa[aid].value.type;//[id,parentId,nodeId,type,address,company=null,serial=null,config,location=null,name,time,]
+    if(!asensors){
+       asensors="";
+    }else{
+        asensors="_"+asensors;
+    }
+    $("#pic_name").text(group_name+asensors);
     aid=(aid % 3)+1;//以后要与后台对应关联，此时采用模拟变换。
     var path="/res/kgg"+aid+".jpg";//kgg  dlxl
     $("#img1").attr('src',path); 
@@ -319,11 +342,13 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
         showstateinfo("本次获取实时数据为空","realdata_detail");
     }
 }
-//第一章 危险（有害）因素辨识：安全评价是以实现安全为目的，应用安全系统工程原理和方法，辨识与分析工程、系统、
-//生产经营活动中的危险、有害因素，预测发生事故造成职业危害的可能性及其严重程度，提出科学、合理、可行的安全对策措施建议，
-//做出评价结论的活动。安全评价可针对一个特定的对象，也可针对一定区域范围 安全预评价 安全验收评价 安全现状评价 和专项安全评价
+//
 //根据数据列值获取Catalog。
-//危险有害特征：普遍性、客观性、转化性、规律性（人、机、料、法（工艺）、环（境））
+//        一级：    二级    三级     四级
+//防火墙   3.0      3.0     3.0     3.0
+//承重墙   3.0      2.5     2.0     0.5
+//
+//
 function getCatalog(atype,afolder,aname){
     try{
         initchartoption();//数据配置信息和单位信息初始化（更新）
@@ -357,7 +382,7 @@ function getCatalog(atype,afolder,aname){
                                     }
                                     /*if((chartOption.chart_max-chartOption.chart_min)%10==0){
                                         chartOption.chart_main_num=4;
-                                        chartOption.chart_chi_num=8;// 忠诚 敬业 自动自发 负责 注重效率 结果导向 善于沟通 合作 积极进取 低调 节约 感恩
+                                        chartOption.chart_chi_num=8;// 
                                     };
                                     if((chartOption.chart_max-chartOption.chart_min)%5==0){
                                         chartOption.chart_main_num=5;
@@ -366,7 +391,6 @@ function getCatalog(atype,afolder,aname){
                                     sessionStorage.setItem("chartoption",JSON.stringify(chartOption));
                                     break;
                                 }
-
                             }
                         }
                         break;
@@ -379,6 +403,6 @@ function getCatalog(atype,afolder,aname){
             chartOption.chart_unit="";
         return chartOption;
     }catch(err){
-        showstateinfo(err.message,"realdata_iot/getCatalog")
+        showstateinfo(err.message,"detail/getCatalog")
     }
 }
