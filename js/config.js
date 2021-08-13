@@ -83,17 +83,17 @@ function sleep(numberMillis) {
 // 登录界面系统名称字体颜色：
 jfjk_base_config.appname_font_color="#fff";
 //登录界面底图
-jfjk_base_config.bg_src="res/bj011.jpg"
+jfjk_base_config.bg_src="res/bj011.jpg";
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
  jfjk_base_config.ver_id="Ver 2.05.07";//1.3添加通用页面。
  //发布日期
- jfjk_base_config.date="2021-05-07"
+ jfjk_base_config.date="2021-05-07";
 //公司名称
  jfjk_base_config.company="保定金凯澳自动化设备有限公司";
  //版权时间
- jfjk_base_config.copyright="&copy 2022-12-31"
+ jfjk_base_config.copyright="&copy 2022-12-31";
 //公司log
  jfjk_base_config.log_src="res/jka_100.png";
 //公司网站：
@@ -178,5 +178,6 @@ function initconfigOption(){
 //localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
  /**un business
   * 1.2.2 节点树的节点字体颜色变化的问题，告警信息每次都显示的问题（同一节点有不同类型的数据和不一样的告警状态造成），节点目录自动折叠的问题；代码精简。
-  *
+  * 第一次政治协议会议、新中国成立、中国人民站起来、西藏和平解放、抗美援朝 土地革命、第一个五年计划、中共八大、宪法、社会主义制度、三大改造
+  * 大跃进、文化大革命、粉碎四人帮、拨乱反正、改革开放、经济建设为中心、
   */

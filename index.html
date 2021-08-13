@@ -22,7 +22,7 @@
 	text-align: center;
 	text-decoration: none;
 	font: bold 12px/25px Arial, sans-serif;
-	font-size:20px;
+	font-size:1em;
 	width:100px;
 	height:40px;
 	line-height:40px;
@@ -45,24 +45,24 @@
 	-ms-transition: all 0.15s ease;
 	transition: all 0.15s ease;
 	}
-	.green {
+	/*.green {
 		color: #3e5706;
 		background: #a5cd4e;
 	}
 
-	/* Blue Color */
+	 Blue Color 
 
 	.blue {
 		color: #19667d;
 		background: #70c9e3;
-	}
+	}*/
 
-	/* Gray Color */
+	/* Gray Color 
 
 	.gray {
 		color: #515151;
 		background: #d3d3d3;
-	}
+	}*/
 	.selected {
 		width: 150px;
 		color:white;
@@ -91,7 +91,7 @@
 </style>
 </head>
 <body id="main" onload="initlogin()" style="background: url(res/bj011.jpg);"><!--style="background-image:url(rec/zzpic12708.jpg)"-->
-	<div align="center" id="page" style="margin:0;padding:0;width:100%; font-size:20px;" >
+	<div align="center" id="page" style="margin:0;padding:0;width:100%; font-size:1.4em;" >
 		<input type="file" id="file" onchange="previewHandle(this)" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;"/>
 		<input type="text" style="width:0;" id="bg_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"/>
 		<label class="selected" onclick="selectFile()" style="float:right;margin-right:20px;background-color: rgb(78, 76, 76);">背景设置</label>
@@ -104,14 +104,14 @@
 					<form id="form1" ><br>
 						<div style="color:#FFFFFF;">用户名<span class="glyphicon glyphicon-user" style="color:rgb(0,0,0);margin-left: 30px;"></span>
 							<input id="username"  type="text" name="username"  
-							style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:20px;border-radius:8px;color:black"/></div><br>
+							style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:1em;border-radius:8px;color:black"/></div><br>
 						<div style="color:#FFFFFF;">密&nbsp;&nbsp; 码<span class="glyphicon glyphicon-lock" style="color: rgb(0, 0, 0);margin-left:30px;"></span>
 							<input id="password" type="password" name="password" 
-							style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:20px;border-radius:8px;color:black" 
+							style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:1em;border-radius:8px;color:black" 
 							onkeypress="return KeyUp()" autocomplete="new-password"/></div>
 							<div style="display:none">
 								<a href="iframe_regist.html" target="main-frame" style="font-weight:bold;text-decoration:none;" ><b>注册新用户</b></a>
-								<div style="color:red;font-size:20px;display:inline;left:40px;position:relative" >
+								<div style="color:red;font-size:1em;display:inline;left:40px;position:relative" >
 									<a href="#" style="color:red; text-decoration:none;">忘记密码</a>
 								</div>
 							</div>

@@ -65,22 +65,22 @@
 <body > <!-- onunload="stopWorker()" 20210316修改onclick="btn_refresh_click()"风险控制：生产安全事故应急救援预案-->
 	<div class="container">
 		<div class="row">
-			<div class="condition col-xs-6 col-lg-3" style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;
+			<div class="condition col-xs-6 col-lg-3" style="font-size: 1.5em;border:solid  rgba(8, 177, 106, 0.5) 2px;
 				border-radius: 10px;width: 200px;height:40px;line-height: 40px;margin-left: 10px;display: none;"><label> 显示内容:</label>
 				<span id="display_type"></span>
 			</div>
-			<div class="col-xs-12 col-lg-11" id="chart"  style="font-size: 16px;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: autopx;height:40px;line-height: 40px;margin-left: 10px;padding-left: 0;">
+			<div class="col-xs-12 col-lg-11" id="chart"  style="font-size: 1.5em;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: autopx;height:40px;line-height: 40px;margin-left: 10px;padding-left: 0;">
 				<canvas id="canvas"  height="40" style="display: none;"></canvas><!-- 标签状态统计信息 canvas图形化显示有待完善。-->
 				<label > 总数:</label> <label id="total" >0</label><label> 连接在线:</label><label id="yunxing">0</label>
 				<label > （ 其中:  1.正常:</label> <label id="normal" style="color:green;" >0</label><label> 2.告警:</label><label id="warning" style="color:orange">0</label><label style="margin-left: 5px;"> ）</label>
 				<label > 离线:</label> <label id="outline" style="color:red">0</label>	
 				<button type="button" id="chaxun" value="刷新" onclick="btn_refresh_click()"
-					style="font-size:14px;height: 30px;line-height:30px;float:right;margin-top: 3px;">
+					style="font-size:1em;height: 30px;line-height:30px;float:right;margin-top: 3px;">
 				<span class="glyphicon glyphicon-refresh" style="margin:5px"></span>刷新</button>
 			</div>
 		</div>
 		<div style="text-align: center;" >
-			<div id="datadiv" style="text-align: center;overflow: auto;height: 700px;overflow: auto;">
+			<div id="datadiv" style="text-align: center;overflow: auto;height: 700px;overflow: auto;margin-bottom: 10px;">
 				<table  id="other_realtable" style="margin: auto;" >
 					<thead id="tab_head" style="display: fixed;">
 						<tr>
@@ -125,14 +125,14 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" 
-								data-dismiss="modal">关闭            </button>
+								data-dismiss="modal" >关闭            </button>
 						</div>
 					</div><!-- /.modal-content -->
 				</div><!-- /.modal -->
 			</div>
-			<div style="text-align: center;font-size: 18px;display:none;">
+			<div style="text-align: center;font-size: 1.2em;display:none;">
 				<a id="btn0"></a>
-				<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
+				<input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;" /><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
 				<a id="sjzl"></a>&nbsp;
 				<a  href="javascript:void(0)" id="btn1" onclick="page.firstPage()">首页</a>
 				<a  href="javascript:void(0)" id="btn2" onclick="page.prePage()">上一页</a>
@@ -145,7 +145,7 @@
 				<a>页&nbsp;</a>
 				<a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>-->
 				<a href="javascript:void(0)"  onclick="exporttoexcel('realtable')">
-					<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;">
+					<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;" />
 				</a>
 			</div>
 		</div>

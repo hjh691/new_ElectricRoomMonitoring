@@ -75,7 +75,7 @@
 				<span class="caret"></span> select_multiple
 			</button>-->
 			<label class="dropdown-toggle" data-toggle="dropdown">
-				<input id="select_text_chart" class="select_text" data-is-select="false" readonly="true" style="height:35px;line-height: 30px;color:black;border-radius: 5px;readonly:true"/>
+				<input id="select_text_chart" class="select_text" data-is-select="false" readonly="true" style="height:35px;line-height: 30px;color:black;"/>
 				<button  style="width:30px;height:35px;margin-left:-35px;position: relative;z-index: 2;"><i class= "caret">
 				</i></button>
 				<!--<a  class="btn  btn-default" href = "#" style="margin-left:-40px;"><i class= "caret">
@@ -91,7 +91,7 @@
 			<span><label class="title-right" >时间选择：</label></span>
 			<span>
 			<input type="text" onclick="showdate({el:this,dateFmt:'yyyy-MM-dd'})" id="cxsj" 
-				style="width:130px;font-size:16px;height: 30px;border-radius: 5px;margin-right: 20px;"/>
+				style="width:130px;font-size:14px;height: 30px;line-height: 35px;margin-right: 20px;"/>
 			<!--<label class="title-right">计量点名称：</label>
 				<a id="refreshlist" class="glyphicon glyphicon-refresh" href="javascript:void(0)" onclick="refreshsensorslist()"></a>
 					<select id="jcdd" style="font-size:18px;width:253px;vertical-align:-10%;" onchange="gradeChange()">display:none
@@ -143,12 +143,12 @@
 						<!---->
 							<th></th>
 							<th>测量时间</th>
-							<th>测量点1</th>
-							<th>测量点2</th>
-							<th>测量点3</th>
-							<th>测量点4</th>
-							<th>测量点5</th>
-							<th>测量点6</th>
+							<th id="cld1">测量点1</th>
+							<th id="cld2">测量点2</th>
+							<th id="cld3">测量点3</th>
+							<th id="cld4">测量点4</th>
+							<th id="cld5">测量点5</th>
+							<th id="cld6">测量点6</th>
 					</tr>	
 				</thead><!---->
 				<tbody id="comprate-tbody" style="height:600px; overflow:auto;">

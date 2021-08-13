@@ -8,12 +8,14 @@ var js_sensors=JSON.parse(localStorage.getItem("sensor_tree"));
 var sa=[];
 var chartOption={};
 var type_td="",group_name="";
-var sensors;
+var sensors,allsensors;
 var allconfigs;
 $(function(){
     initpage();
     function initpage(){
         //sessionStorage.pageindex=21;
+        allsensors=JSON.parse(localStorage.getItem("sensors"));
+        allconfigs=JSON.parse(localStorage.Config);
         list_group.empty();
         sa=findsensorbyid(js_sensors,sen_id);
         var compare = function (obj1, obj2) {
@@ -135,8 +137,10 @@ function refreshgroup(sid){
     }else{
         sensors=[sa[sid]];
     }
-    showAllSensors(sensors);
+    window.parent.getrealdatabynodeid(-1);
     refreshpicture(sid)//,sensors
+    showAllSensors(sensors);
+    
 }
 function showAllSensors(sensors){
     //var parentid=-1,parentname="";
@@ -170,19 +174,22 @@ function showAllSensors(sensors){
                 //atd.innerHTML= "&nbsp;";
                 atr.appendChild(atd);
             }
-            value =  (Math.random() * 30 + 5).toFixed(Number_of_decimal);//模拟随机数
-            atr.cells[0].innerHTML=i;
+            value = ""; (Math.random() * 30 + 5).toFixed(Number_of_decimal);//模拟随机数
+            atr.cells[0].innerHTML=i+1;//序号从1开始
             atr.cells[5].innerHTML=sensors[i].value.id;//标签id
             atr.cells[5].style.cssText="display:none";
             //atr.cells[1].innerHTML=sensors[i].id;
             atr.cells[1].innerHTML=sensors[i].value.name;//第三列添加标签名称，
             atr.cells[2].style.cssText="padding-left:5px;text-align:left";
             atr.cells[2].innerHTML=value;// style.cssText="display:none";
-            atr.cells[3].innerHTML="运行";//parentname;
+            atr.cells[3].innerHTML="";//parentname;运行
             //if(parseInt(jfjk_base_config.realdatashowmodle))
             //    atr.style="display:none;"
             $table.appendChild(atr);//we are famly
+            if(i==0)
+            appenddisplaytype(sensors[i].value.id);
         }
+        refreshData();
         sumtotal();
     }
 }
@@ -215,6 +222,8 @@ function sumtotal(){//对列表中的数据进行简单统计分析
     $("#normal").text(iyunxing-igaojing);
     $("#warning").text(igaojing);
     //$("#outline").text(total-iyunxing);
+    if(!max){max="-";}
+    if(!min){min="-";}
     $("#max").text(max);
     $("#min").text(min);
     $("#addr_max").text(addr_max);
@@ -231,6 +240,7 @@ function tableclick(tr,isloadmain) {
     //    window.parent.treelocationforsensorid(sessionStorage.SensorId);
     refreshpicture(tr.rowIndex,tr.cells[1].innerHTML);
     $(tr).css("background", color_table_cur);//区分选中行
+    
 }
 function refreshpicture(aid,asensors){
     //type=sa[aid].value.type;//[id,parentId,nodeId,type,address,company=null,serial=null,config,location=null,name,time,]
@@ -261,7 +271,7 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
             if(sessionStorage.pageindex==2)
                 tj=(obj_data.name.toLowerCase()==sessionStorage.typename.toLowerCase());
             for(var l=0;l<tab_rows_len;l++){
-                if(parseInt($table.rows[l].cells[5].innerHTML)==parseInt(obj_data.sensorId) && tj){    
+                if(parseInt($table.rows[l].cells[5].innerHTML)==parseInt(obj_data.sensorId) && tj && (obj_data.name==dname)){    
                     titlename=realdatafolder+concat_str+obj_data.name;
                     var sid=parseInt($table.rows[l].cells[5].innerHTML);
                     if (sensors)//&&isnew
@@ -296,8 +306,8 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
                         localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
                         obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
                     }
-                    let str_hh=$table.rows[l].cells[2].innerHTML;
-                    if(!str_hh){
+                    let str_hh=obj_data.value;// $table.rows[l].cells[2].innerHTML;
+                    /*if(!str_hh){
                         str_hh=titlename+" : "+ obj_data.value+" "+chartOption.chart_unit;
                     }else if(str_hh.indexOf(titlename+" : ")!=-1){
                         exp_str=str_hh.substring(str_hh.indexOf(titlename),(str_hh.indexOf("<br>",str_hh.indexOf(titlename))+4));
@@ -305,7 +315,7 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
                     }else{
                         str_hh=str_hh+"<br>"+
                         titlename+" : "+ obj_data.value+" "+chartOption.chart_unit;
-                    }
+                    }*/
                     $table.rows[l].cells[2].innerHTML=str_hh;
                     //isbreak=true;
                     /*if(!$table.rows[l].cells[3].value || ($table.rows[l].cells[3].value<dateToString(obj_data.time,2))){//更新最新时间
@@ -344,9 +354,6 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
 }
 //
 //根据数据列值获取Catalog。
-//        一级：    二级    三级     四级
-//防火墙   3.0      3.0     3.0     3.0
-//承重墙   3.0      2.5     2.0     0.5
 //
 //
 function getCatalog(atype,afolder,aname){
@@ -404,5 +411,102 @@ function getCatalog(atype,afolder,aname){
         return chartOption;
     }catch(err){
         showstateinfo(err.message,"detail/getCatalog")
+    }
+}
+function appenddisplaytype(element_id,time){
+    try{
+        var lcatalog="",ldname="";
+        var display_type=document.getElementById("display_type")
+        for(var i=display_type.childElementCount;i>0;i--)
+        display_type.removeChild(display_type.childNodes[i]);
+        initconfigOption();
+        if(element_id>=0){
+            if(allsensors){
+            let sensors_len=allsensors.length;
+            for(var k=0;k<sensors_len;k++){
+                if(allsensors[k].Value.id==element_id){
+                    scatalog=allsensors[k].Value.type;//catalog;//读取对应的Catalog项1
+                    if(scatalog)
+                        scatalog=scatalog.toLowerCase();
+                    break;
+                }
+            }}
+            if(allconfigs){
+                let configs_len=allconfigs.length;
+                for(var i=0;i<configs_len;i++){
+                    if((allconfigs[i].type.toLowerCase()==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
+                        var s_des=allconfigs[i].details;//如果有，读取其所有配置项
+                        var inside=false;
+                        for(var p in s_des){
+                            var lab=document.createElement("label");
+                            ldname=s_des[p].name;//Name
+                            lcatalog=s_des[p].folder;//Catalog; //not type
+                            tname=s_des[p].desc;//20201023
+                            /*if(!jQuery.isEmptyObject(s_des[p].details)){
+                                for(var detail in s_des[p].details){
+                                    switch(s_des[p].details[detail].name.toLowerCase()){
+                                        case "Type".toLowerCase():
+                                            configOption.childclassname=s_des[p].details[detail].value;
+                                            break;
+                                        case "Unit".toLowerCase():
+                                            configOption.unit=s_des[p].details[detail].value;
+                                            break;
+                                        case "Top".toLowerCase():
+                                            configOption.maxvalue=s_des[p].details[detail].value;
+                                            break;
+                                        case "Bot".toLowerCase():
+                                            configOption.minvalue=s_des[p].details[detail].value;
+                                            break;
+                                    }
+                                }
+                            }*/
+                            lab.innerHTML='<input class="catalog" type="radio" name="options" childtype="'+configOption.childclassname+'" folder="'+lcatalog+'" value="'+ldname+'" >'+tname;
+                            if(sessionStorage.datatype){
+                                if(s_des[p].name==sessionStorage.datatype){//如果有原先的选择
+                                    lab.className="btn btn-primary active";
+                                    dname=ldname;
+                                    catalog=lcatalog;
+                                    childclassname=configOption.childclassname;
+                                    inside=true;
+                                }else{
+                                    lab.className="btn btn-primary";
+                                }
+                            }else{ //没有选择项，则默认为第一项
+                                if(p==0){
+                                    lab.className="btn btn-primary active";
+                                    dname=ldname;
+                                    catalog=lcatalog;
+                                }else{
+                                    lab.className="btn btn-primary";
+                                }
+                            }
+                            //lab.innerHTML=s_des[p].Desc;
+                            display_type.appendChild(lab);
+                        }
+                        if(!inside && sessionStorage.datatype){
+                            display_type.childNodes[1].className="btn btn-primary active";
+                            dname=display_type.children[0].children[0].defaultValue;
+                        }
+                        break;
+                    }
+                }
+            }else{
+            }
+        }
+        $(".btn").click(function(){//用于动态加载的元素的点击响应。
+            $(this).button('toggle');
+            var eobj=$(".catalog:checked")
+            dname= eobj.val();
+            tname= eobj[0].parentNode.innerText;
+            sessionStorage.datatype=dname;//保存选择项的值，用于页面刷新时恢复当前数据。
+            catalog=eobj[0].getAttribute("folder");//getcatalog(dname);
+            childclassname=eobj[0].getAttribute("childtype");
+            //flashbutton();
+            //gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
+            //showAllSensors(sensors);
+            refreshData();
+        });
+    }catch(err){
+        showstateinfo(err.message,"historydata/appenddisplaytype");
     }
 }

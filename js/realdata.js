@@ -19,17 +19,17 @@ var isfirst = "true";
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
 var maxvaluetime="",happentime="",maxOfRealdataName="";
 var colors = [];
-var pageSize = 10;    //每页显示的记录条数
-var curPage = 0;        //当前页
+//var pageSize = 10;    //每页显示的记录条数
+//var curPage = 0;        //当前页
 //var lastPage;        //最后页
-var direct = 0;        //方向
-var len;            //总行数
-var page;            //总页数
-var begin;
-var end;
+//var direct = 0;        //方向
+//var len;            //总行数
+//var page;            //总页数
+//var begin;
+//var end;
 var count=0;
 var $table;
-var sign = '>';
+//var sign = '>';
 var allconfigs;
 var allselect=null;
 var typename="",titlename="";
@@ -61,8 +61,8 @@ function initrealdata(){//初始化页面选项
     cleartable();
     datas = [];
     datas.splice(0, datas.length);//
-    if(sessionStorage.pageSize)
-        pageSize=parseInt(sessionStorage.pageSize);
+    //if(sessionStorage.pageSize)
+    //    pageSize=parseInt(sessionStorage.pageSize);
     for (var i = 0; i < 1; i++) {
         var value = 0;//(Math.random() * 100).toFixed(2) - 0;
         datas.push(JSON.parse('{"name":"","value":' + value + '}'));
@@ -162,7 +162,7 @@ function showAllSensors(){
                 atd.innerHTML= "";
                 atr.appendChild(atd);
             }
-            atr.cells[0].innerHTML=i;
+            atr.cells[0].innerHTML=i+1;//序号从1开始
             atr.cells[1].innerHTML=sensors[i].id;//标签id   1/4 74/270
             //atr.cells[0].style.cssText="display:none"
             atr.cells[2].innerHTML=parentname+sname;//第一列添加标签名称，
@@ -223,7 +223,7 @@ function appendalldisplaytype(){
     for(var i=display_type.childNodes.length;i>0;i--)
         display_type.removeChild(display_type.childNodes[i-1]);
     allconfigs=JSON.parse(localStorage.Config);
-    /*var sel_datatypename=[];
+    /*var sel_datatypename=[];//yugongyishan fengshenbang zhuronggonggong sanqing 
     if(sessionStorage.sel_datatypename) 
     {
         sel_datatypename=JSON.parse(sessionStorage.sel_datatypename);
@@ -962,12 +962,12 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                 //value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
                 var heightpx = $("#realdata-tbody tr").height();// + 1;//加1是网格线的宽度
                 var ppt = parseInt(sessionStorage.t_p);
-                if(ppt<pageSize){
+                /**if(ppt<pageSize){
                     curPage=0;
                 }else{
                     curPage=parseInt((ppt)/pageSize);
                 }
-                /**
+                
                  */
                 //tableclick($table.rows[curPage]);
                 $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
@@ -1110,6 +1110,7 @@ function tableclick(tr,isloadmain) {
     updatachart(typename);
     if(title_index!=-1)
         value0 = parseFloat(tr.cells[title_index].innerHTML).toFixed(Number_of_decimal);
+    if(isNaN(value0)){value0=0;}
     //value1=parseFloat(tr.cells[3].innerHTML);
     //if (parseInt(tr.cells[0].innerHTML) != sessionStorage.SensorId) {
         sessionStorage.SensorId = parseInt(tr.cells[1].innerHTML);
@@ -1649,7 +1650,7 @@ function decodedatas(obj_chartdata) {
         obj_chartdata=JSON.parse(localStorage.getItem("historydata"));
     }
     if (obj_chartdata == null) {
-        maxvalue=NaN;//20200518
+        maxvalue=0;//20210805 is NaN or 0 to define.
         myChart2.hideLoading();
         myChart2.clear();
         refreshData();//20200518
@@ -2031,4 +2032,5 @@ function jisuanyichangbili(avalue){//一个标签有多个类型的数据报警�
  * 首次进入标签定位树形图和实时数据列表选定行同步。
  * 
  * 标签项目录点击没有当前项的指示、编辑通用多页面显示布局的主页面框架布局
+ * 0805 图表的当前值在数据为空时，显示0或NaN；物联网数据在没有实时数据时进行状态统计；detail显示统计信息为空时显示“-”
  */

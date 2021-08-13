@@ -68,7 +68,7 @@ function initpage(){
             }
         }
         setSelectOption("jcdd", sessionStorage.SensorId);*/
-        //appenddisplaytype(sessionStorage.SensorId);//重复执行次数太多（3次），故去掉此处的调用。
+        appenddisplaytype(sessionStorage.SensorId);//重复执行次数太多（3次），故去掉此处的调用。
         if((!sessionStorage.timeindex)||(typeof(sessionStorage.timeindex)=="undefined")||(sessionStorage.timeindex>4)){
             sessionStorage.timeindex=0;
         }
@@ -80,7 +80,7 @@ function initpage(){
         //if(sessionStorage.timeindex==4){//
             stoptimer(timer)                             
             if(window.parent.isresize){
-                queryhistorydata(0);//decodedatas();////
+                queryhistorydata(0);//decodedatas();////一个半小时是多少分钟，两个半小时是多少分钟
                 window.parent.isresize=false;
             }
         //}

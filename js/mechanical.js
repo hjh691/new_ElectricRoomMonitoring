@@ -54,7 +54,7 @@ function initrealdata(){
         now = new Date(base += oneDay);
         visdata.push([
             [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
-            Math.round((Math.random() - 0.5) * 100 )
+            Math.round((Math.random() - 0.5) * 100 ),
         ]);
     }
     updataMechanicalChart(chart_type);
@@ -756,7 +756,7 @@ function updataMechanicalChart(atype) {//根据不同设备类型，更新图形
                 chart_max = 170;
             start_angle = -45;
             //if(!chart_unit)
-                chart_unit = "℃"
+                chart_unit = "℃";
             chart_sigle = "";
             colors = [[0.15, '#1e90ff'], [0.4, '#090'], [0.6, '#ffa500'], [0.8, '#ff4500'], [1, '#ff0000']];
             break;
@@ -767,7 +767,7 @@ function updataMechanicalChart(atype) {//根据不同设备类型，更新图形
                 chart_max = -100;
             //if(!chart_unit)
                 chart_unit = "dB";
-            chart_sigle = ""
+            chart_sigle = "";
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
             break;
         default:
@@ -777,7 +777,7 @@ function updataMechanicalChart(atype) {//根据不同设备类型，更新图形
                 chart_max = 100;
             //if(!chart_unit)
                 chart_unit = "";
-            chart_sigle = ""
+            chart_sigle = "";
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
     }
 }
@@ -828,15 +828,15 @@ function initMechanicalSeries(data) {//温度计、湿度表。
             show: false,
             feature: {
                 mark: {
-                    show: true
+                    show: true,
                 },
                 restore: {
-                    show: true
+                    show: true,
                 },
                 saveAsImage: {
-                    show: true
-                }
-            }
+                    show: true,
+                },
+            },
         },
         series: [{ 
             name: data[0].name,//'电压',
@@ -854,7 +854,7 @@ function initMechanicalSeries(data) {//温度计、湿度表。
                     width: 0,
                     //shadowColor : '#000', //默认透明
                     //shadowBlur: 10
-                }
+                },
             },
             axisTick: { // 坐标轴小标记
                 show: true,
@@ -862,7 +862,7 @@ function initMechanicalSeries(data) {//温度计、湿度表。
                 lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
                     width: 1,
                     color: '#f22',
-                }
+                },
             },
             axisLabel: {
                 distance: -30,//控制刻度值的位置
@@ -904,7 +904,7 @@ function initMechanicalSeries(data) {//温度计、湿度表。
                     color: 'black',
                     fontSize: 16,
                     fontStyle: 'bolder',
-                }
+                },
             },
             detail: {
                 show: true,
@@ -913,7 +913,7 @@ function initMechanicalSeries(data) {//温度计、湿度表。
                 textStyle: {
                     fontSize: 14,
                     color:'#18343C'
-                }
+                },
             },
             data:[data[0]],//[{value: 20,name: '电压'}],// renbao pingan taipingyang dadi yangguang fude 
         }]
@@ -938,13 +938,13 @@ function initMechanicalSeries(data) {//温度计、湿度表。
             show: false,
             feature: {
                 mark: {
-                    show: true
+                    show: true,
                 },
                 restore: {
-                    show: true
+                    show: true,
                 },
                 saveAsImage: {
-                    show: true
+                    show: true,
                 }
             }
         },
@@ -972,7 +972,7 @@ function initMechanicalSeries(data) {//温度计、湿度表。
                 lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
                     width: 1,
                     color: '#f22',
-                }
+                },
             },
             axisLabel: {
                 distance: -30,//控制刻度值的位置
@@ -991,7 +991,7 @@ function initMechanicalSeries(data) {//温度计、湿度表。
                     color: '#000',
                     shadowColor: '#000', //默认透明
                     shadowBlur: 10,
-                }
+                },
             },
             pointer: {
                 show:true,
@@ -1014,7 +1014,7 @@ function initMechanicalSeries(data) {//温度计、湿度表。
                     color: 'black',
                     fontSize: 16,
                     fontStyle: 'bolder',
-                }
+                },
             },
             detail: {
                 show: true,
@@ -1023,7 +1023,7 @@ function initMechanicalSeries(data) {//温度计、湿度表。
                 textStyle: {
                     fontSize: 14,
                     color:'#18343C'
-                }
+                },
             },
             data:[data[1]],//[{value: 20,name: '电压'}],// renbao pingan taipingyang dadi yangguang fude 
         }]
@@ -1074,8 +1074,8 @@ function refreshDataForMechanical() {
     now = new Date(base += oneDay);
     optionMechanicalVt.series[0].data.push([
         [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
-        TP_value
-    ])// maxOfRealdata.toFixed(Number_of_decimal);//54.321;
+        TP_value,
+    ]);// maxOfRealdata.toFixed(Number_of_decimal);//54.321;
     //optionMechanicalLt.series[0].detail.formatter=maxOfRealdata.toFixed(Number_of_decimal)+ '\n\n 标签名称: '+maxOfRealdataName;//实时极值的标签名称,"发生时刻:"+maxvaluetime+
     optionMechanicalVt.series[0].max = chart_max;
     optionMechanicalVt.series[0].min = chart_min;
@@ -1279,30 +1279,30 @@ function initMechanicalChart2(adata) {
                 var date = new Date(params.value[0]);
                 data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
                 return data + '<br/>' + params.value[1];
-            }
+            },
         },
         toolbox: {
             show: true,
             feature: {
                 mark: {
-                    show: true
+                    show: true,
                 },
                 dataView: {
                     show: true,
-                    readOnly: false
+                    readOnly: false,
                 },
                 magicType: {
                     show: true,
-                    type: ['line']
+                    type: ['line'],
                 },
                 //, 'bar', 'stack', 'tiled' 
                 restore: {
-                    show: true
+                    show: true,
                 },
                 saveAsImage: {
-                    show: true
-                }
-            }
+                    show: true,
+                },
+            },
         },
         dataZoom: {
             show: false,
@@ -1316,7 +1316,7 @@ function initMechanicalChart2(adata) {
             //color: 'white',
         },
         grid: {
-            y2: 80
+            y2: 80,
         },
         xAxis: [{
             type: 'time',
@@ -1335,7 +1335,7 @@ function initMechanicalChart2(adata) {
                 lineStyle: {
                     color: 'black',
                     width: 2
-                }
+                },
             },
             //min: minval,
             //max: maxval,

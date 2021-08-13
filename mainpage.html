@@ -19,22 +19,7 @@
 	<script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
 	<script type="text/javascript" src="js/function.js"></script>
 	<style>
-		.aside {
-			height: 98%;
-			width: 15%;
-			position: relative;
-			float:left;
-			background:rgba(8, 177, 106, 0.3);/* #243747;*/
-			transition: width .5s;
-		}
-		.aside-hide {
-			height: 98%;
-			width: 20px;
-			position: relative;
-			float:left;	
-			background :rgba(8, 177, 106, 0.3);/* #243747;*/
-			transition: width .5s;
-		}
+		
 		.butn {
 			border: 0;
 			background: rgba(8, 177, 106, 0);/* #243747;*/
@@ -58,7 +43,7 @@
 				<img src="res/gif_head_48x48.gif" onclick=""  width="20px" height="20px">
 			</span>
 			<!--end No.2-->
-			<span id="yhname" style="position:relative;float:left;left:50px;color:white;font-size:12px;"><!--pageindex:20-->
+			<span id="yhname" ><!--pageindex:20-->
 				<!--No.1登录用户名显示/未登录-->
 				未登录
 			</span>
@@ -66,13 +51,12 @@
 			<span id="yhout" ><a
 					href="javascript:void(0)" style="color:white;">[登录]</a></span>
 			<input id="nav11" type="button" class="topbar-bigbutton" value="联系我们"
-				style="background:url(res/home.jpg) no-repeat center top;"
-				onclick="showcontactus()"/><!--pageindex:300-->
+				 onclick="showcontactus()"/><!--pageindex:300-->
 			<input id="nav12" type="button" class="topbar-bigbutton" value="APP下载"
-				style="background:url(res/chilun.jpg) no-repeat center top;" onclick="showdownload()"/><!--pageindex:200-->
+				 onclick="showdownload()"/><!--pageindex:200-->
 			<!--<input type="button"  class="topbar-bigbutton" value="数据浏览" style="background:url(res/sanse.jpg) no-repeat center top;margin-top:10px;"></input>-->
 			<input id="nav13" type="button" class="topbar-bigbutton" value="操作指南"
-				style="background:url(res/bar.jpg) no-repeat center top;" onclick="showhelp()"/><!--pageindex:100-->
+				 onclick="showhelp()"/><!--pageindex:100-->
 		</div>
 	</div>
 	<!--header-->
@@ -81,14 +65,14 @@
 		<!--左侧站名列表 <h4 id="head_list_name" align="left"  >变电站:</h4> style="display: none;"-->
 		<aside class="aside" id="aside">
 			<button class="butn" id="showaside" onclick="list()"> &lt&lt </button><!--“<”为特殊字符 60 “>”为 62-->
-			<div class="leftmenu" id="leftmenu" >
-				<div class="tree " id="tree" style="overflow-x:auto;white-space: nowrap;">
+			<div id="leftmenu" >
+				<div id="tree">
 				</div>
-				<div class="tree1 " id="tree_chi" style="overflow-x:auto;white-space: nowrap;">
+				<div id="tree_chi">
 				</div>
 			</div>
 		</aside>
-		<div id="content" style="overflow: hidden;">
+		<div id="content" style="overflow: hidden;"><!--float:left;width:85%;-->
 			<!-- 导航栏 -->
 			<nav role="navigation" class="navbar-static-top"><!--class="navbar navbar-default navbar-fixed-top" role="navigation"border: solid rgba(0, 101, 105, 1) 1px;-->
 			<div class="navigation" >
@@ -97,9 +81,9 @@
 						<li><a id="nav1" href="javascript:void(0)" onclick="inittotalpage()" >信息总览</a></li><!--pageindex:0-->
 						<li><a id="nav2" href="javascript:void(0)" onclick="initdrawing()" title="显示系统状态图">状态图</a></li><!--pageindex:1-->
 						<li id="li_realdata"><a id="nav3" href="javascript:void(0)" onclick="initrealdata()" title="实时数据列表">实时数据</a></li><!--pageindex:2-->
-						<li id="li_realdata_other" style="display:none"><a id="nav17" href="javascript:void(0)" onclick="initotherdata()" title="实时数据列表">通用数据</a></li><!--pageindex:17  -->
-						<li id="li_realdata_wather" style="display:none"><a id="nav18" href="javascript:void(0)" onclick="initotherdata()" title="实时数据列表">通用数据</a></li><!--pageindex:17  -->
-						<li id="li_realdata_mechanical" style="display:none"><a id="nav19" href="javascript:void(0)" onclick="initotherdata()" title="实时数据列表">通用数据</a></li><!--pageindex:17  -->
+						<li id="li_realdata_other" style="display:none"><a id="nav17" href="javascript:void(0)" onclick="initotherdata()" title="实时数据列表">实时数据</a></li><!--pageindex:17  -->
+						<li id="li_realdata_wather" style="display:none"><a id="nav18" href="javascript:void(0)" onclick="initotherdata()" title="实时数据列表">实时数据</a></li><!--pageindex:17  -->
+						<li id="li_realdata_mechanical" style="display:none"><a id="nav19" href="javascript:void(0)" onclick="initotherdata()" title="实时数据列表">实时数据</a></li><!--pageindex:17  -->
 						<li id="li_realstate" style="display: none;"><a id="nav14" href="javascript:void(0)" onclick="initrealstate()" title="动环实时状态">实时状态</a></li><!--pageindex:10-->
 						<li id="li_preview" style="display: none;"><a id="nav4" href="javascript:void(0)" onclick="showpreview()" title="视频实时预览">实时预览</a></li><!--pageindex:8-->
 						<li id="li_historydata"><a id="nav5" href="javascript:void(0)" onclick="loadstations_historydata()" title="历史数据变化趋势">历史数据</a></li><!--pageindex:3-->
@@ -110,7 +94,7 @@
 						<li id="li_stationwarnlog" style="display: none;"><a id="nav16" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警查询">告警信息</a></li><!--pageindex:16-->
 						<li><a id="nav9" href="javascript:void(0)" onclick="showdevice()" title="所有设备信息列表">设备信息</a></li><!--pageindex:6-->
 						<li><a id="nav10" href="javascript:void(0)" onclick="showpage(0)" >系统设置</a></li><!--pageindex:7-->
-						<li id="clickaudio" style="float:right;font-size:16px;display: none;"><a href="javascript:void(0)" style="color: red;" onclick="showdailog()">开启告警声音</a></li>
+						<li id="clickaudio" ><a href="javascript:void(0)" style="color: red;" onclick="showdailog()">开启告警声音</a></li>
 					</ul>
 				</div>
 			</div>
@@ -136,12 +120,12 @@
 			</div>
 		</div>
 	</div>
-	<div id="message_dialog" title="信息提示" style="font-size:20px;background-color:rgb(212, 211, 211);"></div><!--这里是一个jQuery的信息提示对话框HTML部分。内部可以再添加元素-->
+	<div id="message_dialog" title="信息提示" style="font-size:2em;background-color:rgb(212, 211, 211);"></div><!--这里是一个jQuery的信息提示对话框HTML部分。内部可以再添加元素-->
 	<!--底部公司版权 -->
 	<div>
-		<div class="navigation" id="footer" style="height:30px;float:bottom;bottom:0px;left:0px;right:0px;">	
+		<div class="navigation" id="footer">	
 			<div class="pc-footer" align="center"><!---->
-					<label id="state_info" style="float:left;margin-left: 30px;color:rgb(240, 236, 9);"></label>
+					<label id="state_info" style="float:left;margin-bottom: 0; margin-left: 30px;color:rgb(248, 233, 20);"></label>
 					<ul  align="center" style="margin:0 0;">
 						<li ><a id="company_info" href="" target="_blank" style="color:white;"><img id="company_log"  width="20px" height="20px" ><lab id="company_name"></lab></a></li>
 						<li style="color:white;" >Copyright: <lab id="copyright_time"></lab></li>
@@ -163,10 +147,10 @@
 				<source src="" type="audio/wav"/>
 			</audio >-->
 			<!--2# 使用iframe标签代替audio标签。-->
-			<iframe id="spkAudio" allow="autoplay" style="display:none">
+			<iframe id="spkAudio" allow="autoplay" style="display:none;">
 				<source src="" type="audio/wav"/>
 			</iframe>
-			<textarea id="chatData" style="width:300px;height:40px;display:none" onclick="spack()" ;>asd
+			<textarea id="chatData" style="width:300px;height:40px;display:none;" onclick="spack();"> asd
 			</textarea>
 		</div>
 		<div id="audio">
@@ -305,29 +289,29 @@
 				}
 				$(".tab a:last").tab("show");
 			}catch(err){
-				showstateinfo(err.message.message,"mainpage/startpage")	
+				showstateinfo(err.message.message,"mainpage/startpage");	
 			}
 		}
 		);
 		//右键菜单绑定
-		context.init({preventDoubleContext: false});
-			context.attach('#tree_chi', [
-				{header: 'Compressed Menu'},
-				{text: 'Back', href: '#'},
-				{text: 'Reload', href: '#'},
-				{divider: true},
-				{text: 'Inspect Element', href: '#'},
-				{divider: true},
-				{text: 'Disable This Menu', action: function(e){
-					e.preventDefault();
-					context.destroy('html');
-					alert('html contextual menu destroyed!');
-				}},
-				{text: 'Donate?', action: function(e){
-					e.preventDefault();
-					$('#donate').submit();
-				}}
-			]);
+		/*context.init({preventDoubleContext: false});
+		context.attach('#tree_chi', [
+			{header: 'Compressed Menu'},
+			{text: 'Back', href: '#'},
+			{text: 'Reload', href: '#'},
+			{divider: true},
+			{text: 'Inspect Element', href: '#'},
+			{divider: true},
+			{text: 'Disable This Menu', action: function(e){
+				e.preventDefault();
+				context.destroy('html');
+				alert('html contextual menu destroyed!');
+			}},
+			{text: 'Donate?', action: function(e){
+				e.preventDefault();
+				$('#donate').submit();
+			}}
+		]);*/
 		//launchFullScreen(document.documentElement);//全屏显示 
 		function launchFullScreen(element) {
 			if(element.requestFullScreen) {
@@ -375,14 +359,14 @@
 			//var footer = document.getElementById("footer");
 			//isfree="true";
 			//获取窗口宽度
-			if (window.innerWidth)
+			if (window.innerWidth){
 				winWidth = window.innerWidth;
-			else if ((document.body) && (document.body.clientWidth))
+			}else if ((document.body) && (document.body.clientWidth))
 				winWidth = document.body.clientWidth;
 			//获取窗口高度
-			if (window.innerHeight)
+			if (window.innerHeight){
 				winHeight = window.innerHeight;
-			else if ((document.body) && (document.body.clientHeight))
+			}else if ((document.body) && (document.body.clientHeight))
 				winHeight = document.body.clientHeight;
 			//初始位置
 			//var top = bodyfrm.scrollTop + bodyfrm.clientHeight - fdheight - 10;
@@ -404,20 +388,20 @@
 				height -= m * main.style.borderWidth.replace("px", "");
 			}
 			if (height > 0) {
-				main.style.height = height*1-30 + "px";
+				main.style.height = height*1-25 + "px";
 				var mheight = height;
 				if (menu.style.borderWidth) {
 					mheight -= m * menu.style.borderWidth.replace("px", "");
 				}
 				if (mheight > 0) {
-					menu.style.height = mheight-30 + "px";
+					menu.style.height = mheight-25 + "px";
 				}
 				mheight = height;
 				if (content.style.borderWidth) {
 					mheight -= m * content.style.borderWidth.replace("px", "");
 				}
 				if (mheight > 0) {
-					content.style.height = mheight-30 + "px";
+					content.style.height = mheight-25 + "px";
 				}
 			}
 			windowHeight=height;
@@ -556,7 +540,7 @@
 						localStorage.setItem("sensors", null);
 						sessionStorage.nodeId = data.id;
 						if(!data.hasOwnProperty("nodes"))
-						GetBinariesByType("NodeGraphic", sessionStorage.nodeId);//将GetBinariesByType与GetSensorsByNode顺序颠倒，以便执行refreshiframe
+							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);//将GetBinariesByType与GetSensorsByNode顺序颠倒，以便执行refreshiframe
 						sessionStorage.eventTypeSelected="";
 						GetSensorsByNode(data.id);
 						sessionStorage.t_p = 0;
@@ -816,19 +800,19 @@
 			//GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
 			//GetBinariesByType("NodeGraphic", infotreeobj.id);
 			refreshinfotree(firstNode);
-			if(firstNode.Catalog=="视频监控"){
+			/*if(firstNode.Catalog=="视频监控"){
 				sessionStorage.nodetype=0;
 				updatanav(sessionStorage.nodetype);
 			}else if(firstNode.Catalog=="机房监控"){
 				sessionStorage.nodetype=2;
 				updatanav(sessionStorage.nodetype);
-			}else{updatanav(sessionStorage.nodetype);}
+			}else{updatanav(sessionStorage.nodetype);}*/
 			//setTimeout(function(){if(sessionStorage.pageindex==0){
 			//	document.getElementById("iframe_main").src="infototal.html";
 			//}},3000);
 			function getThe_level_nodeid(anode, alevel) {
 				while (anode.level > alevel) {
-					anode = (sensorstree.treeview("getParent", anode))
+					anode = (sensorstree.treeview("getParent", anode));
 				}
 				return anode;
 			}
@@ -867,15 +851,15 @@
 					document.getElementById("li_historychart").style.display="inline";
 					document.getElementById("li_preview").style.display="none";
 					//sessionStorage.pageindex=0;//显示信息总览页，有待协商////////////*************************************************
-					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)||(sessionStorage.pageindex==2)){
+					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)||(sessionStorage.pageindex==2)||(sessionStorage.pageindex==18)||(sessionStorage.pageindex==10)){
 						sessionStorage.pageindex=17;
 					}
 					break;
 				case 0://视频
-					document.getElementById("li_realdata").style.display="none"
+					document.getElementById("li_realdata").style.display="none";
 					document.getElementById("li_historydata").style.display="none";
 					document.getElementById("li_realdata_other").style.display="none";
-					document.getElementById("li_warnlog").style.display="none"
+					document.getElementById("li_warnlog").style.display="none";
 					document.getElementById("li_historychart").style.display="none";
 					document.getElementById("li_realstate").style.display="none";
 					//document.getElementById("li_historystate").style.display="none";
@@ -892,10 +876,10 @@
 					document.getElementById("li_realstate").style.display="none";
 					//document.getElementById("li_historystate").style.display="none";
 					document.getElementById("li_historydata").style.display="inline";
-					document.getElementById("li_warnlog").style.display="inline"
+					document.getElementById("li_warnlog").style.display="inline";
 					document.getElementById("li_historychart").style.display="inline";
 					document.getElementById("li_preview").style.display="none";
-					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)||(sessionStorage.pageindex==17)){
+					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)||(sessionStorage.pageindex==17)||(sessionStorage.pageindex==18)||(sessionStorage.pageindex==19)){
 						sessionStorage.pageindex=2;
 					}
 					//if(sessionStorage.pageindex==11){
@@ -909,10 +893,10 @@
 					//document.getElementById("li_historystate").style.display="none";
 					document.getElementById("li_realdata_other").style.display="none";
 					document.getElementById("li_historydata").style.display="inline";
-					document.getElementById("li_warnlog").style.display="inline"
+					document.getElementById("li_warnlog").style.display="inline";
 					document.getElementById("li_historychart").style.display="none";
 					document.getElementById("li_preview").style.display="none";
-					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==2)||(sessionStorage.pageindex==17)){
+					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==2)||(sessionStorage.pageindex==17)||(sessionStorage.pageindex==18)||(sessionStorage.pageindex==19)){
 						sessionStorage.pageindex=10;
 					}
 					if(sessionStorage.pageindex==4){
@@ -926,10 +910,10 @@
 					document.getElementById("li_realstate").style.display="none";
 					//document.getElementById("li_historystate").style.display="none";
 					document.getElementById("li_historydata").style.display="inline";
-					document.getElementById("li_warnlog").style.display="inline"
+					document.getElementById("li_warnlog").style.display="inline";
 					document.getElementById("li_historychart").style.display="inline";
 					document.getElementById("li_preview").style.display="none";
-					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)||(sessionStorage.pageindex==2)){
+					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)||(sessionStorage.pageindex==2)||(sessionStorage.pageindex==18)||(sessionStorage.pageindex==19)){
 						sessionStorage.pageindex=17;
 					}
 				break;
@@ -940,11 +924,11 @@
 					document.getElementById("li_realstate").style.display="none";
 					//document.getElementById("li_historystate").style.display="none";
 					document.getElementById("li_historydata").style.display="inline";
-					document.getElementById("li_warnlog").style.display="inline"
+					document.getElementById("li_warnlog").style.display="inline";
 					document.getElementById("li_historychart").style.display="inline";
 					document.getElementById("li_preview").style.display="none";
-					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)||(sessionStorage.pageindex==2)){
-						sessionStorage.pageindex=18;
+					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)||(sessionStorage.pageindex==2)||(sessionStorage.pageindex==17)||(sessionStorage.pageindex==18)){
+						sessionStorage.pageindex=19;
 					}
 				break;
 				case 5://气象
@@ -954,11 +938,11 @@
 					document.getElementById("li_realstate").style.display="none";
 					//document.getElementById("li_historystate").style.display="none";
 					document.getElementById("li_historydata").style.display="inline";
-					document.getElementById("li_warnlog").style.display="inline"
+					document.getElementById("li_warnlog").style.display="inline";
 					document.getElementById("li_historychart").style.display="inline";
 					document.getElementById("li_preview").style.display="none";
-					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)||(sessionStorage.pageindex==2)){
-						sessionStorage.pageindex=19;
+					if((sessionStorage.pageindex==8)||(sessionStorage.pageindex==10)||(sessionStorage.pageindex==2)||(sessionStorage.pageindex==19)||(sessionStorage.pageindex==17)){
+						sessionStorage.pageindex=18;
 					}
 				break;
 			}
@@ -976,7 +960,7 @@
 			for (var i = 0; i < data_len; i++) {
 				var tempobj = new Object();
 				tempobj.name = adata[i].text;
-				tempobj.id = adata[i].id
+				tempobj.id = adata[i].id;
 				tempobj.level = adata[i].level;
 				if (adata[i].level < 2) {
 					if ((adata[i].hasOwnProperty("nodes")) && adata[i].nodes.length > 0) {
@@ -1094,7 +1078,7 @@
 							icon = "glyphicon glyphicon-tint";//
 					}
 					if (level == 0) {
-						icon = "glyphicon glyphicon-home"
+						icon = "glyphicon glyphicon-home";
 					}
 					anodes.icon = icon;
 					//var chi_len = data[j].Children.length;
@@ -1443,7 +1427,7 @@
 				for (var i = 0; i < sensors_len; i++) {
 					var s = aSensors[i];
 					if (s != null && !jQuery.isEmptyObject(s.value)) {
-						var v = s.value
+						var v = s.value;
 						var map = new Object();
 						map.id = v.id;
 						map.Value = v;
@@ -1524,7 +1508,7 @@
 				}
 				if(sessionStorage.contents){
 					var graphic = JSON.parse(sessionStorage.contents);
-					var obj = []
+					var obj = [];
 					if(graphic){//刷新一次侧图形中的绑定数值
 						graphic.forEach(function(g) {
 							if ($.trim(g).length > 0) {
@@ -1574,7 +1558,7 @@
 							}
 						});
 					}
-					sessionStorage.setItem("contents",JSON.stringify(obj))
+					sessionStorage.setItem("contents",JSON.stringify(obj));
 				}
 				let sersors_len=sensors.length;
 				for (var i = 0; i < sersors_len; i++) {
@@ -1737,7 +1721,7 @@
 			for(var i in anodes) {
 				if(anodes[i].id == aid){
 					sys_name=anodes[i].text;
-					var pid=anodes[i].ParentId
+					var pid=anodes[i].ParentId;
 					if(pid!=-1){
 						sys_name=getsysname(nodes,pid)+" "+sys_name;
 					}
@@ -1765,7 +1749,7 @@
 		function inittreeview_level2(anodes) {
 			var tree1=$("#tree_chi");
 			if(!anodes){
-				var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+				var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"));
 				anodes=buildnode_level2(treeseneors,0);
 			}
 			var sensorarray;
@@ -1780,7 +1764,7 @@
 				multiSelect: multiselect,    //是否可以多选，采用变量控制，在切换页面时设置。
 				searchResultColor: "#FFF",
 				color: "#fff",//所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
-				backColor: "#0d7778",//"rgba(0, 151, 105, 1);", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				backColor: "#073738",//"rgba(0, 151, 105, 1);", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
 				showBorder: false, //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
 				onhoverColor: "#3075a5", //光标停在节点上激活的默认背景色      String
 				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
@@ -1882,10 +1866,10 @@
 				sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
 				sessionStorage.SensorName=currentNode.text;//获取标签名称，用于列表显示用.20201110
 				sessionStorage.sensorallpathname=getSensorAllPathName(currentNode);
-				//tree1.treeview("selectNode", currentNode.id);//将第一个节点设置为选中状态*/**/有毒、粉尘、噪声震动、辐射、机械伤害、易燃易爆、
-				//tree1.treeview("search",[currentNode.text, { ignoreCase: false, exactMatch: true }]);//电伤害、腐蚀、压力容器、焊割、
-				/**///危险化学品、高空坠落、机械加工、宣传管理制度、（生产工艺和物料）安全防护、本质安全、安全管理对策措施、四级教育厂级车间级班组级
-				//岗位培训特种作业
+				//tree1.treeview("selectNode", currentNode.id);//将第一个节点设置为选中状态*/**/
+				//tree1.treeview("search",[currentNode.text, { ignoreCase: false, exactMatch: true }]);//
+				/**///
+				
 			}
 			function getSensorAllPathName(anode){
 				var allpathname=anode.text;
@@ -1969,7 +1953,7 @@
 				anodes.ParentId=data[j].value.parentId;
 				anodes.NodeId=data[j].value.nodeId;//----
 				anodes.Catalog = data[j].value.type;//Catalog;
-				anodes.Address=data[j].value.address//----
+				anodes.Address=data[j].value.address;//----
 				//anodes.Group=data[j].value.group;//----
 				anodes.Serial=data[j].value.serial;//----
 				anodes.Location=data[j].value.location;//----
@@ -2001,6 +1985,7 @@
 						break;
 					case "水浸":
 						icon = "glyphicon glyphicon-tint";//
+						break;
 				}
 				if (level == 0) {
 					icon = "glyphicon glyphicon-home";
@@ -2009,7 +1994,7 @@
 				//var chi_len = data[j].Children.length; 
 				if (data[j].children&&data[j].children.length != 0) {
 					anodes.nodes = [];
-					anodes.nodes = buildnode_level2(data[j].children, level + 1)
+					anodes.nodes = buildnode_level2(data[j].children, level + 1);
 				}
 				tree.push(anodes);
 			}
@@ -2035,7 +2020,7 @@
 					}	
 				}
 			}*/
-			tree.sort(compare)
+			tree.sort(compare);
             return tree;
         }
 		function clickNode(event, data) {
@@ -2084,7 +2069,7 @@
 			} 
 			return{ 
 				x:ev.clientX + document.body.scrollLeft - document.body.clientLeft, 
-				y:ev.clientY + document.body.scrollTop - document.body.clientTop 
+				y:ev.clientY + document.body.scrollTop - document.body.clientTop, 
 			}; 
 			
 		} 
@@ -2124,7 +2109,7 @@
 	function list() {
 		var aside=document.getElementById("aside");
 		if (aside.clientWidth <= 40) {
-			showLeftMenu(false)
+			showLeftMenu(false);
 		} else if (aside.clientWidth > 40) {
 			//console.log("side")
 			//body.className = "aside-hide"
@@ -2239,4 +2224,5 @@
   标签树形目录在跟新系统主站节点时有时不能更新的问题（20210303）
 
   告警查询，选则全部时显示没有记录的问题。一次图的全屏显示模糊问题，
+  
 -->

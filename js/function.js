@@ -1023,7 +1023,7 @@ function drawmap(arr,ctx) {
 	try{
 		var mCanvasDiv=document.getElementById("mycanvasdiv");
 		var mCanvas = document.getElementById("mycanvas");
-		var mheadmap=document.getElementById("head_map")
+		var mheadmap=document.getElementById("head_map");
 		if (mCanvas == null) {
 			mCanvas = iframe_main.document.getElementById("mycanvas");
 		}
@@ -1182,7 +1182,7 @@ function method5(tableid) {
 			idTmr = window.setInterval("Cleanup();", 1);
 		}
 	} else {
-		tableToExcel(tableid)
+		tableToExcel(tableid);
 	}
 }
 function Cleanup() {
@@ -1527,7 +1527,7 @@ function getname(key){
 	}*/
 	return key;
 }
-//不同时间段的选择响应（obj对应的选项对象) 一分、二分、三分、十三中、乐凯、育德、七中、十七中、二十六中、冀英、南奇、
+//不同时间段的选择响应（obj对应的选项对象)
 function seletime(obj){
 	//var timedefine=document.getElementById("timedefine");
 	sessionStorage.timeindex=parseInt(obj);//$('input[name="timeselect"]:checked').val();//obj.value*1;
@@ -1599,7 +1599,7 @@ function updatapcnav(obj){
 			nav.style.backgroundColor="";
 			if(i==obj){
 				nav.style.backgroundColor="#c0c0c0";
-				nav.style.color="#0000f0"
+				nav.style.color="#0000f0";
 			}
 		}
 	}
@@ -1676,8 +1676,17 @@ var sorter=false;
 				{sorter=false}
                 var trValue = new Array();
 				let tr_len=tr.length;
+				let j=0;
 				for (var i=0; i<tr_len; i++ ) {
-					trValue[i] = tr[i];  //
+					if(parseInt(jfjk_base_config.realdatashowmodle)){//只对在线标签进行排序和显示
+						if(!tr[i].style.cssText|| tr[i].style.cssText.indexOf("display: none;")==-1){//display: none 之间必须加空格，否则不能正确匹配，虽然在复制时是display:none;
+							//不能使用cssText=="",因为点击列表时会设置当前行的样式背景颜色从而不为空，将被此条件滤除。
+							trValue[j]=tr[i];
+							j++;
+						}
+					}else{
+						trValue[i] = tr[i];  //
+					}
                 }
 				if(sorter)
                  {
@@ -1726,8 +1735,8 @@ var sorter=false;
                     });
                 }
                 var fragment = document.createDocumentFragment();  //新建一个代码片段，用于保存排序后的结果
-                for (var i=0; i<tr_len; i++ ) {
-					trValue[i].cells[0].innerHTML=i;
+                for (var i=0; i<trValue.length; i++ ) {
+					trValue[i].cells[0].innerHTML=i+1;
                     fragment.appendChild(trValue[i]);
 				}
 				tbody.clear;
@@ -1745,7 +1754,7 @@ function exporttoexcel(tabid){
 		name: "Excel Document Name.xlsx",
 		exclude_img: true,
 		exclude_links: true,
-		exclude_inputs: true
+		exclude_inputs: true,
 	});
 }
 //通过配置名称获取配置分组catalog的值，后台数据源的数据结构：catalog改为type；
@@ -1773,7 +1782,7 @@ function showstateinfo(str,order){
 		stateinfo=parent.window.document.getElementById("state_info");
 	}
 	if(typeof stateinfo != "undefined" && stateinfo)
-		stateinfo.innerHTML=timestr+": "+str;
+		stateinfo.innerHTML=timestr+": "+str+" / "+order;
 	console.log(timestr+": "+order+" / "+str);
 }
 /**
@@ -1940,7 +1949,7 @@ function sendorder(order,callback,datas){
 					showmsg("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试",order);
 				}	else{
-					showmsg(' 数据获取失败',info_showtime);
+					showstateinfo('数据获取失败',order);//showmsg(' 数据获取失败',info_showtime);
 				}
 				sessionStorage.errortime++;
 				if(sessionStorage.errortime<3){
@@ -2355,6 +2364,25 @@ function rnd(n, m) {
 	var random = Math.floor(Math.random() * (m - n + 1) + n);
 	return random;
 }
+function fake_click(obj) {
+    var ev = document.createEvent("MouseEvents");
+    ev.initMouseEvent(
+        "click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
+    );
+    obj.dispatchEvent(ev);
+}
+//保存内容到本地文件
+function download(name, data) {
+    var urlObject = window.URL || window.webkitURL || window;
+
+    var downloadData = new Blob([data]);
+
+    var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+    save_link.href = urlObject.createObjectURL(downloadData);
+    save_link.download = name;
+    fake_click(save_link);
+}
+
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
  * 

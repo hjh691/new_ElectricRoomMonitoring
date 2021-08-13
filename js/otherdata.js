@@ -110,7 +110,7 @@ function initpage() {
             var add = w_scrollTop - 0 + c_top;
             $("table").eq(0).find('thead').attr("style","transform: translateY(" + add + "px);")//固定
         }else{
-            $("table").eq(0).find('thead').attr("style","transform: translateY(0px);")//复原
+            $("table").eq(0).find('thead').attr("style","transform: translateY(0px);");//复原
         }
     });
     if(sessionStorage.getItem("chartoption")){
@@ -163,7 +163,7 @@ function appendalldisplaytype(){
         }
         }
         if(sessionStorage.realdata_index && sessionStorage.realdata_index>=hidden_cells)
-        $.sortTable.sort('other_realtable',sessionStorage.realdata_index)
+            $.sortTable.sort('other_realtable',sessionStorage.realdata_index);
         else
             $.sortTable.sort("other_realtable",hidden_cells);
         }catch(err){
@@ -172,7 +172,7 @@ function appendalldisplaytype(){
 }
 function add_displaytype(parent,name,folder,text,check){
     var lab=document.createElement("label");
-    lab.setAttribute("style","margin-left:20px")
+    lab.setAttribute("style","margin-left:20px");
     var ainput=document.createElement("input");
     ainput.setAttribute("type","checkbox");
     ainput.setAttribute("name","options");
@@ -180,7 +180,7 @@ function add_displaytype(parent,name,folder,text,check){
     ainput.setAttribute("folder",folder);
     ainput.className="btn";
     //ainput.setAttribute('onclick','checkboxclick("'+s_des[p].Name+'")')
-    ainput.innerText=text
+    ainput.innerText=text;
     ainput.className="catalog";
     var spn=document.createElement("span");
     spn.innerHTML=text;
@@ -409,7 +409,7 @@ function getCatalog(index){
         catalog=catalogsel[index].attributes.folder.nodeValue;
         return catalog;
     }catch(err){
-        showstateinfo(err.message,"otherrealdata/getCatalog")
+        showstateinfo(err.message,"otherrealdata/getCatalog");
     }
 }
 function decoderealdata(obj_realdata,asensorid,isload) {
@@ -490,7 +490,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                         //isnew=true;
                         obj_data = (obj_realdata)[j];////sid
                         //(isNaN(obj_data.value))
-                            data_value=obj_data.value
+                        data_value=obj_data.value;
                         //else
                         //    data_value=parseFloat(obj_data.value);
                         for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
@@ -542,12 +542,11 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                     if(obj_data.message){
                                         atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
                                     }else{
-                                        atr.cells[k+hidden_cells].style.backgroundColor=""
+                                        atr.cells[k+hidden_cells].style.backgroundColor="";
                                     }
                                     isfindtype=true;
                                     //break;
                                 }
-                                
                             }
                             /*if((k>=v_sel.length)&&(!isfindtype)){//如果没有在类型列表中，要如何处置
                                 //需要表头标题添加name，所有列表项添加一列（cell）
@@ -577,13 +576,12 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                                 if(atr.cells[tablehead_len-1].innerHTML)
                                                     atr.cells[tablehead_len-1].innerHTML+=","+obj_data.message
                                                 else
-                                                atr.cells[tablehead_len-1].innerHTML=obj_data.message;
+                                                    atr.cells[tablehead_len-1].innerHTML=obj_data.message;
                                             }else{
-                                                atr.cells[k+hidden_cells].style.backgroundColor=""
+                                                atr.cells[k+hidden_cells].style.backgroundColor="";
                                             }
                                             break;
                                         }
-                                        
                                     }
                                     /*if((k>=v_sel.length)&&(!isbreak)){//如果没有在类型列表中，要如何处置
                                         //需要表头标题添加name，所有列表项添加一列（cell）
@@ -636,7 +634,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                             //isnew=true;
                         obj_data = (obj_realdata)[j];////sid
                         //if(isNaN(obj_data.value))
-                            data_value=obj_data.value
+                            data_value=obj_data.value;
                         //else
                             //data_value=parseFloat(obj_data.value).toFixed(Number_of_decimal);
                         if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，
@@ -668,7 +666,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                     if(obj_data.message){
                                         atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
                                     }else{
-                                        atr.cells[k+hidden_cells].style.backgroundColor=""
+                                        atr.cells[k+hidden_cells].style.backgroundColor="";
                                     }
                                     break;
                                 }
@@ -695,9 +693,9 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                                 if(atr.cells[tablehead_len-1].innerHTML)
                                                     atr.cells[tablehead_len-1].innerHTML+=","+obj_data.message
                                                 else
-                                                atr.cells[tablehead_len-1].innerHTML=obj_data.message;
+                                                    atr.cells[tablehead_len-1].innerHTML=obj_data.message;
                                             }else{
-                                                atr.cells[k+hidden_cells].style.backgroundColor=""
+                                                atr.cells[k+hidden_cells].style.backgroundColor="";
                                             }
                                             break;
                                         }
@@ -719,7 +717,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 //alertcount=[0,0,0,0,0]
                 maxOfRealdata=($table.rows[0].cells[title_index].innerHTML)*1;
                 maxvaluetime=($table.rows[0].cells[2].innerHTML);
-                maxOfRealdataName=($table.rows[0].cells[1].innerHTML)
+                maxOfRealdataName=($table.rows[0].cells[1].innerHTML);
                 if(!maxOfRealdata)
                     maxOfRealdata=0;
                 for (var int = 0; int < tableLength; int++) {
@@ -752,10 +750,6 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                     }else{
                         curPage=0;
                     }
-                    /**安全评价是以实现工程、系统安全为目的，应用安全系统工程原理和方法，对工程、系统中存在的危险、有害因素进行识别与分析、判断工程、系统发生
-                     * 事故和急性职业危害的可能性及其严重程度，提出安全对策建议，从而为工程、系统制定防范措施和管理决策提供科学依据。
-                     * 安全预评价 安全验收评价 安全现状综合评价 专项安全评价  普遍性 客观性 规律性 转换性
-                     */
                     //tableclick($table.rows[curPage]);
                     $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
                     $table.rows[ppt].style.backgroundColor = color_table_cur;
@@ -859,7 +853,7 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
                 chartOption.chart_max = 100;
             //if(!chart_unit)
                 chart_unit = "";
-            chartOption.chart_sigle = ""
+            chartOption.chart_sigle = "";
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
     }
 }
@@ -908,19 +902,19 @@ function initseries(data) {
             text: sname+"--24小时极值",
         },
         tooltip: {
-            formatter: "{a} <br/>{c} {b}"
+            formatter: "{a} <br/>{c} {b}",
         },
         toolbox: {
             show: false,
             feature: {
                 mark: {
-                    show: true
+                    show: true,
                 },
                 restore: {
-                    show: true
+                    show: true,
                 },
                 saveAsImage: {
-                    show: true
+                    show: true,
                 }
             }
         },
@@ -939,7 +933,7 @@ function initseries(data) {
                     lineStyle: { // 属性lineStyle控制线条样式
                         color: [
                             [0.2, 'green'],
-                            [1, '#1f1f1f']
+                            [1, '#1f1f1f'],
                         ],
                         color: [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']],
                         width: 29,
@@ -969,7 +963,7 @@ function initseries(data) {
                         color: '#fff',
                         shadowColor: '#fff', //默认透明
                         shadowBlur: 10
-                    }
+                    },
                 },
                 pointer: {
                     show: true,
@@ -984,7 +978,7 @@ function initseries(data) {
                     textStyle: {
                         color: 'white',
                         fontSize: chartOption.chart_title_font_size, 
-                    }
+                    },
                 },
                 detail: {
                     show: true,
@@ -992,8 +986,8 @@ function initseries(data) {
                     formatter: ' {value}  \n\n' + '时间: ' + happentime,//+chart_unit,
                     textStyle: {
                         fontSize: chartOption.chart_detail_font_size, 
-                        color: '#F8F43C'
-                    }
+                        color: '#F8F43C',
+                    },
                 },
                 data: [data[0]],//[{value: 20,name: '温度'}]
             },
@@ -1019,13 +1013,13 @@ function initseries(data) {
             show: false,
             feature: {
                 mark: {
-                    show: true
+                    show: true,
                 },
                 restore: {
-                    show: true
+                    show: true,
                 },
                 saveAsImage: {
-                    show: true
+                    show: true,
                 }
             }
         },
@@ -1088,7 +1082,7 @@ function initseries(data) {
                     textStyle: {
                         color: 'white',
                         fontSize: chartOption.chart_title_font_size,
-                    }
+                    },
                 },
                 detail: {
                     show: true,
@@ -1097,7 +1091,7 @@ function initseries(data) {
                     textStyle: {
                         fontSize: chartOption.chart_detail_font_size,
                         color: '#F8F43C'
-                    }
+                    },
                 },
                 data: [data[1],],//[{value: 20,name: '温度'}]
             }
@@ -1264,13 +1258,13 @@ function decodedatas(obj_chartdata) {
                     var date = new Date(params.value[0]);
                     data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
                     return data + '<br/>' + params.value[1];
-                }
+                },
             },
             toolbox: {
                 show: true,
                 feature: {
                     mark: {
-                        show: true
+                        show: true,
                     },
                     dataView: {
                         show: true,
@@ -1292,24 +1286,24 @@ function decodedatas(obj_chartdata) {
                             }
                             table += '</tbody></table>';
                             return table;
-                        }
+                        },
                     },
                     magicType: {
                         show: true,
-                        type: ['line']
+                        type: ['line'],
                     },
                     //, 'bar', 'stack', 'tiled'
                     restore: {
-                        show: true
+                        show: true,
                     },
                     saveAsImage: {
-                        show: true
-                    }
-                }
+                        show: true,
+                    },
+                },
             },
             dataZoom: [{
                 show: false,
-                start: 0
+                start: 0,
             },
             {   // 这个dataZoom组件，也控制x轴。
 				type: 'inside', // 这个 dataZoom 组件是 inside 型 dataZoom 组件  
@@ -1387,24 +1381,24 @@ function initchart2() {
             show: true,
             feature: {
                 mark: {
-                    show: true
+                    show: true,
                 },
                 dataView: {
                     show: true,
-                    readOnly: false
+                    readOnly: false,
                 },
                 magicType: {
                     show: true,
-                    type: ['line']
+                    type: ['line'],
                 },
                 //, 'bar', 'stack', 'tiled' 
                 restore: {
-                    show: true
+                    show: true,
                 },
                 saveAsImage: {
-                    show: true
+                    show: true,
                 }
-            }
+            },
         },
         dataZoom: {
             show: false,
@@ -1418,7 +1412,7 @@ function initchart2() {
             //color: 'white',
         },
         grid: {
-            y2: 80
+            y2: 80,
         },
         xAxis: [{
             type: 'time',
@@ -1481,19 +1475,19 @@ function initecharts(){
             text: '实时极值',
         },
         tooltip: {
-            formatter: "{a} <br/>{c} {b}"
+            formatter: "{a} <br/>{c} {b}",
         },
         toolbox: {
             show: false,
             feature: {
                 mark: {
-                    show: true
+                    show: true,
                 },
                 restore: {
-                    show: true
+                    show: true,
                 },
                 saveAsImage: {
-                    show: true
+                    show: true,
                 }
             }
         },
@@ -1544,21 +1538,21 @@ function initecharts(){
                         width: 2,
                         color: '#fff',
                         shadowColor: '#fff', //默认透明
-                        shadowBlur: 10
+                        shadowBlur: 10,
                     }
                 },
                 pointer: {
                     show: true,
                     width: 5,
                     shadowColor: '#fff', //默认透明
-                    shadowBlur: 0
+                    shadowBlur: 0,
                 },
                 title: {
                     show: true,
                     offsetCenter: [0, '-30%'], // x, y，单位px
                     textStyle: {
                         color: 'white',
-                        fontSize: 20
+                        fontSize: 20,
                     }
                 },
                 detail: {
@@ -1567,7 +1561,7 @@ function initecharts(){
                     formatter: ' {value}  \n\n' + '发生时刻: ' +maxvaluetime+ '\n\n 标签名称: '+sname,//+chart_unit,
                     textStyle: {
                         fontSize: 20,
-                        color: '#F8F43C'
+                        color: '#F8F43C',
                     }
                 },
                 data: [{value: 20,name: chartdataname1}],//[data[0]],//
@@ -1581,14 +1575,14 @@ function initecharts(){
         tooltip: {
             trigger: 'axis',
             axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                type: 'shadow'  ,      // 默认为直线，可选为：'line' | 'shadow'
             }
         },
         grid: {
             left: '3%',
             right: '4%',
             bottom: '3%',
-            containLabel: true
+            containLabel: true,
         },
         title : {
             text: "状态统计图",
@@ -1620,20 +1614,20 @@ function initecharts(){
                     formatter: '{b}： {c}\n\n  {{d}%}  ',
                     show: true,
                     position: 'out',
-                    color:"#fff"
+                    color:"#fff",
                 },
                 //barWidth: '60%',
                 emphasis: {
                     label: {
                         show: true,
                         fontSize: '20',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
                     }
                 },
                 labelLine: {
-                    show: true
+                    show: true,
                 },
-                data: []//,,{value:90,name:'告警'},{value:0,name:"严重告警"}
+                data: [],//,,{value:90,name:'告警'},{value:0,name:"严重告警"}
                     //{value:30,name:'故障'},{value: 20,name: '停运'}]{value:310,name:'正常'}, {value:52,name:'预警'},{value:20,name:'一级告警'} ,
                     //{value:34,name:'二级告警'}
             }

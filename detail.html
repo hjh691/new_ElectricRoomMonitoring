@@ -6,9 +6,9 @@
 		<link rel="stylesheet" href="css/bootstrap.min.css" />
 		<!--<link rel="stylesheet" href="css/jquery-ui.css" />-->
 		<link rel="stylesheet" href="css/electricroommonitoring.css"/>
-		<script  type="text/javascript" src="js/jquery-3.3.1.js">
-		</script><script src="js/bootstrap.js"></script>
-   		<script  type="text/javascript" src="js/jquery-ui.js"></script>
+		<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+		<script  type="text/javascript" src="js/jquery-ui.js"></script>
+		<script  type="text/javascript" src="js/bootstrap.js"></script>
 		<script  type="text/javascript" src="js/config.js"></script>
 		<script  type="text/javascript" src="js/datatypetransfarm.js"></script>
 		<script  type="text/javascript" src="js/function.js"></script>
@@ -98,7 +98,7 @@
 		<div class="container" id="main" style="border: 0px solid green;position: relative;">
 			<div id="menu" style="border: 0px solid yellow;float:left;width:16%;margin: 10px;overflow: auto;">
 				<div id="ul_group" align="center">
-					<button type="button" class="btn btn_group btn-default" >高压一号柜</button>
+					<button type="button" class="btn btn_group btn-default" ></button>
 				</div>
 			</div>
 			<div class="row" id="content" style="border: 0px solid lightgrey;overflow: auto;">
@@ -131,6 +131,11 @@
 								</div>
 								<div>
 									<label > 最小值:</label> <label id="min" style="width:40px">0</label> <label> 测量点：</label><label id="addr_min" >D点</label>
+								</div>
+								<div>
+									<span><label style="width:100px;"> 类别分组：</label></span>
+									<span id="display_type" class="btn-group"  data-toggle="buttons">
+									</span>
 								</div>
 							</div>
 							<div id="datadiv" style="height: 500px;overflow: auto;margin-top: 10px;" >

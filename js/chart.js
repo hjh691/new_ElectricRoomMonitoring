@@ -351,7 +351,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
         var title_th=document.createElement("th");
         //title_tr.appendChild(title_th);
         //title_th=document.createElement("th");
-        title_th.setAttribute('colspan','4');//setAttribute('colspan','4')"
+        title_th.setAttribute('colspan','8');//setAttribute('colspan','4')"
         //title_th.setAttribute('style','text-align: center');
         title_th.innerHTML=atitle;
         title_tr.appendChild(title_th);
@@ -366,6 +366,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
             var sensorid=check_val[i];
             var series=new Object();
             series.name=check_name[i];//+"["+sensorid+"]"
+            eval("cld"+(i+1)).innerHTML=series.name;
             lengenddata.push(check_name[i]);//+"["+sensorid+"]"
             if(obj_chartdatas.length>0){
                 obj_chartdata=obj_chartdatas;//[sensorid];
@@ -382,7 +383,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                             if(isNaN(parseFloat(obj_data_j.value))){
                                 obj_data_j.value=-1;
                             }
-                            pb.push([Date.parse(obj_data_j.time),obj_data_j.value, j]);
+                            pb.push([Date.parse(obj_data_j.time),parseFloat((obj_data_j.value*1).toFixed(Number_of_decimal)), j]);
                             
                             if(parseFloat(obj_data_j.value)>maxvalue){
                                 maxvalue=parseFloat(obj_data_j.value);
@@ -399,7 +400,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                             }else{
                                 let rows=tbody.rows;
                                 let rows_len=rows.length;
-                                for(k=2;k<rows_len;k++){
+                                for(k=0;k<rows_len;k++){
                                     let tname=rows[k].cells[0].outerText;
                                     if(tname==name && rows[k].cells[1]){
                                         let jiange=GetDateDiff(rows[k].cells[1].outerText,obj_data_j.time.replace(/T/g," ").substring(0,19),"minute");
@@ -411,7 +412,11 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                             tbody.insertBefore(atr,rows[k]);
                                             break;
                                         }else if(jiange<max_timeInterval){
-                                            rows[k].cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
+                                            if((rows[k].cells[i+2].innerHTML!="")&&(rows[k].cells[i+2].innerHTML!=(obj_data_j.value*1).toFixed(Number_of_decimal))){
+                                                continue;   
+                                            }else{
+                                                rows[k].cells[i+2].innerHTML=(obj_data_j.value*1).toFixed(Number_of_decimal);
+                                            }
                                             break;
                                         } /*else if(jiange>2 && jiange<=max_timeInterval){
                                             atr=creatTr();
@@ -545,7 +550,15 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                                     tdBodys.insertBefore(atr,rows[k]);
                                                     break;
                                                 }else if(jiange<2){
-                                                    rows[k].cells[j+2].innerHTML=series[j].data[i][1];
+                                                    if((rows[k].cells[j+2].innerHTML!="")&&(rows[k].cells[j+2].innerHTML!=series[j].data[i][1])){
+                                                        continue;
+                                                        atr=creatTr();
+                                                        atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
+                                                        atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                                        tdBodys.insertBefore(atr,rows[k+1]);
+                                                    }else{
+                                                        rows[k].cells[j+2].innerHTML=series[j].data[i][1];
+                                                    }
                                                     break;
                                                 }
                                             }

@@ -11,10 +11,14 @@
 		text-align: center;
 	}
 	body{
+		/*font-family: serif,Times,' Times New Roman';*/
 		background-color:#ffFFFF;
 		color:#000;
 		opacity: 0;
 		animation: page-fade-in 1s forwards;
+		font-size: 1em;/*10px;*/
+		margin-left: auto;
+		margin-right: auto;
 	}
 	@keyframes page-fade-in {
 		0% {
@@ -110,7 +114,7 @@
 		vertical-align:center;
 		overflow: auto;
 	}
-	/**顶部系统椭圆形按钮	*/
+	/**顶部系统椭圆形按钮	*//* */
 	.topbar-bigbutton{
 		float:right;
 		border-radius: 50%;
@@ -118,17 +122,17 @@
 		background:#008B8B;
 		height:60px;
 		width:80px;
-		margin-right:30px;
+		margin-right:1.5em;
 		position:relative;
-		font-size:14px;
+		font-size:1.3em;/*14px*/
 		color:white;
-		margin-top:10px;
+		margin-top:.8em;
 	}
 	.topbar #app_name{
 		position:relative;
 		float:left;
 		left:15px;
-		font-size:30px;
+		font-size:2.5em;
 		font-style:bold;
 		color:white;
 	}
@@ -142,14 +146,14 @@
 		float:left;
 		left:50px;
 		color:white;
-		font-size:12px;
+		font-size:1.2em;
 	}
 	.topbar #yhout{
 		position:relative;
 		float:left;
 		left:90px;
 		color:white;
-		font-size:12px;
+		font-size:1.2em;
 	}/* border-radius */
 	.navigation{
 		vertical-align:center;
@@ -191,7 +195,7 @@
 	.count_info,.pc-nav{
 		display:inline;
 		vertical-align:center;
-		font-size: 18px;
+		font-size: 1.8em;
 		left:-20px;
 	}
 	.count_info li,.pc-nav li {
@@ -217,7 +221,7 @@
 	.pc-footer li {
 		display: inline;
 		color: #FFFFFF;
-		padding: 2px 3px;
+		padding: 3px 3px;
 		text-decoration: none;
 		vertical-align:center;
 	} 
@@ -225,7 +229,7 @@
 		/*/*display: inline;		hzalign:center;*/
 		color: #000;
 		padding: 2px 3px;
-		margin: 0px 10px;
+		margin: 0px .6em;
 		text-decoration: none;
 		border-radius:5px;
 	}
@@ -258,7 +262,7 @@
         line-height:center;
         /*width:100px;
 		height:30px;*/
-		font-size:14px;
+		font-size:1.2em;
     }
 	.table{
 		border:0px;
@@ -269,12 +273,12 @@
 	}
 	.table-lable{
 		color:#0000b0;
-		font-size:20px;
+		font-size:1.5em;
 		/*line-height:50px;
 		margin-left:20px;*/
 		text-align: right;
 	}
-	.leftmenu{
+	#leftmenu{
 		position:relative;
 		float:left;
 		top:20px;
@@ -287,7 +291,7 @@
 		min-width:100px;
 		/*background-color: rgba(0, 101, 105, 1); #eee0e0;*/
 	}
-	.tree{
+	#tree{
 		/*min-width:200px;*/
 		height:60%;
 		overflow:auto;
@@ -295,8 +299,11 @@
 		border-width:1px 1px 1px 1px;
 		border-color:rgba(8, 177, 106, 0.5);/*#eeb0b0;*/
 		background-color: rgba(0, 101, 105, 1);
+		overflow-x:auto;
+		white-space: nowrap;
+		font-size: 1.4em;
 	}
-	.tree1{
+	#tree_chi{
 		/*min-width:200px;*/
 		height:40%;
 		overflow:auto;
@@ -304,6 +311,9 @@
 		border-width:1px 1px 1px 1px;
 		border-color:rgba(8, 177, 106, 0.5);/*#eeb0b0;*/
 		background-color: rgba(0, 101, 105, 1);
+		overflow-x:auto;
+		white-space: nowrap;
+		font-size: 1.2em;
 	}
 	/* KeFuDiv */
 	.KeFuDiv{
@@ -312,7 +322,7 @@
 		width:500px;
 		background: #FFFF00;
 		color:#000;
-		font-size:16px;
+		font-size:1.2em;
 		text-align: center;
 		cursor: pointer;
 		border-radius: 50%;
@@ -329,7 +339,7 @@
 		background-color: rgb(189, 187, 187);
 		MARGIN-RIGHT: auto; 
 		MARGIN-LEFT: auto;
-		margin: 10px;/**/
+		margin: 0.8em;/**/
 	}
 	#realdata_chart1,#realdata_maxvalOfReal,
 	#realdata_rateOfNormal,#realdata_realdata,
@@ -337,11 +347,11 @@
 		width: 90%;
 		height: 90%;
 		background-color: rgb(212, 209, 209);
-		margin: 20px;
+		margin: 1.4em;
 	}
 	.button{
 		width:60px;
-		font-size:18px;
+		font-size:1.4em;
 		background-image:url(../res/jianbian_orange.jpg);
 	}
 	/**多标签页面格式*/
@@ -389,21 +399,21 @@
 		flex: 1;
 		box-align:center;
 	}
-	.column+ .column{margin-left: 20px;}
+	.column+ .column{margin-left: 1.4em;}
 	.zlchart{
-		margin-top:30px;
+		margin-top:2em;
 		width:300px;
 		height:300px;
 		border: solid cornflowerblue 0px;
 	}
 	.zltable{
-		margin-top:100px;
+		margin-top:7em;
 	}
 	.input ,.output{
 		width:805px;
 		height:342px;
 		background-color: #555;
-		margin-bottom: 10px;
+		margin-bottom: 0.8em;
 	}
 	.donghuan{
 		width:160px;
@@ -421,11 +431,12 @@
 		background-color: rgba(255,255,0,0.2);
 	}
 	.title-right{
-		font-size: 16px;
+		font-size: 1.4em;
 		text-align: right;
 	}
 	span label {
 		color:rgb(8, 104, 182);
+		font-size: 1.1em;
 	}
 	#realdata-tbody{
 		/*width:1020px;*/
@@ -453,14 +464,14 @@
 	.displaytype1{
 		background-color: #dcdcdc; 
 		height:600px;
-		margin: 10px;
-		margin-left: 20px; 
+		margin: .8em;
+		margin-left: 1.4em; 
 	}
 	.displaytype2{
 		background-color: #dcdcdc; 
 		height:280px;
-		margin: 10px;
-		margin-left: 20px; 
+		margin: 0.8em;
+		margin-left: 1.4em; 
 	}
 	.btn-primary{
 		background-color: rgba(0, 101, 105, 1);
@@ -478,4 +489,44 @@
 	{
 		background-color: rgb(14, 150, 93);
 	}
-	
+	/**20210809由内联式提取至此*/
+	#nav11{
+		background:url(../res/home.jpg) no-repeat center top;
+	}
+	#nav12{
+		background:url(../res/chilun.jpg) no-repeat center top;
+	}
+	#nav13{
+		background:url(../res/bar.jpg) no-repeat center top;
+	}
+	#footer{
+		clear: both;
+		height:2em;
+		line-height: 2em;
+		float:bottom;
+		bottom:0px;
+		left:0px;
+		right:0px;
+		padding-bottom: 0px;
+	}
+	#clickaudio{
+		float:right;
+		font-size:1.4em;
+		display: none;
+	}
+	.aside {
+		height: 98%;
+		width: 15%;
+		position: relative;
+		float:left;
+		background:rgba(8, 177, 106, 0.3);/* #243747;*/
+		transition: width .5s;
+	}
+	.aside-hide {
+		height: 98%;
+		width: 1.5em;
+		position: relative;
+		float:left;	
+		background :rgba(8, 177, 106, 0.3);/* #243747;*/
+		transition: width .5s;
+	}
