@@ -769,7 +769,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                                     if(v_sel[k].value==dname){
                                         $table.rows[l].cells[k+hidden_cells].innerHTML=data_value;
                                         //isbreak=true;
-                                        if($table.rows[l].cells[3].value<dateToString(obj_data.time,2)){//更新测量时间
+                                        if($table.rows[l].cells[3].value<dateToString(obj_data.time,2)||$table.rows[l].cells[3].innerHTML==""){//更新测量时间
                                             $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
                                             $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
                                         }
@@ -782,6 +782,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                                         }else{
                                             $table.rows[l].cells[k+hidden_cells].style.backgroundColor=""
                                         }
+                                        $table.rows[l].style=""
                                         break;
                                     }
                                     

@@ -131,7 +131,7 @@
 						<li style="color:white;" >Copyright: <lab id="copyright_time"></lab></li>
 					</ul>
 			</div>
-		</div><!--<li ><a href="#" style="margin-left:500px" >实时告警窗口</a></li>display: none;-->
+		</div><!--<li ><a href="#" style="margin-left:500px" >实时告警窗口</a></li>display: none;--> 
 		<!--告警信息悬浮窗style="display:none"-->
 		<div id="KeFuDiv" class="KeFuDiv" onmousedown="hidefudongdiv();" >
 			<!--屏幕滚动设置 <div class="affiche_text" id="alert_info">style="display: none;"
@@ -700,6 +700,9 @@
 						//refreshinfotree(data);
 					}
 					refreshinfotree(data);
+					if(sessionStorage.pageindex=="4"){
+						iframemain[0].contentWindow.cleardisplaytype();
+					}
 					updatanav(sessionStorage.nodetype);
 					var firstSearchResult = sensorstree.find('ul').find('li[data-nodeid='+ sessionStorage.selNodeId +']');
 					sensorstree.scrollTop(firstSearchResult[0].offsetTop);

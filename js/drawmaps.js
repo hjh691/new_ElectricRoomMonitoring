@@ -29,7 +29,7 @@ function Baseline(ctx, pfdp) {
 	ctx.stroke(path);
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#000000"
+	ctx.strokeStyle="#00000000"
 	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 	ctx.stroke();
 }
@@ -61,7 +61,7 @@ function Line(ctx, pfdp) {
 	ctx.stroke();
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#000000"
+	ctx.strokeStyle="#00000000"
 	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 	ctx.stroke();
 }
@@ -177,7 +177,7 @@ function JumpLine(ctx, pfdp) {
 	ctx.stroke();
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#000000"
+	ctx.strokeStyle="#00000000"
 	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 	ctx.stroke();
 }
@@ -377,7 +377,7 @@ function Ground(ctx, pfdp) {
 	ctx.stroke();
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#000000"
+	ctx.strokeStyle="#00000000"
 	ctx.rect(mleft-3,mtop-3,(mright-mleft+6),(mbottom-mtop+6));
 	ctx.stroke();
 }
@@ -470,7 +470,7 @@ function Capacitor(ctx, pfdp) {
 	}
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#000000"
+	ctx.strokeStyle="#00000000"
 	ctx.rect(mleft-3,mtop-3,(mright-mleft+6),(mbottom-mtop+6));
 	ctx.stroke();
 }
@@ -669,7 +669,7 @@ CanvasRenderingContext2D.prototype.fillTextVertical = function(text, x, y) {
 //绘制文本，必要时竖排。
 function DrawText(ctx, pfdp) {
 	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
-	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1))+pfdp.FontSize;//字体向上延申字体高度。需在基准点y值加上字体高度（即字号fontsize）
+	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1))+parseFloat(pfdp.FontSize);//字体向上延申字体高度。需在基准点y值加上字体高度（即字号fontsize）
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
 	if (pfdp.hasOwnProperty("_matrix")) {
@@ -709,8 +709,8 @@ function DrawText(ctx, pfdp) {
 	}
 	ctx.beginPath();//开始一个新路径，用于保存绘制的区域，从而与鼠标所在位置进行对比匹配。
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#000000"
-	ctx.rect(sx-2,sy-pfdp.FontSize-2,(ex-sx+4),(ey-sy+pfdp.FontSize+4));
+	ctx.strokeStyle="#00000000"
+	ctx.rect(sx-2,sy-parseFloat(pfdp.FontSize)-2,(ex-sx+4),(ey-sy+parseFloat(pfdp.FontSize)+4));
 	ctx.stroke();
 }
 function Selection(ctx, pfdp) {

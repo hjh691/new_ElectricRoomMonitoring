@@ -75,8 +75,7 @@
 			parent.window.updatapcnav(12);//父窗口方法
 			sessionStorage.framepage="app_download.html";
 			sessionStorage.pageindex=200;
-			var str = toUtf8(this.location.href.substr(0, this.location.href.lastIndexOf('/')) + jfjk_base_config.app_path_name); // "/res/SubstationTemperature.apk");
-			//$("#a_code")[0].href = jfjk_base_config.strurl;
+			var str = toUtf8(this.location.href.substr(0, this.location.href.lastIndexOf('/')) + jfjk_base_config.app_path_name); //+"#mp.weixin.qq.com" "/res/SubstationTemperature.apk");
 			$("#a_code")[0].innerHTML = jfjk_base_config.baseurl;
 			$("#a_code1")[0].href = str;
 			madecode(str);

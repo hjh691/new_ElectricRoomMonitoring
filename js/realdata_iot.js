@@ -15,7 +15,7 @@ var start_angle = 0, end_angle = 180;
 //var option,option1,option2,option3,option4;//对应mychart（1-4）的配置项 need speed seed deed
 var chartdataname1="";
 var sname="",sid,type_td,title_index=3;//,hidden_cells=3
-let isfirst = "true";
+let isfirst = "true",isrefreshbtn=false;
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
 var maxvaluetime="",happentime="",maxOfRealdataName="";
 //var colors = [];
@@ -87,7 +87,7 @@ function initpage() {
             i++
             if (i % jfjk_base_config.refreshtime == 0) {
                 //getrealdatabynodeid(-1);rage
-                decoderealdata();
+                //decoderealdata();
             }
         };
     } else {
@@ -284,6 +284,7 @@ function btn_refresh_click(obj){
     decoderealdata();
     if(haverealdata)
         decodedatas();*/
+    isrefreshbtn=true;
     cleartable();
 }
 function refresh_tabhead(sel){
@@ -418,7 +419,7 @@ function refresh_tabhead(sel){
         th_tr.appendChild(th_th);
         tab_head.appendChild(th_tr);
     }
-    //document.getElementById("other_realtable").width=150*(count+5)+"px";// 设定数据列表的总宽度
+
 }
 //var t_pt=0;
 //表格排序使用插件
@@ -439,7 +440,7 @@ function getCatalog(atype,afolder,aname){
         //titlename=catalogsel[index].textContent;//显示项的标题 //20200518
         //var stitlename;;
         updatachart(aname);//0709 更新图表配置
-        refreshData();
+        //refreshData();
         //return catalog;
         if(allconfigs){
             for(var q in allconfigs){
@@ -501,6 +502,18 @@ function getCatalog(atype,afolder,aname){
 }
 function cleartable(){
     //$('#others_realdata_tbody').empty();
+    var showtable=document.getElementById("others_realdata_tbody");
+    var tab_len=showtable.rows.length;
+    if(parseInt(sessionStorage.realdatashowmodle)){//刷新列表内容，剔除不在线的标签。202108118
+        for(var j=0;j<tab_len;j++){
+            showtable.rows[j].setAttribute("style","display:none");
+            showtable.rows[j].cells[8].innerHTML="";
+        }
+    }else{
+        for(var j=0;j<tab_len;j++){
+            showtable.rows[j].cells[8].innerHTML="";
+        }
+    }
     getrealdatabynodeid(-1);
 }
 function decoderealdata(obj_realdata,asensorid,isload) {
@@ -774,6 +787,10 @@ function decoderealdata(obj_realdata,asensorid,isload) {
             //    return;
             //}
             //var heightpx = $("#others_realdata_tbody tr").height();// + 1;//加1是网格线的宽度
+            if(sessionStorage.realdata_index && isrefreshbtn){
+                $.sortTable.sort('other_realtable',sessionStorage.realdata_index);
+                isrefreshbtn=false;
+            }
             for (var int = 0; int < tab_rows_len; int++) {
                 if ($table.rows[int].cells[1].innerHTML == sessionStorage.SensorId) {
                     sessionStorage.t_p = int;
@@ -1354,6 +1371,7 @@ function refreshData() {
     option3.series[0].data=ratArr;
     mychart3.setOption(option3);
     */
+   decoderealdata();
 }
 function decodedatas(obj_chartdata) {
     try{

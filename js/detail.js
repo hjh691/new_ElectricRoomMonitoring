@@ -264,75 +264,77 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
     var tj=true;
     if(arrdata){
         var data_len=arrdata.length;
-        for(var j=0;j<data_len;j++){
-            obj_data=arrdata[j];
-            realdatafolder=obj_data.folder;
-            tj=true;
-            if(sessionStorage.pageindex==2)
-                tj=(obj_data.name.toLowerCase()==sessionStorage.typename.toLowerCase());
-            for(var l=0;l<tab_rows_len;l++){
-                if(parseInt($table.rows[l].cells[5].innerHTML)==parseInt(obj_data.sensorId) && tj && (obj_data.name==dname)){    
-                    titlename=realdatafolder+concat_str+obj_data.name;
-                    var sid=parseInt($table.rows[l].cells[5].innerHTML);
-                    if (sensors)//&&isnew
-                    for (var i = 0; i < sensors.length; i++) {//是否在需要显示的标签列表中
-                        //isfind=false;
-                        if(sid==sensors[i].value.id){
-                            let sensor_obj = sensors[i].value;
-                            type_td = sensor_obj.type;//Catalog;//
-                            //sname = sensor_obj.name;
-                            /*if(sensor_obj.parentId!="-1"){  
-                                if((sensor_obj.parentId!=parentid)){//20201221
-                                    parentid=sensor_obj.parentId;
-                                    for(var k=0;k<sensors_length;k++){
-                                        if(sensors[k].id==parentid){
-                                            parentname=sensors[k].Value.name;//+"_";
-                                            break;
+        for(var l=0;l<tab_rows_len;l++){
+            for(var j=0;j<data_len;j++){
+                obj_data=arrdata[j];
+                realdatafolder=obj_data.folder;
+                tj=true;
+                if(sessionStorage.pageindex==2)
+                    tj=(obj_data.name.toLowerCase()==sessionStorage.typename.toLowerCase());
+                if(parseInt($table.rows[l].cells[5].innerHTML)==parseInt(obj_data.sensorId) && tj){    
+                    if( obj_data.name==dname){
+                        titlename=realdatafolder+concat_str+obj_data.name;
+                        var sid=parseInt($table.rows[l].cells[5].innerHTML);
+                        if (sensors)//&&isnew
+                        for (var i = 0; i < sensors.length; i++) {//是否在需要显示的标签列表中（本节点下的标签）
+                            //isfind=false;
+                            if(sid==sensors[i].value.id){
+                                let sensor_obj = sensors[i].value;
+                                type_td = sensor_obj.type;//Catalog;//   
+                                //sname = sensor_obj.name;
+                                /*if(sensor_obj.parentId!="-1"){  
+                                    if((sensor_obj.parentId!=parentid)){//20201221
+                                        parentid=sensor_obj.parentId;
+                                        for(var k=0;k<sensors_length;k++){
+                                            if(sensors[k].id==parentid){
+                                                parentname=sensors[k].Value.name;//+"_";
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                                //sensors.splice(i, 1);
-                            }*/
-                            //sname=parentname+"_"+sname;
-                            //isfind=true;
-                            //haverealdata=true;
-                            break;
+                                    //sensors.splice(i, 1);
+                                }*/
+                                //sname=parentname+"_"+sname; 
+                                //isfind=true;
+                                //haverealdata=true;
+                                break;
+                            }
                         }
-                    }
-                    if(getCatalog(type_td,realdatafolder,obj_data.name).chart_title)
-                        titlename=getCatalog(type_td,realdatafolder, obj_data.name).chart_title;
-                    if(chartOption.child_classname=="UHFdata"){
-                        var storagename=sid+"_"+titlename;
-                        localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
-                        obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
-                    }
-                    let str_hh=obj_data.value;// $table.rows[l].cells[2].innerHTML;
-                    /*if(!str_hh){
-                        str_hh=titlename+" : "+ obj_data.value+" "+chartOption.chart_unit;
-                    }else if(str_hh.indexOf(titlename+" : ")!=-1){
-                        exp_str=str_hh.substring(str_hh.indexOf(titlename),(str_hh.indexOf("<br>",str_hh.indexOf(titlename))+4));
-                        str_hh.replace(exp_str,titlename+" : "+obj_data.value+" "+chartOption.chart_unit);
-                    }else{
-                        str_hh=str_hh+"<br>"+
-                        titlename+" : "+ obj_data.value+" "+chartOption.chart_unit;
-                    }*/
-                    $table.rows[l].cells[2].innerHTML=str_hh;
-                    //isbreak=true;
-                    /*if(!$table.rows[l].cells[3].value || ($table.rows[l].cells[3].value<dateToString(obj_data.time,2))){//更新最新时间
-                        $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
-                        $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
-                    }*/
-                    if(obj_data.message){
-                        //atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
-                        if($table.rows[l].cells[4].innerHTML&&($table.rows[l].cells[4].innerHTML.indexOf(obj_data.message)<0)){
-                            $table.rows[l].cells[4].innerHTML+=";"+obj_data.message;
+                        if(getCatalog(type_td,realdatafolder,obj_data.name).chart_title)
+                            titlename=getCatalog(type_td,realdatafolder, obj_data.name).chart_title;
+                        if(chartOption.child_classname=="UHFdata"){
+                            var storagename=sid+"_"+titlename;
+                            localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
+                            obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
+                        }
+                        let str_hh=obj_data.value;// $table.rows[l].cells[2].innerHTML;
+                        /*if(!str_hh){
+                            str_hh=titlename+" : "+ obj_data.value+" "+chartOption.chart_unit;
+                        }else if(str_hh.indexOf(titlename+" : ")!=-1){
+                            exp_str=str_hh.substring(str_hh.indexOf(titlename),(str_hh.indexOf("<br>",str_hh.indexOf(titlename))+4));
+                            str_hh.replace(exp_str,titlename+" : "+obj_data.value+" "+chartOption.chart_unit);
                         }else{
-                            $table.rows[l].cells[4].innerHTML=obj_data.message;
+                            str_hh=str_hh+"<br>"+
+                            titlename+" : "+ obj_data.value+" "+chartOption.chart_unit;
+                        }*/
+                        $table.rows[l].cells[2].innerHTML=str_hh;
+                        //isbreak=true;
+                        /*if(!$table.rows[l].cells[3].value || ($table.rows[l].cells[3].value<dateToString(obj_data.time,2))){//更新最新时间
+                            $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                            $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
+                        }*/
+                        if(obj_data.message){
+                            //atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
+                            if($table.rows[l].cells[4].innerHTML&&($table.rows[l].cells[4].innerHTML.indexOf(obj_data.message)<0)){
+                                $table.rows[l].cells[4].innerHTML+=";"+obj_data.message;
+                            }else{
+                                $table.rows[l].cells[4].innerHTML=obj_data.message;
+                            }
                         }
+                        $table.rows[l].cells[3].innerHTML='运行';//obj_data.folder;
+                        $table.rows[l].style="";
+                        break;
                     }
-                    $table.rows[l].cells[3].innerHTML='运行';//obj_data.folder;
-                    $table.rows[l].style="";
-                    break;
                 }
             }
         }
@@ -496,17 +498,26 @@ function appenddisplaytype(element_id,time){
         $(".btn").click(function(){//用于动态加载的元素的点击响应。
             $(this).button('toggle');
             var eobj=$(".catalog:checked")
-            dname= eobj.val();
-            tname= eobj[0].parentNode.innerText;
-            sessionStorage.datatype=dname;//保存选择项的值，用于页面刷新时恢复当前数据。
-            catalog=eobj[0].getAttribute("folder");//getcatalog(dname);
-            childclassname=eobj[0].getAttribute("childtype");
-            //flashbutton();
-            //gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
-            //showAllSensors(sensors);
-            refreshData();
+            if(dname!=eobj.val()){//判断显示数据类型是否发生改变，改变在清除，未改变则不动作。20210817
+                dname= eobj.val();
+                tname= eobj[0].parentNode.innerText;
+                sessionStorage.datatype=dname;//保存选择项的值，用于页面刷新时恢复当前数据。
+                catalog=eobj[0].getAttribute("folder");//getcatalog(dname);
+                childclassname=eobj[0].getAttribute("childtype");
+                clearvalue();//清除原来的数值
+                //gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
+                //showAllSensors(sensors);
+                window.parent.getrealdatabynodeid(-1);//获取所有实时数据，避免漏掉有关数据而造成错误显示20210817,取代refreshData。
+                //refreshData();
+            }
         });
     }catch(err){
         showstateinfo(err.message,"historydata/appenddisplaytype");
+    }
+}
+function clearvalue(){//清除原来的数值
+    $table = document.getElementById('detail_realdata_tbody');
+    for(var i=0;i<$table.rows.length;i++){
+        $table.rows[i].cells[2].innerHTML="";
     }
 }

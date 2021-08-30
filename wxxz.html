@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>微信弹出遮罩</title>
+</head>
+<body>
+    <style type="text/css">
+    *{
+        margin:0;
+        padding:0;
+    }
+    img { 
+        max-width: 100%; 
+        height: auto;
+    }
+
+    .test{
+        height: 600px; 
+        max-width: 600px; 
+        font-size: 40px;
+    }
+    </style>
+    <div class="test"><a href="http://mp.weixin.qq.com/mp/redirect?url=http://mobile.xinlianwang.com/android/distributor/DistributorApp.apk#weixin.qq.com#wechat_redirect "></a></div>
+    <script type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+    <script type="text/javascript">
+        function is_weixin() {
+            var ua = navigator.userAgent.toLowerCase();
+            if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        var isWeixin = is_weixin();
+        var winHeight = typeof window.innerHeight != 'undefined' ? window.innerHeight : document.documentElement.clientHeight;
+        var weixinTip = $('<div id="weixinTip"><p><img src="/res/live_weixin.png" alt="微信打开"/></p></div>');
+        if(isWeixin){
+            $("body").append(weixinTip);
+        }else{
+            window.location.href=toUtf8(this.location.href.substr(0, this.location.href.lastIndexOf('/')) + jfjk_base_config.app_path);
+        }
+        $("#weixinTip").css({
+            "position":"fixed",
+            "left":"0",
+            "top":"0",
+            "height":winHeight,
+            "width":"100%",
+            "z-index":"1000",
+            "background-color":"rgba(0,0,0,0.8)",
+            "filter":"alpha(opacity=80)",
+        });
+        $("#weixinTip p").css({
+            "text-align":"center",
+            "margin-top":"10%",
+            "padding-left":"5%",
+            "padding-right":"5%"
+        });
+function toUtf8(str) {
+			var out, i, len, c;
+			out = "";
+			len = str.length;
+			for (var i = 0; i < len; i++) {
+				c = str.charCodeAt(i);
+				if ((c >= 0x0001) && (c <= 0x007F)) {
+					out += str.charAt(i);
+				} else if (c > 0x07FF) {
+					out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+					out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
+					out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+				} else {
+					out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
+					out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+				}
+			}
+			return out;
+		}
+    </script>
+
+</body>
+</html>

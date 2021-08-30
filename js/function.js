@@ -1471,8 +1471,10 @@ function getrealdatabynodeid(anodeid){
 			value0=0;value1=0;sname="";
 				if(!data){return;}
 				if (jQuery.isEmptyObject(data.datas)) {
-					localStorage.setItem("realdata",null);
+					if(anodeid<=0)//21.8.23 添加，否则真的没数据时可能保留以前的实时数据表而造成误解。只在非获取全部数据返回为空时才保持原来数据不进行更新。
+						localStorage.setItem("realdata",null);//21.8.17修改，暂时去掉此语句，返回数据为空时保持原来的数据，观察对页面数据有无影响。
 					decoderealdata();
+					showstateinfo("本次获取实时数据为空","getrealdatabynodeid");
 					//return;
 				}else{
 					var obj_realdata=data.datas;
@@ -1529,7 +1531,7 @@ function getname(key){
 }
 //不同时间段的选择响应（obj对应的选项对象)
 function seletime(obj){
-	//var timedefine=document.getElementById("timedefine");
+	//var timedefine=document.getElementById("timedefine");//water proof bag 
 	sessionStorage.timeindex=parseInt(obj);//$('input[name="timeselect"]:checked').val();//obj.value*1;
 	if(obj*1==5){
 		timedefine.style.display="none";
@@ -1547,7 +1549,7 @@ function seletime(obj){
 			sessionStorage.jssj = getCurrentDate(2) ;
 			//gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
 			timedefine.style.display="none";
-			//layer.alert("没有符合条件的记录",info_showtime); all 
+			//layer.alert("没有符合条件的记录",info_showtime); all //忿
 			break;
 		case 1:
 			timedefine.style.display="none";
@@ -1648,7 +1650,9 @@ var sorter=false;
 				var table = document.getElementById(tableId);
                 var tbody = table.tBodies[0];//tBodies[0]取表头thead，tBodies[1]取tbody
 				var tr = tbody.rows;
+				sessionStorage.realdata_index=Idx;
 				if((tableId=="realtable")){//||(tableId="ohter_realtable")
+					
 					if(Idx>=hidden_cells){
 						catalog=getCatalog(adatatype,Idx-hidden_cells);
 						title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值
@@ -1662,10 +1666,10 @@ var sorter=false;
 						//var kssj=dateToString((yesterdaytime),2);
 						//kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
 						//jssj = (tr.cells[2].innerHTML);
-						if(sessionStorage.realdata_index!=Idx){
+						//if(sessionStorage.realdata_index!=Idx){
 							decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，但将抵消排序操作；使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。
-						}
-						sessionStorage.realdata_index=Idx;
+						//}
+						
 						//gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
 						//refreshData();
 					}

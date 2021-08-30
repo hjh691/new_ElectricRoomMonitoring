@@ -433,6 +433,7 @@
 	.title-right{
 		font-size: 1.4em;
 		text-align: right;
+		margin-left: 5px;
 	}
 	span label {
 		color:rgb(8, 104, 182);
@@ -529,4 +530,9 @@
 		float:left;	
 		background :rgba(8, 177, 106, 0.3);/* #243747;*/
 		transition: width .5s;
+	}
+	.container{
+		width: 99%;
+		margin-left: 5px;
+		margin-right: 5px;
 	}

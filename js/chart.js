@@ -13,7 +13,7 @@
     function inithistorychart() {
         try{
         updatapcnav(7);
-        selectText="";
+        //selectText="";//重复赋值，造成与显示不符，从而造成选择与状态不符。
         //var el=$("[class $= 't']");jquery 选择器 结束、开始、包含、等于
         //保存页面现场，在点击浏览器的刷新按钮刷新时应用
         sessionStorage.framepage="chart.html";
@@ -59,6 +59,10 @@
         }catch(err){
             showstateinfo(err.message,"chart/inithistorychart");
         }
+    }
+    //清楚分组列表列表内容，在系统节点切换时运行，避免多节点的类型叠加。
+    function cleardisplaytype(){
+        $("#display_type_chart").empty();
     }
     //添加类别分组选项
     function appenddisplaytype(element_id){

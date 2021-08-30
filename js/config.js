@@ -75,7 +75,9 @@ function sleep(numberMillis) {
  //服务器地址
 //jfjk_base_config.serverurl="http://jka.f3322.net:20000/";
 // 手机app存放目录和名称：要求在web的资源目录中，
- jfjk_base_config.app_path_name="/res/cloud.apk";
+ jfjk_base_config.app_path_name="/wxxz.html";//"/res/cloud.apk";
+ jfjk_base_config.app_path="/res/cloud.apk";
+ jfjk_base_config.app_url="";
 //sessionStorage.videourl='';
 //界面用图片信息：
 //登录页面图片：
@@ -87,9 +89,9 @@ jfjk_base_config.bg_src="res/bj011.jpg";
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
- jfjk_base_config.ver_id="Ver 2.05.07";//1.3添加通用页面。
+ jfjk_base_config.ver_id="Ver 2.08.30";//1.3添加通用页面。
  //发布日期
- jfjk_base_config.date="2021-05-07";
+ jfjk_base_config.date="2021-08-30";
 //公司名称
  jfjk_base_config.company="保定金凯澳自动化设备有限公司";
  //版权时间
@@ -118,7 +120,7 @@ jfjk_base_config.bg_src="res/bj011.jpg";
  //保留小数位数
  Number_of_decimal=2;
  //树形目录等级数：
- Levels_of_treeview=3
+ Levels_of_treeview=10
  //数据每周期采样频率
  caiyangcishu=72;
  //连接字符
