@@ -1712,6 +1712,8 @@ var sorter=false;
 								} else {
 									return 0;
 								}
+							}else{
+								return -1;
 							}
 						}
                     });
@@ -1734,6 +1736,8 @@ var sorter=false;
 								} else {
 									return 0;
 								}
+							}else{
+								return -1;
 							}
 						}
                     });
