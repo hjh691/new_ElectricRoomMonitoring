@@ -668,6 +668,7 @@ CanvasRenderingContext2D.prototype.fillTextVertical = function(text, x, y) {
 };
 //绘制文本，必要时竖排。
 function DrawText(ctx, pfdp) {
+	var ffff={"Black":"900","Bold":"700","ExtraBlack":"900","ExtraBold":"800","ExtraLight":"200","Light":"300","Medium":"5500","Normal":"normal","SemiBold":"600","Thin":"100"}
 	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1))+parseFloat(pfdp.FontSize);//字体向上延申字体高度。需在基准点y值加上字体高度（即字号fontsize）
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
@@ -692,8 +693,9 @@ function DrawText(ctx, pfdp) {
 	if (pfdp.hasOwnProperty("FontStyle")) {
 		fontstr = fontstr + pfdp.FontStyle + " ";
 	}
+	//ctx.textBaseline="ideographic";//top, hanging, middle, alphabetic, ideographic, bottom
 	if (pfdp.hasOwnProperty("FontWeight")) {
-		fontstr = fontstr + pfdp.FontWeight + " ";
+		fontstr = fontstr + ffff[pfdp.FontWeight] + " ";
 	}
 	if (pfdp.hasOwnProperty("FontSize")) {
 		fontstr = fontstr + pfdp.FontSize + "px ";
@@ -730,7 +732,8 @@ function Picture(ctx,pfdp){
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		//ctx.transform(a, b, c, d, e, f);
+		//ctx.transform(a, b, c, d, e, f);//失火罪 3-7/3-0,消防责任事故罪 0-3/3-7，重大责任事故罪 0-3/3-7 强令违章冒险作业罪 0-5/5-
+		//重大劳动安全事故罪（安全条件不符合）0-3、3-7 大型群众性活动重大安全事故罪 0-3、3-7 工程重大安全事故罪0-5、5-10
 	}
 	var img=new Image();
 	img.src="data:imgae/jpg;base64,"+pfdp.Datas;

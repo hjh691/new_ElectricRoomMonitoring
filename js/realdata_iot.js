@@ -470,6 +470,10 @@ function getCatalog(atype,afolder,aname){
                                                     case "Bot".toLowerCase():
                                                         chartOption.chart_min=d_config[i].details[detail].value;
                                                         break;
+                                                    case "Dot".toLowerCase():
+                                                        chartOption.dot=parseInt(d_config[i].details[detail].value);
+                                                        //localStorage.decimalNum=Number_of_decimal=chartOption.dot;
+                                                        break;
                                                 }
                                             }
                                             /*if((chartOption.chart_max-chartOption.chart_min)%10==0){

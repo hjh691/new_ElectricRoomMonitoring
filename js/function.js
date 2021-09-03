@@ -989,7 +989,11 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 										if(obj_rd[loop].sensorId==sid && obj_rd[loop].name.toLowerCase()==dataname.toLowerCase()
 											&&(obj_rd[loop].folder.toLowerCase()==datafolder.toLowerCase())){
 											obj_data = (obj_rd)[loop];////
-											g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
+											if(isNumber(obj_data.value)){
+												g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal)
+											}else{
+												g._shape.Text =(obj_data.value)
+											};//;// + " " + sensors[g._shape.Binding].Value.Unit ;
 											if(obj_data.message){
 												g._shape.isError=true;
 											}else{
@@ -1011,7 +1015,7 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 			} catch(err) {
 			}
 			sessionStorage.dataId = 0;
-			getrealdatabynodeid(0);
+			window.parent.getrealdatabynodeid(0);
 		})
 	}
 	}catch(err){

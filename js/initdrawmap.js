@@ -217,6 +217,7 @@ mCanvas.onclick=(function(){
     var pfdp = new Object();
     var trans = new DOMMatrix().scale(sessionStorage.scaler,sessionStorage.scaler);
     var arr=JSON.parse(sessionStorage.contents);
+    if(arr!=null)
     for (var i = 0; i < arr.length; i++) {
         if (!arr[i]) {
             continue;
@@ -244,14 +245,15 @@ mCanvas.onclick=(function(){
         if(ctx.isPointInPath(x, y) ){
             ctx.strokeStyle = "red";
             ctx.stroke();
-            if(!pfdp.Binding&&pfdp.Binding!=null&& pfdp.Binding!=""){
+            if(pfdp.Binding&&pfdp.Binding!=null && pfdp.Binding!=""){
                 var channel=(pfdp.Binding).substring(0,pfdp.Binding.indexOf(':'));
                 //var datatype=(pfdp.Binding).substr(pfdp.Binding.indexOf(':')+1);
                 if((window.parent.allsensors)&&(window.parent.allsensors[channel])){
                     sessionStorage.sensorId=parseInt(window.parent.allsensors[channel].id);
                     window.parent.iframemain.attr("src","detail.html");
                 }else{
-                    showmsg("没有绑定标签!");
+                    //showmsg("没有绑定标签!");
+                    showstateinfo("此图元没有绑定标签信息","initdrawmap-canvas.onclick");
                 }
             }
         }

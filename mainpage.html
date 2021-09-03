@@ -539,7 +539,8 @@
 					if (data.nodeId != nodeid && data.level <= Levels_of_treeview-1) {
 						localStorage.setItem("sensors", null);
 						sessionStorage.nodeId = data.id;
-						if(!data.hasOwnProperty("nodes"))
+						
+						(!data.hasOwnProperty("nodes"))
 							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);//将GetBinariesByType与GetSensorsByNode顺序颠倒，以便执行refreshiframe
 						sessionStorage.eventTypeSelected="";
 						GetSensorsByNode(data.id);
@@ -553,6 +554,8 @@
 						}}
 						catch(err){
 						}/**/
+					}else{
+						closeloadlayer();
 					}
 					//sessionStorage.selectText="";
 					if(data.Catalog){//Catalog为空标书为非叶子节点（最终节点）
@@ -1162,6 +1165,12 @@
 					buildsensor2(allsensors, result.sensors, "");
 					var sensors = buildsensor(result.sensors);//(JSON.parse(localStorage.getItem("sensors")));
 					localStorage.setItem("sensors", JSON.stringify(sensors));
+					try{
+						if ((sessionStorage.pageindex==2)||(sessionStorage.pageindex==17)){
+							iframemain[0].contentWindow.showAllSensors();
+						}}
+						catch(err){
+						}/**/
 					if(!jQuery.isEmptyObject(result.typeConfigs)){
 						var configs=new Object();
 						configs=result.typeConfigs;
@@ -1202,7 +1211,7 @@
 				}
 				refreshiframe();
 				realdataid=-1;
-				getrealdatabynodeid(realdataid);
+				//getrealdatabynodeid(realdataid);
 				inittreeview_level2(treenode);
 			})
 		}catch(err){
@@ -1545,7 +1554,11 @@
 												if(obj_realdata[loop].sensorId==sid && obj_realdata[loop].name.toLowerCase()==dataname.toLowerCase()
 													&&(obj_realdata[loop].folder.toLowerCase()==datafolder.toLowerCase())){
 													obj_data = (obj_realdata)[loop];////
-													g._shape.Text =(obj_data.value);//.toFixed(Number_of_decimal);// + " " + sensors[g._shape.Binding].Value.Unit ;
+													if(isNumber(obj_data.value)){
+														g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal)
+													}else{
+														g._shape.Text =(obj_data.value)
+													};//;// + " " + sensors[g._shape.Binding].Value.Unit ;
 													if(obj_data.message){
 														g._shape.isError=true;
 													}else{
@@ -1580,8 +1593,8 @@
 					if ((obj_realdata)&&(obj_realdata.length>0)) {
 						let obj_length=obj_realdata.length;
 						for(var loop=0;loop<obj_length;loop++){
-							if(realdataid<parseInt(obj_realdata[loop].id))
-								realdataid=parseInt(obj_realdata[loop].id);
+							//if(realdataid<parseInt(obj_realdata[loop].id))
+							//	realdataid=parseInt(obj_realdata[loop].id);
 							if(obj_realdata[loop].sensorId==sid){
 							obj_data = obj_realdata[loop];////
 							var rows=tbody.rows;
@@ -1603,7 +1616,12 @@
 											let jiange=GetDateDiff(rows[k].cells[2].outerText,(dateToString(obj_data.time,2)),"minute")
 											if(jiange<=between_time){
 											//rows[k].cells[2].innerHTML=((obj_data.time).replace(/T/g," ")).substring(0,19);
-											rows[k].cells[3].innerHTML=(obj_data.value );//.toFixed(Number_of_decimal);
+											if(isNumber(obj_data.value)){
+												rows[k].cells[3].innerHTML =(obj_data.value*1).toFixed(Number_of_decimal)
+											}else{
+												rows[k].cells[3].innerHTML =(obj_data.value)
+											};
+											//rows[k].cells[3].innerHTML=(obj_data.value.toFixed(Number_of_decimal) );//;
 											break;
 										}else{
 											tbody.deleteRow(k);
@@ -2227,5 +2245,6 @@
   标签树形目录在跟新系统主站节点时有时不能更新的问题（20210303）
 
   告警查询，选则全部时显示没有记录的问题。一次图的全屏显示模糊问题，
+  0902 图形中的小数位数；刷新后显示部分；分组统计值，小数位数；获取的小数位数值,24h趋势图的标签名称-编号；有关超长数据的处理和显示。
   
 -->

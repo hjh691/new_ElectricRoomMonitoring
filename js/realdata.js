@@ -50,7 +50,7 @@ $(function () {
 function initchartoption(){//初始化图表选择和显示值；
     chartOption={chart_type:"",chart_unit:"",chart_max:170,chart_min:0,chart_sigle:"",
                  chart_main_num:4,chart_chi_num:8,chart_detail_font_size:16,chart_title_font_size:16,
-                 start_angle:0,end_angle:180};
+                 start_angle:0,end_angle:180,dot:1};
     maxval =  minval =  maxvalue =minvalue = value0=maxOfRealdata=0;
     alert_obj={};//状态统计对象
     sname=maxOfRealdataName=maxvaluetime=happentime="";//图表的标签名称、最大值标签名称、最大值发生时间、24h极值发生时刻，maxvaluetime暂时未使用。
@@ -58,7 +58,7 @@ function initchartoption(){//初始化图表选择和显示值；
 function initrealdata(){//初始化页面选项
   try{
     initchartoption();
-    cleartable();
+    //cleartable();
     datas = [];
     datas.splice(0, datas.length);//
     //if(sessionStorage.pageSize)
@@ -129,7 +129,9 @@ function initpage() {
 }
 function showAllSensors(){
     //添加所有的标签项
+    sensors = JSON.parse(localStorage.getItem("sensors"));
     if(sensors!=null){
+        is_have=true;
         alert_obj=[];
         var parentid=-1,parentname="";
         $table = document.getElementById('realdata-tbody');
@@ -188,6 +190,7 @@ function showAllSensors(){
             $table.appendChild(atr);//we are famly
             jisuanyichangbili("离线");
         }
+        getrealdatabynodeid(-1);
         //page=new Page(pageSize,'realtable','realdata-tbody','pageindex');
         //page.changePage(0);
     }
@@ -528,13 +531,18 @@ function getCatalog(adatatype,index){
                                                 chartOption.chart_min=d_config[i].details[detail].value;
                                                 continue;
                                             }
+                                            if(d_config[i].details[detail].name.toLowerCase()=="Dot".toLowerCase()){
+                                                chartOption.dot=parseInt(d_config[i].details[detail].value);
+                                                //localStorage.decimalNum=Number_of_decimal=chartOption.dot;
+                                                continue;
+                                            }
                                         }
                                         //chartOption.chart_max=d_config[i].details.Top;
                                         //chartOption.chart_min=d_config[i].details.Bot;
                                         if((chartOption.chart_max-chartOption.chart_min)%10==0){
                                             chartOption.chart_main_num=4;
                                             chartOption.chart_chi_num=8;
-                                        };
+                                        }else
                                         if((chartOption.chart_max-chartOption.chart_min)%5==0){
                                             chartOption.chart_main_num=5;
                                             chartOption.chart_chi_num=10;
@@ -595,7 +603,9 @@ function cleartable(){
         }
         table[0].appendChild(tr);
     }*/
-    getrealdatabynodeid(-1);
+    is_have=false;
+    
+    
 }
 function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数据，asensorid 当前标签id，isload 是否与主菜单标签表同步
     try{
@@ -623,7 +633,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
     var nodata=true;
     if(!asensorid)//
         nodata=false;
-    if (obj_realdata) {
+    if (obj_realdata && is_have) {
         var realdata_len=obj_realdata.length, 
         tablehead_len=tab_head.rows[0].cells.length;
         refresh_tabhead(v_sel);//根据选项刷新表头的显示内容
@@ -762,17 +772,17 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         let tab_row_len=$table.rows.length;
                         for(var l=0;l<tab_row_len;l++){
                             if($table.rows[l].cells[1].innerHTML==obj_data.sensorId){
+                                if($table.rows[l].cells[3].value<dateToString(obj_data.time,2)||$table.rows[l].cells[3].innerHTML==""){//更新测量时间
+                                    $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                    $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
+                                }
                                 for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
                                     if(!v_sel[k].checked){
                                         $table.rows[l].cells[k+hidden_cells].style.cssText = "display:none";
                                     }
                                     if(v_sel[k].value==dname){
                                         $table.rows[l].cells[k+hidden_cells].innerHTML=data_value;
-                                        //isbreak=true;
-                                        if($table.rows[l].cells[3].value<dateToString(obj_data.time,2)||$table.rows[l].cells[3].innerHTML==""){//更新测量时间
-                                            $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
-                                            $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
-                                        }
+                                        //isbreak=true
                                         if(obj_data.message){
                                             $table.rows[l].cells[k+hidden_cells].style.backgroundColor="#ffff00";
                                             if($table.rows[l].cells[tablehead_len-1].innerHTML&&($table.rows[l].cells[tablehead_len-1].innerHTML.indexOf(obj_data.message)<0))
@@ -951,7 +961,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                 jisuanyichangbili(($table.rows[int].cells[tab_head.rows[0].cells.length-2].innerHTML));
             }
             if (typeof (sessionStorage.t_p) != "undefined") {
-                sname = $table.rows[sessionStorage.t_p].cells[1].innerHTML;
+                sname = $table.rows[sessionStorage.t_p].cells[2].innerHTML;
                 //chartOption.chart_type = $table.rows[sessionStorage.t_p].cells[6].innerHTML;
                 sensor_Id = parseInt($table.rows[sessionStorage.t_p].cells[1].innerHTML);
                 var lasttime = $table.rows[sessionStorage.t_p].cells[3].value;
@@ -1074,8 +1084,8 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
             if(!chartOption.chart_max)
                 chartOption.chart_max = 170;
             chartOption.start_angle = -45;
-            if(!chart_unit || chart_unit=="度")
-                chart_unit = "℃"
+            if(!chartOption.chart_unit || chartOption.chart_unit=="度")
+            chartOption.chart_unit = "℃"
             chartOption.chart_sigle = "";
             colors = [[0.1, '#1e90ff'], [0.6, '#090'], [0.8, '#ffa500'], [0.9, '#ff4500'], [1, '#ff0000']];
             break;
@@ -1087,19 +1097,27 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
             //if(!chartOption.chart_max)
                 chartOption.chart_max = -100;
             //if(!chart_unit)
-                chart_unit = "dB";
+            chartOption.chart_unit = "dB";
             chartOption.chart_sigle = ""
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
             break;
         default:
             //if(!chartOption.chart_min)
-                chartOption.chart_min = 0;
+                chartOption.chart_min = -55;
             //if(!chartOption.chart_max)
-                chartOption.chart_max = 100;
+                chartOption.chart_max = 125;
             //if(!chart_unit)
                 chart_unit = "";
             chartOption.chart_sigle = ""
             colors = [[0.2, '#1e90ff'], [0.8, '#090'], [1, '#ff4500']];
+    }
+    if((chartOption.chart_max-chartOption.chart_min)%10==0){
+        chartOption.chart_main_num=5;
+        chartOption.chart_chi_num=10;
+    }else
+    if((chartOption.chart_max-chartOption.chart_min)%5==0){
+        chartOption.chart_main_num=5;
+        chartOption.chart_chi_num=10;
     }
 }
 function tableclick(tr,isloadmain) {
@@ -1581,7 +1599,7 @@ function refreshData() {
     option.series[0].axisTick.splitNumber=chartOption.chart_chi_num;
     value = option.series[0].data[0].value;
     option.series[0].detail.formatter = chartOption.chart_sigle + value + ' \n\n' +"时间："+happentime;//+chart_unit;
-    option.series[0].data[0].name = chart_unit;//sname;
+    option.series[0].data[0].name = chartOption.chart_unit;//sname;
     option.title.text = sname+":  "+titlename+" 24h 峰值";
     /*for (var i = 0; i < option.series.length; i++) {
         option.series[i].axisLine.lineStyle.color = colors;
@@ -1609,7 +1627,7 @@ function refreshData() {
     option4.series[0].axisTick.splitNumber=chartOption.chart_chi_num;
     value = option4.series[0].data[0].value;
     option4.series[0].detail.formatter = chartOption.chart_sigle + value + ' \n\n' + option4.series[0].name + ' ';//+chart_unit;
-    option4.series[0].data[0].name = chart_unit;//sname;
+    option4.series[0].data[0].name = chartOption.chart_unit;//sname;
     option4.title.text = sname+" : "+titlename;
     myChart4.setOption(option4);
     option1.series[0].data[0].value= maxOfRealdata.toFixed(Number_of_decimal);//54.321;
@@ -1619,7 +1637,7 @@ function refreshData() {
     option1.series[0].splitNumber=chartOption.chart_main_num;
     option1.series[0].axisLine.lineStyle.color=colors;
     option1.series[0].axisTick.splitNumber=chartOption.chart_chi_num;
-    option1.series[0].data[0].name = chart_unit;//sname;
+    option1.series[0].data[0].name = chartOption.chart_unit;//sname;
     option1.title.text="实时极值: "+titlename;
     myChart1.setOption(option1);
     var ratArr=[];//,str_name=""
@@ -1664,7 +1682,7 @@ function decodedatas(obj_chartdata) {
     let chartdata_len=obj_chartdata.length;
     for (var i = 0; i < chartdata_len; i++) {
         //if((obj_chartdata[i].time).replace(/T/g," ").substring(0,19)>=zero)//取当天零点以后的值，obj_chartdata保存24小时以内的值
-            pa.push([Date.parse(obj_chartdata[i].time), obj_chartdata[i].value, i]);
+            pa.push([Date.parse(obj_chartdata[i].time), parseFloat((obj_chartdata[i].value*1).toFixed(Number_of_decimal)), i]);
         //pb.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/1.5, i])
         //pc.push([strtodatetime(obj_chartdata[i].Time), obj_chartdata[i].Value/2, i])
         if (parseFloat(obj_chartdata[i].value) > maxval) {

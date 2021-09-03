@@ -180,7 +180,7 @@ function showAllSensors(sensors){
             atr.cells[5].style.cssText="display:none";
             //atr.cells[1].innerHTML=sensors[i].id;
             atr.cells[1].innerHTML=sensors[i].value.name;//第三列添加标签名称，
-            atr.cells[2].style.cssText="padding-left:5px;text-align:left";
+            atr.cells[2].style.cssText="padding-left:5px;";//text-align:left
             atr.cells[2].innerHTML=value;// style.cssText="display:none";
             atr.cells[3].innerHTML="";//parentname;运行
             //if(parseInt(jfjk_base_config.realdatashowmodle))
@@ -194,20 +194,25 @@ function showAllSensors(sensors){
     }
 }
 function sumtotal(){//对列表中的数据进行简单统计分析
-    var iyunxing=0,igaojing=0,max=0,min=0,addr_max="",addr_min="";
+    var iyunxing=0,igaojing=0,max="",min="",addr_max="",addr_min="";
     $table = document.getElementById('detail_realdata_tbody');
     let total=$table.rows.length;
     if(total>0){
-        max=min=parseFloat($table.rows[0].cells[2].innerHTML);
-        addr_min=addr_max=$table.rows[0].cells[1].innerHTML;
+        if(isNumber($table.rows[0].cells[2].innerHTML)){
+            max=min=parseFloat($table.rows[0].cells[2].innerHTML);
+        }
         for (var int = 0; int < total; int++) {
-            if(max<parseFloat($table.rows[int].cells[2].innerHTML)){
-                max=parseFloat($table.rows[int].cells[2].innerHTML);
-                addr_max=$table.rows[int].cells[1].innerHTML;
-            }
-            if(min>parseFloat($table.rows[int].cells[2].innerHTML)){
-                min=parseFloat($table.rows[int].cells[2].innerHTML);
-                addr_min=$table.rows[int].cells[1].innerHTML;
+            if(isNumber($table.rows[int].cells[2].innerHTML)){
+                if(max==""){max=parseFloat(parseFloat($table.rows[int].cells[2].innerHTML).toFixed(Number_of_decimal))}
+                if(max<parseFloat(parseFloat($table.rows[int].cells[2].innerHTML).toFixed(Number_of_decimal))){
+                    max=parseFloat(parseFloat($table.rows[int].cells[2].innerHTML).toFixed(Number_of_decimal));
+                    addr_max=$table.rows[int].cells[1].innerHTML;
+                }
+                if(min==""){min=parseFloat(parseFloat($table.rows[int].cells[2].innerHTML).toFixed(Number_of_decimal))}
+                if(min>parseFloat(parseFloat($table.rows[int].cells[2].innerHTML).toFixed(Number_of_decimal))){
+                    min=parseFloat(parseFloat($table.rows[int].cells[2].innerHTML).toFixed(Number_of_decimal));
+                    addr_min=$table.rows[int].cells[1].innerHTML;
+                }
             }
             if($table.rows[int].cells[3].innerText=="运行"){
                 iyunxing++;
@@ -251,7 +256,7 @@ function refreshpicture(aid,asensors){
     }
     $("#pic_name").text(group_name+asensors);
     aid=(aid % 3)+1;//以后要与后台对应关联，此时采用模拟变换。
-    var path="/res/kgg"+aid+".jpg";//kgg  dlxl
+    var path='';//"/res/kgg"+aid+".jpg";//kgg  dlxl
     $("#img1").attr('src',path); 
 }
 function refreshData(){//刷新数据内容，由主页面根据实时数据的页面索引来调用。
@@ -307,7 +312,12 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
                             localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
                             obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
                         }
-                        let str_hh=obj_data.value;// $table.rows[l].cells[2].innerHTML;
+                        let str_hh=''
+                        if(isNumber(obj_data.value)){
+                            str_hh=(obj_data.value*1).toFixed(Number_of_decimal);
+                        }else{
+                            str_hh=obj_data.value;// $table.rows[l].cells[2].innerHTML;
+                        }
                         /*if(!str_hh){
                             str_hh=titlename+" : "+ obj_data.value+" "+chartOption.chart_unit;
                         }else if(str_hh.indexOf(titlename+" : ")!=-1){
@@ -340,7 +350,7 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
         }
         //var heightpx = $("#detail_realdata_tbody tr").height();// + 1;//加1是网格线的宽度
         for (var int = 0; int < tab_rows_len; int++) {
-            if ($table.rows[int].cells[1].innerHTML == sessionStorage.SensorId) {
+            if ($table.rows[int].cells[5].innerHTML == sessionStorage.SensorId) {
                 sessionStorage.t_p = int;
                 var ppt = parseInt(sessionStorage.t_p);
                 var divheight=$("#datadiv").height();
@@ -520,4 +530,89 @@ function clearvalue(){//清除原来的数值
     for(var i=0;i<$table.rows.length;i++){
         $table.rows[i].cells[2].innerHTML="";
     }
+}
+function openmodal(aname){
+    var title=$("#bind_name");
+    title.text(aname+": 数据详细内容")
+    var detail=document.getElementById("details");
+    detail.style="width:500px;height:500px;"
+    var temp=(localStorage[aname].split(','));
+    var float=[];
+    var stemp="";
+    for(var i=8;i<temp.length;i=i+4){
+        float[(i/4)-2] = hex2float(bytesarraytofloat(temp,i)).toFixed(Number_of_decimal);
+    //stemp+=float[(i/4)-2]+" ";
+    }
+    //detail.innerHTML=stemp;
+    //var chartdiv=document.createElement("div");
+    //chartdiv.setAttribute('style','width:300px;height:300px;')
+    //var echarts = require('echarts');
+    //require('echarts-gl');
+    //var chartDom = document.getElementById('chartdiv');甲级 25人，其中一级 20%（5人），二级30%（8人），安全工程师30%（8人） 省级审核国家级审批、发证
+    //乙级16人 一级20%（4人），二级30%（5人），工程师30%（5人） 市级审核，升级审批发证（本省活动）（普遍性、客观性、转变性、规律性）
+    //chartDom.style="width:300px;height:300px;"
+    var myChart = echarts.init(detail);
+    var option;
+    var seriesArray=[];
+    // Parametric curve
+    var float_len=float.length;
+    var y=-1,x=-1;
+    var series=new Object();
+    series.type="line3D";
+    series.lineStyle={width:4};
+    var data = [];
+    for (var t = 0; t < float_len; t ++) {
+        var x = t % caiyangcishu;
+        var z = float[t];
+        if(y!=parseInt(t / caiyangcishu)){//采用变量浮动截取相对的周期和采样值。避免采用固定数值时数据的长短造成错误。
+            var y =parseInt(t / caiyangcishu) ;//t + 2.0 * Math.sin(75 * t);
+            data=[];
+            series=new Object();
+            series.type="line3D";
+            series.lineStyle={width:4};
+            data.push([x, y, z]);
+            series.data=data;
+            seriesArray.push(series);
+        }else{
+            data=series.data;
+            data.push([x,y,z]);
+            series.data=data;
+        }
+    }
+    option = {
+        tooltip: {},
+        backgroundColor: '#fff',
+        visualMap: {
+            show: false,
+            dimension: 2,
+            min: 0,
+            max: 30,
+            inRange: {
+                //color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+            }
+        },
+        xAxis3D: {
+            type: 'category'
+        },
+        yAxis3D: {
+            type: 'category'
+        },
+        zAxis3D: {
+            type: 'value'
+        },
+        grid3D: {
+            viewControl: {
+                projection: 'orthographic'
+            }
+        },
+        series: seriesArray,/*[{
+            type: 'line3D',
+            data: data,
+            lineStyle: {
+                width: 4
+            }
+        }]*/
+    };
+    option && myChart.setOption(option);
+    //detail.appendChild(chartdiv); 
 }
