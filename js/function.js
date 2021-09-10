@@ -906,8 +906,8 @@ function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 					localStorage.setItem("historydata",JSON.stringify(data.datas));
 					decodedatas( data.datas);//[sensorid]
 				} else {
-					showmsg("没有符合条件的历史数据");
-					showstateinfo("没有符合条件的历史数据");
+					//showmsg("没有符合条件的历史数据");
+					showstateinfo("没有符合条件的历史数据","gethistorydata");
 					localStorage.setItem("historydata",null);
 					decodedatas(null);
 				}
@@ -943,7 +943,7 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 			if(jQuery.isEmptyObject(data)){//.Result
 				//if (data.Result.Value == null) {
 				showmsg("没有符合条件的记录",info_showtime);
-				showstateinfo("没有符合条件的记录");
+				showstateinfo("没有符合条件的记录","GetBinary");
 				sessionStorage.contents = null;
 				try {
 					drawmap(JSON.parse(sessionStorage.contents));

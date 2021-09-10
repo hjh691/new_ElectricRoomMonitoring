@@ -736,7 +736,7 @@ function Picture(ctx,pfdp){
 		//重大劳动安全事故罪（安全条件不符合）0-3、3-7 大型群众性活动重大安全事故罪 0-3、3-7 工程重大安全事故罪0-5、5-10
 	}
 	var img=new Image();
-	img.src="data:imgae/jpg;base64,"+pfdp.Datas;
+	img.src="data:imgae/jpg;base64,"+pfdp.Datas;//有的教程说此语句放在onload之后，有待验证。
 	img.onload=function(){//等到图像内容加载完成后再显示绘制。此时的ctx的属性已经改变，需重新设置transform。
 		//setTimeout(drawpicture,1000);
 		ctx.globalCompositeOperation="destination-over"; //"destination-atop";//

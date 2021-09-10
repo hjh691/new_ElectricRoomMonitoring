@@ -197,6 +197,7 @@ function showAllSensors(){
 }
 //var objWin;
 function showdetails(asensorid){//功能接口，显示一个新的页面，用于显示次标签的数据详情和图示
+    getrealdatabynodeid(-1);
     sessionStorage.sensorId=parseInt(asensorid);//此处sessionStorage.sensorId首字母为小写。
     window.parent.tablehead=(allselect);
     /*var target = "detail.html"; 
@@ -1087,7 +1088,7 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
             if(!chartOption.chart_unit || chartOption.chart_unit=="度")
             chartOption.chart_unit = "℃"
             chartOption.chart_sigle = "";
-            colors = [[0.1, '#1e90ff'], [0.6, '#090'], [0.8, '#ffa500'], [0.9, '#ff4500'], [1, '#ff0000']];
+            colors = [[0.2, '#1e90ff'], [0.6, '#090'], [0.8, '#ffa500'], [0.9, '#ff4500'], [1, '#ff0000']];
             break;
         case "pd":
         case "max":

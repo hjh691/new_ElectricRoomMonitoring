@@ -10,6 +10,19 @@ var chartOption={};
 var type_td="",group_name="";
 var sensors,allsensors;
 var allconfigs;
+var compare = function (obj1, obj2) {
+    if(obj1 && obj2){
+        var val1 = obj1.value.name;
+        var val2 = obj2.value.name;
+        if (val1 < val2) {
+            return -1;
+        } else if (val1 > val2) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+}
 $(function(){
     initpage();
     function initpage(){
@@ -18,19 +31,6 @@ $(function(){
         allconfigs=JSON.parse(localStorage.Config);
         list_group.empty();
         sa=findsensorbyid(js_sensors,sen_id);
-        var compare = function (obj1, obj2) {
-            if(obj1 && obj2){
-                var val1 = obj1.value.name;
-                var val2 = obj2.value.name;
-                if (val1 < val2) {
-                    return -1;
-                } else if (val1 > val2) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        }
         sa.sort(compare);
         if(sa!=null){
             for(var i=0;i<sa.length;i++){
@@ -65,7 +65,7 @@ $(function(){
                 $("table").eq(0).find('thead').attr("style","transform: translateY(0px);")//复原
             }
         });
-        window.parent.getrealdatabynodeid(-1);
+        //window.parent.getrealdatabynodeid(-1);
     }
     function findsensorbyid(obj,sid,p){
         var a=null;
@@ -137,6 +137,7 @@ function refreshgroup(sid){
     }else{
         sensors=[sa[sid]];
     }
+    sensors.sort(compare);
     window.parent.getrealdatabynodeid(-1);
     refreshpicture(sid)//,sensors
     showAllSensors(sensors);
@@ -190,7 +191,7 @@ function showAllSensors(sensors){
             appenddisplaytype(sensors[i].value.id);
         }
         refreshData();
-        sumtotal();
+        
     }
 }
 function sumtotal(){//对列表中的数据进行简单统计分析
@@ -363,6 +364,7 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
     }else{
         showstateinfo("本次获取实时数据为空","realdata_detail");
     }
+    sumtotal();
 }
 //
 //根据数据列值获取Catalog。

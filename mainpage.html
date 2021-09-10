@@ -11,7 +11,7 @@
 	<title>智能变电站辅助系统综合监测云平台</title>
 	<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
 	<script  type="text/javascript" src="js/jquery-ui.js"></script>
-	<script  type="text/javascript" src="js/context.js"></script>
+	<!--<script  type="text/javascript" src="js/context.js"></script> -->  <!--右键菜单插件-->
 	<script src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/config.js"></script>
 	<script type="text/javascript" src="js/layer/layer.js"></script>
@@ -19,7 +19,6 @@
 	<script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
 	<script type="text/javascript" src="js/function.js"></script>
 	<style>
-		
 		.butn {
 			border: 0;
 			background: rgba(8, 177, 106, 0);/* #243747;*/
@@ -124,9 +123,9 @@
 	<!--底部公司版权 -->
 	<div>
 		<div class="navigation" id="footer">	
-			<div class="pc-footer" align="center"><!---->
-					<label id="state_info" style="float:left;margin-bottom: 0; margin-left: 30px;color:rgb(248, 233, 20);"></label>
-					<ul  align="center" style="margin:0 0;">
+			<div class="pc-footer"><!---->
+					<label id="state_info" style="float:left;margin-bottom: 0; margin-left: 30px;color:rgb(248, 233, 20);width:50%;"></label>
+					<ul  align="left" style="margin:0 0;">
 						<li ><a id="company_info" href="" target="_blank" style="color:white;"><img id="company_log"  width="20px" height="20px" ><lab id="company_name"></lab></a></li>
 						<li style="color:white;" >Copyright: <lab id="copyright_time"></lab></li>
 					</ul>
@@ -1161,6 +1160,20 @@
 					var treenode=buildnode_level2(treeseneors,0);
 					tree2=true;
 					maps = [];
+					if(!jQuery.isEmptyObject(result.configs)){
+						var config=new Object();
+						config=result.configs;
+						localStorage.setItem("Config",JSON.stringify(config));
+					}else{
+						localStorage.setItem("Config",null);
+					}
+					if(!jQuery.isEmptyObject(result.typeConfigs)){
+						var configs=new Object();
+						configs=result.typeConfigs;
+						localStorage.setItem("Configs",JSON.stringify(configs));
+					}else{
+						localStorage.setItem("Configs",null);
+					}
 					allsensors = new Object();
 					buildsensor2(allsensors, result.sensors, "");
 					var sensors = buildsensor(result.sensors);//(JSON.parse(localStorage.getItem("sensors")));
@@ -1171,20 +1184,6 @@
 						}}
 						catch(err){
 						}/**/
-					if(!jQuery.isEmptyObject(result.typeConfigs)){
-						var configs=new Object();
-						configs=result.typeConfigs;
-						localStorage.setItem("Configs",JSON.stringify(configs));
-					}else{
-						localStorage.setItem("Configs",null);
-					}
-					if(!jQuery.isEmptyObject(result.configs)){
-						var config=new Object();
-						config=result.configs;
-						localStorage.setItem("Config",JSON.stringify(config));
-					}else{
-						localStorage.setItem("Config",null);
-					}
 					//inittreeview_level2(treenode);
 				} else {
 					tree2=false;
@@ -1442,6 +1441,15 @@
 						var v = s.value;
 						var map = new Object();
 						map.id = v.id;
+						/*var config=JSON.parse(localStorage.getItem("Config"));//给每个标签添加对应的配置选项，感觉暂时还用不到。
+						if(v.type!=null || v.config!=null){
+							for(var j=0;j<config.length;j++){
+								if(v.type==config[j].type && v.config==config[j].name){
+									v.details=config[j].details;
+									break;
+								}
+							}
+						}*/
 						map.Value = v;
 						var key = $.trim(parentkey);
 						if (v.address && $.trim(v.address) != "") {
