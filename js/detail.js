@@ -3,7 +3,7 @@
  * 将数值列和字符串列分开排序，避免数值也按字符顺序排序造成的混乱，图形添加名称指示项。蓬勃 磅礴 滂沱 撺掇 
  */
 var list_group=$("#ul_group");
-var sen_id=parseInt(sessionStorage.sensorId);//此处sensorId首字母为小写。//飛
+var sen_id=parseInt(sessionStorage.sensorId);//此处sensorId首字母为小写。只在分组显示相关操作使用 realdata.js,detail.js,initdrawmap.js,realdata_iot.js
 var js_sensors=JSON.parse(localStorage.getItem("sensor_tree"));
 var sa=[];
 var chartOption={};
@@ -26,7 +26,8 @@ var compare = function (obj1, obj2) {
 $(function(){
     initpage();
     function initpage(){
-        //sessionStorage.pageindex=21;
+        sessionStorage.framepage="detail.html";
+        sessionStorage.pageindex=21;
         allsensors=JSON.parse(localStorage.getItem("sensors"));
         allconfigs=JSON.parse(localStorage.Config);
         list_group.empty();
@@ -238,9 +239,9 @@ function sumtotal(){//对列表中的数据进行简单统计分析
 function tableclick(tr,isloadmain) {
     $(tr).siblings("tr[backgroundColor!='#ff0']").css("background", "");
     sessionStorage.sel_id = tr.rowIndex - 1;
-    if (parseInt(tr.cells[5].innerHTML) != sessionStorage.SensorId) {
-        sessionStorage.SensorId = parseInt(tr.cells[5].innerHTML);
-        sessionStorage.sel_id=sessionStorage.SensorId;
+    if (parseInt(tr.cells[5].innerHTML) != sessionStorage.sensorId) {
+        sessionStorage.sensorId = parseInt(tr.cells[5].innerHTML);
+        sessionStorage.sel_id=sessionStorage.sensorId;//
     }
     //if (isloadmain)
     //    window.parent.treelocationforsensorid(sessionStorage.SensorId);
@@ -351,12 +352,15 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
         }
         //var heightpx = $("#detail_realdata_tbody tr").height();// + 1;//加1是网格线的宽度
         for (var int = 0; int < tab_rows_len; int++) {
-            if ($table.rows[int].cells[5].innerHTML == sessionStorage.SensorId) {
+            if ($table.rows[int].cells[5].innerHTML == sessionStorage.sensorId) {
                 sessionStorage.t_p = int;
                 var ppt = parseInt(sessionStorage.t_p);
                 var divheight=$("#datadiv").height();
-                if(($table.rows[int].offsetTop-30)>(divheight))
-                    $("#datadiv").scrollTop($table.rows[int].offsetTop-30);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
+                if(($table.rows[int].offsetTop)>(divheight)){
+                    $("#datadiv").scrollTop($table.rows[int].offsetTop-35);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
+                }else{
+                    $("#datadiv").scrollTop(0)
+                }
                 $table.rows[ppt].style.backgroundColor = color_table_cur;
                 break;
             }

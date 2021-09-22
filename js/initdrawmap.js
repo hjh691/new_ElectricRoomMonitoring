@@ -42,8 +42,9 @@ $(document).ready(function(){
     });
 function initpage(){
     updatapcnav(2);
-    sessionStorage.framepag="drawmap.html";
-    window.parent.getrealdatabynodeid();
+    sessionStorage.framepage="drawmap.html";
+    sessionStorage.pageindex=1;
+    window.parent.getrealdatabynodeid(-1);
     $("#txlb").empty();
     var sel_sensor=document.getElementById("txlb");
     /*for (var i = 0; i < sel_sensor.options.length; i) {
@@ -53,7 +54,7 @@ function initpage(){
     }*/
     if(sessionStorage.txid)
         BinariesId=sessionStorage.txid;
-    binaries=JSON.parse(localStorage.getItem("binaries"));
+    var binaries=JSON.parse(localStorage.getItem("binaries"));
     if(binaries!=null){
         for(var i=0;i<binaries.length;i++){
             var op=document.createElement("option");
@@ -101,6 +102,9 @@ function setSelectOption_txlb(objid, sensor) {
         BinariesId=options[0].value;
         sessionStorage.txid=BinariesId;
     }
+}
+function refreshData(){
+    refresh();
 }
 function refresh(){
     if(!checkFull())
@@ -249,7 +253,8 @@ mCanvas.onclick=(function(){
                 var channel=(pfdp.Binding).substring(0,pfdp.Binding.indexOf(':'));
                 //var datatype=(pfdp.Binding).substr(pfdp.Binding.indexOf(':')+1);
                 if((window.parent.allsensors)&&(window.parent.allsensors[channel])){
-                    sessionStorage.sensorId=parseInt(window.parent.allsensors[channel].id);
+                    sessionStorage.sensorId=parseInt(window.parent.allsensors[channel].id);//此处sensorId首字母小写
+                    window.parent.getrealdatabynodeid(-1);
                     window.parent.iframemain.attr("src","detail.html");
                 }else{
                     //showmsg("没有绑定标签!");

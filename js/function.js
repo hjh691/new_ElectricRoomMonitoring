@@ -1015,7 +1015,7 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 			} catch(err) {
 			}
 			sessionStorage.dataId = 0;
-			window.parent.getrealdatabynodeid(0);
+			//window.parent.getrealdatabynodeid(0);
 		})
 	}
 	}catch(err){
@@ -1488,7 +1488,7 @@ function getrealdatabynodeid(anodeid){
 				if(typeof refreshData === "function"){
 					refreshData();
 				}else{
-					if(sessionStorage.pageindex==2 || sessionStorage.pageindex==17){
+					if(sessionStorage.pageindex==2 || sessionStorage.pageindex==17|| sessionStorage.pageindex==1||sessionStorage.pageindex==21){
 						document.getElementById('iframe_main').contentWindow.refreshData();
 					}
 				};

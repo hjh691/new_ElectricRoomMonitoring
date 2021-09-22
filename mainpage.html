@@ -265,6 +265,7 @@
 							LoginOrder(localStorage.username,sessionStorage.password,1);
 						}
 						if((sessionStorage.pageindex==1)&&(i % 15==0)){
+							getrealdatabynodeid(-1);//0916 如果不加此语句，有些刷新慢的数据将短暂缺失。
 							iframemain[0].contentWindow.getbinary();//刷新一次图形
 						}
 					};
@@ -1459,10 +1460,11 @@
 						if ((!jQuery.isEmptyObject(s.children))) {
 							buildsensor2(obj, s.children, key);
 						}
-						/*if (v.type && $.trim(v.type) != "") {
-							key = key ? key + "_" + v.type : v.type;
-						}*/
-						obj[key.toLowerCase()] = map;
+						if(obj.hasOwnProperty(key.toLowerCase())){
+							//showmsg(key+" 标签地址存在重复，请检查！！");
+							continue;//有重复项在跳过。
+						}
+						obj[key.toLowerCase()] = map;//如果地址和通道号有重复的，后边的选项会替代前边的选项。前边加continue则忽略后边选项。
 					}
 				}
 			}
