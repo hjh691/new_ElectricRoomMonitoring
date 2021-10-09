@@ -225,6 +225,10 @@
             </div>
         </div>
         <script >
+            history.pushState(null, null, document.URL);
+			window.addEventListener('popstate', function () {
+                history.pushState(null, null, document.URL);
+			});
             initsysinfo();
             function initsysinfo(){//页面参数和状态初始化
                 if(localStorage.systemName)//软件名称（页面显示的系统名称）

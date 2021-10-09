@@ -238,6 +238,10 @@
         </div-->
     </div>
     <script>
+        history.pushState(null, null, document.URL);
+		window.addEventListener('popstate', function () {
+			history.pushState(null, null, document.URL);
+		});
         var sel_id,dp,isstop,isplay=false;
         var va_id="dplayer0",a=0;
         var dparray=[];

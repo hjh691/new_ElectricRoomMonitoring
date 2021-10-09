@@ -16,6 +16,10 @@
 	var timer=null;
 	var flashit=$("#chaxun");
 	$(function () {
+		history.pushState(null, null, document.URL);
+		window.addEventListener('popstate', function () {
+			history.pushState(null, null, document.URL);
+		});
 		initwarnlog();		
 	});
 	//初始化告警信息查询页面（在进入告警信息页面时触发）。  used by electricroommonitor

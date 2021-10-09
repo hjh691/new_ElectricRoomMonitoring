@@ -10,6 +10,10 @@ var myChart;
 var timer=null;
 var flashit=$("#chaxun");
 $(function () {
+    history.pushState(null, null, document.URL);
+    window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL);
+    });
     initpage();			
 });
 //初始化页面

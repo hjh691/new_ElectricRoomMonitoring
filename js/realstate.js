@@ -1,3 +1,7 @@
+history.pushState(null, null, document.URL);
+window.addEventListener('popstate', function () {
+    history.pushState(null, null, document.URL);
+});
 var obj_realdata;
 var isfirst=true;
 var temp=0;

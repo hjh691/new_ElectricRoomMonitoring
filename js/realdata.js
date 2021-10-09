@@ -45,6 +45,10 @@ var catalog="Defalt";
 var display_type=document.getElementById("display_type_realdata");
 var pt = 0;
 $(function () {
+    history.pushState(null, null, document.URL);
+    window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+    });
     initrealdata();
 });
 function initchartoption(){//初始化图表选择和显示值；

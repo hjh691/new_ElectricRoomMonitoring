@@ -139,6 +139,10 @@
             </div>
         </div>
         <script>
+            history.pushState(null, null, document.URL);
+			window.addEventListener('popstate', function () {
+					history.pushState(null, null, document.URL);
+			});
             var ecConfig = echarts.config;
             function eConsole(param) {
                 var mes = '【' + param.type + '】';

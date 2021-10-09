@@ -45,6 +45,10 @@ var sensors_length=0;
 var catalog="Defalt";
 //var display_type=document.getElementById("display_type");
 initrealdata_iot();
+history.pushState(null, null, document.URL);
+window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL);
+});
 function initchartoption(){//初始化图表选择和显示值；
     chartOption={chart_title:"",chart_unit:"",chart_max:100,chart_min:0,chart_sigle:"",child_classname:"",
                  chart_main_num:4,chart_chi_num:8,chart_detail_font_size:16,chart_title_font_size:16,

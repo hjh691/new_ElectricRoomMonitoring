@@ -1011,6 +1011,8 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 				});
 			sessionStorage.contents = JSON.stringify(obj);// 
 			try {
+				if(sessionStorage.scaler!=1)//将绘图比例设为0，否则可能比例会使用上次的数据造成混乱。数据更新与显示跟新的时间差。
+					sessionStorage.scaler=0;
 				drawmap(JSON.parse(sessionStorage.contents));
 			} catch(err) {
 			}

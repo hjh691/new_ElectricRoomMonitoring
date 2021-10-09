@@ -7,6 +7,10 @@ var dx = 0,
 var offx = 0, offy = 0; //
 var ctx = mCanvas.getContext("2d"); 
 $(document).ready(function(){
+    history.pushState(null, null, document.URL);
+    window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+    });
     $.base64.utf8encode = true;
     if(!sessionStorage.map_module)
         sessionStorage.map_module=0;
@@ -153,6 +157,9 @@ function getbinary(){
         sessionStorage.scaler = 0;
     }
     GetBinary(BinariesId);
+}
+function setscaler(){
+
 }
 /*//鼠标按下，将鼠标按下坐标保存在x,y中  
 mCanvas.onmousedown = function(ev) {

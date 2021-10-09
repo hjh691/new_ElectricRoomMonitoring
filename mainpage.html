@@ -156,6 +156,10 @@
 		</div>
 	</div>
 	<script>
+		history.pushState(null, null, document.URL);
+		window.addEventListener('popstate', function () {
+				history.pushState(null, null, document.URL);
+		});
 		var windowHeight;
 		var infotreedata = [], maps = [];
 		var mnodes=[];
@@ -1123,6 +1127,7 @@
 			}
 		}
 		function showdevice(){
+			showloadlayer();
 			if(sessionStorage.pageindex!=6){
 				iframemain.attr("src","device.html");
 				sessionStorage.pageindex=6;

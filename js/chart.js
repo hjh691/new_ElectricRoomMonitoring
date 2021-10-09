@@ -9,6 +9,10 @@
     var selectText="";
     var timer=null;
     var flashit=$("#chaxun");
+    history.pushState(null, null, document.URL);
+    window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+    });
     inithistorychart();
     function inithistorychart() {
         try{

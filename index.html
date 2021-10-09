@@ -125,10 +125,12 @@
 		</table>
 	</div>
 	<script>
+		history.pushState(null, null, document.URL);
+		window.addEventListener('popstate', function () {
+				history.pushState(null, null, document.URL);
+		});
 		sessionStorage.errortime=0;
-		
-
-window.onresize = function(){
+	window.onresize = function(){
 			var widthoftextarea = $(window).width();
 			//设置背景图大小按比例扩大
 			var width_screen = $(window).width();
@@ -144,6 +146,10 @@ window.onresize = function(){
 			}
 		}
 		$(function(){
+			history.pushState(null, null, document.URL);
+			window.addEventListener('popstate', function () {
+					history.pushState(null, null, document.URL);
+			});
 			var obt=document.getElementById("btn_login");
 			
 			document.onkeydown=function(ev){

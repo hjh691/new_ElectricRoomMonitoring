@@ -174,7 +174,11 @@
 	<div id="indicatorContainer"></div>
     </div>
     <script>
-        var pageSize = 999;    //每页显示的记录条数
+        history.pushState(null, null, document.URL);
+		window.addEventListener('popstate', function () {
+			history.pushState(null, null, document.URL);
+		});
+		var pageSize = 999;    //每页显示的记录条数
         var curPage=0;        //当前页
         //var lastpage;        //最后页
         var direct=0;        //方向
