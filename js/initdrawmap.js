@@ -146,6 +146,7 @@ window.onresize=window.onscroll=refresh;
 function decoderealdata(){
 }
 function getbinary(){
+    window.parent.getrealdatabynodeid(-1);
     var txlb= document.getElementById("txlb");
     BinariesId=txlb.value;
     sessionStorage.txid=BinariesId;//保存图形id

@@ -182,6 +182,7 @@ function LoginOrder(name, ps,flag,order,callback,datas) {
 		success: function(data, status) {
 			var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 			if (status == "success") {
+				sessionStorage.errortime = 0;
 				if (data.Error == null) {
 					//sessionStorage.userinfo=JSON.stringify(data);
 					sessionStorage.token ="Bearer "+ data.accessToken;
@@ -190,10 +191,9 @@ function LoginOrder(name, ps,flag,order,callback,datas) {
 					sessionStorage.islogin = true;
 					if ((flag==0)) {//修改第一次登录不能进入主页面的问题。&&(!sessionStorage.errortime || (sessionStorage.errortime == 0))
 						window.location.href = "mainpage.html";
-						sessionStorage.errortime = 0;
+						
 						showstateinfo(localStorage.username+"用户登录成功!");
 					} else {
-						sessionStorage.errortime = 0;
 						showusername();
 						showstateinfo(localStorage.username+"用户重新登录成功!");
 						if(order!=null)
@@ -942,7 +942,7 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 			//sessionStorage.islogin = true;
 			if(jQuery.isEmptyObject(data)){//.Result
 				//if (data.Result.Value == null) {
-				showmsg("没有符合条件的记录",info_showtime);
+				//showmsg("没有符合条件的记录",info_showtime);
 				showstateinfo("没有符合条件的记录","GetBinary");
 				sessionStorage.contents = null;
 				try {
@@ -1954,6 +1954,7 @@ function sendorder(order,callback,datas){
 			timeout: 10000,
 			error: function (jqXHR, textStatus, errorThrown) {
 			try{
+				sessionStorage.errortime++;
 				ajaxLoadingHidden();
 				if (errorThrown == "Unauthorized") {
 					//layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 数据获取失败',info_showtime);
@@ -1965,7 +1966,7 @@ function sendorder(order,callback,datas){
 				}	else{
 					showstateinfo('数据获取失败',order);//showmsg(' 数据获取失败',info_showtime);
 				}
-				sessionStorage.errortime++;
+				
 				if(sessionStorage.errortime<3){
 					//getNodes();//video.html mainpage.html function.js userprofile 
 				}else if(sessionStorage.errortime<4){
@@ -1996,7 +1997,7 @@ function sendorder(order,callback,datas){
 						callback(data);//回调函数，将接收数据回传给回调函数处理。
 						
 					} else {
-						showmsg(data.Error,info_showtime);
+						//showmsg(data.Error,info_showtime);
 						showstateinfo(data.Error,order);
 						sessionStorage.islogin = ture;
 						callback(null);
