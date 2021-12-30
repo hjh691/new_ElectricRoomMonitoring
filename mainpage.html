@@ -36,10 +36,10 @@
 	onload="initIndex()""showusername()"<script  type="text/javascript" src="js/layer/layer.js"></script>onresize="resizeFresh()"show3D()-->
 	<div class="header" id="header" >
 		<div class="topbar" id="topbar">
-			<div id="app_name"><i></i></div>
+			<div id="app_name" onclick="closews()"><i></i></div>
 			<span id="img_yonghu" >
 				<!--No.2登录用户名显示/未登录loaduserprofile()-->
-				<img src="res/gif_head_48x48.gif" onclick=""  width="20px" height="20px">
+				<img src="res/gif_head_48x48.gif" onclick="openws()"  width="20px" height="20px">
 			</span>
 			<!--end No.2-->
 			<span id="yhname" ><!--pageindex:20-->
@@ -90,7 +90,7 @@
 						<li id="li_replay" style="display: none;"><a id="nav6" href="javascript:void(0)" >视频回放</a></li><!--pageindex:9-->
 						<li id="li_historychart"><a id="nav7" href="javascript:void(0)" onclick="loadstations_chart()" title="多点变化趋势比较">趋势对比</a></li><!--pageindex:4-->
 						<li id="li_warnlog" ><a id="nav8" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警信息查询">告警信息</a></li><!--pageindex:5-->
-						<li id="li_stationwarnlog" style="display: none;"><a id="nav16" href="javascript:void(0)" onclick="loadstations_warnlog()" title="告警查询">告警信息</a></li><!--pageindex:16-->
+						<li id="li_total"><a id="nav16" href="javascript:void(0)" onclick="loadcollectionreport()" title="统计报表">统计报表</a></li><!--style="display:none" pageindex:16-->
 						<li><a id="nav9" href="javascript:void(0)" onclick="showdevice()" title="所有设备信息列表">设备信息</a></li><!--pageindex:6-->
 						<li><a id="nav10" href="javascript:void(0)" onclick="showpage(0)" >系统设置</a></li><!--pageindex:7-->
 						<li id="clickaudio" ><a href="javascript:void(0)" style="color: red;" onclick="showdailog()">开启告警声音</a></li>
@@ -169,6 +169,7 @@
 		var nodes = null, nodeid = -1;
 		//sessionStorage.txid=-1;//20200228 初始化一次图形id
 		sessionStorage.nodetype=1;
+		sessionStorage.wscount=0;
 		var iframemain=$("#iframe_main");
 		var multiselect = false;
 		var tree2=false;
@@ -184,6 +185,9 @@
 		var isresize=false;
 		//实时数据列表表头数据项
  		var tablehead;
+		var userdata;
+		const c_id=0,c_name=1,c_time=2,c_val=3,c_dataname=4,c_mes=5; 
+		var ws,wscount=0,wsconnect=false;
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
@@ -262,20 +266,42 @@
 						i++;
 						if ((i % jfjk_base_config.refreshtime == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
 							//sendbeat();
-							getrealdatabynodeid(realdataid);
+							if(wsconnect){
+								wssend("GetRealsNew",JSON.parse("{\"dataId\":"+realdataid+"}"))
+							}else{
+								getrealdatabynodeid(realdataid);
+								if(sessionStorage.wscount<3)
+									openws();
+							}
+							var sec=GetDateDiff(dateToString(getCurrentDate(2),2),(sessionStorage.refreshtime),"second");
+							if(sec<=20){
+								//提前刷新数据通信认证码
+								RefreshToken(null,function(data){});
+							}
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}
-						if((sessionStorage.islogin=="false")&&(i % 5==0)){
-							LoginOrder(localStorage.username,sessionStorage.password,1);
+						if(i % 18==0){
+							
+							inittreeview_level2();
 						}
-						if((sessionStorage.pageindex==1)&&(i % 15==0)){
-							getrealdatabynodeid(-1);//0916 如果不加此语句，有些刷新慢的数据将短暂缺失。
+						if((sessionStorage.islogin=="false")&&(i % 20==0)){
+							LoginOrder(localStorage.username,sessionStorage.password,1);
+						} 
+						if((sessionStorage.pageindex==1)&&(i % 60==0)){
+							realdataid=-1;
+							if(!(wsconnect)){
+								getrealdatabynodeid(realdataid);//0916 如果不加此语句，有些刷新慢的数据将短暂缺失。
+								
+							}else{
+								wssend("GetReals",JSON.parse("{}"));
+							}	
 							iframemain[0].contentWindow.getbinary();//刷新一次图形
 						}
 					};
 				} else {
 					var t1 = window.setInterval(getrealdatabynodeid(realdataid), 60000);//getrealsbydataid
 				}
+				openws();
 				window.setInterval("resetContent()", 200);//随时判断告警信息进行浮动窗口显示
 				//refreshwindow();
 				initwindow();
@@ -283,7 +309,7 @@
 				isfirstload=false;
 				if(sessionStorage.kssj==undefined){
 					sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
-					sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00";//+ " 23:59:59" 
+					sessionStorage.jssj = getCurrentDate(2); //"2012-09-05T08:00:00"; 
 					sessionStorage.cxsj = getCurrentDate(2);
 				}
 				if (sessionStorage.islogin) {
@@ -292,6 +318,7 @@
 					inittreeview();
 				}
 				$(".tab a:last").tab("show");
+				
 			}catch(err){
 				showstateinfo(err.message.message,"mainpage/startpage");	
 			}
@@ -328,32 +355,32 @@
 		}
 		//加载动画
 		function showloadlayer(){
-			loadlayer = layer.load(0, {shade: false,time:5000});//
+			loadlayer = layer.load(5, {shade: false,time:5000});//
 		}
 		//关闭动画
 		function closeloadlayer(){
 			layer.close(loadlayer);
 		}
 		function refreshwindow() {//重画窗口，规定 尺寸,尤其是浮动窗口的位置
-		try{	
-			isresize=true;
-			showloadlayer();
-			if(!sessionStorage.framepage)
-				sessionStorage.framepage = iframemain.attr('src');
-			//if(sessionStorage.framepage.indexOf("video.html")>=0){
-			//	return;
-			//}
-			//var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body; physics
-			//var fdheight =50;// document.getElementById("KeFuDiv").offsetHeight;
-			//var fdwidth =500;// document.getElementById("KeFuDiv").offsetWidth;
-			initwindow();
-			//initIndex();//窗口尺寸变化时是否重画所有内容。
-			refreshiframe(isfirstload);
-			window.speechSynthesis.cancel();
-		}catch(err){
-			showstateinfo(err.message,"mainpage/refreshwindow");
-		}
-		//isresize=false;
+			try{	
+				isresize=true;
+				showloadlayer();
+				if(!sessionStorage.framepage)
+					sessionStorage.framepage = iframemain.attr('src');
+				//if(sessionStorage.framepage.indexOf("video.html")>=0){
+				//	return;
+				//}
+				//var bodyfrm = (document.compatMode.toLowerCase() == "css1compat") ? document.documentElement : document.body; physics
+				//var fdheight =50;// document.getElementById("KeFuDiv").offsetHeight;
+				//var fdwidth =500;// document.getElementById("KeFuDiv").offsetWidth;
+				initwindow();
+				//initIndex();//窗口尺寸变化时是否重画所有内容。
+				refreshiframe(isfirstload);
+				window.speechSynthesis.cancel();
+			}catch(err){
+				showstateinfo(err.message,"mainpage/refreshwindow");
+			}
+			//isresize=false;
 		}
 		function initwindow(){
 			var main = document.getElementById("chuangti");
@@ -475,7 +502,7 @@
 			var sound=document.getElementById("clickaudio");
 			sound.style.display="none";
 			Alert("告警声音已开启",500);
-			showstateinfo("告警声音开启");
+			showstateinfo("告警声音开启","showdailog");
 		}
 		//初始化目录树
 		function inittreeview(anodes) {
@@ -1011,13 +1038,18 @@
 		}
 		//获取所有节点信息
 		function getNodes(){
-			sendorder("GetNodes",function(getnodes){
-				if(getnodes!=null){
-					nodes=buildnode(getnodes,0);
-					GetSensors();
-					inittreeview(nodes);
-				}
-			});
+			if(wsconnect){
+				wssend("GetNodes",JSON.parse("{}"));
+			}else{
+				sendorder("GetNodes",getnodes_bc);
+			}
+		}
+		function getnodes_bc(getnodes){
+			if(getnodes!=null){
+				nodes=buildnode(getnodes,0);
+				GetSensors();
+				inittreeview(nodes);
+			}
 		}
 		function buildnode(data, level) {
 			var tree = [];
@@ -1146,82 +1178,94 @@
 		//获取指定节点的一次图形列表  //Fresh strawberries tastes good;
 		function GetBinariesByType(atype, anodeid){
 			sessionStorage.scaler=sessionStorage.map_module;//
-			sendorder("GetNodeGraphicsByNode?nodeId="+ anodeid,function(data){
-				if(!jQuery.isEmptyObject(data)){//.Result
-					obj_Binaries = data;//.Result;
-					localStorage.setItem("binaries", JSON.stringify(obj_Binaries));
-				} else {
-					localStorage.setItem("binaries", null);
-					sessionStorage.islogin = true;
-				}
-			});
+			if(!wsconnect){
+				sendorder("GetNodeGraphicsByNode?nodeId="+ anodeid,getbinaries_bc);
+			}else{
+				wssend("GetNodeGraphicsByNode",JSON.parse('{"nodeId":'+anodeid+"}"))
+			}
+
+		}
+		function getbinaries_bc(data){
+			if(!jQuery.isEmptyObject(data)){//.Result
+				obj_Binaries = data;//.Result;
+				localStorage.setItem("binaries", JSON.stringify(obj_Binaries));
+			} else {
+				localStorage.setItem("binaries", null);
+				sessionStorage.islogin = true;
+			}
 		}
 		//获取指定节点包含的标签信息
 		function GetSensorsByNode(anodeid){//20200928 add
 			try{
-			sendorder("GetSensorsByNode?nodeId="+anodeid,function(result){
-				if (!jQuery.isEmptyObject(result.sensors)) {
-					localStorage.setItem("sensor_tree",JSON.stringify(result.sensors));
-					var treeseneors=result.sensors;//JSON.parse(localStorage.getItem("sensor_tree"))
-					var treenode=buildnode_level2(treeseneors,0);
-					tree2=true;
-					maps = [];
-					if(!jQuery.isEmptyObject(result.configs)){
-						var config=new Object();
-						config=result.configs;
-						localStorage.setItem("Config",JSON.stringify(config));
-					}else{
-						localStorage.setItem("Config",null);
-					}
-					if(!jQuery.isEmptyObject(result.typeConfigs)){
-						var configs=new Object();
-						configs=result.typeConfigs;
-						localStorage.setItem("Configs",JSON.stringify(configs));
-					}else{
-						localStorage.setItem("Configs",null);
-					}
-					allsensors = new Object();
-					buildsensor2(allsensors, result.sensors, "");
-					var sensors = buildsensor(result.sensors);//(JSON.parse(localStorage.getItem("sensors")));
-					localStorage.setItem("sensors", JSON.stringify(sensors));
-					try{
-						if ((sessionStorage.pageindex==2)||(sessionStorage.pageindex==17)){
-							iframemain[0].contentWindow.showAllSensors();
-						}}
-						catch(err){
-						}/**/
-					//inittreeview_level2(treenode);
-				} else {
-					tree2=false;
-					localStorage.setItem("sensor_tree",null);
-					var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
-					var treenode=buildnode_level2(treeseneors,0);
-					localStorage.setItem("sensors", null);
-					if(!jQuery.isEmptyObject(result.typeConfigs)){
-						var configs=new Object();
-						configs=result.typeConfigs;
-						localStorage.setItem("Configs",JSON.stringify(configs));
-					}else{
-						localStorage.setItem("Configs",null);
-					}
-					if(!jQuery.isEmptyObject(result.configs)){
-						var config=new Object();
-						config=result.configs;
-						localStorage.setItem("Config",JSON.stringify(config));
-					}else{
-						localStorage.setItem("Config",null);
-					}
-					sessionStorage.SensorId=-1;//清除标签id，避免一些没有标签的节点借用保存的标签id形成错误的查询条件
-					//inittreeview_level2(treenode);
+				if(wsconnect){
+					wssend("GetSensorsByNode",JSON.parse('{"nodeId":'+anodeid+'}'))
+				}else{
+					sendorder("GetSensorsByNode?nodeId="+anodeid,getsensorsbynode_bc);
 				}
-				refreshiframe();
-				realdataid=-1;
-				//getrealdatabynodeid(realdataid);
-				inittreeview_level2(treenode);
-			})
-		}catch(err){
-			showstateinfo(err.message,"mainpage/GetSensorsByNode");
+			}catch(err){
+				showstateinfo(err.message,"mainpage/GetSensorsByNode");
+			}
 		}
+		//回调函数
+		function getsensorsbynode_bc(result){
+			if (!jQuery.isEmptyObject(result.sensors)) {
+				localStorage.setItem("sensor_tree",JSON.stringify(result.sensors));
+				var treeseneors=result.sensors;//JSON.parse(localStorage.getItem("sensor_tree"))
+				var treenode=buildnode_level2(treeseneors,0);
+				tree2=true;
+				maps = [];
+				if(!jQuery.isEmptyObject(result.configs)){
+					var config=new Object();
+					config=result.configs;
+					localStorage.setItem("Config",JSON.stringify(config));
+				}else{
+					localStorage.setItem("Config",null);
+				}
+				if(!jQuery.isEmptyObject(result.typeConfigs)){
+					var configs=new Object();
+					configs=result.typeConfigs;
+					localStorage.setItem("Configs",JSON.stringify(configs));
+				}else{
+					localStorage.setItem("Configs",null);
+				}
+				allsensors = new Object();
+				buildsensor2(allsensors, result.sensors, "");
+				var sensors = buildsensor(result.sensors);//(JSON.parse(localStorage.getItem("sensors")));
+				localStorage.setItem("sensors", JSON.stringify(sensors));
+				try{
+					if ((sessionStorage.pageindex==2)||(sessionStorage.pageindex==17)){
+						iframemain[0].contentWindow.showAllSensors();
+					}}
+					catch(err){
+					}/**/
+				//inittreeview_level2(treenode);
+			} else {
+				tree2=false;
+				localStorage.setItem("sensor_tree",null);
+				var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+				var treenode=buildnode_level2(treeseneors,0);
+				localStorage.setItem("sensors", null);
+				if(!jQuery.isEmptyObject(result.typeConfigs)){
+					var configs=new Object();
+					configs=result.typeConfigs;
+					localStorage.setItem("Configs",JSON.stringify(configs));
+				}else{
+					localStorage.setItem("Configs",null);
+				}
+				if(!jQuery.isEmptyObject(result.configs)){
+					var config=new Object();
+					config=result.configs;
+					localStorage.setItem("Config",JSON.stringify(config));
+				}else{
+					localStorage.setItem("Config",null);
+				}
+				sessionStorage.SensorId=-1;//清除标签id，避免一些没有标签的节点借用保存的标签id形成错误的查询条件
+				//inittreeview_level2(treenode);
+			}
+			refreshiframe();
+			realdataid=-1;
+			//getrealdatabynodeid(realdataid);
+			inittreeview_level2(treenode);
 		}
 		//刷新iframe所包含的页面内容
 		function refreshiframe(flag) {
@@ -1303,6 +1347,9 @@
 				case "11":
 					iframemain.attr('src',"historystate.html");//历史状态，目前未使用
 					break;
+				case 16:
+					iframemain.attr('src',"collectionreport.html");
+					break;
 				case "17":
 					iframemain.attr('src',"realdata_iot.html");//其他通用数据页面，li.nav=17,
 					break;
@@ -1342,36 +1389,41 @@
 		//获取所有的标签信息
 		function GetSensors(){
 			try{
-			sendorder("GetSensors",function(result){
-				if (!jQuery.isEmptyObject(result.sensors)) {
-					//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
-					//sensorsnode=buildnode(data.Result.Sensors,0);//(JSON.parse(localStorage.getItem("sensors")));
-					maps=[];
-					//allsensors = new Object();
-					//buildsensor2(allsensors, result.sensors, "");
-					localStorage.setItem("allsensors",JSON.stringify(buildsensor(result.sensors)));
-					//var sensors=(JSON.parse(localStorage.getItem("sensors")));
-					//var localsensors=buildsensor(data.Result.Sensors);
-					//updatanodetree();
-					if(!jQuery.isEmptyObject(result.typeConfigs)){//20200428 add
-						var configs=new Object();
-						configs=result.typeConfigs;
-						localStorage.setItem("allConfigs",JSON.stringify(configs));
-					}
-					if(!jQuery.isEmptyObject(result.configs)){//20200428 add
-						var config=new Object();
-						config=result.configs;
-						localStorage.setItem("Configs",JSON.stringify(config));
-					}else{
-						localStorage.setItem("Configs",null);
-					}
-				}else {
-					allsensors = null;
+				if(!wsconnect){
+					sendorder("GetSensors",getsensors_bc);
+				}else{
+					wssend("GetSensors",JSON.parse("{}"));
 				}
-			});
-		}catch(err){
-			showstateinfo(err.message.message,"mainpage/GetSensors")
+			}catch(err){
+				showstateinfo(err.message.message,"mainpage/GetSensors")
+			}
 		}
+		function getsensors_bc(result){
+			if (!jQuery.isEmptyObject(result.sensors)) {
+				//sessionStorage.setItem("sensors",JSON.stringify(buildsensor(data.Result.Sensors)));
+				//sensorsnode=buildnode(data.Result.Sensors,0);//(JSON.parse(localStorage.getItem("sensors")));
+				maps=[];
+				//allsensors = new Object();
+				//buildsensor2(allsensors, result.sensors, "");
+				localStorage.setItem("allsensors",JSON.stringify(buildsensor(result.sensors)));
+				//var sensors=(JSON.parse(localStorage.getItem("sensors")));
+				//var localsensors=buildsensor(data.Result.Sensors);
+				//updatanodetree();
+				if(!jQuery.isEmptyObject(result.typeConfigs)){//20200428 add
+					var configs=new Object();
+					configs=result.typeConfigs;
+					localStorage.setItem("allConfigs",JSON.stringify(configs));
+				}
+				if(!jQuery.isEmptyObject(result.configs)){//20200428 add
+					var config=new Object();
+					config=result.configs;
+					localStorage.setItem("Configs",JSON.stringify(config));
+				}else{
+					localStorage.setItem("Configs",null);
+				}
+			}else {
+				allsensors = null;
+			}
 		}
 		/*function updatainfotree(treedata, tnodeid, tsensors) {//,tvalue
 			if (treedata != null && treedata != undefined) {
@@ -1589,7 +1641,11 @@
 							}
 						});
 					}
+					if(sessionStorage.pageindex==1){
+						iframemain[0].contentWindow.refresh(obj);
+					}
 					sessionStorage.setItem("contents",JSON.stringify(obj));
+					
 				}
 				let sersors_len=sensors.length;
 				for (var i = 0; i < sersors_len; i++) {
@@ -1619,7 +1675,7 @@
 							//let ishave=false;
 							for(var k=0;k<rowlength;k++){
 								//判断是否在告警列表中，添加name避免同一标签有多个数据类型而且告警信息不一致造成的混乱
-								if(rows[k].cells[0].outerText==(sid+"")&&(rows[k].cells[4].outerText==obj_data.name)){
+								if(rows[k].cells[c_id].outerText==(sid+"")&&(rows[k].cells[c_dataname].outerText==obj_data.name)){
 									//var msg = obj_data.message;
 									if (!msg){// == null || msg == "" || typeof(msg) == "undefined" || msg.trim() == ""){//在列表中，但目前告警已取消则从列表中删除告警内容。
 										if(pt>0)pt--;
@@ -1628,13 +1684,13 @@
 										break;
 									}else{
 										//if(rows[k].cells[3].outerText==(obj_data.value *1).toFixed(Number_of_decimal)){
-											let jiange=GetDateDiff(rows[k].cells[2].outerText,(dateToString(obj_data.time,2)),"minute")
+											let jiange=GetDateDiff(rows[k].cells[c_time].outerText,(dateToString(obj_data.time,2)),"minute")
 											if(jiange<=between_time){
 											//rows[k].cells[2].innerHTML=((obj_data.time).replace(/T/g," ")).substring(0,19);
 											if(isNumber(obj_data.value)){
-												rows[k].cells[3].innerHTML =(obj_data.value*1).toFixed(Number_of_decimal)
+												rows[k].cells[c_val].innerHTML =(obj_data.value*1).toFixed(Number_of_decimal)
 											}else{
-												rows[k].cells[3].innerHTML =(obj_data.value)
+												rows[k].cells[c_val].innerHTML =(obj_data.value)
 											};
 											//rows[k].cells[3].innerHTML=(obj_data.value.toFixed(Number_of_decimal) );//;
 											break;
@@ -1836,7 +1892,7 @@
 						tree1.treeview("unselectNode",[data.nodeId]);
 						//dialog.html("对比测量点不能大于6个!");//jquery的对话框
 						//dialog.dialog("open");//,info_showtime);
-						showstateinfo("对比测量点不能大于6个");
+						showstateinfo("对比测量点不能大于6个","inittreeview_level2");
 						showmsg("对比测量点不能大于6个");
 						iframemain[0].contentWindow.stoptimer(iframemain[0].contentWindow.timer);//停止闪烁
 						return;
@@ -1961,19 +2017,19 @@
 					if(sensors_tree[j].id==asensorid){
 						//if(i==0)
 						nodeid=sensors_tree[j].nodeId;
-						//tree1.treeview("selectNode",sensors_tree[j].nodeId);//,{levels:2,silent:(noevent)}]);
-						//tree1.treeview("revealNode",[nodeid, { levels: 2, silent: true }]);
 						var offset=Math.ceil($('#tree').outerHeight()+50);
 						var firstSearchResult = tree1.find('ul').find('li[data-nodeid='+ nodeid +']');
 						if(firstSearchResult.length>0){//避免树形菜单为空时，可能报错
 							tree1.scrollTop(firstSearchResult[0].offsetTop-offset);
 							firstSearchResult.addClass("node-selected");
-							firstSearchResult.css("color","#FFFFFF");
-							firstSearchResult.css("background-color","#428bca");
+							firstSearchResult.css("color","#2FF");
+							firstSearchResult.css("background-color","#428bca");			
 						}
+						/*tree1.treeview("selectNode",nodeid);*/
 						break;
 					}
 				}
+				//inittreeview_level2();
 			//}
 			}
 		}
@@ -1996,6 +2052,17 @@
 				anodes.Config = data[j].value.config;
 				anodes.Time = data[j].value.time;
 				anodes.level = level;
+				if(localStorage.realdata!=null && localStorage.realdata!="" && localStorage.realdata!=undefined){
+				var obj=JSON.parse(localStorage.getItem("realdata"));
+				for(var i=0;i<obj.length;i++){
+					if(obj[i].sensorId==anodes.id){
+						anodes.color="#2f4";
+						break;
+					}
+				}
+				if(i>=obj.length)
+					anodes.color="#f72545";}
+				//anodes.color = "#fff"*/
 				if (data[j].value.hasOwnProperty("nodeId")) {
 					anodes.NodeId = data[j].value.nodeId;
 				}
@@ -2186,6 +2253,13 @@
 			document.mozCancelFullScreen ? document.mozCancelFullScreen() :
 			document.webkitExitFullscreen ? document.webkitExitFullscreen() : '';
 		}
+	}
+	function wssend(action,para){
+		if(!action)
+		action="BindAccessToken";
+		if(!para)
+			para=JSON.parse('{"AccessToken":"'+sessionStorage.accessToken+'"}');
+		sendstr(action,para)
 	}
 	</script>
 </body>

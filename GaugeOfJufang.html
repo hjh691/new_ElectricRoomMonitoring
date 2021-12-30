@@ -609,7 +609,7 @@
     function getrealdatabynodeid(nodeid){
 		sessionStorage.pageindex = 2;
 		if (typeof(nodeid)!="undefined" && nodeid!==null) {
-			var url = jfjk_base_config.baseurl + "GetRealsNew?dataId=" + nodeid;
+			var url = localStorage.server_url + "GetRealsNew?dataId=" + nodeid;
 			url = encodeURI(url);
 			if (sessionStorage.islogin == "true") {
 				$.ajax({

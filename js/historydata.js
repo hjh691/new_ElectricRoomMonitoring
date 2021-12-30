@@ -9,6 +9,7 @@ var configs,scatalog;
 var myChart;
 var timer=null;
 var flashit=$("#chaxun");
+//禁止回退
 $(function () {
     history.pushState(null, null, document.URL);
     window.addEventListener('popstate', function () {
@@ -307,13 +308,13 @@ function queryhistorydata() {
         var kssj = document.getElementById("kssj_history").value;
         if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
             showmsg("请指定开始时间",info_showtime);
-            showstateinfo("请指定开始时间");
+            showstateinfo("请指定开始时间","queryhistorydata");
             return;
         }
         var jssj = document.getElementById("jssj_history").value;
         if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
             showmsg("请指定截至时间",info_showtime);
-            showstateinfo("请指定截止时间");
+            showstateinfo("请指定截止时间","queryhistorydata");
             return;
         }
         //if((sessionStorage.SensorId==sel.value)&&(sessionStorage.kssj==kssj)&&(sessionStorage.jssj==jssj)&&(!isfirst)
@@ -359,13 +360,13 @@ function queryhistorydataself() {
         var kssj = document.getElementById("kssj_history").value;
         if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
             showmsg("请指定开始时间",info_showtime);
-            showstateinfo("请指定开始时间");
+            showstateinfo("请指定开始时间","queryhistorydataself");
             return;
         }
         var jssj = document.getElementById("jssj_history").value;
         if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
             showmsg("请指定截至时间",info_showtime);
-            showstateinfo("请指定截止时间");
+            showstateinfo("请指定截止时间","queryhistorydataself");
             return;
         }
         sessionStorage.kssj = kssj;
@@ -901,7 +902,7 @@ function decodedatas(obj_data){
             }
         }
     }catch(err){
-        showstateinfo(err.message);
+        showstateinfo(err.message,"decodedatas");
     }
 }//
 function gradeChange() {

@@ -77,10 +77,21 @@
 			<h3 >告警信息</h3>			
 		</div>
 		<div class="panel panel-default" style="margin-bottom: 0;height: 80px;" >
+			<div>
 			<span><label>类别分组：</label></span>
 			<span id="display_type_warnlog" class="btn-group" data-toggle="buttons">
 				<label class="btn btn-primary active" id="type_other"><input type="radio" class="catalog" name="options" value="" folder="">全部</label><!---->
 			</span>
+			<div class="btn-group  dropdown" style="margin-left:10px;font-size:14px" >
+                <a  class="btn-default" id="selecttype" href="#" data-toggle ="dropdown">单个标签</a>
+                <a  class="btn-default" href = "#" data-toggle ="dropdown"><i class= "caret">
+                </i></a> 
+                <ul  class="dropdown-menu dropdown_item">
+                <li><a href="javascript:void(0)" onclick="selecttype(0)">单个标签</a></li> 
+                <li><a href="javascript:void(0)" onclick="selecttype(1)">全部标签</a></li>
+                </ul > 
+            </div> <!---->
+			</div>
 			<div class="condition" >
 				<span ><label>事件类型：</label></span>
 				<span class="dropdown" style="position: relative; ">
@@ -88,10 +99,10 @@
 					<span class="select_text" data-is-select="false">Dro pup</span>
 					<span class="caret"></span> select_multiple   display:none;style="display: none;"overflow: auto;
 				</button>-->
-				<label class="dropdown-toggle" data-toggle="dropdown">
+				<label class="dropdown-toggle" data-toggle="dropdown" >
 					<input type="text" id="select_text_warnlog" class="select_text " readonly="true" data-is-select="false" style="height:33px;line-height: 33px;color:black;"
 					placeholder="请选择告警事件，不选为全部告警"/>
-					<button style="width:30px;height:35px; margin-left: -30px;position: relative;z-index: 2;"><i class= "caret" >
+					<button style="width:30px;height:33px; margin-left: -30px;margin-top: 2px; position: relative;z-index: 2;"><i class= "caret" >
 					</i></button>
 				</label>
 				<ul class="dropdown-menu dropdown_item" style="bottom: auto;" id="event_type">
@@ -103,12 +114,12 @@
 				<span ><label><input type="radio" value="5" onclick="seletime(5)" name="timeselect"/>实时</label></span>
 				<span ><label><input type="radio" value="0" onclick="seletime(0)" name="timeselect"/> 当天</label> </span>
 				<span ><label><input type="radio" value="1" onclick="seletime(1)" name="timeselect"/>昨天</label></span>
-				<span ><label><input type="radio" value="2" onclick="seletime(2)" name="timeselect"/>当月</label> </span>
-				<span ><label><input type="radio" value="3" onclick="seletime(3)" name="timeselect"/>上月</label></span>
+				<span id="currentmonth"><label><input type="radio" value="2" onclick="seletime(2)" name="timeselect"/>当月</label> </span>
+				<span id="lastmonth"><label><input type="radio" value="3" onclick="seletime(3)" name="timeselect"/>上月</label></span>
 				<span ><label title="自定义起止时间"><input type="radio" value="4" onclick="seletime(4)" name="timeselect"/>自定义</label></span>
 				<span id="timedefine" style="display: none;">
-				起止时间
-				<input type="text" onclick="showdate({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"/>至
+				<label id="label_start">起止时间</label>
+				<input type="text" onclick="showdate({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss '})"  id="kssj_warning" style="width:160px;font-size:16px;height: 30px;"/><label id="label_end">至</label>
 				<input type="text" onclick="showdate({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_warning" style="width:160px;font-size:16px;height: 30px;" />
 				<input class="button" type="button" id="chaxunall" style="width:100px;font-size:16px;height: 30px;line-height: 30px;display:none" value="查询全站" onclick="querywarnlog(1)"/>
 				</span>

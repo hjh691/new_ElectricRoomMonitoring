@@ -21,7 +21,7 @@
 		}
 	</style>
 </head>
-<body onload="GetUserProfile()">
+<body >
 	<div style="width:100%;height:100%;">
 		<!--<h2 style="text-align: center;color:blue;" >用户详细信息</h2>-->
 		<div align="center" style="margin-bottom: 20px;">
@@ -96,6 +96,7 @@
 		sessionStorage.pageindex=20;
 		sessionStorage.framepage="userprofile.html";
 		window.parent.closeloadlayer();
+		GetUserProfile();
 		function infook(){
 			var userinfo=new Object();
 			userinfo.id=document.getElementById("up-yhbh").value*1;

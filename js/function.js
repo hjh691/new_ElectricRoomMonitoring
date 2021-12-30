@@ -76,6 +76,21 @@ function dateToString(now,format){
 	}
 	return time;
 }
+/// <summary>
+/// GMT时间转成本地时间
+/// </summary>
+/// <param name="gmt">字符串形式的GMT时间</param>
+/// <returns></returns>
+function GMTToStr(time){
+    let date = new Date(time)
+    let Str=date.getFullYear() + '-' +
+    (date.getMonth() + 1) + '-' +
+    date.getDate() + ' ' +
+    date.getHours() + ':' +
+    date.getMinutes() + ':' +
+    date.getSeconds()
+    return Str
+}
 //读取本地json文件userinfo.txt"：
 function getJsonFile(fileName) {
 	$.getJSON("js/" + fileName,
@@ -163,10 +178,10 @@ function LoginOrder(name, ps,flag,order,callback,datas) {
 		error: function(data, status) {
 			if (status == "timeout") {
 				showmsg("登录超时",info_showtime);
-				showstateinfo("登录超时");
+				showstateinfo("登录超时","loginOrder");
 			} else if(data.hasOwnProperty("responseJSON")&&data.responseJSON==undefined){//0928修改，判断是否由此项
 				showmsg("服务器连接失败，请稍后重试",info_showtime);
-				showstateinfo("服务器连接失败，请稍后重试");
+				showstateinfo("服务器连接失败，请稍后重试","loginOrder");
 			}else {
 				showmsg(data.responseText,info_showtime);
 				showstateinfo(data.responseText,order);
@@ -179,23 +194,31 @@ function LoginOrder(name, ps,flag,order,callback,datas) {
 				showusername(true);
 			}
 		},
-		success: function(data, status) {
+		success: function(data, status,xml) {
 			var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 			if (status == "success") {
 				sessionStorage.errortime = 0;
+				showstateinfo(xml,"loginOrder");
 				if (data.Error == null) {
 					//sessionStorage.userinfo=JSON.stringify(data);
 					sessionStorage.token ="Bearer "+ data.accessToken;
+					sessionStorage.accessToken=data.accessToken;
 					sessionStorage.refreshtoken=data.refreshToken;
+					sevsertime=GMTToStr(xml.getResponseHeader("date"));
+					sessionStorage.td=GetDateDiff(sevsertime,getCurrentDate(2),"second");
+					var d=new Date(data.expire);
+					var dd=(new Date(d.setSeconds(d.getSeconds()+parseInt(sessionStorage.td))))
+					sessionStorage.refreshtime=dateToString(dd,2);
+					
 					localStorage.username = name;
 					sessionStorage.islogin = true;
 					if ((flag==0)) {//修改第一次登录不能进入主页面的问题。&&(!sessionStorage.errortime || (sessionStorage.errortime == 0))
 						window.location.href = "mainpage.html";
 						
-						showstateinfo(localStorage.username+"用户登录成功!");
+						showstateinfo(localStorage.username+"用户登录成功!","loginOrder");
 					} else {
 						showusername();
-						showstateinfo(localStorage.username+"用户重新登录成功!");
+						showstateinfo(localStorage.username+"用户重新登录成功!","loginOrder");
 						if(order!=null)
 							sendorder(order,callback,datas);
 					}
@@ -203,7 +226,7 @@ function LoginOrder(name, ps,flag,order,callback,datas) {
 					sessionStorage.islogin = false;
 					window.location.href = "index.html";
 					showmsg("登录失败，" + data.Error + ",请确认输入信息正确，注意字母的大小写。",info_showtime);
-					showstateinfo("登录失败");
+					showstateinfo("登录失败","loginOrder");
 					sessionStorage.errortime++;
 				}
 			}
@@ -212,23 +235,36 @@ function LoginOrder(name, ps,flag,order,callback,datas) {
 }
 //刷新安全证书 used by electricroommonitor
 function RefreshToken(order,callback,datas){
-	sendorder("RefreshToken?refreshToken=" + sessionStorage.refreshtoken,function(data){
-		try{
-		if (data) {
-			//sessionStorage.userinfo=JSON.stringify(data);
-			sessionStorage.token ="Bearer "+ data.accessToken;
-			sessionStorage.refreshtoken=data.refreshToken;
-			//localStorage.username = name;
-			sendorder(order,callback,datas);
-			sessionStorage.islogin = true;
-			showstateinfo("认证码刷新成功");
-		}else{
-			LoginOrder(localStorage.username,sessionStorage.password,1,order,callback,datas);
-		}
-		}catch(err){
-			showstateinfo(err+" reLogin","RefreshToken");
-		}
-	});
+	//if(wsconnect){
+	//	wssend("RefreshToken",JSON.parse('{"refreshToken":"'+sessionStorage.refreshtoken+'"}'));
+	//}else
+	{
+		sendorder("RefreshToken?refreshToken=" + sessionStorage.refreshtoken,function(data){
+			refreshtoken_bc(data,order,datas)
+		});
+	}
+	if(datas)
+		//localStorage.username = name;
+		sendorder(order,callback,datas);
+}
+function refreshtoken_bc(data){
+	try{
+	if (data) {
+		//sessionStorage.userinfo=JSON.stringify(data);
+		sessionStorage.token ="Bearer "+ data.accessToken;
+		sessionStorage.accessToken=data.accessToken;
+		sessionStorage.refreshtoken=data.refreshToken;
+		sessionStorage.islogin = true;
+		var d=new Date(data.expire);
+		var dd=(new Date(d.setSeconds(d.getSeconds()+parseInt(sessionStorage.td))))
+		sessionStorage.refreshtime=dateToString(dd,2);
+		showstateinfo("认证码刷新成功");
+	}else{
+		LoginOrder(localStorage.username,sessionStorage.password,1,order,callback,datas);
+	}
+	}catch(err){
+		showstateinfo(err+" reLogin","RefreshToken");
+	}
 }
 //用户登录  used by electricroommonitor 
 function login() {
@@ -260,7 +296,7 @@ function logout(){
 	sendorder("Logout",function(data){
 		if (data){//.Error == null) {
 			localStorage.username = "未登录";
-			sessionStorage.sps="";
+			//sessionStorage.sps="1";//退出标志
 			sessionStorage.islogin = false;
 			top.location.href = "index.html";//使用top代替window，获取最顶层窗口
 			init_var();
@@ -295,19 +331,24 @@ function init_var(){
 }
 //获取用户详细信息 used by electricroommonitor
 function GetUserProfile() {
-	sendorder("GetProfile",function(data){
-		//localStorage.errortime = 0;
-		//sessionStorage.islogin = true;
-		if(data){
-			$("#up-yhbh").val(data.id);
-			$("#up-yhmc").val(data.name);
-			$("#up-yhmm").val(""); //data.Result.UserPass;
-			$("#up-yhqx").val(data.roles);//UserLimit;
-			$("#up-tel").val(data.tele);//UserLimit;
-			$("#up-email").val(data.email);//UserLimit;
-			$("#up-yhsm").val(data.display);//Description;
-		}
-	});
+	if(window.parent.wsconnect){
+		window.parent.wssend("GetProfile",JSON.parse("{}"));
+	}else{
+		sendorder("GetProfile",getprofile_bc);
+	}
+}
+function getprofile_bc(data){
+	//localStorage.errortime = 0;
+	//sessionStorage.islogin = true;
+	if(data){
+		$("#up-yhbh").val(data.id);
+		$("#up-yhmc").val(data.name);
+		$("#up-yhmm").val(""); //data.Result.UserPass;
+		$("#up-yhqx").val(data.roles);//UserLimit;
+		$("#up-tel").val(data.tele);//UserLimit;
+		$("#up-email").val(data.email);//UserLimit;
+		$("#up-yhsm").val(data.display);//Description;
+	}
 }
 //初始化信息汇总页面
 function inittotalpage(){  // used by electricroommonitor
@@ -362,10 +403,10 @@ function sendbeat(){
 	i++;
 	var stime=new Date(getCurrentDate(2).replace(/-/,"/")).getTime();
 	var etime=new Date(getCurrentDate(1).replace(/-/,"/")+" 17:30:00").getTime();
-	showstateinfo((etime-stime)/1000);
+	showstateinfo((etime-stime)/1000,"sendbeat");
 	if ((i % 60 == 0)&&(sessionStorage.islogin=="true")) {
 		//sendbeat();
-		getrealdatabynodeid(-1);
+		getrealdatabynodeid(realdataid);
 		//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 	}
 	if((i % 300==0)&&(sessionStorage.islogin=="false")){
@@ -398,7 +439,7 @@ function showusername(flag) {
 }
 //用户属性页面 used by ele
 function loaduserprofile(){
-	//sessionStorage.pageindex=20;
+	sessionStorage.pageindex=20;
 	document.getElementById("iframe_main").src="userprofile.html";
 }
 //跳转到历史数据  used by electricroommonitor
@@ -754,6 +795,14 @@ function loadstations_warnlog() {
 		document.getElementById("iframe_main").src = 'warnlog.html';
 	}
 }
+// 显示统计报表页面
+function loadcollectionreport(){
+	if(sessionStorage.pageindex!=16){
+		updatapcnav(16);
+		sessionStorage.pageindex = 16;
+		document.getElementById("iframe_main").src = 'collectionreport.html';
+	}
+}
 //显示新密码输入选项 used by ele
 function showeditpassword() {
 	$("#row-newpassword").css('display', "");
@@ -770,12 +819,12 @@ function postpassword() {
 	//var yhsm=document.getElementById("up-yhsm").value;
 	if (yhmm == '') {
 		layer.alert("请输入原始密码",info_showtime);
-		showstateinfo("输入原始密码");
+		showstateinfo("输入原始密码","postpassword");
 		return;
 	}
 	if (xmm == '') {
 		layer.alert("请输入新密码",info_showtime);
-		showstateinfo("请输入新密码");
+		showstateinfo("请输入新密码","postpassword");
 		return;
 	}
 	$("#row-newpassword").css("display","none");
@@ -789,7 +838,7 @@ function postpassword() {
 			showmsg("密码修改成功，请用新密码登录",info_showtime);
 			//if (confirm("密码修改成功，请用新密码登录")) {  
 			//}  
-			showstateinfo("密码修改成功,请使用新密码登录");
+			showstateinfo("密码修改成功,请使用新密码登录","postpassword");
 			logout();
 		}
 	})
@@ -897,21 +946,127 @@ function closewin(ranid) {
 function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 	//if (sessionStorage.islogin == "true") {
 		if (typeof(sensorid) != "undefined") {
-			sendorder("GetHistoriesBySensor?sensorId=" + sensorid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
-				if(!data){
-					decodedatas(null);
-					return;
-				}
-				if (!jQuery.isEmptyObject(data.datas)) {//Result.Datas
-					localStorage.setItem("historydata",JSON.stringify(data.datas));
-					decodedatas( data.datas);//[sensorid]
-				} else {
-					//showmsg("没有符合条件的历史数据");
-					showstateinfo("没有符合条件的历史数据","gethistorydata");
-					localStorage.setItem("historydata",null);
-					decodedatas(null);
-				}
-			});
+			if(window.parent.wsconnect){
+				var apara=new Object();
+				apara.sensorId=parseInt(sensorid);
+				apara.folder=folder;
+				apara.name=name;
+				apara.from=kssj;
+				apara.to=jssj;
+				window.parent.wssend("GetHistoriesBySensor",apara);
+			}else{
+				sendorder("GetHistoriesBySensor?sensorId=" + sensorid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
+					if(!data){
+						decodedatas(null);
+						return;
+					}
+					if (!jQuery.isEmptyObject(data.datas)) {//Result.Datas
+						localStorage.setItem("historydata",JSON.stringify(data.datas));
+						decodedatas( data.datas);//[sensorid]
+					} else {
+						//showmsg("没有符合条件的历史数据");
+						showstateinfo("没有符合条件的历史数据","gethistorydata");
+						localStorage.setItem("historydata",null);
+						decodedatas(null);
+					}
+				});
+			}
+		}
+	//}
+}
+//获取历史数据    used by electricroommonitor 
+function gethistorybynode(nodeid,folder,name,kssj, jssj) {//,aparent
+	//if (sessionStorage.islogin == "true") {
+		if (typeof(nodeid) != "undefined") {
+			if(window.parent.wsconnect){
+				var apara=new Object();
+				apara.nodeid=parseInt(nodeid);
+				apara.folder=folder;
+				apara.name=name;
+				apara.from=kssj;
+				apara.to=jssj;
+				window.parent.wssend("GetHistoriesByNode",apara);
+			}else{
+				sendorder("GetHistoriesByNode?nodeId=" + nodeid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
+					if(!data){
+						decodedatas(null);
+						return;
+					}
+					if (!jQuery.isEmptyObject(data.datas)) {//Result.Datas
+						//localStorage.setItem("historydata",JSON.stringify(data.datas));
+						decodedatas( data.datas);//[sensorid]
+					} else {
+						//showmsg("没有符合条件的历史数据");
+						showstateinfo("没有符合条件的历史数据","gethistorydatabynode");
+						localStorage.setItem("historydata",null);
+						decodedatas(null);
+					}
+				});
+			}
+		}
+	//}
+}
+//获取历史告警数据    used by electricroommonitor 
+function getmessagesbysensor(sensorid,folder,name,kssj, jssj) {//,aparent
+	//if (sessionStorage.islogin == "true") {
+		if (typeof(sensorid) != "undefined") {
+			if(window.parent.wsconnect){
+				var apara=new Object();
+				apara.sensorId=parseInt(sensorid);
+				apara.folder=folder;
+				apara.name=name;
+				apara.from=kssj;
+				apara.to=jssj;
+				window.parent.wssend("GetMessagesBySensor",apara);
+			}else{
+				sendorder("GetMessagesBySensor?sensorId=" + sensorid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
+					if(!data){
+						decodedatas(null);
+						return;
+					}
+					if (!jQuery.isEmptyObject(data.datas)) {//Result.Datas
+						//localStorage.setItem("historymes",JSON.stringify(data.datas));
+						decodedatas( data.datas);//[sensorid]
+					} else {
+						showmsg("没有符合条件的历史数据");
+						showstateinfo("没有符合条件的告警历史数据","getmessagesbysensor");
+						//localStorage.setItem("historymes",null);
+						decodedatas(null);
+					}
+				});
+			}
+		}
+	//}
+}
+//获取历史告警数据根据节点编号：   used by electricroommonitor 
+function getmessagesbynode(nodeid,folder,name,kssj, jssj) {//,aparent
+	//if (sessionStorage.islogin == "true") {
+		if (typeof(nodeid) != "undefined") {
+			if(window.parent.wsconnect){
+				var apara=new Object();
+				apara.nodeId=parseInt(nodeid);
+				apara.folder=folder;
+				apara.name=name;
+				apara.from=kssj;
+				apara.to=jssj;
+				window.parent.wssend("GetMessagesByNode",apara);
+			}else{
+				sendorder("GetMessagesByNode?nodeId=" + nodeid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
+					if(!data){
+						decodedatas(null);
+						return;
+					}
+					if (!jQuery.isEmptyObject(data.datas)) {//Result.Datas
+						//localStorage.setItem("historymes",JSON.stringify(data.datas));
+						decodedatas( data.datas);//[sensorid]
+					} else {
+						showmsg("没有符合条件的历史数据");
+						showstateinfo("没有符合条件的告警历史数据","getmessagesbynode");
+						//localStorage.setItem("historymes",null);
+						decodedatas(null);
+					}
+				});
+			}
 		}
 	//}
 }
@@ -937,92 +1092,98 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 	try{
 	sessionStorage.pageindex = 1;
 	if (typeof(binariesid) != "undefined") {
-		sendorder("GetNodeGraphics?id="+binariesid,function(data){
-			//localStorage.errortime = 0;
-			//sessionStorage.islogin = true;
-			if(jQuery.isEmptyObject(data)){//.Result
-				//if (data.Result.Value == null) {
-				//showmsg("没有符合条件的记录",info_showtime);
-				showstateinfo("没有符合条件的记录","GetBinary");
-				sessionStorage.contents = null;
-				try {
-					drawmap(JSON.parse(sessionStorage.contents));
-				} catch(err) {
-				}
-				return;
-			}
-			//var allsensors=JSON.parse(localStorage.getItem("allsensors"));
-			var obj_data=new Object();
-			var contents = ($.base64.atob(data.value,true)).split("\r\n");//.Result
-			//if(jQuery.hasOwnProperty(localStorage.realdata))
-			var obj_rd=JSON.parse(localStorage.getItem("realdata"));
-			var obj=[];
-				contents.forEach(function(g){
-					if ($.trim(g).length > 0) {
-						g = JSON.parse(g);
-						if (g && g._shape && g._shape.Binding && g._shape.Text) {
-							//var channel=(g._shape.Binding).substring(0,g._shape.Binding.lastIndexOf('_'));
-							//var datatype=(g._shape.Binding).substr(g._shape.Binding.lastIndexOf('_')+1);
-							var datafolder='',dataname='',channel='',datatype='';
-							if(g._shape.Binding.indexOf(":")!=-1){
-								channel=(g._shape.Binding).substring(0,g._shape.Binding.indexOf(':'));
-								datatype=(g._shape.Binding).substr(g._shape.Binding.indexOf(':')+1);
-							}
-							if(g._shape.Binding.indexOf("：")!=-1){
-								channel=(g._shape.Binding).substring(0,g._shape.Binding.indexOf('：'));
-								datatype=(g._shape.Binding).substr(g._shape.Binding.indexOf('：')+1);
-							}
-							if(datatype.lastIndexOf(concat_str)==-1){
-								datafolder="Default";
-								dataname=datatype;
-							}else{
-								var datafolder=datatyep.substring(0,datatype.lastIndexOf(concat_str));
-								var dataname=datatype.substr(datatype.lastIndexOf(concat_str));
-							}
-							if(window.parent.allsensors)
-							if(window.parent.allsensors[channel]){
-								var sid=window.parent.allsensors[channel].id;
-								if ((obj_rd)&&(obj_rd.length>0)) {
-									let obj_rd_len=obj_rd.length;
-									for(var loop=0;loop<obj_rd_len;loop++){
-										//if(obj_rd[loop].sensorId==sid && obj_rd[loop].name.toLowerCase()==datatype.toLowerCase()){
-										if(obj_rd[loop].sensorId==sid && obj_rd[loop].name.toLowerCase()==dataname.toLowerCase()
-											&&(obj_rd[loop].folder.toLowerCase()==datafolder.toLowerCase())){
-											obj_data = (obj_rd)[loop];////
-											if(isNumber(obj_data.value)){
-												g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal)
-											}else{
-												g._shape.Text =(obj_data.value)
-											};//;// + " " + sensors[g._shape.Binding].Value.Unit ;
-											if(obj_data.message){
-												g._shape.isError=true;
-											}else{
-												g._shape.isError=false;
-											}
-											//obj_rd.splice(loop,1);//找到需要的数据，去除数据后删除，减少循环的次数。
-											break;
-										}
-									}
-								}
-							}
-						}
-						obj.push(JSON.stringify(g));
-					}
-				});
-			sessionStorage.contents = JSON.stringify(obj);// 
-			try {
-				if(sessionStorage.scaler!=1)//将绘图比例设为0，否则可能比例会使用上次的数据造成混乱。数据更新与显示跟新的时间差。
-					sessionStorage.scaler=0;
-				drawmap(JSON.parse(sessionStorage.contents));
-			} catch(err) {
-			}
-			sessionStorage.dataId = 0;
-			//window.parent.getrealdatabynodeid(0);
-		})
+		if(window.parent.wsconnect){
+			window.parent.wssend("GetNodeGraphics",JSON.parse('{"id":'+parseInt(binariesid)+'}'));
+		}else{
+			sendorder("GetNodeGraphics?id="+binariesid,getnodegraphics_bc)
+		}
 	}
 	}catch(err){
 		showstateinfo(err.message,"GetBinary");
 	}
+}
+function getnodegraphics_bc(data){
+	//localStorage.errortime = 0;
+	//sessionStorage.islogin = true;
+	if(jQuery.isEmptyObject(data)){//.Result
+		//if (data.Result.Value == null) {
+		//showmsg("没有符合条件的记录",info_showtime);
+		showstateinfo("没有符合条件的记录","GetBinary");
+		sessionStorage.contents = null;
+		try {
+			drawmap(JSON.parse(sessionStorage.contents));
+		} catch(err) {
+		}
+		return;
+	}
+	//var allsensors=JSON.parse(localStorage.getItem("allsensors"));
+	var obj_data=new Object();
+	var contents = ($.base64.atob(data.value,true)).split("\r\n");//.Result
+	//if(jQuery.hasOwnProperty(localStorage.realdata))
+	var obj_rd=JSON.parse(localStorage.getItem("realdata"));
+	var obj=[];
+		contents.forEach(function(g){
+			if ($.trim(g).length > 0) {
+				g = JSON.parse(g);
+				if (g && g._shape && g._shape.Binding && g._shape.Text) {
+					//var channel=(g._shape.Binding).substring(0,g._shape.Binding.lastIndexOf('_'));
+					//var datatype=(g._shape.Binding).substr(g._shape.Binding.lastIndexOf('_')+1);
+					var datafolder='',dataname='',channel='',datatype='';
+					if(g._shape.Binding.indexOf(":")!=-1){
+						channel=(g._shape.Binding).substring(0,g._shape.Binding.indexOf(':'));
+						datatype=(g._shape.Binding).substr(g._shape.Binding.indexOf(':')+1);
+					}
+					if(g._shape.Binding.indexOf("：")!=-1){
+						channel=(g._shape.Binding).substring(0,g._shape.Binding.indexOf('：'));
+						datatype=(g._shape.Binding).substr(g._shape.Binding.indexOf('：')+1);
+					}
+					if(datatype.lastIndexOf(concat_str)==-1){
+						datafolder="Default";
+						dataname=datatype;
+					}else{
+						var datafolder=datatyep.substring(0,datatype.lastIndexOf(concat_str));
+						var dataname=datatype.substr(datatype.lastIndexOf(concat_str));
+					}
+					if(window.parent.allsensors)
+					if(window.parent.allsensors[channel]){
+						var sid=window.parent.allsensors[channel].id;
+						if ((obj_rd)&&(obj_rd.length>0)) {
+							let obj_rd_len=obj_rd.length;
+							for(var loop=0;loop<obj_rd_len;loop++){
+								//if(obj_rd[loop].sensorId==sid && obj_rd[loop].name.toLowerCase()==datatype.toLowerCase()){
+								if(obj_rd[loop].sensorId==sid && obj_rd[loop].name.toLowerCase()==dataname.toLowerCase()
+									&&(obj_rd[loop].folder.toLowerCase()==datafolder.toLowerCase())){
+									obj_data = (obj_rd)[loop];////
+									if(isNumber(obj_data.value)){
+										g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal)
+									}else{
+										g._shape.Text =(obj_data.value)
+									};//;// + " " + sensors[g._shape.Binding].Value.Unit ;
+									if(obj_data.message){
+										g._shape.isError=true;
+									}else{
+										g._shape.isError=false;
+									}
+									//obj_rd.splice(loop,1);//找到需要的数据，取出数据后删除，减少循环的次数。但是此操作可能使重复绑定的标签，
+									//除第一个以外的其他图元没有数据可以更新，所以暂时屏蔽掉。
+									break;
+								}
+							}
+						}
+					}
+				}
+				obj.push(JSON.stringify(g));
+			}
+		});
+	sessionStorage.contents = JSON.stringify(obj);// 
+	try {
+		if(sessionStorage.scaler!=1)//将绘图比例设为0，否则可能比例会使用上次的数据造成混乱。数据更新与显示跟新的时间差。
+			sessionStorage.scaler=0;
+		drawmap(JSON.parse(sessionStorage.contents));
+	} catch(err) {
+	}
+	sessionStorage.dataId = 0;
+	//window.parent.getrealdatabynodeid(0);
 }
 //绘图函数 in used by electricroommonitoring
 function drawmap(arr,ctx) {
@@ -1470,32 +1631,53 @@ function initsysteminfo(){//used by electricroommonitor 初始化系统设置
 //以下为新增函数
 //获取实时数据  used by electricroommonitor mainpage.html realdata.html formatting
 function getrealdatabynodeid(anodeid){
+	
 	if (typeof(anodeid)!="undefined"&&anodeid!==null) {
-		sendorder("GetRealsNew?dataId=" + anodeid,function(data){
-			//localStorage.errortime = 0;
-			//sessionStorage.islogin = true;
-			value0=0;value1=0;sname="";
-				if(!data){return;}
-				if (jQuery.isEmptyObject(data.datas)) {
-					if(anodeid<=0)//21.8.23 添加，否则真的没数据时可能保留以前的实时数据表而造成误解。只在非获取全部数据返回为空时才保持原来数据不进行更新。
-						localStorage.setItem("realdata",null);//21.8.17修改，暂时去掉此语句，返回数据为空时保持原来的数据，观察对页面数据有无影响。
-					decoderealdata();
-					showstateinfo("本次获取实时数据为空","getrealdatabynodeid");
-					//return;
-				}else{
-					var obj_realdata=data.datas;
-					localStorage.setItem("realdata",JSON.stringify(obj_realdata));
-					decoderealdata(obj_realdata);
-				}
-				if(typeof refreshData === "function"){
-					refreshData();
-				}else{
-					if(sessionStorage.pageindex==2 || sessionStorage.pageindex==17|| sessionStorage.pageindex==1||sessionStorage.pageindex==21){
-						document.getElementById('iframe_main').contentWindow.refreshData();
-					}
-				};
-		})
+		if(typeof(wsconnect)=="undefined" || !wsconnect){
+			sendorder("GetRealsNew?dataId=" + anodeid,function(data){
+				realcall(data,anodeid);
+			})
+		}else{
+			wssend("GetRealsNew",JSON.parse('{"dataId":'+parseInt(anodeid)+"}"))
+		}
 	}
+}
+function realcall(data,dataid){
+	//localStorage.errortime = 0;
+	//sessionStorage.islogin = true;
+	//value0=0;value1=0;sname="";
+		if(!data){return;}
+		if (jQuery.isEmptyObject(data.datas)) {
+			if(dataid==1)
+				if (typeof(realdataid)=="undefined"){
+					dataid=window.parent.realdataid;
+				}else{
+					dataid=realdataid;
+				}
+			if(!dataid || dataid<=0)//21.8.23 添加，否则真的没数据时可能保留以前的实时数据表而造成误解。只在非获取全部数据返回为空时才保持原来数据不进行更新。
+				localStorage.setItem("realdata",null);//21.8.17修改，暂时去掉此语句，返回数据为空时保持原来的数据，观察对页面数据有无影响。
+			if(typeof(decoderealdata)=="function")
+				decoderealdata();
+			showstateinfo("本次获取实时数据为空","getrealdatabynodeid");
+			//return;
+		}else{
+			var obj_realdata=data.datas;
+			if(!dataid || dataid<=0)
+				localStorage.setItem("realdata",JSON.stringify(obj_realdata));
+			if(typeof(decoderealdata)=="function"){
+				decoderealdata(obj_realdata);
+			}
+			if(document.getElementById('iframe_main')!==null &&typeof((document.getElementById('iframe_main')).contentWindow.decoderealdata)=="function")
+				document.getElementById('iframe_main').contentWindow.decoderealdata(obj_realdata);
+		}
+		if(typeof refreshData === "function"){
+			refreshData();
+		}else{
+			if(sessionStorage.pageindex==2 || sessionStorage.pageindex==17|| sessionStorage.pageindex==1||sessionStorage.pageindex==21){
+				if(typeof window.iframemain[0].contentWindow.refreshData =="function")
+				document.getElementById('iframe_main').contentWindow.refreshData();
+			}
+		};
 }
 function sleep(numberMillis) {    
 	var now = new Date();    
@@ -1626,13 +1808,15 @@ function updatapcnav(obj){
 	}
 	//if(window.parent.tree2)
 		window.parent.inittreeview_level2();
-	switch(obj){//控制标签树形菜单是否显示。
+		window.parent.document.getElementById("tree").style.pointerEvents ="auto";
+		switch(obj){//控制标签树形菜单是否显示。
 		case 3:
 		case 4:
 		case 5:
 		case 7:
 		case 8:
 		case 15:
+		case 16:
 		case 17:
 			if(window.parent.tree2){
 				window.parent.document.getElementById('tree_chi').style.display="block";
@@ -1658,26 +1842,29 @@ var sorter=false;
 				var tr = tbody.rows;
 				sessionStorage.realdata_index=Idx;
 				if((tableId=="realtable")){//||(tableId="ohter_realtable")
-					
-					if(Idx>=hidden_cells){
-						catalog=getCatalog(adatatype,Idx-hidden_cells);
-						title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值
-						isfirst=true;//更改排序项的同时更改显示项，重新获取数据刷新图表；
-						var head=$("#tab_head")[0].rows[0].cells[Idx];
-						head.style.color='blue';
-						//btn_refresh_click();//刷新图表
-						//return;
-						//var jssj = getCurrentDate(2);
-						//var yesterdaytime= (new Date(jssj))-(1000*60*60*24);
-						//var kssj=dateToString((yesterdaytime),2);
-						//kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
-						//jssj = (tr.cells[2].innerHTML);
-						//if(sessionStorage.realdata_index!=Idx){
-							decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，但将抵消排序操作；使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。
-						//}
-						
-						//gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
-						//refreshData();
+					try{
+						if(Idx>=hidden_cells){
+							catalog=getCatalog(adatatype,Idx-hidden_cells);
+							title_index=Idx;//获取排序的列表项下序号（位置)，用于获取对应项的数值
+							isfirst=true;//更改排序项的同时更改显示项，重新获取数据刷新图表；
+							var head=$("#tab_head")[0].rows[0].cells[Idx];
+							head.style.color='blue';
+							//btn_refresh_click();//刷新图表
+							//return;
+							//var jssj = getCurrentDate(2);
+							//var yesterdaytime= (new Date(jssj))-(1000*60*60*24);
+							//var kssj=dateToString((yesterdaytime),2);
+							//kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
+							//jssj = (tr.cells[2].innerHTML);
+							//if(sessionStorage.realdata_index!=Idx){
+								decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，但将抵消排序操作；使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。
+							//}
+							
+							//gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
+							//refreshData();
+						}
+					}catch(err){
+
 					}
 				}
 				if (tbody.sortCol == Idx){
@@ -1982,11 +2169,12 @@ function sendorder(order,callback,datas){
 				showstateinfo(err.message,"sendpostorder");
 			}
 			},
-			success: function (data, status) {
+			success: function (data, status,xml) {
 			try{
 				ajaxLoadingHidden();
 				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
+					showstateinfo(xml,"sendorder");
 					sessionStorage.errortime = 0;
 					if(sessionStorage.islogin==false){
 						showusername();
@@ -2011,12 +2199,12 @@ function sendorder(order,callback,datas){
 			},
 		});
 	} else {
-		showmsg("用户未登录，您无权完成此次操作", info_showtime);
+		//showmsg("用户未登录，您无权完成此次操作", info_showtime);
 		showstateinfo("用户未登录，你无权完成此次操作",order);
 		callback(null) ;
 	}
 	}catch(err){
-		showstateinfo(err.message);
+		showstateinfo(err.message,order);
 	}
 }
 //显示jQuery自定义消息对话框 暂时没用
@@ -2398,6 +2586,142 @@ function download(name, data) {
     fake_click(save_link);
 }
 
+//websocket 测试
+function sendstr(action,para){
+	wscount++
+	var str={
+		"Guid":"websocketGuid"+wscount,
+		"Action":"GetRealsNew",
+		"Para":{
+			"AccessToken":sessionStorage.accessToken
+		}
+	};
+	if(action)
+		str.Action=action;
+	if(para)
+		str.Para=para;
+	if(typeof(wsconnect)!="undefined" || wsconnect)
+		ws.send(JSON.stringify(str));
+	//ws.send()
+}
+function closews(){
+	if(ws)
+		ws.close()
+	//alert('连接已断开');
+}
+function openws(){
+	var usews;
+	if(localStorage.usews)
+		usews=localStorage.usews
+	else
+		usews=jfjk_base_config.usews;
+	if(!ws && (usews=="true"||usews==true))
+		WebSocketTest();
+}
+function WebSocketTest() {
+	if ("WebSocket" in window) {
+		//alert("您的浏览器支持 WebSocket!",1000);
+		// 打开一个 web socket ws://82.157.123.54:9010/ajaxchattest
+		var ws_url=localStorage.server_url.replace("http","ws");
+		ws = new WebSocket(ws_url+"ws");//ws://123.207.136.134:9010/ajaxchattest此在线测试地址可以正常连接和通信。192.168.10.250:805/ws
+		ws.onopen = function (evt) {
+			console.log("连接成功...");
+			// Web Socket 已连接上，使用 send() 方法发送数据 encodeURIComponent
+			var str={
+				"Guid":"abcdefg",
+				"Action":"BindAccessToken",
+				"Para":{
+					"AccessToken":sessionStorage.accessToken
+				}
+			}
+			sessionStorage.wscount=0;
+			ws.send(JSON.stringify(str));
+		};
+		ws.onmessage = function (evt) {//接收到信息时触发此事件，回调函数
+			//var received_msg =decodeURIComponent(evt.data).substring(0,decodeURIComponent(evt.data).indexOf('['));// ;
+			var obj_rec=JSON.parse(evt.data);
+			if(obj_rec){
+				var rec_datas=obj_rec.result.datas;
+				if(obj_rec.error==null || obj_rec.error=="null")
+				switch(obj_rec.action){
+				case "BindAccessToken":
+					//RefreshToken(null,function(data){});
+					wsconnect=true;
+					break;
+				case "GetRealsNew":
+					decoderealdata(rec_datas);
+					if(obj_rec.guid.indexOf("websocketGuid")>=0)
+						iframemain[0].contentWindow.realcall(obj_rec.result,1);
+					break;
+				case "GetReals" :
+					decoderealdata(rec_datas);
+					if(obj_rec.guid.indexOf("websocketGuid")>=0)
+						iframemain[0].contentWindow.realcall(obj_rec.result,-1);/**/
+					localStorage.setItem("realdata",JSON.stringify(rec_datas));
+					if((sessionStorage.pageindex==2||sessionStorage.pageindex==17)&&
+						(typeof iframemain[0].contentWindow.decoderealdata==="function"))
+						iframemain[0].contentWindow.decoderealdata(rec_datas);
+					break;
+				case "GetHistoriesByNode":
+					iframemain[0].contentWindow.decodedatas(rec_datas,1);
+					break;
+				case "GetHistoriesBySensor":
+				case "GetHistoriesBySensors":
+					
+				case "GetMessagesByNode":
+				case "GetMessagesBySensor":
+				case "GetMessagesBySensors":
+					iframemain[0].contentWindow.decodedatas(rec_datas);
+					break;
+				case "GetSensorsByNode":
+					getsensorsbynode_bc(obj_rec.result);
+					break;
+				case "GetSensors":
+					getsensors_bc(obj_rec.result);
+					break;
+				case "GetNodeGraphicsByNode":
+					getbinaries_bc(obj_rec.result);
+					break;
+				case "GetNodes":
+					getnodes_bc(obj_rec.result);
+					break;
+				case "GetNodeGraphics":
+					iframemain[0].contentWindow.getnodegraphics_bc(obj_rec.result);
+					break;
+				case "GetProfile":
+					if(sessionStorage.pageindex==20){
+						iframemain[0].contentWindow.getprofile_bc(obj_rec.result)						
+					}
+					break;
+				case "RefreshToken":
+					refreshtoken_bc(obj_rec.result);
+					break;
+				}
+			}
+			console.log(rec_datas);
+			//document.getElementById("rec_str").innerText=document.getElementById("rec_str").innerText+("发送的信息为"+decodeURIComponent(received_msg))+"\r\n";//.type+received_msg.size;
+		};
+		ws.onclose = function (evt) {//ws关闭时调用的函数
+			// 关闭 websocket 
+			//alert("连接已关闭...");hotter hottest best better good well ok great
+			ws=null;
+			wsconnect=false;
+			console.log("连接已关闭...");
+			if(sessionStorage.wscount>0 && sessionStorage.wscount<3){
+				openws();
+				sessionStorage.wscount=0;
+			}
+		};
+		ws.onerror=function (evt){//连接出错时的处理函数
+			sessionStorage.wscount++;
+			console.log(evt.data);
+			wsconnect=false;
+		}
+	}else {
+		// 浏览器不支持 WebSocket
+		alert("您的浏览器不支持 WebSocket!");
+	}
+}
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
  * 

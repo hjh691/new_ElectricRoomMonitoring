@@ -43,6 +43,7 @@ var sensors_length=0;
 //var alertcount=[0,0,0,0];//;
 //let haverealdata=false;
 var catalog="Defalt";
+const c_no=0,c_id=1,c_name=2,c_pname=5,c_time=3,c_statu=8,c_mes=7,c_didian=4,c_val=6,c_next=9;
 //var display_type=document.getElementById("display_type");
 initrealdata_iot();
 history.pushState(null, null, document.URL);
@@ -156,19 +157,19 @@ function showAllSensors(){
                 //atd.innerHTML= "&nbsp;";
                 atr.appendChild(atd);
             }
-            atr.cells[0].innerHTML=i+1;//序号从1开始计数
+            atr.cells[c_no].innerHTML=i+1;//序号从1开始计数
             //atr.cells[0].style.cssText="width:80px";
-            atr.cells[1].innerHTML=sensors[i].id;
-            atr.cells[2].innerHTML=sensors[i].Value.name;//第三列添加标签名称，
-            atr.cells[2].style.cssText="text-align:left";
-            atr.cells[4].style.cssText="display:none";//监测地点，隐藏
-            atr.cells[5].innerHTML=parentname;
-            atr.cells[6].style.cssText="padding:0.5em 0 .2em .5em;text-align:left;width:250px;word-break:break-all;";//设置上下边距格式
+            atr.cells[c_id].innerHTML=sensors[i].id;
+            atr.cells[c_name].innerHTML=sensors[i].Value.name;//第三列添加标签名称，
+            atr.cells[c_name].style.cssText="text-align:left";
+            atr.cells[c_didian].style.cssText="display:none";//监测地点，隐藏
+            atr.cells[c_pname].innerHTML=parentname;
+            atr.cells[c_val].style.cssText="padding:0.5em 0 .2em .5em;text-align:left;width:250px;word-break:break-all;";//设置上下边距格式
             var aa=document.createElement("a");
             aa.setAttribute("href","javascript:void(0)");
             aa.setAttribute("onclick","showdetails("+sensors[i].id+")");
             aa.innerHTML=">>>";
-            atr.cells[9].appendChild(aa);
+            atr.cells[c_next].appendChild(aa);
             if(parseInt(jfjk_base_config.realdatashowmodle))
                 atr.style="display:none;"
             $table.appendChild(atr);//
@@ -189,6 +190,7 @@ function showdetails(asensorid){//功能接口，显示一个新的页面，用�
     objWin.focus();*///deinn  
     window.parent.document.getElementById("tree_chi").style.display="none";
     window.parent.document.getElementById('tree').style.height='100%';
+    //window.parent.document.getElementById("tree").style.pointerEvents="none";
     window.parent.iframemain.attr("src","detail.html");
     stopPropagation();/**/
 }
@@ -515,14 +517,20 @@ function cleartable(){
     if(parseInt(sessionStorage.realdatashowmodle)){//刷新列表内容，剔除不在线的标签。202108118
         for(var j=0;j<tab_len;j++){
             showtable.rows[j].setAttribute("style","display:none");
-            showtable.rows[j].cells[8].innerHTML="";
+            showtable.rows[j].cells[c_statu].innerHTML="";
         }
     }else{
         for(var j=0;j<tab_len;j++){
-            showtable.rows[j].cells[8].innerHTML="";
+            showtable.rows[j].cells[c_statu].innerHTML="";
         }
     }
-    getrealdatabynodeid(-1);
+    if(window.parent.wsconnect){
+        var action="GetReals" ;
+        var para=JSON.parse("{}");
+        window.parent.wssend(action,para);
+    }else{
+        getrealdatabynodeid(-1);
+    }
 }
 function decoderealdata(obj_realdata,asensorid,isload) {
     try{
@@ -564,7 +572,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 isfindtype=false;
                 sid=obj_realdata[j].sensorId;
                 for(p=0;p<tab_rows_len;p++){
-                    if($table.rows[p].cells[1].innerHTML==obj_realdata[j].sensorId){
+                    if($table.rows[p].cells[c_id].innerHTML==obj_realdata[j].sensorId){
                         isfindtype=true;
                         break;
                     }
@@ -633,7 +641,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                     }else{//不是新标签
                         let tab_row_len=$table.rows.length;
                         for(var l=0;l<tab_row_len;l++){
-                            if($table.rows[l].cells[1].innerHTML==obj_data.sensorId){
+                            if($table.rows[l].cells[c_id].innerHTML==obj_data.sensorId){
                                 titlename=realdatafolder+concat_str+obj_data.name;
                                 if(getCatalog(type_td,realdatafolder,obj_data.name).chart_title)
                                     titlename=getCatalog(type_td,realdatafolder, obj_data.name).chart_title;
@@ -642,7 +650,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                     localStorage[storagename]=base64ToArrayBuffer(obj_data.value);
                                     obj_data.value='<a onclick="openmodal(\''+storagename+'\')" data-toggle="modal" data-target="#myModal">'+obj_data.value.substring(0,5)+'\>\>\></a>';
                                 }
-                                let str_hh=$table.rows[l].cells[6].innerHTML;
+                                let str_hh=$table.rows[l].cells[c_val].innerHTML;
                                 if(!str_hh){
                                     str_hh=titlename+" : "+ obj_data.value+" "+chartOption.chart_unit;
                                 }else if(str_hh.indexOf(titlename+" : ")!=-1){
@@ -658,21 +666,21 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                     str_hh=str_hh+"<br>"+
                                     titlename+" : "+ obj_data.value+" "+chartOption.chart_unit+"<br>";
                                 }
-                                $table.rows[l].cells[6].innerHTML=str_hh;
+                                $table.rows[l].cells[c_val].innerHTML=str_hh;
                                 //isbreak=true;
-                                if(!$table.rows[l].cells[2].value || ($table.rows[l].cells[3].value<dateToString(obj_data.time,2))){//更新最新时间
-                                    $table.rows[l].cells[3].innerHTML=dateToString(obj_data.time,2).substring(10,19);
-                                    $table.rows[l].cells[3].value=dateToString(obj_data.time,2);
+                                if(!$table.rows[l].cells[c_time].value || ($table.rows[l].cells[c_time].value<dateToString(obj_data.time,2))){//更新最新时间
+                                    $table.rows[l].cells[c_time].innerHTML=dateToString(obj_data.time,2).substring(10,19);
+                                    $table.rows[l].cells[c_time].value=dateToString(obj_data.time,2);
                                 }
                                 if(obj_data.message){
                                     //atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
-                                    if($table.rows[l].cells[7].innerHTML&&($table.rows[l].cells[7].innerHTML.indexOf(obj_data.message)<0)){
-                                        $table.rows[l].cells[7].innerHTML+=";"+obj_data.message;
+                                    if($table.rows[l].cells[c_mes].innerHTML&&($table.rows[l].cells[c_mes].innerHTML.indexOf(obj_data.message)<0)){
+                                        $table.rows[l].cells[c_mes].innerHTML+=";"+obj_data.message;
                                     }else{
-                                        $table.rows[l].cells[7].innerHTML=obj_data.message;
+                                        $table.rows[l].cells[c_mes].innerHTML=obj_data.message;
                                     }
                                 }
-                                $table.rows[l].cells[8].innerHTML='运行';//obj_data.folder;
+                                $table.rows[l].cells[c_statu].innerHTML='运行';//obj_data.folder;
                                 $table.rows[l].style=""
                                 /**/
                                 break;
@@ -800,7 +808,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 isrefreshbtn=false;
             }
             for (var int = 0; int < tab_rows_len; int++) {
-                if ($table.rows[int].cells[1].innerHTML == sessionStorage.SensorId) {
+                if ($table.rows[int].cells[c_id].innerHTML == sessionStorage.SensorId) {
                     sessionStorage.t_p = int;
                     var ppt = parseInt(sessionStorage.t_p);
                     var divheight=$("#datadiv").height();
@@ -1005,7 +1013,7 @@ function localrowbysensorid(asensorid){
     $table = document.getElementById('others_realdata_tbody');
     let tablehead_len=$table.rows.length;
     for (var int = 0; int < tablehead_len; int++) {
-        if ($table.rows[int].cells[1].innerHTML == (asensorid+"")) {
+        if ($table.rows[int].cells[c_id].innerHTML == (asensorid+"")) {
             sessionStorage.t_p = int;
             var row=$table.rows[int];
             tableclick(row);
@@ -1061,14 +1069,14 @@ function updatachart(atype) {//根据不同设备类型，更新图形当中的�
 function tableclick(tr,isloadmain) {
     $(tr).siblings("tr[backgroundColor!='#ff0']").css("background", "");
     sessionStorage.t_p = tr.rowIndex - 1;
-    sname = tr.cells[1].innerHTML;
+    //sname = tr.cells[c_name].innerHTML;
     //chart_type = tr.cells[tr.cells.length-2].innerHTML;
     //updatachart(typename);
     //if(title_index!=-1)
     //    value0 = parseFloat(tr.cells[6].innerHTML).toFixed(Number_of_decimal);
     //value1=parseFloat(tr.cells[3].innerHTML);
-    if (parseInt(tr.cells[1].innerHTML) != sessionStorage.SensorId) {
-        sessionStorage.SensorId = parseInt(tr.cells[1].innerHTML);
+    if (parseInt(tr.cells[c_id].innerHTML) != sessionStorage.SensorId) {
+        sessionStorage.SensorId = parseInt(tr.cells[c_id].innerHTML);
         sessionStorage.sel_id=sessionStorage.SensorId;
         //var kssj = getCurrentDate(1) + " 00:00:00";
         //var jssj = getCurrentDate(2);
@@ -1397,7 +1405,7 @@ function decodedatas(obj_chartdata) {
     if(obj_chartdata==null){
         obj_chartdata=JSON.parse(localStorage.getItem("historydata"));
     }
-    if (obj_chartdata == null) {
+    if (obj_chartdata == null || obj_chartdata.length==0) {
         maxvalue=NaN;//20200518
         myChart2.hideLoading();
         refreshData();//20200518
@@ -1842,9 +1850,9 @@ function jisuanyichangbili(avalue){
     $table = document.getElementById('others_realdata_tbody');
     let total=$table.rows.length;
     for (var int = 0; int < total; int++) {
-        if($table.rows[int].cells[8].innerText=="运行"){
+        if($table.rows[int].cells[c_statu].innerText=="运行"){
             iyunxing++;
-            if($table.rows[int].cells[7].innerText!="" && $table.rows[int].cells[7].innerText!=null){
+            if($table.rows[int].cells[c_mes].innerText!="" && $table.rows[int].cells[c_mes].innerText!=null){
                 igaojing++;
             }
         }

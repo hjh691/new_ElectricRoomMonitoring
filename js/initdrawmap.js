@@ -48,7 +48,8 @@ function initpage(){
     updatapcnav(2);
     sessionStorage.framepage="drawmap.html";
     sessionStorage.pageindex=1;
-    window.parent.getrealdatabynodeid(-1);
+    window.parent.realdataid=-1;
+    window.parent.getrealdatabynodeid(window.parent.realdataid);
     $("#txlb").empty();
     var sel_sensor=document.getElementById("txlb");
     /*for (var i = 0; i < sel_sensor.options.length; i) {
@@ -110,7 +111,7 @@ function setSelectOption_txlb(objid, sensor) {
 function refreshData(){
     refresh();
 }
-function refresh(){
+function refresh(obj){
     if(!checkFull())
     //if((!sessionStorage.allscreen) || ( sessionStorage.allscreen=="false")){
         $("#mapmodule1").text("全屏显示");
@@ -119,7 +120,11 @@ function refresh(){
     //    $("#mapmodule1").text("退出全屏");
 //sessionStorage.allscreen=false;
     //}/**/
-    var graphic = JSON.parse(sessionStorage.contents);
+    var graphic;
+    if(!obj)
+        graphic = JSON.parse(sessionStorage.getItem("contents"))
+    else
+        graphic=obj;
     if(graphic!=null){
     drawmap(graphic,ctx);
     }else{
@@ -146,7 +151,8 @@ window.onresize=window.onscroll=refresh;
 function decoderealdata(){
 }
 function getbinary(){
-    window.parent.getrealdatabynodeid(-1);
+    window.parent.realdataid=-1;
+    window.parent.getrealdatabynodeid(window.parent.realdataid);
     var txlb= document.getElementById("txlb");
     BinariesId=txlb.value;
     sessionStorage.txid=BinariesId;//保存图形id
@@ -190,7 +196,7 @@ mCanvas.onmousedown = function(ev) {
             var cav=mCanvas.parentNode.parentNode;
             cav.scrollTo(standerx-offx,shashtandery-offy);
         }
-    };
+    };//
     //鼠标移开事件  
     mCanvas.onmouseup = function(ev) {
         isDown = false;
@@ -263,6 +269,7 @@ mCanvas.onclick=(function(){
                 if((window.parent.allsensors)&&(window.parent.allsensors[channel])){
                     sessionStorage.sensorId=parseInt(window.parent.allsensors[channel].id);//此处sensorId首字母小写
                     window.parent.getrealdatabynodeid(-1);
+                    //window.parent.document.getElementById("tree").style.pointerEvents ="none";
                     window.parent.iframemain.attr("src","detail.html");
                 }else{
                     //showmsg("没有绑定标签!");

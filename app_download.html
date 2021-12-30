@@ -66,7 +66,7 @@
 		}
 		//生成二维码  used by electricroommonitor 
 		function madecode(str) {
-			var strurl = toUtf8(jfjk_base_config.baseurl); 
+			var strurl = toUtf8(localStorage.server_url); 
 			$('#code').qrcode(strurl);
 			$('#code1').qrcode(str);
 		}
@@ -76,7 +76,7 @@
 			sessionStorage.framepage="app_download.html";
 			sessionStorage.pageindex=200;
 			var str = toUtf8(this.location.href.substr(0, this.location.href.lastIndexOf('/')) + jfjk_base_config.app_path); //+"#mp.weixin.qq.com" "/res/SubstationTemperature.apk");
-			$("#a_code")[0].innerHTML = jfjk_base_config.baseurl;
+			$("#a_code")[0].innerHTML = localStorage.server_url;
 			$("#a_code1")[0].href = str;
 			madecode(str);
 			window.parent.closeloadlayer();

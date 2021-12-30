@@ -152,7 +152,7 @@
 							<div style="font-size: 15px;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: auto;text-align: left;">
 								<div >
 									<label style="width:50px"> 总 数 :</label> <label id="total" style="width:40px">0</label><label> 在线运行:</label><label id="yunxing" style="width:40px">0</label>
-									<label >(其中:  1.正常:</label> <label id="normal" style="color:green;width:40px" >0</label><label> 2.告警:</label><label id="warning" style="color:orange;width:40px">0</label><label style="margin-left: 5px;"> ）</label>
+									<label >(其中:  正常:</label> <label id="normal" style="color:green;width:40px" >0</label><label> 告警:</label><label id="warning" style="color:orange;width:40px">0</label><label style="margin-left: 5px;"> ）</label>
 								</div>
 								<div >
 									<label > 最大值:</label> <label id="max" style="width:40px">0</label> <label> 测量点：</label><label id="addr_max">A点</label>
@@ -173,8 +173,9 @@
 											<th >序号</th>
 											<th onclick="$.sortTable.sort('detail_realdata',1)">名称</th>
 											<th onclick="$.sortTable.sort('detail_realdata',2)">数值</th>
-											<th onclick="$.sortTable.sort('detail_realdata',3)">状态</th>
+											<th onclick="$.sortTable.sort('detail_realdata',3)">时间</th>
 											<th onclick="$.sortTable.sort('detail_realdata',4)">信息</th>
+											<th onclick="$.sortTable.sort('detail_realdata',5)">状态</th>
 										</tr>
 									</thead>
 									<tbody id="detail_realdata_tbody" style="top:35px;text-align: center;">

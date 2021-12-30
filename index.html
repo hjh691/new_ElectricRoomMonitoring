@@ -6,11 +6,25 @@
 	<title>智能变电站辅助系统综合监测云平台|登录</title>
 	<link rel="shortcut icon" href="#" /><!-- 消除GET http://localhost:8080/favicon.ico 404 (Not Found) 错误提示-->
 	<link rel="stylesheet" href="css/bootstrap.min.css" /> 
+	<script  type="text/javascript">
+		//if(!sessionStorage.sps){
+			localStorage.server_url=null;
+			localStorage.Config=[];
+			localStorage.Configs=[];
+			localStorage.allConfigs=[];
+			localStorage.allsensors=[];
+			localStorage.realdata=[];
+			localStorage.sensors=[];
+			localStorage.sensor_tree=[];
+			localStorage.historydata=[];
+			localStorage.binaries=[];
+		//}
+	</script>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
-	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script type="text/javascript" src="js/bootstrap.js"></script>
 	<!--<script  type="text/javascript" src="js/json2.js"></script>-->
+	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	<script type="text/javascript" src="js/jquery.validate.min.js"></script>
 	<style>
@@ -93,7 +107,7 @@
 <body id="main" onload="initlogin()" style="background: url(res/bj011.jpg);"><!--style="background-image:url(rec/zzpic12708.jpg)"-->
 	<div align="center" id="page" style="margin:0;padding:0;width:100%; font-size:1.4em;" >
 		<input type="file" id="file" onchange="previewHandle(this)" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;"/>
-		<input type="text" style="width:0;" id="bg_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"/>
+		<input type="text" style="width:0;display: none;" id="bg_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"/>
 		<label class="selected" onclick="selectFile()" style="float:right;margin-right:20px;background-color: rgb(78, 76, 76);">背景设置</label>
 		<br>
 		<h1 id="company_name" ></h1>
@@ -109,10 +123,11 @@
 							<input id="password" type="password" name="password" 
 							style="margin-left:-30px;padding:2px;padding-left:35px;height:40px;font-size:1em;border-radius:8px;color:black" 
 							onkeypress="return KeyUp()" autocomplete="new-password"/></div>
-							<div style="display:none">
-								<a href="iframe_regist.html" target="main-frame" style="font-weight:bold;text-decoration:none;" ><b>注册新用户</b></a>
-								<div style="color:red;font-size:1em;display:inline;left:40px;position:relative" >
-									<a href="#" style="color:red; text-decoration:none;">忘记密码</a>
+							<br>
+							<div id="tip" style="display:none">
+								<a href="iframe_regist.html" target="main-frame" style="font-weight:bold;text-decoration:none;display: none;" ><b>注册新用户</b></a>
+								<div style="color:red;font-size:1em;display:inline;position:relative" >
+									<a href="#" style="color:red; text-decoration:none;">连接后台服务器失败</a>
 								</div>
 							</div>
 						<br>
@@ -125,12 +140,13 @@
 		</table>
 	</div>
 	<script>
+		
 		history.pushState(null, null, document.URL);
 		window.addEventListener('popstate', function () {
 				history.pushState(null, null, document.URL);
 		});
 		sessionStorage.errortime=0;
-	window.onresize = function(){
+		window.onresize = function(){
 			var widthoftextarea = $(window).width();
 			//设置背景图大小按比例扩大
 			var width_screen = $(window).width();
@@ -158,7 +174,101 @@
 				obt.click();
 				}  
 			}
+			var list_pt=0;
+			//if(localStorage.server_url!=null && localStorage.server_url!="undefined" && localStorage.server_url!="" && localStorage.server_url!="null"){
+			//	jfjk_base_config.baseurl=localStorage.server_url;
+			//}else
+			//{
+			//for(var i=0;i<server_url_list.length;i++){
+			//if(!sessionStorage.sps){
+				var a_url=server_url_list[list_pt]
+				if(a_url.indexOf("localhost")>-1){
+					a_url=a_url.replace("localhost",window.location.hostname);
+					//jfjk_base_config.speechurl=jfjk_base_config.speechurl.replace("localhost",window.location.hostname);
+				}
+				try{
+					var tips=layer.open({
+						type: 4 //Layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+						//,title: 'title here'
+						,area: ['390px', '330px']
+						,shade: 0.4
+						//,content:"加载中" //支持获取DOM元素
+						//,btn: ['yes', 'close'] //按钮
+						//,scrollbar: false //屏蔽浏览器滚动条
+						//,yes: function(index){
+							//layer.msg('yes');
+						//	layer.close(index);
+						//	showToast();
+						//}
+						//,btn2: function(){
+							//layer.alert('aaa',{title:'msg title'});
+						//	layer.msg('bbb');
+							//layer.closeAll();
+						//}
+					}); 
+					var tip2=layer.msg('正在连接后台服务器...',{time:10000});
+					test_url(a_url);            
+				}catch(err){
+					showstateinfo(err.message);
+				}
+			//}
+			//}
+			function test_url(url){
+				url = encodeURI(url+"GetProfile");
+				$.ajax({
+					beforeSend: function (request) {
+						request.setRequestHeader("Authorization", "sessionStorage.token");
+					},
+					url: url,
+					type: 'GET',
+					dataType: 'json',
+					timeout: 5000,
+					error: function (jqXHR, textStatus, errorThrown) {
+						try{
+							if (errorThrown == "Unauthorized") {
+								localStorage.server_url=server_url_list[list_pt];//jfjk_base_config.baseurl=
+								elementeanabled();
+								layer.close(tips);
+								layer.msg('连接后台服务器成功',{time:1000});
+								secc=0;
+							}else{
+								if (++(list_pt)<server_url_list.length){
+									//list_pt++;
+									//localStorage.server_url=jfjk_base_config.baseurl=server_url_list[list_pt];
+									test_url(server_url_list[list_pt]);
+								}else
+								{
+									//所有地址均失败怎显示连接失败
+									elementdisabled();
+									//layer.msg('连接后台服务器失败');
+									layer.close(tip2);
+									layer.close(tips);
+								}
+							} 
+						}catch(err){
+							showstateinfo(err.message,"sendpostorder");
+						}
+					},
+					success: function (data, status) {
+						localStorage.server_url=server_url_list[list_pt];//jfjk_base_config.baseurl=
+						//return secc=0;
+					}
+				});
+				//return secc;
+			}
 		});
+		function elementdisabled(){
+			$("#username").attr("disabled",true);
+			$("#password").attr("disabled",true);
+			$("#btn_login").attr("disabled",true);
+			$("#tip").attr("style","")
+		}
+		function elementeanabled(){
+			$("#username").attr("disabled",false);
+			$("#password").attr("disabled",false);
+			$("#btn_login").attr("disabled",false);
+			$("#tip").attr("style","display:none")
+		}
 		function selectFile(){
 			//触发 文件选择的click事件
 			$("#file").trigger("click");
@@ -184,7 +294,7 @@
 				return;
 			}
 			if(file.size>2000000){
-				alert("文件太大，请选择不答应2M的图形文件！");
+				alert("文件太大，请选择不大于2M的图形文件！");
 				return;
 			}
 			// 读取完成

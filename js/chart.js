@@ -231,6 +231,14 @@
     }
     //获取历史数据   
     function gethistorybysensors(arr_sensors,folder,aname,apt,atitle){
+        var apara=new Object();
+        //apara.sensorId=parseInt(sessionStorage.SensorId);
+        apara.folder=folder;
+        apara.name=aname;
+        apara.from=kssj;
+        apara.to=jssj;
+        apara[""]=arr_sensors;
+        //window.parent.wssend("GetHistoriesBySensors",apara);
         sendorder("GetHistoriesBySensors?folder="+folder+"&name="+aname+"&from="+kssj+"&to="+jssj,function(data){
             if (data!= null) {//Result.
                 if (!jQuery.isEmptyObject(data.datas)) {
@@ -543,7 +551,7 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                     if(j==0){
                                         atr=creatTr();
                                         atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
-                                        atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                        atr.cells[j+2].innerHTML=series[j].data[i][1].toFixed(Number_of_decimal);
                                         tdBodys.appendChild(atr);
                                     }else{
                                         var rows=tdBodys.rows;
@@ -551,21 +559,21 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                         if(len!=0){
                                             for(var k=0;k<len;k++){
                                                 var jiange=GetDateDiff(rows[k].cells[1].outerText,dateToString((series[j].data[i][0]),2),"minute");
-                                                if(jiange<=-2){
+                                                if(jiange<=-1*min_timeInterval){
                                                     atr=creatTr();
                                                     atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
-                                                    atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                                    atr.cells[j+2].innerHTML=series[j].data[i][1].toFixed(Number_of_decimal);
                                                     tdBodys.insertBefore(atr,rows[k]);
                                                     break;
-                                                }else if(jiange<2){
-                                                    if((rows[k].cells[j+2].innerHTML!="")&&(rows[k].cells[j+2].innerHTML!=series[j].data[i][1])){
+                                                }else if(jiange<max_timeInterval){
+                                                    if((rows[k].cells[j+2].innerHTML!=" ")&&(rows[k].cells[j+2].innerHTML!=series[j].data[i][1])){
                                                         continue;
                                                         atr=creatTr();
                                                         atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
                                                         atr.cells[j+2].innerHTML=series[j].data[i][1];
                                                         tdBodys.insertBefore(atr,rows[k+1]);
                                                     }else{
-                                                        rows[k].cells[j+2].innerHTML=series[j].data[i][1];
+                                                        rows[k].cells[j+2].innerHTML=series[j].data[i][1].toFixed(Number_of_decimal);
                                                     }
                                                     break;
                                                 }
@@ -573,13 +581,13 @@ function decodedatas(obj_chartdatas,apt,atitle,aname) {
                                             if(k>=len){
                                                 atr=creatTr();
                                                 atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
-                                                atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                                atr.cells[j+2].innerHTML=series[j].data[i][1].toFixed(Number_of_decimal);
                                                 tdBodys.insertBefore(atr,rows[k]);
                                             }
                                         }else{
                                             atr=creatTr();
                                             atr.cells[1].innerHTML=dateToString((series[j].data[i][0]),2);
-                                            atr.cells[j+2].innerHTML=series[j].data[i][1];
+                                            atr.cells[j+2].innerHTML=series[j].data[i][1].toFixed(Number_of_decimal);
                                             tdBodys.insertBefore(atr,rows[k]);
                                         }
                                     }
@@ -681,7 +689,7 @@ function creatTr(){
     let atr=document.createElement("tr");
     for(var i=0;i<=check_val.length+1;i++){
         let atd=document.createElement("td");
-        atd.innerHTML= "";
+        atd.innerHTML= " ";
         if(i===0)
             atd.setAttribute("style",'display:none');
         atr.appendChild(atd);

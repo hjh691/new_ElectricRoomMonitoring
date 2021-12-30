@@ -3,62 +3,14 @@ var jfjk_base_config={};
 // 1. 后台服务器地址：用引号括起来默认："http://localhost";"http://192.168.1.10";"http://www.bdjka.com"等。
 //后台服务器地址列表：
 var secc=-1;
+//_api与服务器通信地址列表，系统自动进行通道测试，保存首个通信正常地址进行数据交互；
 var server_url_list=[
+    "http://localhost:20000/",
     "http://192.168.10.250:20000/",
-    "http://192.168.10.67:20000/",
-    "http://jka.f3322.net:20000/"
-]
-var list_pt=0;
-if(localStorage.server_url!=null && localStorage.server_url!="undefined" && localStorage.server_url!=""){
-    jfjk_base_config.baseurl=localStorage.server_url;
-}else
-{
-//for(var i=0;i<server_url_list.length;i++){
-    localStorage.server_url=jfjk_base_config.baseurl=server_url_list[list_pt];
-    try{
-        test_url(jfjk_base_config.baseurl);            
-    }catch(err){
-        showstateinfo(err.message);
-    }
-}
-function test_url(url){
-    url = encodeURI(url+"GetProfile");
-    $.ajax({
-        beforeSend: function (request) {
-            request.setRequestHeader("Authorization", "sessionStorage.token");
-        },
-        url: url,
-        type: 'GET',
-        dataType: 'json',
-        timeout: 5000,
-        error: function (jqXHR, textStatus, errorThrown) {
-            try{
-                if (errorThrown == "Unauthorized") {
-                    secc=0;
-                }else{
-                    if (++(list_pt)<server_url_list.length){
-                        //list_pt++;
-                        localStorage.server_url=jfjk_base_config.baseurl=server_url_list[list_pt];
-                        test_url(jfjk_base_config.baseurl);
-                    }
-                } 
-            }catch(err){
-                showstateinfo(err.message,"sendpostorder");
-            }
-        },
-        success: function (data, status) {
-            return secc=0;
-        }
-    });
-    return secc;
-}
-if(jfjk_base_config.baseurl.indexOf("localhost")>-1){
-    jfjk_base_config.baseurl=jfjk_base_config.baseurl.replace("localhost",window.location.hostname);
-    //jfjk_base_config.speechurl=jfjk_base_config.speechurl.replace("localhost",window.location.hostname);
-}else if(jfjk_base_config.baseurl.indexOf("127.0.0.1")>-1){
-    jfjk_base_config.baseurl=jfjk_base_config.baseurl.replace("127.0.0.1",window.location.hostname);
-    //jfjk_base_config.speechurl=jfjk_base_config.speechurl.replace("127.0.0.1",window.location.hostname);
-}
+    "http://yun.hebjka.com:20000/"
+];
+
+
 function sleep(numberMillis) { 
     var now = new Date(); 
     var exitTime = now.getTime() + numberMillis; 
@@ -89,11 +41,11 @@ jfjk_base_config.bg_src="res/bj011.jpg";
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
- jfjk_base_config.ver_id="Ver 2.09.14";//1.3添加通用页面。
+ jfjk_base_config.ver_id="Ver 2.29.09";//1.3添加通用页面。
  //发布日期
- jfjk_base_config.date="2021-09-14";
+ jfjk_base_config.date="2021-12-29";
 //公司名称
- jfjk_base_config.company="保定金凯澳自动化设备有限公司";
+ jfjk_base_config.company="河北金凯澳电气设备制造有限公司";
  //版权时间
  jfjk_base_config.copyright="&copy 2022-12-31";
 //公司log
@@ -112,6 +64,8 @@ jfjk_base_config.bg_src="res/bj011.jpg";
  jfjk_base_config.part2="技术服务部：0312-6783283 安经理";
  jfjk_base_config.part3="生　产　部：0312-6783282 刘经理";
  jfjk_base_config.part4="市　场　部：13313227451 闫经理";
+ //是否使用websocket通信方式
+ jfjk_base_config.usews=false;
 //各子系统的指定名称
  sysnames=['视频监控','测温','局部放电','局放','机房监控','辅助综合','开关柜','气象','微气象'];
 //图形颜色
@@ -180,6 +134,5 @@ function initconfigOption(){
 //localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
  /**un business
   * 1.2.2 节点树的节点字体颜色变化的问题，告警信息每次都显示的问题（同一节点有不同类型的数据和不一样的告警状态造成），节点目录自动折叠的问题；代码精简。
-  * 第一次政治协议会议、新中国成立、中国人民站起来、西藏和平解放、抗美援朝 土地革命、第一个五年计划、中共八大、宪法、社会主义制度、三大改造
-  * 大跃进、文化大革命、粉碎四人帮、拨乱反正、改革开放、经济建设为中心、
+  * 
   */

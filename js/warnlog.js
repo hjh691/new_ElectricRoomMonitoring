@@ -36,6 +36,9 @@
 		//inittreeview(treenode);
 		$("#kssj_warning").val(sessionStorage.kssj);
 		$("#jssj_warning").val(sessionStorage.jssj);
+		if(!sessionStorage.selecttype)
+			sessionStorage.selecttype=0;
+		selecttype(sessionStorage.selecttype);
 		/*var sel_sensor=document.getElementById("jcdd");
 		for (var i = 0; i < sel_sensor.length; i++) {
 			sel_sensor.removeChild(sel_sensor.options[0]);
@@ -101,7 +104,8 @@
 				i++
 				//if(i%60==0){
 					if(sessionStorage.timeindex==5)
-					showrealworning();
+					querywarnlog();//showrealworning();
+					stoptimer(timer);
 				//}
 			};
 		} else {
@@ -209,14 +213,14 @@
 			if((configs)){//检查配置中是否有catalog项
 				for(var i=0;i<configs.length;i++){
 					if((configs[i].type.toLowerCase()==allcatalog)){
-						var s_des=configs[i].details//如果有，读取其所有配置项
+						var s_des=configs[i].details//如果有，读取其所有配置项;
 						for(var p in s_des){
 							lab=document.createElement("label");
 							/*if(p==0){
 								name=s_des[p].Name;
 								catalog=s_des[p].Catalog;
 								lab.className="btn btn-primary active"
-							}else{}*/
+							}else{}*///this iit,mun
 							if(sessionStorage.warnlogname && sessionStorage.warnlogname!=undefined){
 								dname=sessionStorage.warnlogname;
 							}
@@ -314,11 +318,39 @@
 			dname= $(".catalog:checked").val();
 			sessionStorage.warnlogname=dname;
 			catalog=$(".catalog:checked")[0].getAttribute("folder");//getcatalog(dname);
-			gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+			//getmessagesbysensor(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+			querywarnlog();
 			//decodedatas(JSON.parse(localStorage.historydata));// 
 		});
 		}catch(err){
 			showstateinfo(err.message,"warnlog/appenddisplaytype");
+		}
+	}
+	function selecttype(type){
+		flashbutton();//查询按钮闪烁，提示进行重新查询更新。
+		switch(parseInt(type)){
+			case 0:
+				$("#selecttype").text("单个标签");
+				$("#currentmonth").attr("style","");
+				$("#lastmonth").attr("style","");
+				$("#jssj_warning").attr("style","width:160px;font-size:16px;height: 30px;");
+				$("#label_start").text("起止时间");
+				$("#label_end").text("至");
+				sessionStorage.selecttype=0;
+				break;
+			case 1:
+				$("#selecttype").text("全部标签");//以节点为依据查询该节点下所有标签的告警信息。
+				sessionStorage.selecttype=1;
+				$("#currentmonth").attr("style","display:none");
+				$("#lastmonth").attr("style","display:none");
+				$("#jssj_warning").attr("style","width:160px;font-size:16px;height: 30px;display:none");
+				$("#label_start").text("查询日期");
+				$("#label_end").text("");
+				if(sessionStorage.timeindex>1 && sessionStorage.timeindex<4){
+					seletime(0);
+					$(":radio[name='timeselect'][value='"+0+"']").prop("checked","checked");
+				}
+				break;
 		}
 	}
 	function displaytype(obj){
@@ -382,19 +414,44 @@
 				td_third.setAttribute("colspan","4");
 				tr3.appendChild(td_third);
 				$table.appendChild(tr3);*/
-				let data_len=obj_data.length;
+				let data_len=obj_data.length,sensor_id=-1;
 				for (var i = 0; i <data_len; i++) {
 					if(obj_data[i].message){
 						if((dname!="") && (obj_data[i].name!=dname)){
 							continue;
 						}
+						var sensor_name=sessionStorage.sensorallpathname,parentname="",parentid=-1,sname="";
+						
+						if(sessionStorage.selecttype==1 && obj_data[i].sensorId!=sensor_id){
+						sensors = JSON.parse(localStorage.getItem("sensors"));
+    					sensor_id=obj_data[i].sensorId;
+						if(sensors!=null){
+							for(var j=0;j<sensors.length;j++){
+								if(sensors[j].id==sensor_id){
+									sname=sensors[j].Value.name;
+									if(sensors[j].Value.parentId=="-1"){
+										parentname="";
+									}else if(sensors[j].Value.parentId!=parentid){
+										parentid=sensors[j].Value.parentId;
+										for(var k=0;k<sensors.length;k++){
+											if(sensors[k].id==parentid){
+												parentname=sensors[k].Value.name+"_";
+												break;
+											}
+										}
+									}
+									break;
+								}
+							}
+							sensor_name=parentname+sname;
+						}}
 						var tr=document.createElement("tr");
 						tr.setAttribute("onclick","tableclick(this)");
 						var td_did=document.createElement("td");
 						td_did.innerHTML=sessionStorage.SensorId;//objS.options[objS.selectedIndex].value;
 						td_did.setAttribute("style","display:none");
 						var td_dname=document.createElement("td");
-						td_dname.innerHTML=sessionStorage.sensorallpathname;// SensorName;//name;
+						td_dname.innerHTML=sensor_name;//sessionStorage.sensorallpathname;// SensorName;//name;
 						var td_dtime=document.createElement("td");
 						var time=dateToString((obj_data[i].time),2);//.replace(/T/g," ")).substring(0,19);//(ttime-oneday*(2*i+5));
 						td_dtime.innerHTML=time;//dateToString(new Date(time),2);
@@ -436,7 +493,7 @@
 				if(!count){
 					if(!flag)
 					showmsg("沒有符合条件的告警数据",info_showtime);
-					showstateinfo("没有符合条件的告警数据");
+					showstateinfo("没有符合条件的告警数据","warnlog/decodedatas");
 					document.getElementById("count_val").innerHTML="";
 					//document.getElementById("count_first").innerHTML="";
 					//document.getElementById("count_third").innerHTML="";
@@ -475,6 +532,8 @@
 			}else{
 				//document.getElementById("count_first").innerHTML=0;
 				//document.getElementById("count_third").innerHTML=0;
+				showmsg("沒有符合条件的告警数据",info_showtime);
+				showstateinfo("没有符合条件的告警数据","warnlog/decodedatas");
 			}
 		}catch(err){
 			showstateinfo(err.message,"warnlog/decodedatas");
@@ -536,11 +595,11 @@
 			}
 			/*var rowNum = $table.rows.length;
 			for (var i = 0; i < rowNum; i++) {
-				
 				$table.removeChild($table.rows[0]);
 			}*/
 			if(trs.length>0){
-				/**
+				/** 
+				 * 明日计划：web前端程序功能测试，系统添加websocket通信的功能函数；学习Gradle实战之第一部分Gradle基础概述
 				 * 在表格中定义一些关键节点（行），采用insertbifore命令时的参考节点。//
 				 * 用于对表格中的数据进行分类插入，并作为分类显示的标题。tr1,tr2...
 				 * **/
@@ -619,7 +678,7 @@
 				//$table.removeChild(dtr);//去掉最后一行（插入的参考行）
 			}else{
 				showmsg("当前没有告警!",info_showtime);
-				showstateinfo("当前没有告警信息");
+				showstateinfo("当前没有告警信息","warnlog/showrealwarning");
 			}
 			//document.getElementById("count_first").innerHTML=count_l[0];
 			//document.getElementById("count_third").innerHTML=count_l[1];
@@ -802,24 +861,28 @@ function querywarnlog(num) {
 		var kssj = document.getElementById("kssj_warning").value;
 		if ((kssj == null) || (kssj == "") || (typeof(kssj) == "undefined")) {
 			showmsg("请指定开始时间",info_showtime);
-			showstateinfo("请指定开始时间");
+			showstateinfo("请指定开始时间","warnlog/querywarnlog");
 			return;
 		}
 		sessionStorage.kssj = kssj;
 		var jssj = document.getElementById("jssj_warning").value;
 		if ((jssj == null) || (jssj == "") || (typeof(jssj) == "undefined")) {
 			showmsg("请指定截至时间",info_showtime);
-			showstateinfo("请指定截止时间");
+			showstateinfo("请指定截止时间","warnlog/querywarnlog");
 			return;
 		}
 		sessionStorage.jssj = jssj;
+		if(sessionStorage.selecttype==1){
+			sessionStorage.kssj=kssj.substring(0,10)+" 00:00:00";
+			sessionStorage.jssj=kssj.substring(0,10)+" 23:59:59"
+		}
 	}
 	$("#warnlogdata-tbody tr").empty();
-	//if (num == 0) {//name 改为dname 20200520 edit;at the options was null,get the all data;
-		gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
-	//} else {
-	//	gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
-	//}
+	if (sessionStorage.selecttype == 0) {//name 改为dname 20200520 edit;at the options was null,get the all data;
+		getmessagesbysensor(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+	} else {
+		getmessagesbynode(sessionStorage.nodeId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
+	}
 }
 /*	202101
 	修改在更改筛选条件后实时告警信息不显示的问题；
