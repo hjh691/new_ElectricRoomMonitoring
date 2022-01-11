@@ -1620,6 +1620,7 @@
 												/*if(obj_realdata[loop].sensorId==sid && obj_realdata[loop].name.toLowerCase()==datatype.toLowerCase()){*/
 												if(obj_realdata[loop].sensorId==sid && obj_realdata[loop].name.toLowerCase()==dataname.toLowerCase()
 													&&(obj_realdata[loop].folder.toLowerCase()==datafolder.toLowerCase())){
+													g.refresh=true;
 													obj_data = (obj_realdata)[loop];////
 													if(isNumber(obj_data.value)){
 														g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal)
@@ -1641,11 +1642,11 @@
 							}
 						});
 					}
-					if(sessionStorage.pageindex==1){
-						iframemain[0].contentWindow.refresh(obj);
-					}
-					sessionStorage.setItem("contents",JSON.stringify(obj));
 					
+					sessionStorage.setItem("contents",JSON.stringify(obj));
+					if(sessionStorage.pageindex==1){
+						iframemain[0].contentWindow.refresh(obj,0);
+					}
 				}
 				let sersors_len=sensors.length;
 				for (var i = 0; i < sersors_len; i++) {

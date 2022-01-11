@@ -153,8 +153,8 @@ function showAllSensors(){
         sensors_length=sensors.length;
         tablehead_len=tab_head.rows[0].cells.length;
         for(var i=0;i<sensors_length;i++){
-            var tr=document.createElement("tr");
-            tr.setAttribute("onclick","tableclick(this)");
+            //var tr=document.createElement("tr");
+            //tr.setAttribute("onclick","tableclick(this)");
             var td_did=document.createElement("td");
             td_did.innerHTML=sensors[i].id;
             var sname=sensors[i].Value.name;
@@ -991,7 +991,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                     maxOfRealdataName=($table.rows[int].cells[c_name].innerHTML)
                 }
                 //jisuanyichangbili(($table.rows[int].cells[title_index].innerHTML)*1);//
-                jisuanyichangbili(($table.rows[int].cells[tab_head.rows[0].cells.length-2].innerHTML));
+                jisuanyichangbili($table.rows[int].cells[c_time].innerHTML,($table.rows[int].cells[tab_head.rows[0].cells.length-2].innerHTML));
             }
             if (typeof (sessionStorage.t_p) != "undefined") {
                 sname = $table.rows[sessionStorage.t_p].cells[c_name].innerHTML;
@@ -1712,14 +1712,21 @@ function decodedatas(obj_chartdata) {
     if(obj_chartdata==null){
         obj_chartdata=JSON.parse(localStorage.getItem("historydata"));
     }
+    var dom = document.getElementById('realdata_chart');
+    
     if (obj_chartdata == null || obj_chartdata.length==0) {
         maxvalue=0;//20210805 is NaN or 0 to define.
         myChart2.hideLoading();
         myChart2.clear();
+        dom.innerHTML = '-暂无相关数据-';
+        dom.style.cssText = 'text-align:center; color: #000;font-size:16px; border: none;line-height: 300px';
+        //dom.removeAttribute('_echarts_instance_');
         refreshData();//20200518
         return;
         //drawchart();
     }
+    dom.setAttribute('_echarts_instance_', '');
+    myChart2=echarts.init(dom);
     minval = maxval = obj_chartdata[0].value;//value0;
     //var zero=getCurrentDate(1) + " 00:00:00";
     happentime=dateToString(obj_chartdata[0].time,2);//发生时刻 how is excited the boy
@@ -2050,14 +2057,16 @@ function displayPage() {
     });
 }*/
 
-function jisuanyichangbili(avalue){//一个标签有多个类型的数据报警时，告警类型的统计可能有问题，有待验证。
-    if(!avalue){
-        avalue="正常";
+function jisuanyichangbili(isonline,iswarning){//一个标签有多个类型的数据报警时，告警类型的统计可能有问题，有待验证。
+    if(!isonline || isonline=="离线")
+        iswarning="离线";
+    if(!iswarning){
+        iswarning="正常";
     }
-    if(alert_obj.hasOwnProperty(avalue)){
-        alert_obj[avalue]++;
+    if(alert_obj.hasOwnProperty(iswarning)){
+        alert_obj[iswarning]++;
     }else{
-        alert_obj[avalue]=1;
+        alert_obj[iswarning]=1;
     }
     /*
     //if(avalue>alertconfig[3]){

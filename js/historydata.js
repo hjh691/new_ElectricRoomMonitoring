@@ -268,10 +268,7 @@ function buildnode(data, level) {//no used
     }
     return tree;
 }
-function tableclick(tr){
-    $(tr).siblings().css("background","");
-    $(tr).css("background","#85e494");//区分选中行
-}
+
 function refreshsensorslist(){
     window.parent.GetSensorsByNode(sessionStorage.nodeId);
 }

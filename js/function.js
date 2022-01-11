@@ -237,7 +237,7 @@ function LoginOrder(name, ps,flag,order,callback,datas) {
 function RefreshToken(order,callback,datas){
 	//if(wsconnect){
 	//	wssend("RefreshToken",JSON.parse('{"refreshToken":"'+sessionStorage.refreshtoken+'"}'));
-	//}else
+	//}else this function is refesh the te accesse token
 	{
 		sendorder("RefreshToken?refreshToken=" + sessionStorage.refreshtoken,function(data){
 			refreshtoken_bc(data,order,datas)
@@ -989,17 +989,17 @@ function gethistorybynode(nodeid,folder,name,kssj, jssj) {//,aparent
 			}else{
 				sendorder("GetHistoriesByNode?nodeId=" + nodeid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
 					if(!data){
-						decodedatas(null);
+						decodedatas(null,1);
 						return;
 					}
 					if (!jQuery.isEmptyObject(data.datas)) {//Result.Datas
 						//localStorage.setItem("historydata",JSON.stringify(data.datas));
-						decodedatas( data.datas);//[sensorid]
+						decodedatas( data.datas,1);//[sensorid]
 					} else {
 						//showmsg("没有符合条件的历史数据");
 						showstateinfo("没有符合条件的历史数据","gethistorydatabynode");
 						localStorage.setItem("historydata",null);
-						decodedatas(null);
+						decodedatas(null,1);
 					}
 				});
 			}
@@ -1111,7 +1111,7 @@ function getnodegraphics_bc(data){
 		showstateinfo("没有符合条件的记录","GetBinary");
 		sessionStorage.contents = null;
 		try {
-			drawmap(JSON.parse(sessionStorage.contents));
+			drawmap(JSON.parse(sessionStorage.contents),null,1);
 		} catch(err) {
 		}
 		return;
@@ -1125,6 +1125,7 @@ function getnodegraphics_bc(data){
 		contents.forEach(function(g){
 			if ($.trim(g).length > 0) {
 				g = JSON.parse(g);
+				g.refresh=true;
 				if (g && g._shape && g._shape.Binding && g._shape.Text) {
 					//var channel=(g._shape.Binding).substring(0,g._shape.Binding.lastIndexOf('_'));
 					//var datatype=(g._shape.Binding).substr(g._shape.Binding.lastIndexOf('_')+1);
@@ -1179,14 +1180,14 @@ function getnodegraphics_bc(data){
 	try {
 		if(sessionStorage.scaler!=1)//将绘图比例设为0，否则可能比例会使用上次的数据造成混乱。数据更新与显示跟新的时间差。
 			sessionStorage.scaler=0;
-		drawmap(JSON.parse(sessionStorage.contents));
+		drawmap(JSON.parse(sessionStorage.contents),null,1);
 	} catch(err) {
 	}
 	sessionStorage.dataId = 0;
 	//window.parent.getrealdatabynodeid(0);
 }
 //绘图函数 in used by electricroommonitoring
-function drawmap(arr,ctx) {
+function drawmap(arr,ctx,isrefresh) {
 	try{
 		var mCanvasDiv=document.getElementById("mycanvasdiv");
 		var mCanvas = document.getElementById("mycanvas");
@@ -1208,8 +1209,8 @@ function drawmap(arr,ctx) {
 		var sheight = cheight=document.documentElement.clientHeight-mheadmap.clientHeight;
 		mCanvasDiv.style.width= cwidth  + 'px';
 		mCanvasDiv.style.height= cheight + 'px';
-		var background_color="#cccccc";
-		mCanvasDiv.style.backgroundColor = mCanvas.style.backgroundColor =background_color;
+		//var background_color="#cccccc";
+		//mCanvasDiv.style.backgroundColor = mCanvas.style.backgroundColor =background_color;
 		if(arr==null){
 			ctx.save();
 			ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
@@ -1226,7 +1227,7 @@ function drawmap(arr,ctx) {
 				return;
 			}
 			if ((strs.hasOwnProperty("_type")) && (strs._type == "Selection")) {
-				if (strs.hasOwnProperty("_shape")) {
+				if (strs.hasOwnProperty("_shape")&& (isrefresh)) {
 					var str = strs._shape;
 					var sx = parseFloat(str.StartPoint.substring(0, str.StartPoint.indexOf(",")));
 					var sy = parseFloat(str.StartPoint.substr(str.StartPoint.indexOf(",") + 1));
@@ -1245,6 +1246,18 @@ function drawmap(arr,ctx) {
 					} else {
 						mCanvas.height = document.documentElement.clientHeight;
 					}*/
+					if((parseFloat(sessionStorage.scaler)<0.01 && parseInt(sessionStorage.map_module)!=1 )||sessionStorage.scaler=="undefined")//
+					{
+						sessionStorage.scaler = Math.min(cwidth / swidth,cheight / sheight) * 0.98;
+					}
+					swidth *= parseFloat(sessionStorage.scaler);
+					sheight *= parseFloat(sessionStorage.scaler);
+					mCanvas.width = swidth;
+					mCanvas.height = sheight;
+					mCanvas.style.width= swidth + 'px';
+					mCanvas.style.height= sheight + 'px';
+					//var ctx = mCanvas.getContext("2d");
+					ctx.save();
 					break;
 				}
 			} /*else {
@@ -1252,46 +1265,40 @@ function drawmap(arr,ctx) {
 				mCanvas.height = document.documentElement.clientHeight;//
 			}*/
 		}
-		if((parseFloat(sessionStorage.scaler)<0.01 && parseInt(sessionStorage.map_module)!=1 )||sessionStorage.scaler=="undefined")//
-		{
-			sessionStorage.scaler = Math.min(cwidth / swidth,cheight / sheight) * 0.98;
-		}
-		swidth *= parseFloat(sessionStorage.scaler);
-		sheight *= parseFloat(sessionStorage.scaler);
-		mCanvas.width = swidth;
-		mCanvas.height = sheight;
-		mCanvas.style.width= swidth + 'px';
-		mCanvas.style.height= sheight + 'px';
-		//var ctx = mCanvas.getContext("2d");
-		ctx.save();
-		ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+		
+		//ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
 		var pfdp = new Object();
 		var trans = new DOMMatrix().scale(parseFloat(sessionStorage.scaler),parseFloat(sessionStorage.scaler));
-		for (var i = 0; i < arr_len; i++) {
+		for (var i = 1; i < arr_len; i++) {
 			if (!arr[i]) {
 				continue;
 			}
 			var strs = JSON.parse(arr[i]);
-			if (strs.hasOwnProperty("_type")) {
-				pfdp.type = strs._type;
-			}
-			if (strs.hasOwnProperty("_matrix")) {
-				pfdp._matrix = strs._matrix;
-			}
-			if (strs.hasOwnProperty("_shape")) {
-				var str = strs._shape;
-				//将shape的属性和值赋值给pfdp。
-				for (var key in str) {
-					pfdp[key] = str[key];
+			if(strs.refresh || isrefresh){
+				if (strs.hasOwnProperty("_type")) {
+					pfdp.type = strs._type;
 				}
-			}
-			ctx.setTransform(trans); //还原矩阵，没有此句，图形将在上一次变化的基础上进行变化。
-			ctx.setLineDash([]);
-			eval(pfdp.type)(ctx, pfdp);//类反射，pfdp.type对应各类图形名称去调用相应的绘图函数。移动至drawmap.js里。
-			for (var key in pfdp) {
-				delete pfdp[key];
+				if (strs.hasOwnProperty("_matrix")) {
+					pfdp._matrix = strs._matrix;
+				}
+				if (strs.hasOwnProperty("_shape")) {
+					var str = strs._shape;
+					//将shape的属性和值赋值给pfdp。
+					for (var key in str) {
+						pfdp[key] = str[key];
+					}
+				}
+				ctx.setTransform(trans); //还原矩阵，没有此句，图形将在上一次变化的基础上进行变化。
+				ctx.setLineDash([]);
+				eval(pfdp.type)(ctx, pfdp);//类反射，pfdp.type对应各类图形名称去调用相应的绘图函数。移动至drawmap.js里。
+				for (var key in pfdp) {
+					delete pfdp[key];
+				}
+				strs.refresh=false;
+				arr[i]=JSON.stringify(strs);
 			}
 		}
+		sessionStorage.contents = JSON.stringify(arr);
 		ctx.restore();
 	}catch(err){
 		showstateinfo(err.message,"drawmap");
@@ -1530,11 +1537,11 @@ function sortt(className) {
 	//setTimeout("moduletable('realdata-tbody')", 200)
 }*/
 function sortarray(arrs){
-	var arr=[];
-	arr=arrs;
+	//var arr=[];
+	//arr=arrs;
 	var compare = function (obj1, obj2) {
-		var val1 = obj1.Value.Name;
-		var val2 = obj2.Value.Name;
+		var val1 = obj1.sensorId;
+		var val2 = obj2.sensorId;
 		if (val1 < val2) {
 			return -1;
 		} else if (val1 > val2) {
@@ -1543,7 +1550,12 @@ function sortarray(arrs){
 			return 0;
 		}            
 	} 
-	arr.sort(compare);
+	arrs.sort(compare);
+}
+//表格改变选中行颜色
+function tableclick(tr){
+    $(tr).siblings().css("background","");
+    $(tr).css("background",color_table_cur);//区分选中行"#85e494"
 }
 /*//进度条
  * 显示圆圈加载进度条  used by electricroommonitor

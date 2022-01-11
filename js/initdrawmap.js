@@ -35,10 +35,10 @@ $(document).ready(function(){
     var i=0;
     w1.onmessage = function(event) {
             //document.getElementById("result").innerHTML = event.data;
-            //i++
-            //if(i%10==0){
+            i++
+            if(i%10==0){
                 refresh();
-            //}
+            }
         };
     } else {
         var t1 = window.setInterval("refresh();",10000);
@@ -111,7 +111,7 @@ function setSelectOption_txlb(objid, sensor) {
 function refreshData(){
     refresh();
 }
-function refresh(obj){
+function refresh(obj,isrefresh){
     if(!checkFull())
     //if((!sessionStorage.allscreen) || ( sessionStorage.allscreen=="false")){
         $("#mapmodule1").text("全屏显示");
@@ -125,8 +125,12 @@ function refresh(obj){
         graphic = JSON.parse(sessionStorage.getItem("contents"))
     else
         graphic=obj;
+    if(!isrefresh)
+        isrefresh=null
+    else
+        isrefresh=1;
     if(graphic!=null){
-    drawmap(graphic,ctx);
+    drawmap(graphic,ctx,isrefresh);
     }else{
         getbinary();
     }
@@ -145,7 +149,7 @@ function showmodule(){
         mapmodule.innerText="原尺寸显示";
         sessionStorage.scaler = 0.0;
     }
-    refresh();
+    refresh(null,1);
 }
 window.onresize=window.onscroll=refresh;
 function decoderealdata(){
@@ -222,19 +226,26 @@ var mouseHandler = function(ev) {
                 if(parseFloat(sessionStorage.scaler)<0.1)
                    sessionStorage.scaler=0.1;
             }
-            refresh();
+            refresh(null,1);
         }
     }
 };
 mCanvas.onclick=(function(){
+    mCanvas= document.getElementById("mycanvas");
+    var ctx = mCanvas.getContext("2d");
     //标准的获取鼠标点击相对于canvas画布的坐标公式
     var x = event.pageX - mCanvas.getBoundingClientRect().left;
     var y = event.pageY - mCanvas.getBoundingClientRect().top;
-    ctx.save();
-    ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+    //if(event.shiftKey!=1){
+    //    mCanvas.width=mCanvas.width;
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0,0,mCanvas.width,mCanvas.height);
+    //}
     var pfdp = new Object();
     var trans = new DOMMatrix().scale(sessionStorage.scaler,sessionStorage.scaler);
     var arr=JSON.parse(sessionStorage.contents);
+    var str=new Object()
     if(arr!=null)
     for (var i = 0; i < arr.length; i++) {
         if (!arr[i]) {
@@ -248,12 +259,13 @@ mCanvas.onclick=(function(){
             pfdp._matrix = strs._matrix;
         }
         if (strs.hasOwnProperty("_shape")) {
-            var str = strs._shape;
+            str = strs._shape;
             //将shape的属性和值赋值给pfdp。
             for (var key in str) {
                 pfdp[key] = str[key];
             }
         }
+        
         ctx.setTransform(trans); //还原矩阵，没有此句，图形将在上一次变化的基础上进行变化。
         ctx.setLineDash([]);
         //var apath="path"+i;
@@ -261,8 +273,16 @@ mCanvas.onclick=(function(){
         eval(pfdp.type)(ctx, pfdp);//类反射，pfdp.type对应各类图形名称去调用相应的绘图函数。移动至drawmap.js里。
         //var abc=ctx.getImageData(0,0,100,100);
         if(ctx.isPointInPath(x, y) ){
-            ctx.strokeStyle = "red";
-            ctx.stroke();
+            if(pfdp.isselect){
+                str.isselect=false;
+                pfdp.isselect=false;
+            }else{
+                ctx.strokeStyle = "red";
+                ctx.stroke();
+                str.isselect=true;
+                pfdp.isselect=true;
+            }
+           
             if(pfdp.Binding&&pfdp.Binding!=null && pfdp.Binding!=""){
                 var channel=(pfdp.Binding).substring(0,pfdp.Binding.indexOf(':'));
                 //var datatype=(pfdp.Binding).substr(pfdp.Binding.indexOf(':')+1);
@@ -276,21 +296,21 @@ mCanvas.onclick=(function(){
                     showstateinfo("此图元没有绑定标签信息","initdrawmap-canvas.onclick");
                 }
             }
+        }else{
+            if(event.shiftKey!=1){
+                str.isselect=false;
+                pfdp.isselect=false;
+            }
         }
+        strs._shape=str;
+        arr[i]=JSON.stringify(strs);
         for (var key in pfdp) {
             delete pfdp[key];
         }
     }
+    sessionStorage.setItem("contents",JSON.stringify(arr));
     ctx.restore();
-    /*for(var i = 0; i < balls.length; i++){
-        ctx.beginPath();
-        ctx.setTransform(trans);
-        ctx.arc(balls[i].X, balls[i].Y, balls[i].R, 0, Math.PI*2);
-        if(ctx.isPointInPath(x, y)){
-            ctx.fillStyle = "red";
-            ctx.fill();
-        }
-    }*/
+    refresh(null,1)
 });
 $(mCanvas).off().on({
     mousewheel : mouseHandler,
@@ -301,7 +321,7 @@ function toggleFullScreen(e) {
     //mapmodule.innerText="自动缩放";
     var old_scaler=sessionStorage.scaler;
     sessionStorage.scaler=1;
-    refresh();
+    refresh(null,1);
     //e.innerHTML == '全屏显示' ? e.innerHTML = '退出全屏' : e.innerHTML = '全屏显示';
     var el = document.getElementById("mycanvas");// || e.target; //target兼容Firefox
     //if(sessionStorage.allscreen=="false")

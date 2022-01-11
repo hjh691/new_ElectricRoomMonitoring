@@ -541,10 +541,10 @@
 		//display();
 		page=new Page(pageSize,'warnlogtable','warnlogdata-tbody','pageindex');
 	}
-	function tableclick(tr){
+	/*function tableclick(tr){
 		$(tr).siblings().css("background","");
 		$(tr).css("background",color_table_cur);//区分选中行
-	}
+	}*/
 	function stopWorker(){ 
 		w1.terminate();
 		w1 = undefined;

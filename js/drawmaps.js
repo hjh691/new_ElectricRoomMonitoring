@@ -29,7 +29,10 @@ function Baseline(ctx, pfdp) {
 	ctx.stroke(path);
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#00000000"
+	if(pfdp.isselect)
+		ctx.strokeStyle="red"
+	else
+		ctx.strokeStyle="#00000000";
 	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 	ctx.stroke();
 }
@@ -61,7 +64,10 @@ function Line(ctx, pfdp) {
 	ctx.stroke();
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#00000000"
+	if(pfdp.isselect)
+		ctx.strokeStyle="red"
+	else
+		ctx.strokeStyle="#00000000";
 	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 	ctx.stroke();
 }
@@ -99,6 +105,10 @@ function EllipseArea(ctx, pfdp) {
 		ctx.fill();
 	} else {
 		ctx.stroke();
+	}
+	if(pfdp.isselect){
+		ctx.strokeStyle="red";
+		ctx.strokeRect(sx,sy,ex-sx,ey-sy);
 	}
 }
 //自定义绘制椭圆，x,y 圆心坐标，a横轴半径，b是Y轴半径。
@@ -147,6 +157,13 @@ function RectArea(ctx, pfdp) {
 		ctx.rect(sx, sy, parseFloat(ex) - parseFloat(sx), parseFloat(ey) - parseFloat(sy));
 		ctx.stroke();
 	}
+	if(pfdp.isselect){
+		ctx.strokeStyle="red";
+		ctx.stroke();
+	}
+	/*else{
+		ctx.strokeStyle="#000000";
+	}*/
 }
 //绘制虚线（跳线）；
 function JumpLine(ctx, pfdp) {
@@ -177,7 +194,10 @@ function JumpLine(ctx, pfdp) {
 	ctx.stroke();
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#00000000"
+	if(pfdp.isselect)
+		ctx.strokeStyle="red"
+	else
+		ctx.strokeStyle="#00000000"
 	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 	ctx.stroke();
 }
@@ -216,7 +236,10 @@ function Breaker(ctx, pfdp) {
 	ctx.strokeRect(sx, y1, parseFloat(ex) - parseFloat(sx), y2 - y1);
 	ctx.rect(sx, y1, parseFloat(ex) - parseFloat(sx), y2 - y1);
 	ctx.fill();
-	
+	if(pfdp.isselect){
+		ctx.strokeStyle="red";
+		ctx.stroke();
+	}
 }
 //画开关（隔离）
 function Isolator(ctx, pfdp) {
@@ -260,7 +283,15 @@ function Isolator(ctx, pfdp) {
 		path.lineTo(mright, y2);
 	}
 	ctx.stroke(path);
-	ctx.rect(sx,sy,(ex-sx),(ey-sy))
+	ctx.rect(sx,sy,(ex-sx),(ey-sy));
+	if(pfdp.isselect){
+		ctx.strokeStyle="red";
+		ctx.stroke();
+	}
+	/*else{
+		ctx.strokeStyle="#000000";
+	}*/
+	
 	//return path;
 }
 //画变压器
@@ -318,7 +349,11 @@ function Transformer(ctx, pfdp) {
 	ctx.beginPath();
 	ctx.arc(mx, r2, r, 0, Math.PI * 2, false);
 	ctx.stroke();
-	ctx.rect(sx,sy,(ex-sx),(ey-sy))
+	ctx.rect(sx,sy,(ex-sx),(ey-sy));
+	if(pfdp.isselect){
+		ctx.strokeStyle="red";
+		ctx.strokeRect(mleft,mtop,mright-mleft,mbottom-mtop);
+	}
 }
 //画根节点
 function RootNode(ctx, pfdp) {
@@ -377,7 +412,10 @@ function Ground(ctx, pfdp) {
 	ctx.stroke();
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#00000000"
+	if(pfdp.isselect)
+		ctx.strokeStyle="red"
+	else
+		ctx.strokeStyle="#00000000";
 	ctx.rect(mleft-3,mtop-3,(mright-mleft+6),(mbottom-mtop+6));
 	ctx.stroke();
 }
@@ -402,7 +440,7 @@ function Capacitor(ctx, pfdp) {
 	var mleft = sx < ex ? sx: ex; //左侧坐标
 	var mright = sx < ex ? ex: sx; //右侧坐标
 	var mtop = sy < ey ? sy: ey; //顶端坐标
-	var mbottom = sy < ey ? ey: sy; //底边坐标
+	var mbottom = sy < ey ? ey: sy; //底边坐标 
 	var mwidth = mright - mleft,
 	mheight = mbottom - mtop;
 	var mx = mleft + mwidth / 2.0;
@@ -470,9 +508,12 @@ function Capacitor(ctx, pfdp) {
 	}
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#00000000"
+	if(pfdp.isselect)
+		ctx.strokeStyle="red"
+	else
+		ctx.strokeStyle="#00000000";
 	ctx.rect(mleft-3,mtop-3,(mright-mleft+6),(mbottom-mtop+6));
-	ctx.stroke();
+	ctx.strokeRect(mleft,mtop,(mright-mleft),(mbottom-mtop));
 }
 //画出线
 function Outer(ctx, pfdp) {
@@ -505,7 +546,16 @@ function Outer(ctx, pfdp) {
 	ctx.closePath();
 	ctx.moveTo(mleft, mbottom - mhead);
 	ctx.lineTo(mleft, mtop);
+	//ctx.beginPath;
 	ctx.stroke();
+	
+	if(pfdp.isselect){
+		ctx.strokeStyle="red";
+		ctx.stroke();
+	}else{
+		ctx.strokeStyle="#00000000";
+	}
+	ctx.rect(mleft-mhead,mtop,mhead*2,mbottom-mtop);
 }
 //画告警图形
 function Warning(ctx, pfdp) {
@@ -683,6 +733,7 @@ function DrawText(ctx, pfdp) {
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
 		ctx.transform(a, b, c, d, e, f);
 	}
+	ctx.clearRect(sx-2,sy-parseFloat(pfdp.FontSize)-2,(ex-sx+4),(ey-sy+parseFloat(pfdp.FontSize)+4))
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.fillStyle = "#FFFF00";
 	} else {
@@ -711,7 +762,10 @@ function DrawText(ctx, pfdp) {
 	}
 	ctx.beginPath();//开始一个新路径，用于保存绘制的区域，从而与鼠标所在位置进行对比匹配。
 	ctx.lineWidth=1;
-	ctx.strokeStyle="#00000000"
+	if(pfdp.isselect)
+		ctx.strokeStyle="red"
+	else
+		ctx.strokeStyle="#00000000"
 	ctx.rect(sx-2,sy-parseFloat(pfdp.FontSize)-2,(ex-sx+4),(ey-sy+parseFloat(pfdp.FontSize)+4));
 	ctx.stroke();
 }
@@ -742,6 +796,10 @@ function Picture(ctx,pfdp){
 		ctx.globalCompositeOperation="destination-over"; //"destination-atop";//
 		ctx.transform(a, b, c, d, e, f);
 		ctx.drawImage(img, sx,sy,(ex-sx),(ey-sy));
+	}
+	if(pfdp.isselect){
+		ctx.strokeStyle="red";
+		ctx.strokeRect(sx,sy,ex-sx,ey-sy);
 	}
 }
 /** 图元绘制函数完成*/

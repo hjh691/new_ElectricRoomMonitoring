@@ -214,10 +214,13 @@
 			//}
 			//}
 			function test_url(url){
+				if(!url.match(/\/$/)){
+					url=url+"/";
+				}
 				url = encodeURI(url+"GetProfile");
 				$.ajax({
 					beforeSend: function (request) {
-						request.setRequestHeader("Authorization", "sessionStorage.token");
+						request.setRequestHeader("Authorization", sessionStorage.token);
 					},
 					url: url,
 					type: 'GET',
@@ -225,8 +228,11 @@
 					timeout: 5000,
 					error: function (jqXHR, textStatus, errorThrown) {
 						try{
-							if (errorThrown == "Unauthorized") {
+							if (errorThrown == "Unauthorized"||(errorThrown=="Bad Request"  && jqXHR.responseText=="用户登录超时！")) {
 								localStorage.server_url=server_url_list[list_pt];//jfjk_base_config.baseurl=
+								if(!localStorage.server_url.match(/\/$/)){
+									localStorage.server_url=localStorage.server_url+"/";
+								}
 								elementeanabled();
 								layer.close(tips);
 								layer.msg('连接后台服务器成功',{time:1000});
