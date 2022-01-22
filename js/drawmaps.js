@@ -1,8 +1,36 @@
 /**绘制各种图形图元函数；开始
 	*/
+
+//解析图形参数：
+function ecodeparafrompfdp(pfdp){
+	var paras={};
+	paras.sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
+	paras. sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
+	paras. ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
+	paras. ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	if (pfdp.hasOwnProperty("_matrix")) {
+		var pt = pfdp._matrix.indexOf(",");
+		paras. a = parseFloat(pfdp._matrix.substring(0, pt));
+		paras. b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		paras. c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		paras. d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		paras. e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		paras. f = parseFloat(pfdp._matrix.substr(pt + 1));
+		
+	}else{
+		paras.a=1;paras.b=0;paras.c=0;paras.d=1;paras.e=0;paras.f=0;
+	}
+	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == "true")) {
+		paras.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
+	} else {
+		paras.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
+	}
+	paras.lineWidth = parseInt(pfdp.StrokeThinkness);
+	return paras;
+}
 //绘制母线;
-function Baseline(ctx, pfdp) {
-	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
+function Baseline(ctx, pfdp,fcanvas) {
+	/*var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
@@ -21,56 +49,68 @@ function Baseline(ctx, pfdp) {
 	} else {
 		ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	}
-	ctx.lineWidth = pfdp.StrokeThinkness;
+	ctx.lineWidth = pfdp.StrokeThinkness;*/
+	var paras=ecodeparafrompfdp(pfdp);
+	ctx.strokeStyle=paras.strokeStyle;
+	ctx.lineWidth=paras.lineWidth;
+	ctx.transform(paras.a,paras.b,paras.c,paras.d,paras.e,paras.f);
+	
 	var path=new Path2D();
 	//path.beginPath();
-	path.moveTo(sx, sy);
-	path.lineTo(ex, ey);
+	path.moveTo(paras.sx, paras.sy);
+	path.lineTo(paras.ex, paras.ey);
 	ctx.stroke(path);
+
+	/*var fpath=new fabric.Path('M '+paras.sx+' '+paras.sy+' L '+paras.ex+' '+paras.ey,{
+		stroke:pfdp.StrokeColor.replace("#FF","#"),
+		strokeWidth:parseInt(pfdp.StrokeThinkness),
+		fill:pfdp.StrokeColor.replace("#FF","#"),
+		hasControls:false,
+	});
+	fabric.util.addTransformToObject(fpath,[paras.a,paras.b,paras.c,paras.d,paras.e,paras.f]);
+	fcanvas.add(fpath);*/
+
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	if(pfdp.isselect)
+	if(pfdp.isselect)//选中时的颜色为红色，未选择为透明黑
 		ctx.strokeStyle="red"
 	else
 		ctx.strokeStyle="#00000000";
-	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
+	ctx.rect(paras.sx-1,paras.sy-1,(paras.ex-paras.sx+2),(paras.ey-paras.sy+2));
 	ctx.stroke();
 }
 //绘制线；
-function Line(ctx, pfdp) {
-	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
-	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
-	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
-	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
-	if (pfdp.hasOwnProperty("_matrix")) {
-		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
-	}
-	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == "true")) {
-		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
-	} else {
-		ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
-	}
-	ctx.lineWidth = pfdp.StrokeThinkness;
+function Line(ctx, pfdp,fcanvas) {
+	
+	var paras=ecodeparafrompfdp(pfdp);
+	ctx.transform(paras.a,paras. b, paras.c, paras.d, paras.e, paras.f);
+	ctx.lineWidth=paras.lineWidth;
+	ctx.strokeStyle=paras.strokeStyle;
 	ctx.beginPath();
-	ctx.moveTo(sx, sy);
-	ctx.lineTo(ex, ey);
+	ctx.moveTo(paras.sx, paras.sy);
+	ctx.lineTo(paras.ex, paras.ey);
 	ctx.stroke();
 	ctx.beginPath();
+	/*//var str="f"+"line";
+	var fline=new fabric.Line([paras.sx,paras.sy,paras.ex,paras.ey],{
+		strokeWidth: paras.lineWidth, //线宽
+		stroke: paras.strokeStyle, //线的颜色
+		hasControls:false,
+		//scaleX:sessionStorage.scaler,
+	})
+	fabric.util.addTransformToObject(fline,[paras.a,paras.b,paras.c,paras.d,paras.e,paras.f]);
+	fcanvas.add(fline);
+	//fabric.util.removeTransformFromObject(fline,[a,b,c,d,e,f]);
+	
+	*/
 	ctx.lineWidth=1;
-	if(pfdp.isselect)
+	if(pfdp.isselect)//选中时的颜色为红色，未选择为透明黑
 		ctx.strokeStyle="red"
 	else
 		ctx.strokeStyle="#00000000";
-	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
+	ctx.rect(paras.sx-1,paras.sy-1,(paras.ex-paras.sx+2),(paras.ey-paras.sy+2));
 	ctx.stroke();
-}
+}	
 //绘制椭圆形区域
 function EllipseArea(ctx, pfdp) {
 	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
@@ -81,16 +121,17 @@ function EllipseArea(ctx, pfdp) {
 	oy = parseFloat(sy) + parseFloat((ey - sy) / 2);
 	var lx = Math.abs(sx - ex) / 2;
 	var ly = Math.abs(sy - ey) / 2;
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
+	ctx.transform(a, b, c, d, e, f);
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
@@ -106,7 +147,7 @@ function EllipseArea(ctx, pfdp) {
 	} else {
 		ctx.stroke();
 	}
-	if(pfdp.isselect){
+	if(pfdp.isselect){//选中状态，红色轮廓，未选择则不圈轮廓
 		ctx.strokeStyle="red";
 		ctx.strokeRect(sx,sy,ex-sx,ey-sy);
 	}
@@ -126,137 +167,176 @@ function Ellipse(context, x, y, a, b) {
 }
 //绘制矩形区域
 function RectArea(ctx, pfdp) {
-	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
+	/*var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
+	ctx.transform(a, b, c, d, e, f);
+	ctx.lineWidth = pfdp.StrokeThinkness;
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
 		ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
-	}
+	}*/
+	var paras=ecodeparafrompfdp(pfdp);
+	ctx.strokeStyle=paras.strokeStyle;
+	ctx.lineWidth=paras.lineWidth;
 	if (pfdp.IsFill == true) {
 		ctx.fillStyle = pfdp.FillColor;
 	}
-	ctx.lineWidth = pfdp.StrokeThinkness;
+	ctx.transform(paras.a,paras.b,paras.c,paras.d,paras.e,paras.f);
 	ctx.beginPath();
 	if (pfdp.IsFill == true) {
-		ctx.rect(sx, sy, parseFloat(ex) - parseFloat(sx), parseFloat(ey) - parseFloat(sy));
+		ctx.rect(paras.sx, paras.sy, parseFloat(paras.ex) - parseFloat(paras.sx), parseFloat(paras.ey) - parseFloat(paras.sy));
 		ctx.fill();
 	} else {
-		ctx.rect(sx, sy, parseFloat(ex) - parseFloat(sx), parseFloat(ey) - parseFloat(sy));
+		ctx.rect(paras.sx, paras.sy, parseFloat(paras.ex) - parseFloat(paras.sx), parseFloat(paras.ey) - parseFloat(paras.sy));
 		ctx.stroke();
 	}
-	if(pfdp.isselect){
+	if(pfdp.isselect){//选中状态，红色轮廓，未选择则不圈轮廓
 		ctx.strokeStyle="red";
 		ctx.stroke();
 	}
 	/*else{
 		ctx.strokeStyle="#000000";
 	}*/
+	
 }
 //绘制虚线（跳线）；
 function JumpLine(ctx, pfdp) {
-	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
+	/*var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.strokeStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
 		ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	}
-	ctx.lineWidth = pfdp.StrokeThinkness;
+	ctx.lineWidth = pfdp.StrokeThinkness;*/
+	var paras=ecodeparafrompfdp(pfdp);
+	ctx.strokeStyle=paras.strokeStyle;
+	ctx.lineWidth=paras.lineWidth;
+	ctx.transform(paras.a,paras. b, paras.c, paras.d, paras.e, paras.f);
+	
 	ctx.beginPath();
 	ctx.setLineDash([10, 15]);
-	ctx.moveTo(sx, sy);
-	ctx.lineTo(ex, ey);
+	ctx.moveTo(paras.sx, paras.sy);
+	ctx.lineTo(paras.ex, paras.ey);
 	ctx.stroke();
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	if(pfdp.isselect)
+	if(pfdp.isselect)//选中时的颜色为红色，未选择为透明黑
 		ctx.strokeStyle="red"
 	else
 		ctx.strokeStyle="#00000000"
-	ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
+	ctx.rect(paras.sx-1,paras.sy-1,(paras.ex-paras.sx+2),(paras.ey-paras.sy+2));
 	ctx.stroke();
 }
 //画断路器
-function Breaker(ctx, pfdp) {
-	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
+function Breaker(ctx, pfdp,fcanvas) {
+	/*var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
-	ctx.lineWidth = pfdp.StrokeThinkness;
-	var mx = parseFloat(sx) + parseFloat((ex - sx) / 2);
-	var y1 = parseFloat(sy) + parseFloat((ey - sy) / 6);
-	var y2 = parseFloat(ey) - (parseFloat(ey - sy) / 6);
+	ctx.lineWidth = pfdp.StrokeThinkness;*/
+	var paras=ecodeparafrompfdp(pfdp);
+	ctx.strokeStyle=paras.strokeStyle;
+	ctx.lineWidth=paras.lineWidth;
+	ctx.transform(paras.a, paras.b, paras.c, paras.d, paras.e, paras.f);
+	
+	var mx = parseFloat(paras.sx) + parseFloat((paras.ex - paras.sx) / 2);
+	var y1 = parseFloat(paras.sy) + parseFloat((paras.ey - paras.sy) / 6);
+	var y2 = parseFloat(paras.ey) - (parseFloat(paras.ey - paras.sy) / 6);
 	ctx.beginPath();
-	ctx.moveTo(mx, sy);
+	ctx.moveTo(mx, paras.sy);
 	ctx.lineTo(mx, y1);
 	ctx.moveTo(mx, y2);
-	ctx.lineTo(mx, ey);
+	ctx.lineTo(mx, paras.ey);
+	
 	if (pfdp.IsClosed == true) {
 		ctx.fillStyle = "red";
 	} else {
 		ctx.fillStyle = "green";
 	}
+	/*var fpath=new fabric.Path('M '+(mx+parseInt(pfdp.StrokeThinkness)/2)+' '+Math.ceil(paras.sy)+' L'+' '+ (mx+parseInt(pfdp.StrokeThinkness)/2)+' '+ (y1)+
+	'  M '+ (mx+parseInt(pfdp.StrokeThinkness)/2)+' '+ (y2)+' L '+ (mx+parseInt(pfdp.StrokeThinkness)/2)+' '+ Math.ceil(paras.ey),{
+		fill: pfdp.StrokeColor.replace("#FF","#"),
+		stroke:pfdp.StrokeColor.replace("#FF","#"),
+		strokeWidth:parseInt(pfdp.StrokeThinkness),
+		originX:"right",
+	});
+	var frect=new fabric.Rect({
+		left:paras.sx,
+		top:y1, 
+		width:parseFloat(paras.ex) - parseFloat(paras.sx),
+		height: y2 - y1,
+		fill:ctx.fillStyle,
+		stroke:pfdp.StrokeColor.replace("#FF","#"),
+		strokeWidth:parseInt(pfdp.StrokeThinkness),
+	});
+	var fgroup=new fabric.Group([fpath,frect],{
+		hasControls:false,
+	});
+	fabric.util.addTransformToObject(fgroup,[paras.a,paras.b,paras.c,paras.d,paras.e,paras.f]);
+	fcanvas.add(fgroup);*/
 	ctx.stroke();
-	ctx.strokeRect(sx, y1, parseFloat(ex) - parseFloat(sx), y2 - y1);
-	ctx.rect(sx, y1, parseFloat(ex) - parseFloat(sx), y2 - y1);
+	ctx.strokeRect(paras.sx, y1, parseFloat(paras.ex) - parseFloat(paras.sx), y2 - y1);
+	ctx.rect(paras.sx, y1, parseFloat(paras.ex) - parseFloat(paras.sx), y2 - y1);
 	ctx.fill();
-	if(pfdp.isselect){
+	if(pfdp.isselect){//选中状态，红色轮廓，未选择则不圈轮廓
 		ctx.strokeStyle="red";
 		ctx.stroke();
 	}
 }
 //画开关（隔离）
-function Isolator(ctx, pfdp) {
+function Isolator(ctx, pfdp,fcanvas) {
 	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
+	ctx.transform(a, b, c, d, e, f);
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
 	var mleft = sx < ex ? sx: ex; //左侧坐标
@@ -277,22 +357,61 @@ function Isolator(ctx, pfdp) {
 	path.arc(mleft, y3, r, 0, Math.PI * 2, false);
 	path.moveTo((parseFloat(mleft) + r), y3);
 	path.closePath();
+	var endpoit={};
 	if (pfdp.IsClosed == true) {
 		path.lineTo((parseFloat(mleft) + r), y1);
+		endpoit.x=parseFloat(mleft)+r;
+		endpoit.y=y1;
 	} else {
 		path.lineTo(mright, y2);
+		endpoit.x=parseFloat(mright);
+		endpoit.y=y2;
 	}
+	/*
+	var fisloterpath1=new fabric.Path('M '+(mleft+r)+' '+mtop+' '+'L '+(mleft+r)+' '+(parseFloat(y1) - parseFloat(r)),{
+		stroke:pfdp.StrokeColor.replace("#FF","#"),
+		strokeWidth:parseInt(pfdp.StrokeThinkness),
+		fill:pfdp.StrokeColor.replace("#FF","#"),
+	});
+	var fisloterart1=new fabric.Circle({
+		left:mleft-r,
+		top:y1-r,
+		radius:r,
+		stroke:pfdp.StrokeColor.replace("#FF","#"),
+		strokeWidth:parseInt(pfdp.StrokeThinkness),
+	});
+	var fisloterpath2=new fabric.Path('M '+(mleft+r)+' '+mbottom+' '+'L '+(mleft+r)+' '+(parseFloat(y3) - parseFloat(r)),{
+		stroke:pfdp.StrokeColor.replace("#FF","#"),
+		strokeWidth:parseInt(pfdp.StrokeThinkness),
+		fill:pfdp.StrokeColor.replace("#FF","#"),
+	});
+	var fisloterart2=new fabric.Circle({
+		left:mleft-r,
+		top:y3-r,
+		radius:r,
+		stroke:pfdp.StrokeColor.replace("#FF","#"),
+		strokeWidth:parseInt(pfdp.StrokeThinkness),
+	});
+	var fisloterpath3=new fabric.Path('M '+(mleft+r*2)+' '+y3+' '+'L '+endpoit.x+' '+endpoit.y,{
+		stroke:pfdp.StrokeColor.replace("#FF","#"),
+		strokeWidth:parseInt(pfdp.StrokeThinkness),
+		fill:pfdp.StrokeColor.replace("#FF","#"),
+	});
+	var fislotergroup=new fabric.Group([fisloterpath1,fisloterart1,fisloterpath2,fisloterart2,fisloterpath3],{
+		hasControls:false,
+	});
+	fabric.util.addTransformToObject(fislotergroup,[a,b,c,d,e,f]);
+	fcanvas.add(fislotergroup);*/
 	ctx.stroke(path);
 	ctx.rect(sx,sy,(ex-sx),(ey-sy));
-	if(pfdp.isselect){
+	if(pfdp.isselect){//选中状态，红色轮廓，未选择则不圈轮廓
 		ctx.strokeStyle="red";
 		ctx.stroke();
 	}
 	/*else{
 		ctx.strokeStyle="#000000";
 	}*/
-	
-	//return path;
+	//
 }
 //画变压器
 function Transformer(ctx, pfdp) {
@@ -300,16 +419,17 @@ function Transformer(ctx, pfdp) {
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
+	ctx.transform(a, b, c, d, e, f);
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
 	var mleft = parseFloat(sx < ex ? sx: ex); //左侧坐标
@@ -350,7 +470,7 @@ function Transformer(ctx, pfdp) {
 	ctx.arc(mx, r2, r, 0, Math.PI * 2, false);
 	ctx.stroke();
 	ctx.rect(sx,sy,(ex-sx),(ey-sy));
-	if(pfdp.isselect){
+	if(pfdp.isselect){//选中状态，红色轮廓，未选择则不圈轮廓
 		ctx.strokeStyle="red";
 		ctx.strokeRect(mleft,mtop,mright-mleft,mbottom-mtop);
 	}
@@ -360,12 +480,12 @@ function RootNode(ctx, pfdp) {
 	Node(ctx, pfdp);
 }
 //监视器
-function Monitor(ctx, pfdp) {
-	DrawText(ctx, pfdp);
+function Monitor(ctx, pfdp,fcanvas) {
+	DrawText(ctx, pfdp,fcanvas);
 }
 //标题
-function Title(ctx, pfdp) {
-	DrawText(ctx, pfdp);
+function Title(ctx, pfdp,fcanvas) {
+	DrawText(ctx, pfdp,fcanvas);
 }
 //画接地
 function Ground(ctx, pfdp) {
@@ -373,16 +493,17 @@ function Ground(ctx, pfdp) {
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
+	ctx.transform(a, b, c, d, e, f);
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
 	var mleft = sx < ex ? sx: ex; //左侧坐标
@@ -390,10 +511,10 @@ function Ground(ctx, pfdp) {
 	var mtop = sy < ey ? sy: ey; //顶端坐标
 	var mbottom = sy < ey ? ey: sy; //底边坐标
 	var mwidth = mright - mleft,
-	mheight = mbottom - mtop;
+		mheight = mbottom - mtop;
 	var mx = mleft + mwidth / 2.0,
-	y1 = mbottom - mheight / 3.0,
-	y2 = mbottom - mheight / 6.0;
+		y1 = mbottom - mheight / 3.0,
+		y2 = mbottom - mheight / 6.0;
 	ctx.beginPath();
 	ctx.moveTo(mx, mtop);
 	ctx.lineTo(mx, y1);
@@ -412,7 +533,7 @@ function Ground(ctx, pfdp) {
 	ctx.stroke();
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	if(pfdp.isselect)
+	if(pfdp.isselect)//选中时的颜色为红色，未选择为透明黑
 		ctx.strokeStyle="red"
 	else
 		ctx.strokeStyle="#00000000";
@@ -425,16 +546,17 @@ function Capacitor(ctx, pfdp) {
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
+	ctx.transform(a, b, c, d, e, f);
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
 	var mleft = sx < ex ? sx: ex; //左侧坐标
@@ -508,7 +630,7 @@ function Capacitor(ctx, pfdp) {
 	}
 	ctx.beginPath();
 	ctx.lineWidth=1;
-	if(pfdp.isselect)
+	if(pfdp.isselect)//选中时的颜色为红色，未选择为透明黑
 		ctx.strokeStyle="red"
 	else
 		ctx.strokeStyle="#00000000";
@@ -516,27 +638,32 @@ function Capacitor(ctx, pfdp) {
 	ctx.strokeRect(mleft,mtop,(mright-mleft),(mbottom-mtop));
 }
 //画出线
-function Outer(ctx, pfdp) {
-	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
+function Outer(ctx, pfdp,fcanvas) {
+	/*var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
-	ctx.lineWidth = pfdp.StrokeThinkness;
-	var mleft = sx < ex ? sx: ex; //左侧坐标
+	ctx.lineWidth = pfdp.StrokeThinkness;*/
+	var paras=ecodeparafrompfdp(pfdp);
+	ctx.strokeStyle=paras.strokeStyle;
+	ctx.lineWidth=paras.lineWidth;
+	ctx.transform(paras.a, paras.b, paras.c, paras.d, paras.e, paras.f);
+	
+	var mleft = paras.sx < paras.ex ? paras.sx: paras.ex; //左侧坐标
 	//var mright = sx < ex ? ex: sx; //右侧坐标
-	var mtop = sy < ey ? sy: ey; //顶端坐标
-	var mbottom = sy < ey ? ey: sy; //底边坐标
+	var mtop = paras.sy < paras.ey ? paras.sy: paras.ey; //顶端坐标
+	var mbottom = paras.sy < paras.ey ? paras.ey: paras.sy; //底边坐标
 	var mheight = mbottom - mtop;
 	var mhead = mheight / 10.0;
 	ctx.beginPath();
@@ -548,8 +675,16 @@ function Outer(ctx, pfdp) {
 	ctx.lineTo(mleft, mtop);
 	//ctx.beginPath;
 	ctx.stroke();
-	
-	if(pfdp.isselect){
+	/*var offset=paras.lineWidth/2;
+	var fouter=new fabric.Path('M '+(mleft+offset)+' '+mbottom+' L '+(mleft-mhead+offset)+' '+(mbottom-mhead)+
+	' L '+(mleft+mhead+offset)+' '+(mbottom-mhead)+' z M '+(mleft+offset)+' '+(mbottom-mhead)+' L '+(mleft+offset)+' '+mtop,{
+		stroke: paras.strokeStyle,
+		strokeWidth: paras.lineWidth,
+		hasControls:false,
+	});
+	fabric.util.addTransformToObject(fouter,[paras.a,paras.b,paras.c,paras.d,paras.e,paras.f]);
+	fcanvas.add(fouter);*/
+	if(pfdp.isselect){//选中时的颜色为红色，未选择为透明黑
 		ctx.strokeStyle="red";
 		ctx.stroke();
 	}else{
@@ -563,16 +698,17 @@ function Warning(ctx, pfdp) {
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
+	ctx.transform(a, b, c, d, e, f);
 	ctx.strokeStyle = "red"; //pfdp.StrokeColor;
 	ctx.fillStyle = "yellow";
 	ctx.lineWidth = pfdp.StrokeThinkness;
@@ -604,16 +740,17 @@ function Area(ctx, pfdp) {
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
+	ctx.transform(a, b, c, d, e, f);
 	ctx.strokeStyle = pfdp.StrokeColor.replace("#FF","#");
 	ctx.lineWidth = pfdp.StrokeThinkness;
 	var pt;
@@ -637,16 +774,17 @@ function Node(ctx, pfdp) {
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
+	ctx.transform(a, b, c, d, e, f);
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.fillStyle = pfdp.ErrorColor.replace("#FF","#");
 	} else {
@@ -661,6 +799,13 @@ function Node(ctx, pfdp) {
 		ctx.arc(sx + r, sy + r, r, 0, Math.PI * 2, false);
 	}
 	ctx.fill();
+	ctx.beginPath();
+	if(pfdp.isselect){
+		ctx.strokeStyle="red";
+	}else{
+		ctx.strokeStyle="#00000000";
+	}
+	ctx.strokeRect(sx,sy,ex-sx,ey-sy);
 }
 /**
 	*绘制竖排文本（英语直接旋转，中文竖排）
@@ -717,22 +862,23 @@ CanvasRenderingContext2D.prototype.fillTextVertical = function(text, x, y) {
 	context.textBaseline = baseline;
 };
 //绘制文本，必要时竖排。
-function DrawText(ctx, pfdp) {
+function DrawText(ctx, pfdp,fcanvas) {
 	var ffff={"Black":"900","Bold":"700","ExtraBlack":"900","ExtraBold":"800","ExtraLight":"200","Light":"300","Medium":"5500","Normal":"normal","SemiBold":"600","Thin":"100"}
 	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1))+parseFloat(pfdp.FontSize);//字体向上延申字体高度。需在基准点y值加上字体高度（即字号fontsize）
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
 	var ey = parseFloat(pfdp.EndPoint.substring(pfdp.EndPoint.indexOf(",") + 1));
+	var a=1,b=0,c=0,d=1,e=0,f=0;
 	if (pfdp.hasOwnProperty("_matrix")) {
 		var pt = pfdp._matrix.indexOf(",");
-		var a = parseFloat(pfdp._matrix.substring(0, pt));
-		var b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
-		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		ctx.transform(a, b, c, d, e, f);
+		a = parseFloat(pfdp._matrix.substring(0, pt));
+		b = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		c = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
+		f = parseFloat(pfdp._matrix.substr(pt + 1));
 	}
+	ctx.transform(a, b, c, d, e, f);
 	ctx.clearRect(sx-2,sy-parseFloat(pfdp.FontSize)-2,(ex-sx+4),(ey-sy+parseFloat(pfdp.FontSize)+4))
 	if (pfdp.hasOwnProperty("isError") && (pfdp.isError == true)) {
 		ctx.fillStyle = "#FFFF00";
@@ -760,9 +906,35 @@ function DrawText(ctx, pfdp) {
 	} else {
 		ctx.fillText(pfdp.Text, sx, sy);
 	}
+	if(pfdp.refresh==true){
+		fcanvas.remove(window[(pfdp.Binding)]);//.setText(pfdp.Text);
+		pfdp.refresh=false;
+	}else{}
+	if(pfdp.Binding==null || pfdp.Binding==undefined){
+		pfdp.Binding="ftext";
+	}
+	window[(pfdp.Binding)]=new fabric.Text(pfdp.Text,{
+		left:sx,
+		top:sy-parseFloat(pfdp.FontSize),
+		fontFamily:pfdp.FontFamily,
+		fontSize:parseInt(pfdp.FontSize),
+		fill:pfdp.StrokeColor.replace("#FF","#"),
+		fontStyle:pfdp.FontStyle,
+		//strokeWidth:parseInt(pfdp.StrokeThinkness),
+		//stroke:pfdp.StrokeColor.replace("#FF","#"),
+		fontWeight:pfdp.FontWeight,
+		binding:pfdp.Binding,
+		hasControls:false,
+		objectCaching: false,
+	});
+	fabric.util.addTransformToObject(window[(pfdp.Binding)],[a,b,c,d,e,f]);
+	
+	fcanvas.add(window[pfdp.Binding]);
+	//fcanvas.renderAll();
+	
 	ctx.beginPath();//开始一个新路径，用于保存绘制的区域，从而与鼠标所在位置进行对比匹配。
 	ctx.lineWidth=1;
-	if(pfdp.isselect)
+	if(pfdp.isselect)//选中时的颜色为红色，未选择为透明黑
 		ctx.strokeStyle="red"
 	else
 		ctx.strokeStyle="#00000000"
@@ -786,8 +958,7 @@ function Picture(ctx,pfdp){
 		var d = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var e = parseFloat(pfdp._matrix.substring(pt + 1, (pt = pfdp._matrix.indexOf(",", pt + 1))));
 		var f = parseFloat(pfdp._matrix.substr(pt + 1));
-		//ctx.transform(a, b, c, d, e, f);//失火罪 3-7/3-0,消防责任事故罪 0-3/3-7，重大责任事故罪 0-3/3-7 强令违章冒险作业罪 0-5/5-
-		//重大劳动安全事故罪（安全条件不符合）0-3、3-7 大型群众性活动重大安全事故罪 0-3、3-7 工程重大安全事故罪0-5、5-10
+		//ctx.transform(a, b, c, d, e, f);
 	}
 	var img=new Image();
 	img.src="data:imgae/jpg;base64,"+pfdp.Datas;//有的教程说此语句放在onload之后，有待验证。
@@ -797,7 +968,7 @@ function Picture(ctx,pfdp){
 		ctx.transform(a, b, c, d, e, f);
 		ctx.drawImage(img, sx,sy,(ex-sx),(ey-sy));
 	}
-	if(pfdp.isselect){
+	if(pfdp.isselect){//选中状态，红色轮廓，未选择则不圈轮廓
 		ctx.strokeStyle="red";
 		ctx.strokeRect(sx,sy,ex-sx,ey-sy);
 	}

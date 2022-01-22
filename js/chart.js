@@ -231,14 +231,13 @@
     }
     //获取历史数据   
     function gethistorybysensors(arr_sensors,folder,aname,apt,atitle){
-        var apara=new Object();
-        //apara.sensorId=parseInt(sessionStorage.SensorId);
+        /*var apara=new Object();
         apara.folder=folder;
         apara.name=aname;
         apara.from=kssj;
         apara.to=jssj;
         apara[""]=arr_sensors;
-        //window.parent.wssend("GetHistoriesBySensors",apara);
+        window.parent.wssend("GetHistoriesBySensors",apara);*/
         sendorder("GetHistoriesBySensors?folder="+folder+"&name="+aname+"&from="+kssj+"&to="+jssj,function(data){
             if (data!= null) {//Result.
                 if (!jQuery.isEmptyObject(data.datas)) {
@@ -254,7 +253,7 @@
                 //showmsg("没有符合条件的 “"+atitle+"” 记录",info_showtime);
                 showstateinfo("没有符合条件的 "+atitle+" 记录");
             }
-        },arr_sensors);
+        },arr_sensors);/**/
     }
 //动态添加的元素注册添加点击事件//
 $(document).on("click",".check_box",function (event){

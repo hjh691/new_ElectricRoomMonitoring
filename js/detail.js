@@ -557,8 +557,7 @@ function openmodal(aname){
     //chartdiv.setAttribute('style','width:300px;height:300px;')
     //var echarts = require('echarts');
     //require('echarts-gl');
-    //var chartDom = document.getElementById('chartdiv');甲级 25人，其中一级 20%（5人），二级30%（8人），安全工程师30%（8人） 省级审核国家级审批、发证
-    //乙级16人 一级20%（4人），二级30%（5人），工程师30%（5人） 市级审核，升级审批发证（本省活动）（普遍性、客观性、转变性、规律性）
+    //var chartDom = document.getElementById('chartdiv');
     //chartDom.style="width:300px;height:300px;"
     var myChart = echarts.init(detail);
     var option;

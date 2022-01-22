@@ -11,6 +11,7 @@
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
 	<script  type="text/javascript" src="js/drawmaps.js"></script>
+	<script  type="text/javascript" src="js/fabric.js"></script>
 	<script  type="text/javascript" src="js/function.js"></script>
 	<style type="text/css"></style>
 </head>
@@ -30,10 +31,16 @@
 		</div>
 		<a id="mapmodule" style="color:red;position:absolute;top:7px;right:20px;text-align:right" href="javascript:void(0)" onclick="showmodule()" ></a>
 		<a id="mapmodule1" style="color:red;position:absolute;top:7px;right:100px;text-align:right" href="javascript:void(0)" onclick="toggleFullScreen(event)" ></a>
-		<div id="maprefresh" style="display:none" onclick="refresh()"></div><!--有告警时刷新图形显示overflow: auto;-->
+		<div id="maprefresh" style="display:none" onclick="refresh()"></div><!--有告警时刷新图形显示overflow: auto; style="background-color:#000";-->
 		<div id="mycanvasdiv" style="background-color:#cccccc;position: relative; text-align: center; overflow: auto;">
 			<div align="center" >
-				<canvas id="mycanvas" align="center" width="900px" height="700px" style="background-color:#000;">
+				<canvas id="mycanvas" align="center" width="900px" height="700px">
+				</canvas>
+			</div>
+		</div>
+		<div id="mycanvasdiv2" style="background-color:#cccccc;position: relative; text-align: center; overflow: auto;display: none;">
+			<div align="center" >
+				<canvas id="mycanvas2" align="center" width="900px" height="700px">
 				</canvas>
 			</div>
 		</div>

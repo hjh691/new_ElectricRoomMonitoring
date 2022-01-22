@@ -18,6 +18,7 @@
 			localStorage.sensor_tree=[];
 			localStorage.historydata=[];
 			localStorage.binaries=[];
+			localStorage.txid=-1;
 		//}
 	</script>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
@@ -244,7 +245,7 @@
 									test_url(server_url_list[list_pt]);
 								}else
 								{
-									//所有地址均失败怎显示连接失败
+									//所有地址均失败则显示连接失败
 									elementdisabled();
 									//layer.msg('连接后台服务器失败');
 									layer.close(tip2);

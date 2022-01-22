@@ -266,11 +266,11 @@
 						i++;
 						if ((i % jfjk_base_config.refreshtime == 0)&&(sessionStorage.islogin=="true")) {//减少在没有连接时的通信次数和系统的信息提示框的显示
 							//sendbeat();
-							if(wsconnect){
+							if(wsconnect && localStorage.usews){
 								wssend("GetRealsNew",JSON.parse("{\"dataId\":"+realdataid+"}"))
 							}else{
 								getrealdatabynodeid(realdataid);
-								if(sessionStorage.wscount<3)
+								if(localStorage.usews && sessionStorage.wscount<3)
 									openws();
 							}
 							var sec=GetDateDiff(dateToString(getCurrentDate(2),2),(sessionStorage.refreshtime),"second");
@@ -1621,6 +1621,7 @@
 												if(obj_realdata[loop].sensorId==sid && obj_realdata[loop].name.toLowerCase()==dataname.toLowerCase()
 													&&(obj_realdata[loop].folder.toLowerCase()==datafolder.toLowerCase())){
 													g.refresh=true;
+													g._shape.refresh=true;
 													obj_data = (obj_realdata)[loop];////
 													if(isNumber(obj_data.value)){
 														g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal)
@@ -2053,16 +2054,17 @@
 				anodes.Config = data[j].value.config;
 				anodes.Time = data[j].value.time;
 				anodes.level = level;
-				if(localStorage.realdata!=null && localStorage.realdata!="" && localStorage.realdata!=undefined){
-				var obj=JSON.parse(localStorage.getItem("realdata"));
-				for(var i=0;i<obj.length;i++){
-					if(obj[i].sensorId==anodes.id){
-						anodes.color="#2f4";
-						break;
+				if(localStorage.realdata && localStorage.realdata!="null" && localStorage.realdata!="" && localStorage.realdata!=undefined){
+					var obj=JSON.parse(localStorage.getItem("realdata"));
+					for(var i=0;i<obj.length;i++){
+						if(obj[i].sensorId==anodes.id){
+							anodes.color="#2f4";
+							break;
+						}
 					}
+					if(i>=obj.length)
+						anodes.color="#f72545";
 				}
-				if(i>=obj.length)
-					anodes.color="#f72545";}
 				//anodes.color = "#fff"*/
 				if (data[j].value.hasOwnProperty("nodeId")) {
 					anodes.NodeId = data[j].value.nodeId;

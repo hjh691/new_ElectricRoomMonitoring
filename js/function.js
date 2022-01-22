@@ -88,7 +88,7 @@ function GMTToStr(time){
     date.getDate() + ' ' +
     date.getHours() + ':' +
     date.getMinutes() + ':' +
-    date.getSeconds()
+    date.getSeconds();
     return Str
 }
 //读取本地json文件userinfo.txt"：
@@ -240,7 +240,7 @@ function RefreshToken(order,callback,datas){
 	//}else this function is refesh the te accesse token
 	{
 		sendorder("RefreshToken?refreshToken=" + sessionStorage.refreshtoken,function(data){
-			refreshtoken_bc(data,order,datas)
+			refreshtoken_bc(data,order,datas);
 		});
 	}
 	if(datas)
@@ -328,6 +328,7 @@ function init_var(){
 	window.speechSynthesis.cancel();
 	sessionStorage.allscreen=false;
 	localStorage.server_url=undefined;
+	localStorage.txid=-1;
 }
 //获取用户详细信息 used by electricroommonitor
 function GetUserProfile() {
@@ -423,7 +424,7 @@ function showusername(flag) {
 		yhname=parent.window.document.getElementById("yhname");
 	}
 	if((!flag)||(sessionStorage.islogin=="true"))//发生错误时显示“未登录”
-		yhname.innerHTML = "<a href='javascript:void(0)' onclick='loaduserprofile()' style='color:white;text-decoration: none;'>" + localStorage.username + "</a>"
+		yhname.innerHTML = "<a href='javascript:void(0)' onclick='loaduserprofile()' style='color:white;text-decoration: none;'>" + localStorage.username + "</a>";
 	else
 		yhname.innerHTML="未登录"; //#屏蔽href=userprofile.html
 	var yhout=document.getElementById('yhout');
@@ -1084,6 +1085,7 @@ function strtodatetime(str) {
 function initdrawing() {
 	if(sessionStorage.pageindex!=1){
 		sessionStorage.pageindex = 1;
+		localStorage.txif=-1;
 		document.getElementById("iframe_main").src = 'drawmap.html';
 	}
 }
@@ -1116,6 +1118,14 @@ function getnodegraphics_bc(data){
 		}
 		return;
 	}
+	var brefresh=true;
+	if(localStorage.txid!=-1){
+		//brefresh=false;
+		drawmap(JSON.parse(sessionStorage.contents),null,1);
+		return;
+	}else{
+		localStorage.txid=-1;
+	}
 	//var allsensors=JSON.parse(localStorage.getItem("allsensors"));
 	var obj_data=new Object();
 	var contents = ($.base64.atob(data.value,true)).split("\r\n");//.Result
@@ -1125,7 +1135,8 @@ function getnodegraphics_bc(data){
 		contents.forEach(function(g){
 			if ($.trim(g).length > 0) {
 				g = JSON.parse(g);
-				g.refresh=true;
+				g.refresh=brefresh;
+				
 				if (g && g._shape && g._shape.Binding && g._shape.Text) {
 					//var channel=(g._shape.Binding).substring(0,g._shape.Binding.lastIndexOf('_'));
 					//var datatype=(g._shape.Binding).substr(g._shape.Binding.lastIndexOf('_')+1);
@@ -1156,9 +1167,9 @@ function getnodegraphics_bc(data){
 									&&(obj_rd[loop].folder.toLowerCase()==datafolder.toLowerCase())){
 									obj_data = (obj_rd)[loop];////
 									if(isNumber(obj_data.value)){
-										g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal)
+										g._shape.Text =(obj_data.value*1).toFixed(Number_of_decimal);
 									}else{
-										g._shape.Text =(obj_data.value)
+										g._shape.Text =(obj_data.value);
 									};//;// + " " + sensors[g._shape.Binding].Value.Unit ;
 									if(obj_data.message){
 										g._shape.isError=true;
@@ -1190,6 +1201,7 @@ function getnodegraphics_bc(data){
 function drawmap(arr,ctx,isrefresh) {
 	try{
 		var mCanvasDiv=document.getElementById("mycanvasdiv");
+		var mCanvasDiv2=document.getElementById("mycanvasdiv2");
 		var mCanvas = document.getElementById("mycanvas");
 		var mheadmap=document.getElementById("head_map");
 		if (mCanvas == null) {
@@ -1217,7 +1229,20 @@ function drawmap(arr,ctx,isrefresh) {
 			return;
 		}
 		let arr_len=arr.length;
+		//fcanvas=new fabric.Canvas("mycanvas2",{
+		//	backgroundColor:"#000",
+		//});
+		/*var fline=new fabric.Line([10,10,70,70],{
+			strokeWidth: 2, //线宽
+	
+			stroke: 'white', //线的颜色
+		});
+		for(var k=0;k<10;k++){
+			//fcanvas.add(fline);
+		}*/
+		//if(arr_len)
 		for (var i = 0; i < arr_len; i++) {
+			//fcanvas.add(fline);
 			if (!arr[i]) {
 				continue;
 			}
@@ -1257,6 +1282,12 @@ function drawmap(arr,ctx,isrefresh) {
 					mCanvas.style.width= swidth + 'px';
 					mCanvas.style.height= sheight + 'px';
 					//var ctx = mCanvas.getContext("2d");
+					fcanvas.setBackgroundColor=str.StrokeColor.replace(/\#../,"#");
+					fcanvas.clear();
+					fcanvas.setWidth(swidth);
+					fcanvas.setHeight(sheight);
+					fcanvas.setZoom(sessionStorage.scaler);
+					mCanvasDiv2.style.backgroundColor=str.StrokeColor.replace(/\#../,"#");
 					ctx.save();
 					break;
 				}
@@ -1265,7 +1296,7 @@ function drawmap(arr,ctx,isrefresh) {
 				mCanvas.height = document.documentElement.clientHeight;//
 			}*/
 		}
-		
+
 		//ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
 		var pfdp = new Object();
 		var trans = new DOMMatrix().scale(parseFloat(sessionStorage.scaler),parseFloat(sessionStorage.scaler));
@@ -1290,7 +1321,8 @@ function drawmap(arr,ctx,isrefresh) {
 				}
 				ctx.setTransform(trans); //还原矩阵，没有此句，图形将在上一次变化的基础上进行变化。
 				ctx.setLineDash([]);
-				eval(pfdp.type)(ctx, pfdp);//类反射，pfdp.type对应各类图形名称去调用相应的绘图函数。移动至drawmap.js里。
+				eval(pfdp.type)(ctx, pfdp,fcanvas);//类反射，pfdp.type对应各类图形名称去调用相应的绘图函数。移动至drawmap.js里。
+				
 				for (var key in pfdp) {
 					delete pfdp[key];
 				}
@@ -1298,13 +1330,25 @@ function drawmap(arr,ctx,isrefresh) {
 				arr[i]=JSON.stringify(strs);
 			}
 		}
-		sessionStorage.contents = JSON.stringify(arr);
+		if(arr && arr_len>0)
+			sessionStorage.contents = JSON.stringify(arr);
 		ctx.restore();
+		fcanvas.renderAll();
 	}catch(err){
 		showstateinfo(err.message,"drawmap");
 	}
 }
-/*将数据表导出到Excel表格。共四个函数：
+/*
+
+		var fline=new fabric.Rect({
+			left:100,
+			top:100,
+			fill:"red",
+			width:30,
+			height:30,
+		});
+		fcanvas.add(fline);
+将数据表导出到Excel表格。共四个函数：
 getExplorer（）；function method5(tableid)；function Cleanup() ； var tableToExcel = (function()；
 在body中调用method5（tablename）；参数tablename位要导出的table的id属性值。
 */
@@ -1367,7 +1411,7 @@ var tableToExcel = (function() {
 	var uri = 'data:application/vnd.ms-excel;base64,',
 	template = '<html><head><meta charset="UTF-8"></head><body><table  border="1">{table}</table></body></html>',
 	base64 = function(s) {
-		return window.btoa(unescape(encodeURIComponent(s)))
+		return window.btoa(unescape(encodeURIComponent(s)));
 	},
 	format = function(s, c) {
 		return s.replace(/{(\w+)}/g,
@@ -1381,7 +1425,7 @@ var tableToExcel = (function() {
 			worksheet: name || 'Worksheet',
 			table: table.innerHTML
 		}
-		window.location.href = uri + base64(format(template, ctx))
+		window.location.href = uri + base64(format(template, ctx));
 	}
 })()
 /**导出到Excel完成*/
@@ -1643,14 +1687,13 @@ function initsysteminfo(){//used by electricroommonitor 初始化系统设置
 //以下为新增函数
 //获取实时数据  used by electricroommonitor mainpage.html realdata.html formatting
 function getrealdatabynodeid(anodeid){
-	
 	if (typeof(anodeid)!="undefined"&&anodeid!==null) {
 		if(typeof(wsconnect)=="undefined" || !wsconnect){
 			sendorder("GetRealsNew?dataId=" + anodeid,function(data){
 				realcall(data,anodeid);
-			})
+			});
 		}else{
-			wssend("GetRealsNew",JSON.parse('{"dataId":'+parseInt(anodeid)+"}"))
+			wssend("GetRealsNew",JSON.parse('{"dataId":'+parseInt(anodeid)+"}"));
 		}
 	}
 }
@@ -1658,38 +1701,38 @@ function realcall(data,dataid){
 	//localStorage.errortime = 0;
 	//sessionStorage.islogin = true;
 	//value0=0;value1=0;sname="";
-		if(!data){return;}
-		if (jQuery.isEmptyObject(data.datas)) {
-			if(dataid==1)
-				if (typeof(realdataid)=="undefined"){
-					dataid=window.parent.realdataid;
-				}else{
-					dataid=realdataid;
-				}
-			if(!dataid || dataid<=0)//21.8.23 添加，否则真的没数据时可能保留以前的实时数据表而造成误解。只在非获取全部数据返回为空时才保持原来数据不进行更新。
-				localStorage.setItem("realdata",null);//21.8.17修改，暂时去掉此语句，返回数据为空时保持原来的数据，观察对页面数据有无影响。
-			if(typeof(decoderealdata)=="function")
-				decoderealdata();
-			showstateinfo("本次获取实时数据为空","getrealdatabynodeid");
-			//return;
-		}else{
-			var obj_realdata=data.datas;
-			if(!dataid || dataid<=0)
-				localStorage.setItem("realdata",JSON.stringify(obj_realdata));
-			if(typeof(decoderealdata)=="function"){
-				decoderealdata(obj_realdata);
+	if(!data){return;}
+	if (jQuery.isEmptyObject(data.datas)) {
+		if(dataid==1)
+			if (typeof(realdataid)=="undefined"){
+				dataid=window.parent.realdataid;
+			}else{
+				dataid=realdataid;
 			}
-			if(document.getElementById('iframe_main')!==null &&typeof((document.getElementById('iframe_main')).contentWindow.decoderealdata)=="function")
-				document.getElementById('iframe_main').contentWindow.decoderealdata(obj_realdata);
+		if(!dataid || dataid<=0)//21.8.23 添加，否则真的没数据时可能保留以前的实时数据表而造成误解。只在非获取全部数据返回为空时才保持原来数据不进行更新。
+			localStorage.setItem("realdata",null);//21.8.17修改，暂时去掉此语句，返回数据为空时保持原来的数据，观察对页面数据有无影响。
+		if(typeof(decoderealdata)=="function")
+			decoderealdata();
+		showstateinfo("本次获取实时数据为空","getrealdatabynodeid");
+		//return;
+	}else{
+		var obj_realdata=data.datas;
+		if(!dataid || dataid<=0)
+			localStorage.setItem("realdata",JSON.stringify(obj_realdata));
+		if(typeof(decoderealdata)=="function"){
+			decoderealdata(obj_realdata);
 		}
-		if(typeof refreshData === "function"){
-			refreshData();
-		}else{
-			if(sessionStorage.pageindex==2 || sessionStorage.pageindex==17|| sessionStorage.pageindex==1||sessionStorage.pageindex==21){
-				if(typeof window.iframemain[0].contentWindow.refreshData =="function")
-				document.getElementById('iframe_main').contentWindow.refreshData();
-			}
-		};
+		if(document.getElementById('iframe_main')!==null &&typeof((document.getElementById('iframe_main')).contentWindow.decoderealdata)=="function")
+			document.getElementById('iframe_main').contentWindow.decoderealdata(obj_realdata);
+	}
+	if(typeof refreshData === "function"){
+		refreshData();
+	}else{
+		if(sessionStorage.pageindex==2 || sessionStorage.pageindex==17|| sessionStorage.pageindex==1||sessionStorage.pageindex==21){
+			if(typeof window.iframemain[0].contentWindow.refreshData =="function")
+			document.getElementById('iframe_main').contentWindow.refreshData();
+		}
+	};
 }
 function sleep(numberMillis) {    
 	var now = new Date();    
@@ -1797,7 +1840,7 @@ function updatapcnav(obj){
 			nav=window.parent.document.getElementById("nav"+i);
 		}
 		if(nav){
-			nav.style.color=""
+			nav.style.color="";
 			nav.style.backgroundColor="";
 			if(i==obj){
 				nav.style.backgroundColor="#c0c0c0";
@@ -2618,7 +2661,7 @@ function sendstr(action,para){
 }
 function closews(){
 	if(ws)
-		ws.close()
+		ws.close();
 	//alert('连接已断开');
 }
 function openws(){
@@ -2679,7 +2722,8 @@ function WebSocketTest() {
 					break;
 				case "GetHistoriesBySensor":
 				case "GetHistoriesBySensors":
-					
+					iframemain[0].contentWindow.decodedatas(rec_datas);
+					break;
 				case "GetMessagesByNode":
 				case "GetMessagesBySensor":
 				case "GetMessagesBySensors":
@@ -2702,7 +2746,7 @@ function WebSocketTest() {
 					break;
 				case "GetProfile":
 					if(sessionStorage.pageindex==20){
-						iframemain[0].contentWindow.getprofile_bc(obj_rec.result)						
+						iframemain[0].contentWindow.getprofile_bc(obj_rec.result);						
 					}
 					break;
 				case "RefreshToken":

@@ -83,7 +83,7 @@ function initpage() {
     sessionStorage.framepage="realdata_iot.html";
     sessionStorage.pageindex=17;
     tab_head=document.getElementById("tab_head");
-    if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
+    /*if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
         if (typeof (w1) == "undefined") {
             w1 = new Worker("delay_worker.js");
         }
@@ -97,7 +97,7 @@ function initpage() {
         };
     } else {
         var t1 = window.setInterval("getrealdatabynodeid(-1);", 60000);
-    }/**/
+    }*/
     appendalldisplaytype();/*"display_type"*/
     //btn_refresh_click();
     window.parent.closeloadlayer();

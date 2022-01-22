@@ -2,10 +2,12 @@
 var BinariesId=-1;
 var mCanvas=document.getElementById("mycanvas");
 var isDown = false;
+var isrefresh=false;
 var dx = 0, 
     dy = 0; // 鼠标按下位置的坐标
 var offx = 0, offy = 0; //
-var ctx = mCanvas.getContext("2d"); 
+var ctx = mCanvas.getContext("2d");
+var fcanvas=new fabric.Canvas("mycanvas2") ;
 $(document).ready(function(){
     history.pushState(null, null, document.URL);
     window.addEventListener('popstate', function () {
@@ -37,7 +39,7 @@ $(document).ready(function(){
             //document.getElementById("result").innerHTML = event.data;
             i++
             if(i%10==0){
-                refresh();
+                //refresh();
             }
         };
     } else {
@@ -85,7 +87,10 @@ function initpage(){
         j++;
         },false);
         j=0;*/               //
-    GetBinary(BinariesId);
+    if(localStorage.txif==-1)
+        GetBinary(BinariesId)
+    else
+        drawmap(JSON.parse(sessionStorage.contents),null,1);
     window.parent.closeloadlayer();
     //var isFullscreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
     //if(isFullscreen)
@@ -130,7 +135,7 @@ function refresh(obj,isrefresh){
     else
         isrefresh=1;
     if(graphic!=null){
-    drawmap(graphic,ctx,isrefresh);
+        drawmap(graphic,ctx,isrefresh);
     }else{
         getbinary();
     }
@@ -167,6 +172,7 @@ function getbinary(){
         mapmodule.innerText="原尺寸显示";
         sessionStorage.scaler = 0;
     }
+    localStorage.txid=-1;
     GetBinary(BinariesId);
 }
 function setscaler(){
@@ -237,15 +243,15 @@ mCanvas.onclick=(function(){
     var x = event.pageX - mCanvas.getBoundingClientRect().left;
     var y = event.pageY - mCanvas.getBoundingClientRect().top;
     //if(event.shiftKey!=1){
-    //    mCanvas.width=mCanvas.width;
-        ctx.save();
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.clearRect(0,0,mCanvas.width,mCanvas.height);
+    //    mCanvas.width=mCanvas.width;//清除整个区域的方法1
+        //ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);//恢复ctx的初始变换
+        ctx.clearRect(0,0,mCanvas.width,mCanvas.height);//清除整个区域的方法二，需要setTransform(1,0,0,1,0,0)
     //}
     var pfdp = new Object();
     var trans = new DOMMatrix().scale(sessionStorage.scaler,sessionStorage.scaler);
     var arr=JSON.parse(sessionStorage.contents);
-    var str=new Object()
+    var str=new Object();
     if(arr!=null)
     for (var i = 0; i < arr.length; i++) {
         if (!arr[i]) {
@@ -265,12 +271,11 @@ mCanvas.onclick=(function(){
                 pfdp[key] = str[key];
             }
         }
-        
         ctx.setTransform(trans); //还原矩阵，没有此句，图形将在上一次变化的基础上进行变化。
         ctx.setLineDash([]);
         //var apath="path"+i;
         //apath=new Path2D();
-        eval(pfdp.type)(ctx, pfdp);//类反射，pfdp.type对应各类图形名称去调用相应的绘图函数。移动至drawmap.js里。
+        eval(pfdp.type)(ctx, pfdp,fcanvas);//类反射，pfdp.type对应各类图形名称去调用相应的绘图函数。移动至drawmap.js里。
         //var abc=ctx.getImageData(0,0,100,100);
         if(ctx.isPointInPath(x, y) ){
             if(pfdp.isselect){
@@ -290,6 +295,7 @@ mCanvas.onclick=(function(){
                     sessionStorage.sensorId=parseInt(window.parent.allsensors[channel].id);//此处sensorId首字母小写
                     window.parent.getrealdatabynodeid(-1);
                     //window.parent.document.getElementById("tree").style.pointerEvents ="none";
+                    localStorage.txid=1;
                     window.parent.iframemain.attr("src","detail.html");
                 }else{
                     //showmsg("没有绑定标签!");
@@ -310,7 +316,7 @@ mCanvas.onclick=(function(){
     }
     sessionStorage.setItem("contents",JSON.stringify(arr));
     ctx.restore();
-    refresh(null,1)
+    refresh(null,1);
 });
 $(mCanvas).off().on({
     mousewheel : mouseHandler,
