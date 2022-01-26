@@ -276,7 +276,11 @@
 							var sec=GetDateDiff(dateToString(getCurrentDate(2),2),(sessionStorage.refreshtime),"second");
 							if(sec<=20){
 								//提前刷新数据通信认证码
-								RefreshToken(null,function(data){});
+								if(wsconnect && localStorage.usews){
+									wssend("RefreshToken",JSON.parse('{"refreshToken":"'+sessionStorage.refreshtoken+'"}'));
+								}else{
+									RefreshToken(null,function(data){});
+								}
 							}
 							//GetBinariesByType("NodeGraphic",sessionStorage.nodeId);
 						}

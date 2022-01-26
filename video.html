@@ -133,7 +133,7 @@
                                 <select class="tt" onchange="changeWndNum(this.value);">
                                     <option value="1">1x1</option>
                                     <option value="2" >2x2</option>
-                                    <option value="3" selected >3X3</option>
+                                    <!--<option value="3" selected >3X3</option>-->
                                 </select>
                             </td>
                             <td  class="tt">
@@ -283,6 +283,7 @@
         }
         function initpage(){
             updatapcnav(4);
+            //changeWndNum(2);
 			var parentid = -100, parentname = "";
 			var maps = [];
             var sel_sensor = document.getElementById("sz_list");
@@ -345,8 +346,8 @@
                 if(typeof(sessionStorage.sel_id)=="undefined"||sessionStorage.sel_id<0||sessionStorage.sel_id==null){
                     sel_sensor[0].checked=true;
                 }
-                if(isplay)
-                    clickStartRealPlay();
+                //if(!!window.parent.isresize)
+                //    clickStartRealPlay();
             }
             /*element.addEventListener("pause",function(){
             showOPInfo("video暂停");
@@ -464,6 +465,7 @@
                 var url = localStorage.server_url + "GetFlvToken?sensorId=" + sel_id+"&type=0&channel="+sessionStorage.streamtype;
                 url = encodeURI(url)
                 if (sessionStorage.islogin == "true") {
+                    try{
                     var t=$.ajax({
                         beforeSend: function(request) {
                             request.setRequestHeader("Authorization", sessionStorage.token);
@@ -473,6 +475,7 @@
                         dataType: 'json',
                         timeout: 10000,
                         error: function(jqXHR, textStatus, errorThrown) {
+                            sessionStorage.errortime++;
                             if (errorThrown == "Unauthorized") {
                                 layer.alert(textStatus + ' :code' + jqXHR.status + '  未授权或授权已过期； 获取视频token失败',info_showtime);
                             } else {
@@ -483,7 +486,8 @@
                             var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
                             if (status == "success")
                             if (data){//.Error == null) {
-                                sessionStorage.videourl = localStorage.server_url + "GetFlv?token="+data.token;//data即为获取到的token编码。
+                                //sessionStorage.videourl = localStorage.server_url + "GetFlv?token="+data.token;//data即为获取到的token编码。
+                                sessionStorage.videourl = localStorage.server_url.replace(/^http?/ig, "ws") + "GetWsFlv?token=" + data.token;//data即为获取到的token编码。
                                 url = encodeURI(sessionStorage.videourl); //url='../mp401.flv';
                                  /*//url=
                                 if (typeof player !== "undefined"&&player!=null) {
@@ -542,7 +546,10 @@
                             }
                         }
                     });
-                }
+                }catch(err){
+                    showstateinfo(err.message,"video");
+            }
+            }
                 isstop=false;
             }else{
                 layer.alert("请选择要预览的通道",info_showtime);

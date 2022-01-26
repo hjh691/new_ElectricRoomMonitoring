@@ -41,9 +41,9 @@ jfjk_base_config.bg_src="res/bj011.jpg";
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
- jfjk_base_config.ver_id="Ver 2.22.112";//20220112
+ jfjk_base_config.ver_id="Ver 2.22.126";//20220122
  //发布日期
- jfjk_base_config.date="2022-01-12";
+ jfjk_base_config.date="2022-01-26";
 //公司名称
  jfjk_base_config.company="河北金凯澳电气设备制造有限公司";
  //版权时间
@@ -90,7 +90,7 @@ jfjk_base_config.bg_src="res/bj011.jpg";
  warning_sign_low="越下限";
  warning_sign_hight="越上限";
  info_showtime=1500;
- jfjk_base_config.refreshtime=2;
+ jfjk_base_config.refreshtime=3;
  if(localStorage.refreshtime)
     jfjk_base_config.refreshtime=localStorage.refreshtime;
  color_table_cur="#adf7b8";//85e494

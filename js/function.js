@@ -1107,6 +1107,7 @@ function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 function getnodegraphics_bc(data){
 	//localStorage.errortime = 0;
 	//sessionStorage.islogin = true;
+	var brefresh=true;
 	if(jQuery.isEmptyObject(data)){//.Result
 		//if (data.Result.Value == null) {
 		//showmsg("没有符合条件的记录",info_showtime);
@@ -1118,7 +1119,7 @@ function getnodegraphics_bc(data){
 		}
 		return;
 	}
-	var brefresh=true;
+	
 	if(localStorage.txid!=-1){
 		//brefresh=false;
 		drawmap(JSON.parse(sessionStorage.contents),null,1);
@@ -1221,11 +1222,16 @@ function drawmap(arr,ctx,isrefresh) {
 		var sheight = cheight=document.documentElement.clientHeight-mheadmap.clientHeight;
 		mCanvasDiv.style.width= cwidth  + 'px';
 		mCanvasDiv.style.height= cheight + 'px';
+		mCanvasDiv2.style.width=cwidth+"px";
+		mCanvasDiv2.style.height=cheight+"px";
 		//var background_color="#cccccc";
 		//mCanvasDiv.style.backgroundColor = mCanvas.style.backgroundColor =background_color;
 		if(arr==null){
-			ctx.save();
-			ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+			//ctx.save();
+			ctx.beginPath();
+			//ctx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+			mCanvas.width = mCanvas.width;
+			fcanvas.clear();
 			return;
 		}
 		let arr_len=arr.length;
@@ -1288,6 +1294,7 @@ function drawmap(arr,ctx,isrefresh) {
 					fcanvas.setHeight(sheight);
 					fcanvas.setZoom(sessionStorage.scaler);
 					mCanvasDiv2.style.backgroundColor=str.StrokeColor.replace(/\#../,"#");
+					
 					ctx.save();
 					break;
 				}
@@ -2696,6 +2703,7 @@ function WebSocketTest() {
 			//var received_msg =decodeURIComponent(evt.data).substring(0,decodeURIComponent(evt.data).indexOf('['));// ;
 			var obj_rec=JSON.parse(evt.data);
 			if(obj_rec){
+				if(obj_rec.result)
 				var rec_datas=obj_rec.result.datas;
 				if(obj_rec.error==null || obj_rec.error=="null")
 				switch(obj_rec.action){
