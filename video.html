@@ -133,7 +133,7 @@
                                 <select class="tt" onchange="changeWndNum(this.value);">
                                     <option value="1">1x1</option>
                                     <option value="2" >2x2</option>
-                                    <!--<option value="3" selected >3X3</option>-->
+                                    <option value="3" selected >3X3</option><!---->
                                 </select>
                             </td>
                             <td  class="tt">
@@ -147,12 +147,12 @@
                                 <button type="button"  value="停止预览" onclick="clickStopRealPlay();" ><span class="glyphicon glyphicon-stop"></span><a href="javascript:void(0)">停止预览</a></button>
                             </td>
                             <td class="tt">
-                                <button ><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz"> 抓图</a></button>
+                                <button ><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz" onclick="clickCapturePic();"> 抓图</a></button>
                             </td>
                         </tr>
                         <!--<tr>
                             <td colspan="3"><button style="display: none;"><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz1"> 抓图</a></button>
-                                <input type="button" class="btn" value="抓图" onclick="clickCapturePic();" />onclick="clickCapturePic();"
+                                <input type="button" class="btn" value="抓图" onclick="clickCapturePic();" />
                                 <input type="button" class="btn" value="开始录像" onclick="clickStartRecord();" />
                                 <input type="button" class="btn" value="停止录像" onclick="clickStopRecord();" />
                             </td>
@@ -346,7 +346,7 @@
                 if(typeof(sessionStorage.sel_id)=="undefined"||sessionStorage.sel_id<0||sessionStorage.sel_id==null){
                     sel_sensor[0].checked=true;
                 }
-                //if(!!window.parent.isresize)
+                //if(window.parent.isresize)//重绘窗口（改变窗口大小）时重新加载视频
                 //    clickStartRealPlay();
             }
             /*element.addEventListener("pause",function(){
@@ -528,8 +528,12 @@
                                     isplay=true;
                                     showOPInfo("开始预览成功")
                                 });
+                                dp.on("canplay",function(){
+                                    isplay=true;
+                                    showOPInfo("开始预览成功");
+                                });
                                 dp.on("error" ,function(){
-                                    showOPInfo("视频预览错误");//播放
+                                    showmsg("视频预览错误",info_showtime);//播放
                                     isplay=false;
                                     if(!isstop){
                                         clickStartRealPlay();//解决视频加载失败或播放过程中出现错误而预览停止的问题
@@ -552,7 +556,7 @@
             }
                 isstop=false;
             }else{
-                layer.alert("请选择要预览的通道",info_showtime);
+                showmsg("请选择要预览的通道",info_showtime);
                 showstateinfo("请选择要预览的通道");
             }
         }
@@ -581,15 +585,19 @@
             sessionStorage.sel_id=sel_id;
         }
         function clickCapturePic(){//抓图
-            var zhuavideo=document.getElementById("pz");
-            zhuavideo.addEventListener('click', function() {
-                const canvas = document.createElement("canvas");
-                canvas.width = dp.video.videoWidth;
-                canvas.height = dp.video.videoHeight;
-                canvas.getContext('2d').drawImage(dp.video, 0, 0, canvas.width, canvas.height);
-                zhuavideo.href = canvas.toDataURL();
-                zhuavideo.download = "DPlayer.png";
-            });
+            if(dp){
+                var zhuavideo=document.getElementById("pz");
+                zhuavideo.addEventListener('click', function() {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = dp.video.videoWidth;
+                    canvas.height = dp.video.videoHeight;
+                    canvas.getContext('2d').drawImage(dp.video, 0, 0, canvas.width, canvas.height);
+                    zhuavideo.href = canvas.toDataURL();
+                    zhuavideo.download = "DPlayer.png";
+                });
+            }else{
+                showmsg("请选择要抓取的视频画面",info_showtime);//layer.alert
+            }
             //paizhao();
         }
         /*function paizhao(){

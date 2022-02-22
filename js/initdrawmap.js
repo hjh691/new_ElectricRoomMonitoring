@@ -7,8 +7,11 @@ var dx = 0,
     dy = 0; // 鼠标按下位置的坐标
 var offx = 0, offy = 0; //
 var ctx = mCanvas.getContext("2d");
-var fcanvas=new fabric.Canvas("mycanvas2") ;
+var fcanvas=null;
+//var mcanvas2=document.getElementById("mycanvas2");
 $(document).ready(function(){
+    fcanvas=new fabric.Canvas("mycanvas2") ;
+    fcanvas.selection=false;
     history.pushState(null, null, document.URL);
     window.addEventListener('popstate', function () {
             history.pushState(null, null, document.URL);
@@ -92,6 +95,81 @@ function initpage(){
     else
         drawmap(JSON.parse(sessionStorage.contents),null,1);
     window.parent.closeloadlayer();
+    fcanvas.on('mouse:dblclick',function(data){//鼠标双击事件，断路器、隔离开关进行开合状态转换
+        if(data.target && data.target.type=='breaker'){
+            if(!data.target.isclosed){
+                data.target._objects[1].set("fill",'#880000');//fill=='#880000'
+                data.target.isclosed=true;
+            }else{
+                data.target._objects[1].set('fill','#008000');
+                data.target.isclosed=false;
+            };
+            fcanvas.renderAll();
+        }
+        if(data.target && data.target.type=='Isolator'){
+            if(!data.target.isclosed){
+                data.target._objects[4].path[1][0]='L';
+                data.target._objects[4].path[1][1]= data.target.points['mleft']+data.target.points['r'];
+                data.target._objects[4].path[1][2]= data.target.points['y1'];
+                data.target.isclosed=true;
+                data.target._objects[4].set('fill','#008000');
+            }else{
+                data.target._objects[4].path[1][0]='L';
+                data.target._objects[4].path[1][1]= data.target.points['mright'];
+                data.target._objects[4].path[1][2]= data.target.points['y2'];
+                data.target.isclosed=false;
+                data.target._objects[4].set('fill','#800000');
+            }
+            fcanvas.renderAll();
+            //$("#myModal").modal();//显示模态对话框
+        }
+    });
+    fcanvas.on('mouse:wheel', function(opt) {
+        /*var delta = opt.e.deltaY;
+        var zoom = fcanvas.getZoom();
+        zoom *= 0.999 ** delta;
+        if (zoom > 20) zoom = 20;
+        if (zoom < 0.01) zoom = 0.01;
+        fcanvas.setZoom(zoom);
+        opt.e.preventDefault();
+        opt.e.stopPropagation();*/
+        if (opt.e.type == "wheel") {//鼠标滚轮事件响应；图形进行连续缩放
+            if(sessionStorage.map_module==0){
+                var e = (opt.e || window.event).originalEvent;
+                var deltaY =  opt.e.deltaY;//e.wheelDelta;
+                if(deltaY == 100) {
+                    sessionStorage.scaler=parseFloat(sessionStorage.scaler)+parseFloat(0.1);
+                    if(parseFloat(sessionStorage.scaler)>3)//最大3倍
+                       sessionStorage.scaler=3;
+                } else if(deltaY ==-100) {
+                    sessionStorage.scaler=parseFloat(sessionStorage.scaler)-parseFloat(0.1);
+                    if(parseFloat(sessionStorage.scaler)<0.5)//最小0.5倍
+                       sessionStorage.scaler=0.5;
+                }
+                refresh(null,1);
+            }
+        }
+      });
+      /*fcanvas.on('mouse:over',function(data){
+          console.log(data.target);//鼠标越过元素时
+      });*/
+      fcanvas.on('selection:created',function(data){
+          //console.log(data);
+          if(data.target.binding&&data.target.binding!=null && data.target.binding!="" && !data.target.group){
+            var channel=data.target.binding.substring(0,data.target.binding.indexOf(':'));
+            //var datatype=(pfdp.Binding).substr(pfdp.Binding.indexOf(':')+1);
+            if((window.parent.allsensors)&&(window.parent.allsensors[channel])){
+                sessionStorage.sensorId=parseInt(window.parent.allsensors[channel].id);//此处sensorId首字母小写
+                window.parent.getrealdatabynodeid(-1);
+                //window.parent.document.getElementById("tree").style.pointerEvents ="none";
+                localStorage.txid=1;
+                window.parent.iframemain.attr("src","detail.html");
+            }else{
+                //showmsg("没有绑定标签!");
+                showstateinfo("此图元没有绑定标签信息","initdrawmap-canvas.onclick");
+            }
+        }
+      });
     //var isFullscreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen;
     //if(isFullscreen)
         //sessionStorage.allscreen=false;
@@ -321,6 +399,7 @@ mCanvas.onclick=(function(){
 $(mCanvas).off().on({
     mousewheel : mouseHandler,
 });/**/
+
 function toggleFullScreen(e) {
     var old_module=sessionStorage.map_module;
     sessionStorage.map_module=1;//将图形比例设为1，这样可以显示最大限度的显示整张图。
@@ -329,7 +408,7 @@ function toggleFullScreen(e) {
     sessionStorage.scaler=1;
     refresh(null,1);
     //e.innerHTML == '全屏显示' ? e.innerHTML = '退出全屏' : e.innerHTML = '全屏显示';
-    var el = document.getElementById("mycanvas");// || e.target; //target兼容Firefox
+    var el = document.getElementById("mycanvas2");// || e.target; //target兼容Firefox
     //if(sessionStorage.allscreen=="false")
     //    sessionStorage.allscreen=true
     //else
@@ -357,6 +436,24 @@ function toggleFullScreen(e) {
         wscript.SendKeys("{F11}");
       }
     }*/
+}
+function loadCanvasfromsvg(){
+    fabric.loadSVGFromURL('res/save.svg', function(objects, options) {
+    var obj = fabric.util.groupSVGElements(objects, options);
+        fcanvas.add(obj).renderAll();
+        /*// 先进行 组合成组
+        const group1 = new fabric.Group(objects)
+        // 把组合 add 进 card
+        fcanvas.add(group1)
+        // 把组合设置为选中
+        fcanvas.setActiveObject(group1)
+        // 把选中的组合 进行拆分组
+        fcanvas.getActiveObject().toActiveSelection();
+        // 把拆分开的每一个模块进行取消选中状态
+        fcanvas.discardActiveObject()
+        // 重新渲染
+        fcanvas.renderAll()*/
+    });
 }
 function checkFull() {
     var isFull =

@@ -1,9 +1,7 @@
 /**绘制各种图形图元函数；开始
 	*/
 
-const { fabric, fabric } = require("./fabric");
-
-//解析图形参数：//简简单单、家家户户、兢兢业业、空空荡荡、空空洞洞、坎坎坷坷、快快乐乐磕磕碰碰客客气气口口声声扣扣索索哭哭啼啼坑坑洼洼开开心心
+//解析图形参数：//
 function ecodeparafrompfdp(pfdp){
 	var paras={};
 	paras.sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
@@ -28,7 +26,7 @@ function ecodeparafrompfdp(pfdp){
 	paras.lineWidth = parseInt(pfdp.StrokeThinkness);
 	return paras;
 }
-//绘制母线;//搂搂抱抱拉拉扯扯唠唠叨叨来来回回来来去去踉踉跄跄来来去去老老实实零零散散零零碎碎懒懒散散啰啰嗦嗦来来往往里里外外陆陆续续林林总总扭扭捏捏
+//绘制母线;//
 function Baseline(ctx, pfdp,fcanvas) {
 	var paras=ecodeparafrompfdp(pfdp);
 	with (paras){
@@ -37,15 +35,14 @@ function Baseline(ctx, pfdp,fcanvas) {
 		ctx.transform(a,b,c,d,e,f);
 		
 		var path=new Path2D();
-		//path.beginPath();//期期艾艾清清白白清清楚楚凄凄惨惨嘁嘁喳喳起起伏伏奇奇怪怪前前后后勤勤恳恳起起落落亲亲热热轻轻松松确确实实清清爽爽切切实实
-		path.moveTo(sx, sy);//千千万万卿卿我我曲曲折折齐齐整整热热闹闹日日年年柔柔弱弱日日夜夜认认真真随随便便时时处处世世代代神神叨叨顺顺当当双双对对
-		path.lineTo(ex, ey);//舒舒服服是是非非四四方方时时刻刻松松垮垮顺顺利利三三两两丝丝拉拉神神秘秘生生世世山山水水生生死死松松散散琐琐碎碎酸酸甜甜
-		ctx.stroke(path);//斯斯文文上上下下说说笑笑实实在在坦坦荡荡坛坛罐罐挑挑拣拣条条框框痛痛快快拖拖拉拉偷偷摸摸甜甜蜜蜜体体面面太太平平
-		ctx.beginPath();//吞吞吐吐踏踏实实推推搡搡团团圆圆堂堂正正稳稳当当文文静静唯唯诺诺歪歪扭扭完完全全弯弯曲曲弯弯绕绕畏畏缩缩完完整整
-		ctx.lineWidth=1;//修修补补许许多多絮絮叨叨星星点点羞羞答答嘻嘻哈哈辛辛苦苦淅淅沥沥稀稀拉拉稀稀落落寻寻觅觅熙熙攘攘形形色色潇潇洒洒
-		if(pfdp.isselect)//选中时的颜色为红色，未选择为透明黑//飘飘忽忽漂漂亮亮破破烂烂婆婆妈妈乒乒乓乓普普通通跑跑跳跳平平稳稳平平整整
-			ctx.strokeStyle="red"//虚虚实实悉悉索索原原本本摇摇摆摆郁郁葱葱影影绰绰郁郁苍苍摇摇晃晃晕晕乎乎庸庸碌碌严严实实洋洋洒洒隐隐约约犹犹豫豫
-		else//永永远远祖祖辈辈皱皱巴巴指指点点咋咋呼呼战战兢兢真真假假真真切切整整齐齐扎扎实实子子孙孙支支吾吾左左右右遮遮掩掩真真正正吱吱呀呀
+		//path.beginPath();
+		path.moveTo(sx, sy);
+		path.lineTo(ex, ey);
+		ctx.stroke(path);//
+		ctx.beginPath();//
+		if(pfdp.isselect)//
+			ctx.strokeStyle="red"//
+		else//
 			ctx.strokeStyle="#00000000";
 		ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 		ctx.stroke();
@@ -55,7 +52,10 @@ function Baseline(ctx, pfdp,fcanvas) {
 				strokeWidth:parseInt(pfdp.StrokeThinkness),
 				fill:pfdp.StrokeColor.replace("#FF","#"),
 				hasControls:false,
-				originY:"bottom",
+				originY:"top",
+				type:'baseline',
+				lockMovementX: true, //锁定坐标位置，禁止被拖动
+				lockMovementY: true,
 			});
 			fabric.util.addTransformToObject(fbaseline,[a,b,c,d,e,f]);
 			fcanvas.add(fbaseline);
@@ -63,7 +63,7 @@ function Baseline(ctx, pfdp,fcanvas) {
 		}
 	}
 }
-//绘制线；//腻腻歪歪年年岁岁明明白白磨磨蹭蹭密密丛丛懵懵懂懂迷迷瞪瞪满满当当满满登登迷迷糊糊模模糊糊马马虎虎磨磨唧唧忙忙碌碌朦朦胧胧密密麻麻
+//绘制线；
 function Line(ctx, pfdp,fcanvas) {
 	var paras=ecodeparafrompfdp(pfdp);
 	with(paras){
@@ -83,13 +83,17 @@ function Line(ctx, pfdp,fcanvas) {
 		ctx.rect(sx-1,sy-1,(ex-sx+2),(ey-sy+2));
 		ctx.stroke();
 		if(fcanvas){
-			//var str="f"+"line";//模模糊糊
+			//var str="f"+"line";//
 			var fline=new fabric.Line([sx,sy,ex,ey],{
-				strokeWidth: lineWidth, //线宽//陆陆续续、林林总总、明明白白、磨磨蹭蹭、满满当当、懵懵懂懂、迷迷瞪瞪、迷迷糊糊、马马虎虎
-				stroke: strokeStyle, //线的颜色//哭哭啼啼、坑坑洼洼、开开心心、拉拉扯扯、唠唠叨叨、来来回回、来来去去、冷冷清清、踉踉跄跄、来来往往、里里外外
+				strokeWidth: lineWidth, 
+				stroke: strokeStyle, //线的颜色
 				hasControls:false,
-				//scaleX:sessionStorage.scaler,//简简单单、家家户户、空空洞洞、空空荡荡、坎坎坷坷、快快乐乐、磕磕碰碰、客客气气、口口声声、扣扣索索
-				originY:"bottom",
+				fill:pfdp.StrokeColor.replace("#FF","#"),
+				//scaleX:sessionStorage.scaler,
+				originY:"top",
+				type:'line',
+				lockMovementX: true, 
+				lockMovementY: true,
 			})
 			fabric.util.addTransformToObject(fline,[a,b,c,d,e,f]);
 			fcanvas.add(fline);
@@ -98,7 +102,7 @@ function Line(ctx, pfdp,fcanvas) {
 		}
 	}
 }	
-//绘制椭圆形区域//哼哼唧唧、轰轰烈烈、和和美美、和和睦睦、和和气气、晃晃悠悠、慌慌张张、结结巴巴、进进出出、
+//绘制椭圆形区域
 function EllipseArea(ctx, pfdp,fcanvas) {
 	var paras=ecodeparafrompfdp(pfdp);
 	with(paras){
@@ -120,7 +124,7 @@ function EllipseArea(ctx, pfdp,fcanvas) {
 		} else {
 			ctx.stroke();
 		}
-		if(pfdp.isselect){//选中状态，红色轮廓，未选择则不圈轮廓//干干净净、沟沟坎坎、鬼鬼祟祟、高高兴兴、工工整整、昏昏沉沉、花花草草、浩浩荡荡
+		if(pfdp.isselect){//选中状态，红色轮廓，未选择则不圈轮廓
 			ctx.strokeStyle="red";
 			ctx.strokeRect(sx,sy,ex-sx,ey-sy);
 		}
@@ -133,6 +137,9 @@ function EllipseArea(ctx, pfdp,fcanvas) {
 				fill:pfdp.IsFill?pfdp.FillColor:"#0000",
 				stroke:strokeStyle,
 				strokeWidth:lineWidth,
+				type:'ellipsearea',
+				lockMovementX: true, 
+				lockMovementY: true,
 			});
 			fabric.util.addTransformToObject(fellipsearea,[a,b,c,d,e,f]);
 			fcanvas.add(fellipsearea);
@@ -140,7 +147,7 @@ function EllipseArea(ctx, pfdp,fcanvas) {
 		}
 	}
 }
-//自定义绘制椭圆，x,y 圆心坐标，a横轴半径，b是Y轴半径。//浑浑噩噩、健健康康、急急忙忙、结结实实、唧唧歪歪、兢兢业业、叽叽喳喳、磕磕绊绊、磕磕巴巴
+//自定义绘制椭圆，x,y 圆心坐标，a横轴半径，b是Y轴半径。
 function Ellipse(context, x, y, a, b) {
 	context.save();
 	var r = (a > b) ? a: b;
@@ -153,7 +160,7 @@ function Ellipse(context, x, y, a, b) {
 	context.restore();
 	//context.fill();
 }
-//绘制矩形区域//的的确确、打打杀杀、断断续续、大大小小、跌跌撞撞、端端正正、缝缝补补、疯疯癫癫、风风光光、风风火火、分分合合、古古怪怪
+//绘制矩形区域
 function RectArea(ctx, pfdp,fcanvas) {
 	var paras=ecodeparafrompfdp(pfdp);
 	with(paras){
@@ -171,7 +178,7 @@ function RectArea(ctx, pfdp,fcanvas) {
 			ctx.rect(sx, sy, parseFloat(ex) - parseFloat(sx), parseFloat(ey) - parseFloat(sy));
 			ctx.stroke();
 		}
-		if(pfdp.isselect){//选中状态，红色轮廓，未选择则不圈轮廓//颤颤巍巍、躲躲藏藏、点点滴滴、大大方方、嘀嘀咕咕、大大咧咧、打打闹闹、
+		if(pfdp.isselect){//选中状态，红色轮廓，未选择则不圈轮廓
 			ctx.strokeStyle="red";
 			ctx.stroke();
 		}
@@ -188,6 +195,9 @@ function RectArea(ctx, pfdp,fcanvas) {
 				originY:"top",
 				strokeDashoffset:lineWidth,
 				hasControls:false,
+				type:'rectarea',
+				lockMovementX: true, 
+				lockMovementY: true,
 			})
 			fabric.util.addTransformToObject(frectarea,[a,b,c,d,e,f]);
 			fcanvas.add(frectarea);
@@ -195,7 +205,7 @@ function RectArea(ctx, pfdp,fcanvas) {
 		}
 	}
 }
-//绘制虚线（跳线）；//渺渺茫茫勉勉强强冒冒失失慢慢吞吞慢慢腾腾慢慢悠悠毛毛躁躁迷迷怔怔平平安安蓬蓬勃勃平平常常拼拼凑凑平平淡淡跑跑颠颠平平凡凡瓶瓶罐罐
+//绘制虚线（跳线）；//
 function JumpLine(ctx, pfdp,fcanvas) {
 	var paras=ecodeparafrompfdp(pfdp);
 	with(paras){
@@ -223,6 +233,9 @@ function JumpLine(ctx, pfdp,fcanvas) {
 				hasControls:false,
 				strokeDashArray:[10,15],
 				originY:'bottom',
+				type:'jumpline',
+				lockMovementX: true, 
+				lockMovementY: true,
 			});
 			fabric.util.addTransformToObject(fjumpline,[a,b,c,d,e,f]);
 			fcanvas.add(fjumpline);
@@ -230,10 +243,7 @@ function JumpLine(ctx, pfdp,fcanvas) {
 		}
 	}
 }
-//画断路器反反复复、洋洋洒洒、严严实实、唯唯诺诺、歪歪扭扭、跌跌撞撞、端端正正、兜兜转转、高高兴兴、吞吞吐吐、拖拖拉拉、林林总总、支支吾吾
-//轰轰烈烈、花花绿绿、千千万万、卿卿我我、风风光光、风风火火、方方面面、分分秒秒、缝缝补补、疯疯癫癫、服服帖帖、沸沸扬扬、风风雨雨、纷纷扬扬、
-//方方正正、安安静静、本本分分、白白净净、边边角角、爸爸妈妈、别别扭扭、白白嫩嫩、白白胖胖、蹦蹦跳跳、病病歪歪、病病殃殃、彻彻底底、层层叠叠
-//重重叠叠、吹吹打打、吃吃喝喝、出出进进、吵吵闹闹、匆匆忙忙、缠缠绵绵、吵吵嚷嚷、从从容容、
+//断路器
 function Breaker(ctx, pfdp,fcanvas) {
 	var paras=ecodeparafrompfdp(pfdp);
 	with(paras){
@@ -270,6 +280,8 @@ function Breaker(ctx, pfdp,fcanvas) {
 				fill: pfdp.StrokeColor.replace("#FF","#"),
 				stroke:pfdp.StrokeColor.replace("#FF","#"),
 				strokeWidth:parseInt(pfdp.StrokeThinkness),
+				originX:"right",
+				originY:"bottom",
 			});
 			var frect=new fabric.Rect({
 				left:sx,
@@ -280,12 +292,18 @@ function Breaker(ctx, pfdp,fcanvas) {
 				stroke:pfdp.StrokeColor.replace("#FF","#"),
 				strokeWidth:parseInt(pfdp.StrokeThinkness),
 			});
-			var fgroup=new fabric.Group([fpath,frect],{
+			//sx=sx-offset;
+			var fbreaker=new fabric.Group([fpath,frect],{
+				left:sx,
 				hasControls:false,
+				type:'breaker',
+				isclosed:pfdp.IsClosed,
+				lockMovementX: true, 
+				lockMovementY: true,
 			});
-			fabric.util.addTransformToObject(fgroup,[a,b,c,d,e,f]);
-			fcanvas.add(fgroup);
-			return fgroup;
+			fabric.util.addTransformToObject(fbreaker,[a,b,c,d,e,f]);
+			fcanvas.add(fbreaker);
+			return fbreaker;
 		}
 	}
 }
@@ -304,6 +322,9 @@ function Isolator(ctx, pfdp,fcanvas) {
 		var y1 = parseFloat(mtop) + parseFloat((parseFloat(mbottom) - parseFloat(mtop)) / 6);
 		var y2 = parseFloat(mtop) + parseFloat((parseFloat(mbottom) - parseFloat(mtop)) / 4);
 		var y3 = parseFloat(mbottom) - parseFloat((parseFloat(mbottom) - parseFloat(mtop)) / 6);
+		var points=[];
+		points.mleft=mleft;points.mright=mright;points.mtop=mtop;points.mbottom=mbottom;
+		points.r=r;points.y1=y1;points.y2=y2;points.y3=y3;
 		var path=new Path2D();
 		ctx.beginPath();
 		path.moveTo(mleft, mtop);
@@ -332,11 +353,13 @@ function Isolator(ctx, pfdp,fcanvas) {
 		}
 		if(fcanvas){
 			var offset=lineWidth/2
+			points.offset=offset;
 			var fisloterpath1=new fabric.Path('M '+(mleft+offset)+' '+mtop+' '+'L '+(mleft+offset)+' '+(parseFloat(y1) - parseFloat(r)),{
 				stroke:pfdp.StrokeColor.replace("#FF","#"),
 				strokeWidth:parseInt(pfdp.StrokeThinkness),
 				fill:pfdp.StrokeColor.replace("#FF","#"),
-				
+				originX:"left",
+				originY:"bottom",
 			});
 			var fisloterart1=new fabric.Circle({
 				left:mleft-r,
@@ -349,6 +372,8 @@ function Isolator(ctx, pfdp,fcanvas) {
 				stroke:pfdp.StrokeColor.replace("#FF","#"),
 				strokeWidth:parseInt(pfdp.StrokeThinkness),
 				fill:pfdp.StrokeColor.replace("#FF","#"),
+				originX:"left",
+				originY:"bottom",
 			});
 			var fisloterart2=new fabric.Circle({
 				left:mleft-r,
@@ -361,9 +386,19 @@ function Isolator(ctx, pfdp,fcanvas) {
 				stroke:pfdp.StrokeColor.replace("#FF","#"),
 				strokeWidth:parseInt(pfdp.StrokeThinkness),
 				fill:pfdp.StrokeColor.replace("#FF","#"),
+				originX:"left",
+				originY:"bottom",
 			});
 			var fislotergroup=new fabric.Group([fisloterpath1,fisloterart1,fisloterpath2,fisloterart2,fisloterpath3],{
+				left:sx-r,
 				hasControls:false,
+				type:'Isolator',
+				originX:"left",
+				originY:"bottom",
+				isclosed:pfdp.IsClosed,
+				points:points,
+				lockMovementX: true, 
+				lockMovementY: true,
 			});
 			fabric.util.addTransformToObject(fislotergroup,[a,b,c,d,e,f]);
 			fcanvas.add(fislotergroup);
@@ -447,6 +482,9 @@ function Transformer(ctx, pfdp,fcanvas) {
 			});
 			var ftransformer=new fabric.Group([fcircle1,fcircle2,fpath1],{
 				hasControls:false,
+				type:'transformer',
+				lockMovementX: true, 
+				lockMovementY: true,
 			});
 			fabric.util.addTransformToObject(ftransformer,[a,b,c,d,e,f]);
 			fcanvas.add(ftransformer);
@@ -516,6 +554,9 @@ function Ground(ctx, pfdp,fcanvas) {
 				strokeWidth:lineWidth,
 				stroke:strokeStyle,
 				hasControls:false,	
+				type:'ground',
+				lockMovementX: true, 
+				lockMovementY: true,
 				} );
 			fabric.util.addTransformToObject(fground,[a,b,c,d,e,f]);
 			fcanvas.add(fground);
@@ -623,6 +664,9 @@ function Capacitor(ctx, pfdp,fcanvas) {
 					stroke:strokeStyle,
 					strokeWidth:lineWidth,
 					hasControls:false,
+					type:'capacitor',
+					lockMovementX: true, 
+					lockMovementY: true,
 				});
 			}else{
 				fcapacitor=new fabric.Path('M '+(mx+offset)+' '+mtop+' L '+(mx+offset)+' '+y1+' M '+
@@ -631,6 +675,9 @@ function Capacitor(ctx, pfdp,fcanvas) {
 					stroke:strokeStyle,
 					strokeWidth:lineWidth,
 					hasControls:false,
+					type:'capacitor',
+					lockMovementX: true, 
+					lockMovementY: true,
 				});
 			}
 			fabric.util.addTransformToObject(fcapacitor,[a,b,c,d,e,f]);
@@ -676,6 +723,9 @@ function Outer(ctx, pfdp,fcanvas) {
 				stroke: strokeStyle,
 				strokeWidth: lineWidth,
 				hasControls:false,
+				type:'outer',
+				lockMovementX: true, 
+				lockMovementY: true,
 			});
 			fabric.util.addTransformToObject(fouter,[a,b,c,d,e,f]);
 			fcanvas.add(fouter);
@@ -720,6 +770,9 @@ function Warning(ctx, pfdp,fcanvas) {
 				strokeWidth:lineWidth,
 				fill:"yellow",
 				hasControls:false,
+				type:'warning',
+				lockMovementX: true, 
+				lockMovementY: true,
 			});
 			fabric.util.addTransformToObject(fwarning,[a,b,c,d,e,f]);
 			fcanvas.add(fwarning);
@@ -757,6 +810,9 @@ function Area(ctx, pfdp,fcanvas) {
 				strokeWidth:lineWidth,
 				fill:'#0000',
 				hasControls:false,
+				type:'area',
+				lockMovementX: true, 
+				lockMovementY: true,
 			});
 			fabric.util.addTransformToObject(farea,[a,b,c,d,e,f]);
 			fcanvas.add(farea);
@@ -799,6 +855,9 @@ function Node(ctx, pfdp,fcanvas) {
 					strokeWidth:lineWidth,
 					hasControls:false,
 					fill:"#0000",
+					type:'node',
+					lockMovementX: true, 
+					lockMovementY: true,
 				});
 			}else{
 				fnode=new fabric.Circle({
@@ -809,6 +868,9 @@ function Node(ctx, pfdp,fcanvas) {
 					strokeWidth:lineWidth,
 					fill:"#0000",
 					hasControls:false,
+					type:'node',
+					lockMovementX: true, 
+					lockMovementY: true,
 				});
 			}
 			fabric.util.addTransformToObject(fnode,[a,b,c,d,e,f]);
@@ -926,6 +988,9 @@ function DrawText(ctx, pfdp,fcanvas) {
 				binding:pfdp.Binding,
 				hasControls:false,
 				objectCaching: false,
+				lockMovementX: true, 
+				lockMovementY: true,
+				type:'text',
 			});
 			fabric.util.addTransformToObject(window[(pfdp.Binding)],[a,b,c,d,e,f]);
 			
@@ -946,7 +1011,7 @@ function DrawText(ctx, pfdp,fcanvas) {
 function Selection(ctx, pfdp) {
 
 }
-function Picture(ctx,pfdp){
+function Picture(ctx,pfdp,fcanvas){
 	var sx = parseFloat(pfdp.StartPoint.substring(0, pfdp.StartPoint.indexOf(",")));
 	var sy = parseFloat(pfdp.StartPoint.substr(pfdp.StartPoint.indexOf(",") + 1));
 	var ex = parseFloat(pfdp.EndPoint.substring(0, pfdp.EndPoint.indexOf(",")));
@@ -974,5 +1039,15 @@ function Picture(ctx,pfdp){
 		ctx.strokeStyle="red";
 		ctx.strokeRect(sx,sy,ex-sx,ey-sy);
 	}
+	if(fcanvas){//有待使用图片数据进行实际验证
+		fabric.Image.fromURL(img.src, function(fimg) { 
+			fabric.util.addTransformToObject(fimg,[a,b,c,d,e,f]);
+			fcanvas.add(fimg.set({left:200,top:0,angle:45}).scale(.05));
+			return fimg; //返回此实例；
+		});
+		
+	}
 }
-/** 图元绘制函数完成*/
+/** 图元绘制函数完成
+ * 
+*/

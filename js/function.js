@@ -1296,7 +1296,7 @@ function drawmap(arr,ctx,isrefresh) {
 					mCanvasDiv2.style.backgroundColor=str.StrokeColor.replace(/\#../,"#");
 					
 					ctx.save();
-					break;
+					break;//
 				}
 			} /*else {
 				mCanvas.width = document.documentElement.clientWidth - 17;
@@ -1634,7 +1634,7 @@ function ajaxLoadingShow() {
 	});
 }
 /*
- * 取消圆圈加载进度条  used by electricroommonitor
+ * 取消圆圈加载进度条  used by electricroommonitor 
  */
 function ajaxLoadingHidden() {
 	$("#viewport").removeAttr("style");

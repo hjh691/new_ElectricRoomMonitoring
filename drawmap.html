@@ -4,9 +4,12 @@
 	<meta charset="utf-8"/>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 	<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" href="css/jquery-ui.css" /> 
 	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
 	<title>状态图形</title>
 	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+	<script src="js/bootstrap.js"></script>
+	<script  type="text/javascript" src="js/jquery-ui.js"></script>
 	<script  type="text/javascript" src="js/jquery.base64.js"></script>
 	<script  type="text/javascript" src="js/config.js"></script>
 	<script  type="text/javascript" src="js/layer/layer.js"></script>
@@ -30,9 +33,10 @@
 			</div>
 		</div>
 		<a id="mapmodule" style="color:red;position:absolute;top:7px;right:20px;text-align:right" href="javascript:void(0)" onclick="showmodule()" ></a>
+		<button onclick="loadCanvasfromsvg()" style="display:none" >加载svg</button>
 		<a id="mapmodule1" style="color:red;position:absolute;top:7px;right:100px;text-align:right" href="javascript:void(0)" onclick="toggleFullScreen(event)" ></a>
 		<div id="maprefresh" style="display:none" onclick="refresh()"></div><!--有告警时刷新图形显示overflow: auto; style="background-color:#000";-->
-		<div id="mycanvasdiv" style="background-color:#cccccc;position: relative; text-align: center; overflow: auto;">
+		<div id="mycanvasdiv" style="background-color:#cccccc;position: relative; text-align: center; overflow: auto;display: none;">
 			<div align="center" >
 				<canvas id="mycanvas" align="center" width="900px" height="700px">
 				</canvas>
@@ -45,6 +49,29 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+                aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" 
+                            data-dismiss="modal" aria-hidden="true">
+                            &times;           </button>
+                        <h4 class="modal-title" id="myModalLabel">
+                            模态框（Modal）标题            </h4>
+                    </div>
+                    <div class="modal-body">
+                        在这里添加一些文本         
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" 
+                            data-dismiss="modal">关闭            </button>
+                        <button type="button" class="btn btn-primary">
+                            提交更改            </button>
+                    </div>
+                </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
 	<script type="text/javascript" src="js/initdrawmap.js"></script>
 </body>
 </html>
