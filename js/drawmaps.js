@@ -354,7 +354,9 @@ function Isolator(ctx, pfdp,fcanvas) {
 		if(fcanvas){
 			var offset=lineWidth/2
 			points.offset=offset;
-			var fisloterpath1=new fabric.Path('M '+(mleft+offset)+' '+mtop+' '+'L '+(mleft+offset)+' '+(parseFloat(y1) - parseFloat(r)),{
+			var fisloterpath1=new fabric.Path('M '+(mleft+offset)+' '+mtop+' '+'L '+(mleft+offset)+' '+(parseFloat(y1) - parseFloat(r))+
+				' M '+(mleft+offset)+' '+mbottom+' '+'L '+(mleft+offset)+' '+(parseFloat(y3) - parseFloat(r))+
+				' M '+(mleft+offset*2)+' '+y3+' '+'L '+mright+' '+y2,{
 				stroke:pfdp.StrokeColor.replace("#FF","#"),
 				strokeWidth:parseInt(pfdp.StrokeThinkness),
 				fill:pfdp.StrokeColor.replace("#FF","#"),
@@ -368,13 +370,6 @@ function Isolator(ctx, pfdp,fcanvas) {
 				stroke:pfdp.StrokeColor.replace("#FF","#"),
 				strokeWidth:parseInt(pfdp.StrokeThinkness),
 			});
-			var fisloterpath2=new fabric.Path('M '+(mleft+offset)+' '+mbottom+' '+'L '+(mleft+offset)+' '+(parseFloat(y3) - parseFloat(r)),{
-				stroke:pfdp.StrokeColor.replace("#FF","#"),
-				strokeWidth:parseInt(pfdp.StrokeThinkness),
-				fill:pfdp.StrokeColor.replace("#FF","#"),
-				originX:"left",
-				originY:"bottom",
-			});
 			var fisloterart2=new fabric.Circle({
 				left:mleft-r,
 				top:y3-r,
@@ -382,14 +377,7 @@ function Isolator(ctx, pfdp,fcanvas) {
 				stroke:pfdp.StrokeColor.replace("#FF","#"),
 				strokeWidth:parseInt(pfdp.StrokeThinkness),
 			});
-			var fisloterpath3=new fabric.Path('M '+(mleft+offset*2)+' '+y3+' '+'L '+endpoit.x+' '+endpoit.y,{
-				stroke:pfdp.StrokeColor.replace("#FF","#"),
-				strokeWidth:parseInt(pfdp.StrokeThinkness),
-				fill:pfdp.StrokeColor.replace("#FF","#"),
-				originX:"left",
-				originY:"bottom",
-			});
-			var fislotergroup=new fabric.Group([fisloterpath1,fisloterart1,fisloterpath2,fisloterart2,fisloterpath3],{
+			var fislotergroup=new fabric.Group([fisloterpath1,fisloterart1,fisloterart2],{
 				left:sx-r,
 				hasControls:false,
 				type:'Isolator',

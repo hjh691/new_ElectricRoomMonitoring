@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>画板程序(canvas)</title>
-    <link rel="stylesheet" href="css/drawingboard.css">
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <style>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/drawingboard.css"/>
+    <link rel="stylesheet" href="css/farbtastic.css" type="text/css" />
+    <script type="text/javascript" src="js/FileSaver.js"></script>
+     <style>
         .container{
             width: 97%;
             height:100%;
@@ -63,69 +65,251 @@
             </ul>
         </div>
         <div class="row">
-            <div class="col-xs-12 col-md-9 col-lg-10" style="margin-top:40px;border: rgb(250, 159, 159) solid 0px;overflow: auto;">
+            <div class="col-xs-7 col-md-9 col-lg-10" style="margin-top:40px;border: rgb(250, 159, 159) solid 0px;overflow: auto;">
                 <div id="canvasDiv" class="canvasDiv" style="width:100%;">
                     <canvas id="c" width="1920" height="1080">请使用支持HTML5的浏览器</canvas>
                 </div>
             </div>
-            <div class="col-xs-12 col-md-3 col-lg-2" style="border: rgb(250, 165, 165) solid 1px;margin-top: 40px;right:10px;position: fixed;float: right;">
+            <div class="col-xs-5 col-md-3 col-lg-2" style="border: rgb(250, 176, 176) solid 1px;margin-top: 40px;right:10px;position: fixed;float: right;">
                 <div class="tool_attr" style="width:100%;top:40px;float:right;">
                     <div id="c2" style="height:800px;">
-                        <div style="width:100%;">
-                            <ul id="tools-hul2" class="tools-h" style="margin: 0px;padding: 0px;margin-bottom: 5px;">
+                        <fieldset class="preview" style="width:100%;">
+                            <legend >图形</legend>
+                            <ul id="tools-hul2" class="tools-h" style="margin: 0px;padding: 0px;margin-bottom: 5px;" onclick="changetools()">
                                 <li id="tools-hPencil2" data-type="pen" class="active">
                                     <i class="icon-tools-h icon-pen-select" data-default="icon-tools-h icon-pen-black"></i>
                                 </li>
-                                <li data-type="arrow">
+                                <li data-type="arrow"><!--箭头-->
                                     <i class="icon-tools-h icon-arrow-black" data-default="icon-tools-h icon-arrow-black"></i>
                                 </li>
-                                <li data-type="line">
+                                <li data-type="line"><!--直线-->
                                     <i class="icon-tools-h icon-line-black" data-default="icon-tools-h icon-line-black"></i>
                                 </li>
-                                <li data-type="dottedline">
+                                <li data-type="dottedline"><!--虚线-->
                                     <i class="icon-tools-h icon-dottedline-black" data-default="icon-tools-h icon-dottedline-black"></i>
                                 </li>
-                                <li data-type="circle">
+                                <li data-type="circle"><!--正圆-->
                                     <i class="icon-tools-h icon-circle-black" data-default="icon-tools-h icon-circle-black"></i>
                                 </li>
-                                <li data-type="ellipse">
+                                <li data-type="ellipse"><!--椭圆-->
                                     <i class="icon-tools-h icon-ellipse-black" data-default="icon-tools-h icon-ellipse-black"></i>
                                 </li>
-                                <li class="hide" data-type="square">
+                                <li class="hide" data-type="square"><!--正方形-->
                                     <i class="icon-tools-h icon-square-black" data-default="icon-tools-h icon-square-black"></i>
                                 </li>
-                                <li data-type="rectangle">
+                                <li data-type="rectangle"><!--矩形-->
                                     <i class="icon-tools-h icon-rectangle-black" data-default="icon-tools-h icon-rectangle-black"></i>
                                 </li>
-                                <li data-type="rightangle">
+                                <li class="hide" data-type="rightangle"><!--右直角三角形-->
                                     <i class="icon-tools-h icon-rightangle-black" data-default="icon-tools-h icon-rightangle-black"></i>
                                 </li>
-                                <li data-type="equilateral">
-                                    <i class="icon-tools-h icon-equilateral-black" data-default="icon-tools-h icon-equilateral-black"></i>
-                                </li>
-                                <li class="hide" data-type="isosceles">
+                                <li class="hide" data-type="isosceles"><!--等腰三角形-->
                                     <i class="icon-tools-h icon-isosceles-black" data-default="icon-tools-h icon-isosceles-black"></i>
                                 </li>
-                                <li data-type="text">
+                                <li data-type="equilateral"><!--正三角形-->
+                                    <i class="icon-tools-h icon-equilateral-black" data-default="icon-tools-h icon-equilateral-black"></i>
+                                </li>
+                                <li data-type="isolator"><!--隔离开关-->
+                                    <i class="icon-tools-h icon-isolator-black" data-default="icon-tools-h icon-isolator-black"></i>
+                                </li>
+                                <li data-type="breaker"><!--断路器-->
+                                    <i class="icon-tools-h icon-breaker-black" data-default="icon-tools-h icon-breaker-black"></i>
+                                </li>
+                                <li data-type="ground"><!--接地-->
+                                    <i class="icon-tools-h icon-ground-black" data-default="icon-tools-h icon-ground-black"></i>
+                                </li>
+                                <li data-type="capacitor"><!--电容-->
+                                    <i class="icon-tools-h icon-capacitor-black" data-default="icon-tools-h icon-capacitor-black"></i>
+                                </li>
+                                <li data-type="outer"><!--出线-->
+                                    <i class="icon-tools-h icon-outer-black" data-default="icon-tools-h icon-outer-black"></i>
+                                </li>
+                                <li data-type="transformer"><!--变压器-->
+                                    <i class="icon-tools-h icon-transformer-black" data-default="icon-tools-h icon-transformer-black"></i>
+                                </li>
+                                <li data-type="warning"><!--告警区域-->
+                                    <i class="icon-tools-h icon-warning-black" data-default="icon-tools-h icon-warning-black"></i>
+                                </li>
+                                <li data-type="rectarea"><!--矩形区域-->
+                                    <i class="icon-tools-h icon-rectarea-black" data-default="icon-tools-h icon-rectarea-black"></i>
+                                </li>
+                                <li data-type="ellipsearea"><!--椭圆区域-->
+                                    <i class="icon-tools-h icon-ellipsearea-black" data-default="icon-tools-h icon-ellipsearea-black"></i>
+                                </li>
+                                <li class="hide" data-type="linewidth"><!--线条宽度-->
+                                    <i class="icon-tools-h icon-linewidth-black" data-default="icon-tools-h icon-linewidth-black"></i>
+                                </li>
+                                <li data-type="picture"><!--椭圆区域-->
+                                    <i class="icon-tools-h icon-picture-black" data-default="icon-tools-h icon-picture-black"></i>
+                                </li>
+                                <li data-type="text"><!--文本-->
                                     <i class="icon-tools-h icon-text-black" data-default="icon-tools-h icon-text-black"></i>
                                 </li>
-                                <li data-type="remove">
+                                <li data-type="remove"><!--删除-->
                                     <i class="icon-tools-h icon-remove-black" data-default="icon-tools-h icon-remove-black"></i>
                                 </li>
+                                <li data-type="move"><!--等腰三角形-->
+                                    <i class="icon-tools-h icon-move-black" data-default="icon-tools-h icon-move-black"></i>
+                                </li>
                             </ul>
+                        </fieldset>
+                        <div>
+                            <fieldset class="preview">
+                                <legend >参数设置</legend>
+                                <table cellpadding="10" cellspacing="10">
+                                    <tr>
+                                        <td >定位: X: </td>
+                                        <td >
+                                            <input class="txt" id="left" value="0" oninput="changepaint(1)"/>
+                                            <span> Y</span>
+                                            <input class="txt" id="top" value="0" oninput="changepaint(2)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td >缩放: X: </td>
+                                        <td >
+                                            <input class="txt" id="scalex" value="1" oninput="changepaint(3)"/>
+                                            <span> Y</span>
+                                            <input class="txt" id="scaley" value="1" oninput="changepaint(4)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td >旋转: X: </td>
+                                        <td >
+                                            <input class="txt" id="rote" value="0" oninput="changepaint(5)"/>
+                                            <span>度</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td >反转: </td>
+                                        <td >
+                                            X:<input type="checkbox" class="txt" id="flipx" value="0" oninput="changepaint(6)" style="margin-left: -15px;"/>
+                                            <span>/</span>
+                                            Y:<input type="checkbox" class="txt" id="flipy" value="0" oninput="changepaint(7)" style="margin-left: -15px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td >线宽: </td>
+                                        <td >
+                                            <select id="linewidth" class="tt" onchange="changelinewidth(this.value)">
+                                                <option value="1">1px</option>
+                                                <option value="3">3px</option>
+                                                <option value="5">5px</option>
+                                                <option value="8">8px</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td >边框颜色:</td>
+                                        <td >
+                                            <input class="txt" type="text" id="strokecolor" onclick="showstrokecolor()" name="color" value="#123456"/>
+                                            <span><input type="button" class="btn" value="确定" onclick="setstrokecolor();" /></span>
+                                            <div id="pickerstroke"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td >填充颜色:</td>
+                                        <td >
+                                            <input class="txt" type="text" id="fillcolor" onclick="showfillcolor()" name="color" value="#123456"/>
+                                            <span><input type="button" class="btn" value="确定" onclick="setfillcolor();" /></span>
+                                            <div id="pickerfill"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td >背景颜色:</td>
+                                        <td >
+                                            <input class="txt" type="text" id="backgroundcolor" onclick="showbackgroundcolor()" name="color" value="#123456"/>
+                                            <span><input type="button" class="btn" value="确定" onclick="setbackgroundcolor();" /></span>
+                                            <div id="pickerbackground"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td >字体: </td>
+                                        <td >
+                                            <select id="fontfamily" class="tt" onchange="changefontfamily(this.value)">
+                                                <option value="Helvetica Neue">Helvetica Neue</option>
+                                                <option value="Helvetica">Helvetica</option>
+                                                <option value="Arial">Arial</option>
+                                                <option value="sans-serif">sans-serif</option>
+                                                <option value="Microsoft Yahei">Microsoft Yahei</option>
+                                                <option value="Comic Sans">Comic Sans</option>
+                                                <option value="Times New Roman">Times New Roman</option>
+                                                <option value="FangSong">FangSong</option>
+                                            </select>
+                                            <span> 字号：</span>
+                                            <input class="txt" id="fontsize" value="12" oninput="changefontsize(this.value)">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td >样式: </td>
+                                        <td >
+                                            <select id="fontstyle" class="tt" onchange="changefontstyle(this.value)">
+                                                <option value="normal">normal</option>
+                                                <option value="italic">italic</option>
+                                                <!--<option value="oblique">oblique</option>
+                                                <option value="inherit">inherit</option>-->
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>粗细：</td>
+                                            <td>
+                                            <select id="fontweight" class="tt" onchange="changefontweight(this.value)">
+                                                <option value="900">Black  900</option>
+                                                <option value="700">Bold  700</option>
+                                                <option value="900">ExtraBlack  900</option>
+                                                <option value="800">ExtraBold  800</option>
+                                                <option value="200">ExtraLight  200</option>
+                                                <option value="300">Light  300</option>
+                                                <option value="500">Medium  500</option>
+                                                <option value="normal">Normal  400</option>
+                                                <option value="600">SemiBold 600</option>
+                                                <option value="100">Thin  100</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>绑定值</td>
+                                        <td>
+                                            <input class="txt" id="binding" value="" oninput="changebinding(this.value)">
+                                            <span><input type="button" class="btn" value="绑定" onclick="settextbinding();" /></span>
+                                        </td>
+                                    </tr>
+                                </table>  
+                                <br> 
+                                    <tr>
+                                        <td colspan="3"><button style="display: none;"><span class="glyphicon glyphicon-camera"></span><a href="javascript:void(0)" id="pz1"> 抓图</a></button>
+                                            <input type="button" class="btn" value="打开" onclick="importfromfile();" />
+                                            <input type="button" class="btn" value="保存" onclick="save();" />
+                                            <input type="button" class="btn" value="导出" onclick="emport();" />
+                                            <input type="button" class="btn" value="取消" onclick="exit();" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            <input type="file" id="file" onchange="upload(this)" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;" />
+                                            <input type="file" id="picturefile" onchange="uploadpicture(this)" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;" />
+                                            <!--<input type="text" style="width:0;display: none;" id="bg_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"/>
+                                            <label class="selected" onclick="importfromfile()" style="float:right;margin-right:20px;background-color: rgb(78, 76, 76);display: none;">背景设置</label>
+                                            <img id="img" src="xcode.png" style="display: none;">-->
+                                        </td>
+                                    </tr>
+                            </fieldset>
+                            <fieldset class="preview" style="display: none;">
+                               <legend>颜色设置</legend>
+                                    <div class="form-item"><label for="color" onclick="showdialog()">颜色:</label><input class="txt" type="text" id="color" name="color" value="#123456" /></div><div id="picker"></div>
+                            </fieldset>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!--<script src="https://cdn.bootcss.com/jquery/1.9.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/fabric.js/2.1.0/fabric.min.js"></script>-->
     <script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="js/fabric.js"></script>
+    <script type="text/javascript" src="js/farbtastic.js"></script>
     <script src="js/drawingboard.js"></script>
     <script src="js/canvaszoom.js"></script><!---->
-
 </body>
 
 </html>

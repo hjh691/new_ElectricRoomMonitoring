@@ -2060,7 +2060,8 @@
 				anodes.level = level;
 				if(localStorage.realdata && localStorage.realdata!="null" && localStorage.realdata!="" && localStorage.realdata!=undefined){
 					var obj=JSON.parse(localStorage.getItem("realdata"));
-					for(var i=0;i<obj.length;i++){
+					if(sessionStorage.nodetype!=0)
+					for(var i=0;i<obj.length;i++){//根据实时数据判断标签的当前状态；有数据为绿色，没有为红色。
 						if(obj[i].sensorId==anodes.id){
 							anodes.color="#2f4";
 							break;

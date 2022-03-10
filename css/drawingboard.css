@@ -1,0 +1,500 @@
+.tools {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .tools-h {
+    list-style: none;
+    top:0px;
+    width:100%;
+    margin: 0;
+    padding: 0;
+    /*position : fixed;*/
+  }
+  .tools li {
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 28px;
+    border-top: #dad7d9 solid 1px;
+    background: #fefefe;
+    cursor: pointer;
+    position: relative;
+  }
+  .tools-h li {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 28px;
+    border-top: #dad7d9 solid 1px;
+    background: #fefefe;
+    cursor: pointer;
+    position: relative;
+    margin: 2px;
+    
+  }
+  
+  .tools-h li:hover {
+    background: #f2f1f2;
+  }
+  
+  .tools-h li.active,.tools-h li.active {
+    background: #e34f51;
+  }
+  
+  .hide {
+    display: none;
+  }
+  
+  .canvasDiv{
+    /*position: relative;*/
+    width: 100%;
+    height: 100%;
+    background: #777;
+   
+  }
+  .tool_attr{
+    /*position: relative;*/
+    width: 100%;
+    height: 100%;
+    background: rgb(245, 243, 243);
+   
+  }  
+  .icon-tools {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-image: url("../image/tools-28.png");
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+  .icon-tools-h {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-image: url("../image/tools-282.png");
+    background-repeat: no-repeat;
+  }
+  
+  .icon-color-gray {
+    background-position: -0px -0px;
+  }
+  
+  .icon-color-red {
+    background-position: -28px -0px;
+  }
+  
+  .icon-color-black {
+    background-position: -56px -0px;
+  }
+  
+  .icon-color-blue {
+    background-position: -84px -0px;
+  }
+  
+  .icon-color-select {
+    background-position: -112px -0px;
+  }
+  
+  .icon-eye-black {
+    background-position: -140px -0px;
+  }
+  
+  .icon-eye-select {
+    background-position: -168px -0px;
+  }
+  
+  .icon-noeye-black {
+    background-position: -196px -0px;
+  }
+  
+  .icon-noeye-select {
+    background-position: -0px -28px;
+  }
+  
+  .icon-grids-black {
+    background-position: -28px -28px;
+  }
+  
+  .icon-grids-select {
+    background-position: -56px -28px;
+  }
+  
+  .icon-nogrids-black {
+    background-position: -84px -28px;
+  }
+  
+  .icon-nogrids-select {
+    background-position: -112px -28px;
+  }
+  
+  .icon-pen-black {
+    background-position: -140px -28px;
+  }
+  
+  .icon-pen-select {
+    background-position: -168px -28px;
+  }
+  
+  .icon-move-black {
+    background-position: -196px -28px;
+  }
+  
+  .icon-move-select {
+    background-position: -0px -56px;
+  }
+  
+  .icon-text-black {
+    background-position: -28px -56px;
+  }
+  
+  .icon-text-select {
+    background-position: -56px -56px;
+  }
+  
+  .icon-dottedline-arrow-black {
+    background-position: -84px -56px;
+  }
+  
+  .icon-dottedline-arrow-select {
+    background-position: -112px -56px;
+  }
+  
+  .icon-line-black {
+    background-position: -140px -56px;
+  }
+  
+  .icon-line-select {
+    background-position: -168px -56px;
+  }
+  
+  .icon-dottedline-black {
+    background-position: -196px -56px;
+  }
+  
+  .icon-dottedline-select {
+    background-position: -0px -84px;
+  }
+  
+  .icon-arrow-black {
+    background-position: -28px -84px;
+  }
+  
+  .icon-arrow-select {
+    background-position: -56px -84px;
+  }
+  
+  .icon-circle-black {
+    background-position: -84px -84px;
+  }
+  
+  .icon-circle-select {
+    background-position: -112px -84px;
+  }
+  
+  .icon-ellipse-black {
+    background-position: -140px -84px;
+  }
+  
+  .icon-ellipse-select {
+    background-position: -168px -84px;
+  }
+  
+  .icon-square-black {
+    background-position: -196px -84px;
+  }
+  
+  .icon-square-select {
+    background-position: -0px -112px;
+  }
+  
+  .icon-rectangle-black {
+    background-position: -28px -112px;
+  }
+  
+  .icon-rectangle-select {
+    background-position: -56px -112px;
+  }
+  
+  .icon-rightangle-black {
+    background-position: -84px -112px;
+  }
+  
+  .icon-rightangle-select {
+    background-position: -112px -112px;
+  }
+  
+  .icon-equilateral-black {
+    background-position: -140px -112px;
+  }
+  
+  .icon-equilateral-select {
+    background-position: -168px -112px;
+  }
+  
+  .icon-isosceles-black {
+    background-position: -196px -112px;
+  }
+  
+  .icon-isosceles-select {
+    background-position: -0px -140px;
+  }
+  
+  .icon-isoscelesrighttriangle-black {
+    background-position: -28px -140px;
+  }
+  
+  .icon-isoscelesrighttriangle-select {
+    background-position: -56px -140px;
+  }
+  
+  .icon-remove-black {
+    background-position: -84px -140px;
+  }
+  
+  .icon-remove-select {
+    background-position: -112px -140px;
+  }
+  
+  .icon-clear-black {
+    background-position: -140px -140px;
+  }
+  
+  .icon-clear-select {
+    background-position: -168px -140px;
+  }
+  
+  /*
+   .icon-pen-black {
+    background-position: -224px -168px;
+  }
+  
+  .icon-pen-select {
+    background-position: -252px -168px;
+  }
+  */
+  .icon-isolator-black {
+    background-position: -224px -0px;
+  }
+  
+  .icon-isolator-select {
+    background-position: -224px -28px;
+  }
+
+  .icon-breaker-black {
+    background-position: -224px -56px;
+  }
+  
+  .icon-breaker-select {
+    background-position: -224px -84px;
+  }
+  .icon-ground-black {
+    background-position: -224px -112px;
+  }
+  
+  .icon-ground-select {
+    background-position: -252px -140px;
+  }
+  .icon-capacitor-black {
+    background-position: -252px -0px;
+  }
+  
+  .icon-capacitor-select {
+    background-position: -252px -28px;
+  }
+  .icon-outer-black {
+    background-position: -196px -140px;
+  }
+  
+  .icon-outer-select {
+    background-position: -224px -140px;
+  }
+  .icon-transformer-black {
+    background-position: -252px -56px;
+  }
+  
+  .icon-transformer-select {
+    background-position: -252px -84px;
+  }
+  .icon-warning-black {
+    background-position: -0px -168px;
+  }
+  
+  .icon-warning-select {
+    background-position: -28px -168px;
+  }
+  .icon-rectarea-black {
+    background-position: -56px -168px;
+  }
+  
+  .icon-rectarea-select {
+    background-position: -84px -168px;
+  }
+
+  .icon-ellipsearea-black {
+    background-position: -112px -168px;
+  }
+  
+  .icon-ellipsearea-select {
+    background-position: -140px -169px;
+  }
+
+  .icon-linewidth-black {
+    background-position: -168px -168px;
+  }
+  
+  .icon-linewidth-select {
+    background-position: -196px -168px;
+  }
+  .icon-picture-black {
+    background-position: -252px -140px;
+  }
+  .icon-picture-select {
+    background-position: -252px -140px;
+  }
+  .video-preview-modal-div {
+    width: 69%;
+    margin: 5% auto 0;
+    text-align: center;
+    background-color: #ffffff;
+  }
+  
+  /********* 添加对错号 **************/
+  .icon-right-black{
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    background-image: url(../image/right.png);
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+  
+  .icon-right-select{
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    background-image: url(../image/right-sel.png);
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+  
+  .icon-wrong-black{
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    background-image: url(../image/wrong.png);
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+  
+  .icon-wrong-select{
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    background-image: url(../image/wrong-sel.png);
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+  
+  .icon-right-small-black{
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-image: url(../image/right-small.png);
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+  
+  .icon-right-small-select{
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-image: url(../image/right-small-sel.png);
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+  
+  .icon-wrong-small-black{
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-image: url(../image/wrong-small.png);
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+  
+  .icon-wrong-small-select{
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-image: url(../image/wrong-small-sel.png);
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+  
+  .icon-submit-black{
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-image: url(../image/submit.png);
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+  
+  .icon-submit-select{
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-image: url(../image/submit-sel.png);
+    background-repeat: no-repeat;
+    margin-top: 10px;
+  }
+
+  fieldset
+{
+	display:block;
+	border:1px solid #7F9DB9;
+}
+/*预览*/
+legend{
+  margin-bottom: 2px;
+}
+.preview
+{
+	width:98%;/* 450px;*/
+	padding:5px; 
+	margin-left:1px;
+	border:1px solid #7F9DB9;
+}
+.preview .tt
+{
+	width:80px;
+  
+}
+.preview .txt
+{
+	width:60px;
+  text-align: center;
+}
+.preview .btn
+{
+	width:60px;
+	height:30px;
+	line-height:28px;
+}
+.preview .btn2
+{
+	width:90px;
+	height:22px;
+	line-height:18px;
+}
+.preview .sel
+{
+	width:105px;
+	height:25px;
+	line-height:35px;
+}

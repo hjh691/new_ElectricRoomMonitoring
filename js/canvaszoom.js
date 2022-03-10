@@ -7,12 +7,12 @@ var config = function() {
       canvasId: "c"
     };
   };
-  
+  var ffff={"Black":"900","Bold":"700","ExtraBlack":"900","ExtraBold":"800","ExtraLight":"200","Light":"300","Medium":"500","Normal":"normal","SemiBold":"600","Thin":"100"};
   //初次设置画板
   (function() {
     setZoom(window.canvas);
   })();
-  
+
   //设置缩放
   function setZoom(canvas) {
     var canvasDiv = jQuery("#" + config().canvasParentId);
@@ -45,4 +45,6 @@ var config = function() {
   window.onresize = function() {
     setZoom(window.canvas);
   };
+  //测试功能  获取系统默认字体
+  
   

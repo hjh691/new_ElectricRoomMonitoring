@@ -2667,6 +2667,7 @@ function sendstr(action,para){
 	//ws.send()
 }
 function closews(){
+	window.open("drawingboard.html");
 	if(ws)
 		ws.close();
 	//alert('连接已断开');

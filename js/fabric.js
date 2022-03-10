@@ -17238,11 +17238,59 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
      * @return {String}
      */
     getSvgCommons: function() {
+      if(this.canvas.custom_attribute_array){ //保存自定义属性需修改（20220304）
+        //console.log(this.canvas.custom_attribute_array); 
+        var custom_result = []; 
+        for(var i in this.canvas.custom_attribute_array){ 
+         var custom_attribute = this.canvas.custom_attribute_array[i]; 
+         if(this[custom_attribute]){ 
+          var val = this[custom_attribute]; 
+          if(typeof val == "string"){ 
+           val = '"'+val+'"';  
+          } 
+          custom_result.push(custom_attribute + '=' + val); 
+         }  
+        } 
+        console.log(custom_result); 
+        if(custom_result){ 
+         return custom_result.join(" ") + " "; 
+        } 
+      }else{ 
+        return this.id ? 'id="' + this.id + '" ' : ''; 
+      } //保存自定义属性需修改（20220304）
       return [
         this.id ? 'id="' + this.id + '" ' : '',
         this.clipPath ? 'clip-path="url(#' + this.clipPath.clipPathId + ')" ' : '',
       ].join('');
     },
+
+    /** 
+* Returns id attribute for svg output 
+* @return {String} 
+*/ 
+getSvgId: function() { 
+  if(this.canvas.custom_attribute_array){ 
+  console.log(this.canvas.custom_attribute_array); 
+  var custom_result = []; 
+  for(var i in this.canvas.custom_attribute_array){ 
+   var custom_attribute = this.canvas.custom_attribute_array[i]; 
+   if(this[custom_attribute]){ 
+    var val = this[custom_attribute]; 
+    if(typeof val == "string"){ 
+     val = '"'+val+'"';  
+    } 
+    custom_result.push(custom_attribute + '=' + val); 
+   }  
+  } 
+  console.log(custom_result); 
+  if(custom_result){ 
+   return custom_result.join(" ") + " "; 
+  } 
+  } 
+  else{ 
+  return this.id ? 'id="' + this.id + '" ' : ''; 
+  } 
+}, 
 
     /**
      * Returns transform-string for svg-export
