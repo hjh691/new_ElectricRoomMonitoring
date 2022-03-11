@@ -364,7 +364,8 @@ function initrealdata(){
 		var pages=document.getElementById("iframe_main");
 		//var data=$("#tree").treeview("getSelected");
 		//if(pages.src.indexOf("/newrealdata.html")<=0){
-			pages.src="newrealdata.html";
+			//pages.src="newrealdata.html";//20220310
+			pages.src="realdata_vue.html"//vue框架下的页面
 		//}
 		sessionStorage.pageindex=2;
 	}
@@ -2236,7 +2237,7 @@ function sendorder(order,callback,datas){
 				ajaxLoadingHidden();
 				//var reg = new RegExp("(^|&)value1=([^&]*)(&|$)");
 				if (status == "success") {
-					showstateinfo(xml,"sendorder");
+					//showstateinfo(xml,"sendorder");
 					sessionStorage.errortime = 0;
 					if(sessionStorage.islogin==false){
 						showusername();

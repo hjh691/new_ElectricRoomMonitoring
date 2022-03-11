@@ -368,7 +368,7 @@
 		function refreshwindow() {//重画窗口，规定 尺寸,尤其是浮动窗口的位置
 			try{	
 				isresize=true;
-				showloadlayer();
+				//showloadlayer();
 				if(!sessionStorage.framepage)
 					sessionStorage.framepage = iframemain.attr('src');
 				//if(sessionStorage.framepage.indexOf("video.html")>=0){
@@ -1293,10 +1293,15 @@
 					break;
 				case '2':
 					//var str_page=(iframemain.attr('src'));
-					if((iframemain.attr('src')).indexOf("newrealdata.html")>=0  && flag==undefined){
+					/*if((iframemain.attr('src')).indexOf("newrealdata.html")>=0  && flag==undefined){
 						iframemain[0].contentWindow.initrealdata();
 					}else{
 						iframemain.attr('src', "newrealdata.html");
+					}*/
+					if((iframemain.attr('src')).indexOf("realdata_vue.html")>=0  && flag==undefined){
+						iframemain[0].contentWindow.initrealdata();
+					}else{
+						iframemain.attr('src', "realdata_vue.html");
 					}
 					break;
 				case '3':
@@ -1384,6 +1389,7 @@
 					break;//添加注释.......
 				default:
 					iframemain.arrt("src","newrealdata.html");
+					iframemain.arrt("src","realdata_vue.html");
 			}
 			sessionStorage.framepage=iframemain.attr('src');
 		}catch(err){
