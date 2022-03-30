@@ -1,3 +1,20 @@
+var v_power=new Vue({
+    el:'#room_power',
+    data:{
+        PT_A: '4:1',
+        PT_B: '4:1',
+        PT_C: '4:1',
+        CT_A: '200:5',
+        CT_B: '200:5',
+        CT_C: '200:5',
+        pt_a: '4:1',
+        pt_b: '4:1',
+        pt_c: '4:1',
+        ct_a: '300:5',
+        ct_b: '300:5',
+        ct_c: '200:5',
+    }
+})
 var chart_P=echarts.init(document.getElementById("chart-P"),'light');
 var chart_vA=echarts.init(document.getElementById("chart-vA"));
 var chart_vB=echarts.init(document.getElementById("chart-vB"));
@@ -12,7 +29,7 @@ var chart_vc=echarts.init(document.getElementById("chart-vc"));
 var chart_ia=echarts.init(document.getElementById("chart-ia"));
 var chart_ib=echarts.init(document.getElementById("chart-ib"));
 var chart_ic=echarts.init(document.getElementById("chart-ic"));
-//初始化数据
+//初始化数据 
 var category = ['A相功率','B相功率', 'C相功率'];
 var barDatas = [[800, 850, 750],[450,600,1200]];
 initbarchart(chart_P,barDatas[0]);

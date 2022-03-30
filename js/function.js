@@ -191,7 +191,7 @@ function LoginOrder(name, ps,flag,order,callback,datas) {
 			sessionStorage.errortime++;
 			if(sessionStorage.errortime>=4){
 				sessionStorage.islogin=false;
-				showusername(true);
+				//showusername(true);
 			}
 		},
 		success: function(data, status,xml) {
@@ -217,7 +217,7 @@ function LoginOrder(name, ps,flag,order,callback,datas) {
 						
 						showstateinfo(localStorage.username+"用户登录成功!","loginOrder");
 					} else {
-						showusername();
+						//showusername();
 						showstateinfo(localStorage.username+"用户重新登录成功!","loginOrder");
 						if(order!=null)
 							sendorder(order,callback,datas);
@@ -332,11 +332,11 @@ function init_var(){
 }
 //获取用户详细信息 used by electricroommonitor
 function GetUserProfile() {
-	if(window.parent.wsconnect){
-		window.parent.wssend("GetProfile",JSON.parse("{}"));
-	}else{
+	//if(window.parent.wsconnect){
+	//	window.parent.wssend("GetProfile",JSON.parse("{}"));
+	//}else{
 		sendorder("GetProfile",getprofile_bc);
-	}
+	//}
 }
 function getprofile_bc(data){
 	//localStorage.errortime = 0;
@@ -374,7 +374,8 @@ function initotherdata(){
 	if(sessionStorage.pageindex!=17){
 		sessionStorage.pageindex=17;
 		var ifm=$('#iframe_main');
-		ifm.attr('src','realdata_iot.html');
+		//ifm.attr('src','realdata_iot.html');
+		ifm.attr('src','realdata_iot_vue.html');
 	}
 	updatapcnav(17);
 }
@@ -436,7 +437,7 @@ function showusername(flag) {
 		yhout.innerHTML = "<a href='javascript:logout()' style='color:white;text-decoration: none;'>[退出]</a>";
 		//document.getElementById("iframe_main").src="userprofile.html";
 	} else {
-		yhout.innerHTML = "<a href='index.html' style='color:white;text-decoration: none;'>[登录]</a>";
+		yhout.innerHTML = "<a href='index.html' style='color:white;text-decoration: none;'>[登录] </a>";
 	}
 }
 //用户属性页面 used by ele
@@ -802,7 +803,7 @@ function loadcollectionreport(){
 	if(sessionStorage.pageindex!=16){
 		updatapcnav(16);
 		sessionStorage.pageindex = 16;
-		document.getElementById("iframe_main").src = 'collectionreport.html';
+		document.getElementById("iframe_main").src ='reportlist.html';// 'collectionreport.html';
 	}
 }
 //显示新密码输入选项 used by ele
@@ -948,7 +949,7 @@ function closewin(ranid) {
 function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 	//if (sessionStorage.islogin == "true") {
 		if (typeof(sensorid) != "undefined") {
-			if(window.parent.wsconnect){
+			/*if(window.parent.wsconnect){
 				var apara=new Object();
 				apara.sensorId=parseInt(sensorid);
 				apara.folder=folder;
@@ -956,7 +957,7 @@ function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 				apara.from=kssj;
 				apara.to=jssj;
 				window.parent.wssend("GetHistoriesBySensor",apara);
-			}else{
+			}else{*/
 				sendorder("GetHistoriesBySensor?sensorId=" + sensorid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
 					if(!data){
 						decodedatas(null);
@@ -972,7 +973,7 @@ function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 						decodedatas(null);
 					}
 				});
-			}
+			//}
 		}
 	//}
 }
@@ -980,7 +981,7 @@ function gethistorydata(sensorid,folder,name,kssj, jssj) {//,aparent
 function gethistorybynode(nodeid,folder,name,kssj, jssj) {//,aparent
 	//if (sessionStorage.islogin == "true") {
 		if (typeof(nodeid) != "undefined") {
-			if(window.parent.wsconnect){
+			/*if(window.parent.wsconnect){
 				var apara=new Object();
 				apara.nodeid=parseInt(nodeid);
 				apara.folder=folder;
@@ -988,7 +989,7 @@ function gethistorybynode(nodeid,folder,name,kssj, jssj) {//,aparent
 				apara.from=kssj;
 				apara.to=jssj;
 				window.parent.wssend("GetHistoriesByNode",apara);
-			}else{
+			}else{*/
 				sendorder("GetHistoriesByNode?nodeId=" + nodeid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
 					if(!data){
 						decodedatas(null,1);
@@ -1004,7 +1005,7 @@ function gethistorybynode(nodeid,folder,name,kssj, jssj) {//,aparent
 						decodedatas(null,1);
 					}
 				});
-			}
+			//}
 		}
 	//}
 }
@@ -1012,7 +1013,7 @@ function gethistorybynode(nodeid,folder,name,kssj, jssj) {//,aparent
 function getmessagesbysensor(sensorid,folder,name,kssj, jssj) {//,aparent
 	//if (sessionStorage.islogin == "true") {
 		if (typeof(sensorid) != "undefined") {
-			if(window.parent.wsconnect){
+			/*if(window.parent.wsconnect){
 				var apara=new Object();
 				apara.sensorId=parseInt(sensorid);
 				apara.folder=folder;
@@ -1020,7 +1021,7 @@ function getmessagesbysensor(sensorid,folder,name,kssj, jssj) {//,aparent
 				apara.from=kssj;
 				apara.to=jssj;
 				window.parent.wssend("GetMessagesBySensor",apara);
-			}else{
+			}else{*/
 				sendorder("GetMessagesBySensor?sensorId=" + sensorid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
 					if(!data){
 						decodedatas(null);
@@ -1036,7 +1037,7 @@ function getmessagesbysensor(sensorid,folder,name,kssj, jssj) {//,aparent
 						decodedatas(null);
 					}
 				});
-			}
+			//}
 		}
 	//}
 }
@@ -1044,7 +1045,7 @@ function getmessagesbysensor(sensorid,folder,name,kssj, jssj) {//,aparent
 function getmessagesbynode(nodeid,folder,name,kssj, jssj) {//,aparent
 	//if (sessionStorage.islogin == "true") {
 		if (typeof(nodeid) != "undefined") {
-			if(window.parent.wsconnect){
+			/*if(window.parent.wsconnect){
 				var apara=new Object();
 				apara.nodeId=parseInt(nodeid);
 				apara.folder=folder;
@@ -1052,7 +1053,7 @@ function getmessagesbynode(nodeid,folder,name,kssj, jssj) {//,aparent
 				apara.from=kssj;
 				apara.to=jssj;
 				window.parent.wssend("GetMessagesByNode",apara);
-			}else{
+			}else{*/
 				sendorder("GetMessagesByNode?nodeId=" + nodeid + "&folder="+folder+"&name="+name+"&from=" + kssj + "&to=" + jssj,function(data){
 					if(!data){
 						decodedatas(null);
@@ -1068,7 +1069,7 @@ function getmessagesbynode(nodeid,folder,name,kssj, jssj) {//,aparent
 						decodedatas(null);
 					}
 				});
-			}
+			//}
 		}
 	//}
 }
@@ -1094,12 +1095,12 @@ function initdrawing() {
 function GetBinary(binariesid) { //user by electricroommontioring drawmap.html
 	try{
 	sessionStorage.pageindex = 1;
-	if (typeof(binariesid) != "undefined") {
-		if(window.parent.wsconnect){
-			window.parent.wssend("GetNodeGraphics",JSON.parse('{"id":'+parseInt(binariesid)+'}'));
-		}else{
+	if (typeof(binariesid) != "undefined" && binariesid!='' && binariesid!=null) {
+		//if(window.parent.wsconnect){
+		//	window.parent.wssend("GetNodeGraphics",JSON.parse('{"id":'+parseInt(binariesid)+'}'));
+		//}else{
 			sendorder("GetNodeGraphics?id="+binariesid,getnodegraphics_bc)
-		}
+		//}
 	}
 	}catch(err){
 		showstateinfo(err.message,"GetBinary");
@@ -1696,13 +1697,13 @@ function initsysteminfo(){//used by electricroommonitor 初始化系统设置
 //获取实时数据  used by electricroommonitor mainpage.html realdata.html formatting
 function getrealdatabynodeid(anodeid){
 	if (typeof(anodeid)!="undefined"&&anodeid!==null) {
-		if(typeof(wsconnect)=="undefined" || !wsconnect){
+		//if(typeof(wsconnect)=="undefined" || !wsconnect){
 			sendorder("GetRealsNew?dataId=" + anodeid,function(data){
 				realcall(data,anodeid);
 			});
-		}else{
-			wssend("GetRealsNew",JSON.parse('{"dataId":'+parseInt(anodeid)+"}"));
-		}
+		//}else{
+		//	wssend("GetRealsNew",JSON.parse('{"dataId":'+parseInt(anodeid)+"}"));
+		//}
 	}
 }
 function realcall(data,dataid){
@@ -1842,7 +1843,7 @@ function seletime(obj){
 }
 //导航按钮选中指示标志//20200212 
 function updatapcnav(obj){
-	for(var i=1;i<18;i++){
+	for(var i=1;i<21;i++){
 		var nav=document.getElementById("nav"+i);
 		if(nav==null){//如果为null。就获取父窗口下的元素。 
 			nav=window.parent.document.getElementById("nav"+i);
@@ -1870,7 +1871,7 @@ function updatapcnav(obj){
 		//}
 	}
 	//if(window.parent.tree2)
-		window.parent.inittreeview_level2();
+		//window.parent.inittreeview_level2();
 		window.parent.document.getElementById("tree").style.pointerEvents ="auto";
 		switch(obj){//控制标签树形菜单是否显示。
 		case 3:
@@ -1881,6 +1882,7 @@ function updatapcnav(obj){
 		case 15:
 		case 16:
 		case 17:
+		case 20:
 			if(window.parent.tree2){
 				window.parent.document.getElementById('tree_chi').style.display="block";
 				window.parent.document.getElementById('tree').style.height='60%';
@@ -1901,10 +1903,8 @@ var sorter=false;
 		sortTable:{
             sort:function(tableId,Idx,adatatype){
 				var table = document.getElementById(tableId);
-                var tbody = table.tBodies[0];//tBodies[0]取表头thead，tBodies[1]取tbody
-				var tr = tbody.rows;
 				sessionStorage.realdata_index=Idx;
-				if((tableId=="realtable")){//||(tableId="ohter_realtable")
+				if((tableId=="my_table")){//||(tableId="ohter_realtable")
 					try{
 						if(Idx>=hidden_cells){
 							catalog=getCatalog(adatatype,Idx-hidden_cells);
@@ -1920,16 +1920,20 @@ var sorter=false;
 							//kssj = (tr.cells[2].innerHTML).substring(0, 10) + " 00:00:00";//20200217  取当日的时间而不是当前时间
 							//jssj = (tr.cells[2].innerHTML);
 							//if(sessionStorage.realdata_index!=Idx){
-								decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，但将抵消排序操作；使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。
+								//decoderealdata();//使用此函数在更改查看项目后可以实时刷新所有的图形数据，但将抵消排序操作；使用gethistorydata（）只刷新曲线和24小时极值，其他要等下一次自动刷新。
 							//}
-							
-							//gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
-							//refreshData();
+							//刷新各个图表和24h曲线数据
+							gethistorydata(sensor_Id,catalog,typename, kssj, jssj, 1);
+							refreshData();
 						}
 					}catch(err){
 
 					}
 				}
+				if(!table)
+					return;
+				var tbody = table.tBodies[0];//tBodies[0]取表头thead，tBodies[1]取tbody
+				var tr = tbody.rows;
 				if (tbody.sortCol == Idx){
 					sorter=(!sorter);
 				}else
@@ -2012,9 +2016,16 @@ var sorter=false;
 })(jQuery);
 //导出表格到Excel。使用.js插件。
 function exporttoexcel(tabid){
+	let caption=null;
+	try{
+		caption=$("#"+tabid)[0].caption.innerText+".xls";
+	}catch(exception){}
+	if(!caption){
+		caption="Excel" + new Date().getTime() + ".xls";
+	}
 	$("#"+tabid).table2excel({
 		exclude  : ".noExl",                                       //过滤位置的 css 类名
-		filename : "Excel" + new Date().getTime() + ".xls",        //文件名称
+		filename : caption,        //文件名称
 		name: "Excel Document Name.xlsx",
 		exclude_img: true,
 		exclude_links: true,
@@ -2213,7 +2224,10 @@ function sendorder(order,callback,datas){
 				}else if(jqXHR.hasOwnProperty("responseJSON")&&jqXHR.responseJSON==undefined){//0928修改，判断是否由此项
 					showmsg("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试",order);
-				}	else{
+				}else if(errorThrown=="Bad Request"){
+					showmsg("操作失败: "+jqXHR.responseText);
+				}
+					else{
 					showstateinfo('数据获取失败',order);//showmsg(' 数据获取失败',info_showtime);
 				}
 				
@@ -2225,7 +2239,7 @@ function sendorder(order,callback,datas){
 					sessionStorage.islogin=false;
 					//sessionStorage.errortime=0;
 					//localStorage.username="未登录";
-					showusername(true);
+					//(true);
 				}
 				callback(null);
 			}catch(err){
@@ -2240,7 +2254,7 @@ function sendorder(order,callback,datas){
 					//showstateinfo(xml,"sendorder");
 					sessionStorage.errortime = 0;
 					if(sessionStorage.islogin==false){
-						showusername();
+						//showusername();
 						sessionStorage.islogin = true;
 					}
 					if (data.Error == null) {
@@ -2655,6 +2669,7 @@ function sendstr(action,para){
 	var str={
 		"Guid":"websocketGuid"+wscount,
 		"Action":"GetRealsNew",
+		"AccessToken":sessionStorage.accessToken,
 		"Para":{
 			"AccessToken":sessionStorage.accessToken
 		}
@@ -2668,7 +2683,7 @@ function sendstr(action,para){
 	//ws.send()
 }
 function closews(){
-	window.open("drawingboard.html");
+	//window.open("drawingboard.html");
 	if(ws)
 		ws.close();
 	//alert('连接已断开');
@@ -2690,16 +2705,18 @@ function WebSocketTest() {
 		ws = new WebSocket(ws_url+"ws");//ws://123.207.136.134:9010/ajaxchattest此在线测试地址可以正常连接和通信。192.168.10.250:805/ws
 		ws.onopen = function (evt) {
 			console.log("连接成功...");
-			// Web Socket 已连接上，使用 send() 方法发送数据 encodeURIComponent
+			sessionStorage.wscount=0;
+			wsconnect=true;
+			/*// Web Socket 已连接上，使用 send() 方法发送数据 encodeURIComponent
 			var str={
 				"Guid":"abcdefg",
 				"Action":"BindAccessToken",
+				"AccessToken":sessionStorage.accessToken,
 				"Para":{
 					"AccessToken":sessionStorage.accessToken
 				}
 			}
-			sessionStorage.wscount=0;
-			ws.send(JSON.stringify(str));
+			ws.send(JSON.stringify(str));*/
 		};
 		ws.onmessage = function (evt) {//接收到信息时触发此事件，回调函数
 			//var received_msg =decodeURIComponent(evt.data).substring(0,decodeURIComponent(evt.data).indexOf('['));// ;
@@ -2762,6 +2779,15 @@ function WebSocketTest() {
 				case "RefreshToken":
 					refreshtoken_bc(obj_rec.result);
 					break;
+				case "GetReportConfigs":
+					iframemain[0].contentWindow.getreportconfiglist_bc(obj_rec.result);
+					break;
+				case "GetReportList":
+					iframemain[0].contentWindow.getreportlist_bc(obj_rec.result);
+					break;
+				case "GetReportDetail":
+					iframemain[0].contentWindow.getreportdetail_bc(obj_rec.result);
+					break;
 				}
 			}
 			console.log(rec_datas);
@@ -2786,6 +2812,12 @@ function WebSocketTest() {
 	}else {
 		// 浏览器不支持 WebSocket
 		alert("您的浏览器不支持 WebSocket!");
+	}
+}
+function refreshlist(tr){
+	if(tr){
+		var lis=$(tr.parentNode).siblings().css("background", "");
+    $(tr.parentNode).css("background", '#85e494');
 	}
 }
 /***

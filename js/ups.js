@@ -18,6 +18,32 @@ var ups_ua=document.getElementById("ups_a");
 var ups_ub=document.getElementById("ups_b");
 var ups_uc=document.getElementById("ups_c");
 var ups_f=document.getElementById("ups_pl");
+var ups_data={
+    input_ua : "235.22",
+    input_ub:"230.22",
+    input_uc:"230.22",
+    input_f:"50",
+    bat_state:"正常",
+    bat_con:"230.22",
+    bat_u:"230.22",
+    bat_f:"0",
+    pl_ua:"230.22",
+    pl_ub:"230.22",
+    pl_uc:"230.22",
+    pl_f:"50",
+    output_ua:"220.22",
+    output_ub:"220.22",
+    output_uc:"220.22",
+    output_f:"50",
+    ups_ua:"220.22",
+    ups_ub:"220.22",
+    ups_uc:"220.22",
+    ups_f:"50",
+}
+var v_ups=new Vue({
+    el:'#div1',
+    data:ups_data,
+})
 initups()
 function initups(){
     input_ua.value="225.22";

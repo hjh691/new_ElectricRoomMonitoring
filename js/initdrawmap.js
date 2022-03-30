@@ -215,7 +215,7 @@ function refresh(obj,isrefresh){
     if(graphic!=null){
         drawmap(graphic,ctx,isrefresh);
     }else{
-        getbinary();
+        //getbinary();
     }
 }
 function refreshbinary(){

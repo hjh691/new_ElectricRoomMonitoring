@@ -130,166 +130,177 @@
         </style>
     </head>
     <body onload="initsysteminfo()">
-        <div class="container" id="maxname1" >
-            <button class="selected" onclick="javascript:history.go(-1)" style="float:right;margin-right:20px;display:none;">返回</button>
-            <div class="row">
-                <div class="col-xs-3" style="text-align: right;font-size:18px;">
-                    <label></label>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 " align="center">
-                    <img src="res/jka_100.png" style="height: 100px;" />
-                    <div style="color:#0000b0;font-size:16px;display:none">
-                        <p id="p1"></p><!---->
-                        <p id="p2"></p>
-                        <p id="p3"></p>
-                        <p id="p4"></p>
-                        <p id="p5"></p>
+        <!--<ul class="nav nav-tabs" disabled="disabled" id="nav">
+            <li class="active"><a href="#tab_webpara" data-toggle="tab">前端参数</a></li>
+            <li ><a href="#tab_servicepara" data-toggle="tab"><i class="glyphicon glyphicon-user" ></i>后台维护</a></li>
+        </ul>
+        <div class="tab-content" id="tab-content">
+            <div class="tab-pane in fade active" id="tab_webpara">-->
+                <div class="container" id="maxname1" >
+                    <button class="selected" onclick="javascript:history.go(-1)" style="float:right;margin-right:20px;display:none;">返回</button>
+                    <div class="row">
+                        <div class="col-xs-3" style="text-align: right;font-size:18px;">
+                            <label></label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 " align="center">
+                            <img src="res/jka_100.png" style="height: 100px;" />
+                            <div style="color:#0000b0;font-size:16px;display:none">
+                                <p id="p1"></p><!---->
+                                <p id="p2"></p>
+                                <p id="p3"></p>
+                                <p id="p4"></p>
+                                <p id="p5"></p>
+                            </div>
+                        </div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set" >
+                            <label>系统名称</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 " >
+                            <input type="text" style="width:75%;" id="sysname"/><button  class="btn-hide" onclick="save(0)">保存</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set" >
+                            <label>公司名称</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 " >
+                            <input type="text" style="width:75%;" id="companyname"/><button  class="btn-hide" onclick="save(1)">保存</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set" >
+                            <label>公司网站</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 " >
+                            <input type="text" style="width:75%;" id="companyurl"/><button class="btn-hide"  onclick="save(2)">保存</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>登录页面背景图片</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 " >
+                            <input type="file" id="file" onchange="previewHandle(this)" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;"/> 
+                            <input type="text" style="width:75%;" id="bg_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')" title="背景文件全路径名称"/>
+                            <button class="selected" onclick="selectFile()" sytle="width:150px;height:40px;">浏览</button>
+                        </div>
+                    </div><!---->
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>小数保留位数</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 " >
+                            <input type="text" style="width:75%;" id="decimalnum" maxlength="1" oninput = "value=value.replace(/[^\d]/g,'')" title="一位整数"/><button  class="btn-hide" onclick="save(3)">保存</button>
+                            <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(3)"></a>
+                            <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(3)"></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>提示框显示时长(毫秒)</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 " >
+                            <input type="text" style="width:75%;" id="delaytime" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')" title="最多4位整数(毫秒)"/>
+                            <button  class="btn-hide" onclick="save(4)">保存</button>
+                            <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(4)"></a>
+                            <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(4)"></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>实时数据显示模式</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 ">
+                            <select id = "realdatashowmodle" style="width:75%;height:35px;">
+                                <option value= "0">显示全部</option>
+                                <option value= "1">显示在线</option>
+                                <button  class="btn-hide" onclick="save(10)">保存</button>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>实时数据刷新间隔(X10秒)</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 " >
+                            <input type="text" style="width:75%;" id="refreshtime" maxlength="2" oninput = "value=value.replace(/[^\d]/g,'')" title="最多2位整数(分钟)"/><button  class="btn-hide" onclick="save(6)">保存</button>
+                            <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(6)"></a>
+                            <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(6)"></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>隐藏左侧菜单</label>
+                        </div>
+                        <div class="col-xs-4 col-sm-6 col-md-4 " align="left" >
+                            <img id="switch01"  style="height:30px;vertical-align: middle;margin-right: 10%;" title="显示/隐藏左侧菜单" onclick="save(15)"/>
+                        </div>
+                    </div>
+                    <!--<div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>使用websocket</label>
+                        </div>
+                        <div class="col-xs-4 col-sm-6 col-md-4 " align="left" >
+                            <img id="switch02"  style="height:30px;vertical-align: middle;margin-right: 10%;" title="是否使用websocket通信" onclick="save(16)"/>
+                        </div>
+                    </div>-->
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>字幕滚动速度</label>
+                        </div>
+                            <div class="col-xs-12 col-sm-6 col-md-4 " >
+                                <input type="number" style="width:75%;" id="speed_scroll" maxlength="1" title="一位整数" value="3"/><button  class="btn-hide" onclick="save(5)">保存</button>
+                                <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(5)"></a>
+                                <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(5)"></a>
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>语音播放速度</label>
+                        </div>
+                            <div class="col-xs-12 col-sm-6 col-md-4 " >
+                                <input type="number" style="width:75%;" id="speech_rate" maxlength="3"  title="一位整数" value="2"/><button  class="btn-hide" onclick="save(7)">保存</button>
+                                <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(7)"></a>
+                                <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(7)"></a>
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>语音播放语调</label>
+                        </div>
+                            <div class="col-xs-12 col-sm-6 col-md-4 " >
+                                <input type="number" style="width:75%;" id="speech_pitch" maxlength="3"  title="一位整数" value="1"/><button  class="btn-hide" onclick="save(8)">保存</button>
+                                <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(8)"></a>
+                                <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(8)"></a>
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4 col-md-3 system-set">
+                            <label>相同告警时间间隔</label>
+                        </div>
+                            <div class="col-xs-12 col-sm-6 col-md-4 " >
+                                <input type="number" style="width:75%;" id="between_time" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')" title="一位整数" value="1"/><button  class="btn-hide" onclick="save(9)">保存</button>
+                                <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(9)"></a>
+                                <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(9)"></a>
+                            </div>
+                    </div>
+                    <div class="row" align="center">
+                        <!--<div class="col-xs-4 col-md-3 system-set"> 
+                            <label>图片文件</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4 " >
+                            <input type="files" style="width:75%;" id="" /><button onclick="save(4)">保存更改</button>
+                        </div><br><br>-->
+                        <button type="button" class="btn btn-primary btn-lg" sytle="width:550px;height:40px;line-height:40px" onclick="saveall()">保存修改</button>
                     </div>
                 </div>
-            </div><br>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set" >
-                    <label>系统名称</label>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="sysname"/><button  class="btn-hide" onclick="save(0)">保存</button>
-                </div>
+            <!--</div>
+            <div class="tab-pane in fade" id="tab_servicepara">
+
             </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set" >
-                    <label>公司名称</label>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="companyname"/><button  class="btn-hide" onclick="save(1)">保存</button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set" >
-                    <label>公司网站</label>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="companyurl"/><button class="btn-hide"  onclick="save(2)">保存</button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>登录页面背景图片</label>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="file" id="file" onchange="previewHandle(this)" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;"/> 
-                    <input type="text" style="width:75%;" id="bg_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')" title="背景文件全路径名称"/>
-                    <button class="selected" onclick="selectFile()" sytle="width:150px;height:40px;">浏览</button>
-                </div>
-            </div><!---->
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>小数保留位数</label>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="decimalnum" maxlength="1" oninput = "value=value.replace(/[^\d]/g,'')" title="一位整数"/><button  class="btn-hide" onclick="save(3)">保存</button>
-                    <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(3)"></a>
-                    <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(3)"></a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>提示框显示时长(毫秒)</label>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="delaytime" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')" title="最多4位整数(毫秒)"/>
-                    <button  class="btn-hide" onclick="save(4)">保存</button>
-                    <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(4)"></a>
-                    <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(4)"></a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>实时数据显示模式</label>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 ">
-                    <select id = "realdatashowmodle" style="width:75%;height:35px;">
-                        <option value= "0">显示全部</option>
-                        <option value= "1">显示在线</option>
-                        <button  class="btn-hide" onclick="save(10)">保存</button>
-                    </select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>实时数据刷新间隔(X10秒)</label>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="text" style="width:75%;" id="refreshtime" maxlength="2" oninput = "value=value.replace(/[^\d]/g,'')" title="最多2位整数(分钟)"/><button  class="btn-hide" onclick="save(6)">保存</button>
-                    <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(6)"></a>
-                    <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(6)"></a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>隐藏左侧菜单</label>
-                </div>
-                <div class="col-xs-4 col-sm-6 col-md-4 " align="left" >
-                    <img id="switch01"  style="height:30px;vertical-align: middle;margin-right: 10%;" title="显示/隐藏左侧菜单" onclick="save(15)"/>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>使用websocket</label>
-                </div>
-                <div class="col-xs-4 col-sm-6 col-md-4 " align="left" >
-                    <img id="switch02"  style="height:30px;vertical-align: middle;margin-right: 10%;" title="是否使用websocket通信" onclick="save(16)"/>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>字幕滚动速度</label>
-                </div>
-                    <div class="col-xs-12 col-sm-6 col-md-4 " >
-                        <input type="number" style="width:75%;" id="speed_scroll" maxlength="1" title="一位整数" value="3"/><button  class="btn-hide" onclick="save(5)">保存</button>
-                        <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(5)"></a>
-                        <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(5)"></a>
-                    </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>语音播放速度</label>
-                </div>
-                    <div class="col-xs-12 col-sm-6 col-md-4 " >
-                        <input type="number" style="width:75%;" id="speech_rate" maxlength="3"  title="一位整数" value="2"/><button  class="btn-hide" onclick="save(7)">保存</button>
-                        <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(7)"></a>
-                        <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(7)"></a>
-                    </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>语音播放语调</label>
-                </div>
-                    <div class="col-xs-12 col-sm-6 col-md-4 " >
-                        <input type="number" style="width:75%;" id="speech_pitch" maxlength="3"  title="一位整数" value="1"/><button  class="btn-hide" onclick="save(8)">保存</button>
-                        <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(8)"></a>
-                        <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(8)"></a>
-                    </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4 col-md-3 system-set">
-                    <label>相同告警时间间隔</label>
-                </div>
-                    <div class="col-xs-12 col-sm-6 col-md-4 " >
-                        <input type="number" style="width:75%;" id="between_time" maxlength="3" oninput = "value=value.replace(/[^\d]/g,'')" title="一位整数" value="1"/><button  class="btn-hide" onclick="save(9)">保存</button>
-                        <a href="javascript:" class="btns btn_minus" role="button" title="减少" onclick="dec(9)"></a>
-                        <a href="javascript:" class="btns btn_plus" role="button" title="增加" onclick="add(9)"></a>
-                    </div>
-            </div>
-            <div class="row" align="center">
-                <!--<div class="col-xs-4 col-md-3 system-set"> 
-                    <label>图片文件</label>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-4 " >
-                    <input type="files" style="width:75%;" id="" /><button onclick="save(4)">保存更改</button>
-                </div><br><br>-->
-                <button type="button" class="btn btn-primary btn-lg" sytle="width:550px;height:40px;line-height:40px" onclick="saveall()">保存修改</button>
-            </div>
-        </div>
+        </div>-->
         <script >
             history.pushState(null, null, document.URL);
 			window.addEventListener('popstate', function () {
@@ -325,10 +336,10 @@
                     $("#switch01")[0].src="res/on.png"
                 else
                     $("#switch01")[0].src="res/off.png";
-                if(localStorage.usews && localStorage.usews=="true")
+                /*if(localStorage.usews && localStorage.usews=="true")
                     $("#switch02")[0].src="res/on.png"
                 else
-                    $("#switch02")[0].src="res/off.png";
+                    $("#switch02")[0].src="res/off.png";*/
                 if(localStorage.backgroudfilename)
                     $("#bg_src").val(localStorage.backgroudfilename)
                 else
@@ -420,7 +431,7 @@
                         parent.window.showLeftMenu(true);
                     }
                     break;
-                    case 16:
+                    /*case 16:
                         var swithbutton=$("#switch02")
                         if(swithbutton[0].src.indexOf("/on.png")>0){
                             swithbutton[0].src="res/off.png";
@@ -433,7 +444,7 @@
                             jfjk_base_config.usews=true;
                             parent.window.openws();
                         }
-                        break;
+                        break;*/
                 }
             }
             function dec(type){

@@ -14,7 +14,7 @@ var myChart1=echarts.init(document.getElementById('realdata_maxvalOfReal'));//�
 var myChart4=echarts.init(document.getElementById('realdata_realdata'));//实时值
 var option,option1,option2,option3,option4;//对应mychart（1-4）的配置项 need speed seed deed
 var chartdataname1="";
-var sname="",sid,type_td,title_index=3;//,hidden_cells=4
+var sname="",sid,type_td,title_index=3,hidden_cells=4;//
 var isfirst = "true";
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
 var maxvaluetime="",happentime="",maxOfRealdataName="";
@@ -28,7 +28,7 @@ var colors = [];
 //var begin;
 //var end;
 var count=0;
-var $table;
+//var $table;
 //var sign = '>';
 var allconfigs;
 var allselect=null;
@@ -50,7 +50,7 @@ var arr_realdata=[];
 var atable;
 var adata=[];
 var tempstr="";
-var isshow2=false;
+//var isshow2=false;
 var imtable=document.getElementById("itable");
 var temp=document.getElementById("temp");
 $(function () {
@@ -151,10 +151,11 @@ function initpage() {
         chartOption=JSON.parse(sessionStorage.getItem("chartoption"));
     }
     //sensors = JSON.parse(localStorage.getItem("sensors"));
-    $('#realdata-tbody').empty();
+    //$('#realdata-tbody').empty();
     //$table = document.getElementById('realdata-tbody');
     tablehead_len=tab_head.rows[0].cells.length;
-    btn_refresh_click();//showAllSensors();    
+    btn_refresh_click();//showAllSensors();
+        
 }
 function showAllSensors(){
     //添加所有的标签项
@@ -165,15 +166,15 @@ function showAllSensors(){
         alert_obj=[];
         
         var parentid=-1,parentname="";
-        $table = document.getElementById('realdata-tbody');
+        //$table = document.getElementById('realdata-tbody');
         sensors_length=sensors.length;
         tablehead_len=tab_head.rows[0].cells.length;
         for(var i=0;i<sensors_length;i++){
             var obj_name=new Object();
             //var tr=document.createElement("tr");
             //tr.setAttribute("onclick","tableclick(this)");
-            var td_did=document.createElement("td");
-            td_did.innerHTML=sensors[i].id;
+            //var td_did=document.createElement("td");
+            //td_did.innerHTML=sensors[i].id;
             var sname=sensors[i].Value.name;
             if(sensors[i].Value.parentId=="-1"){
                 parentname="";
@@ -186,18 +187,18 @@ function showAllSensors(){
                     }
                 }
             }
-            atr=document.createElement("tr");
-            atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
+            //atr=document.createElement("tr");
+            //atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
             for(var k=0;k<tablehead_len;k++){
                 var obj_cel={};
                 obj_cel.isshow=true;
-                var atd=document.createElement("td");
+                //var atd=document.createElement("td");
                 if(tab_head.rows[0].cells[k].attributes.hasOwnProperty("style")){
-                    atd.setAttribute("style",tab_head.rows[0].cells[k].attributes.style.value);
+                    //atd.setAttribute("style",tab_head.rows[0].cells[k].attributes.style.value);
                     obj_cel.isshow=false;
                 }
-                atd.innerHTML= "";
-                atr.appendChild(atd);
+                //atd.innerHTML= "";
+                //atr.appendChild(atd);
                 if(tab_head.rows[0].cells[k].attributes.hasOwnProperty("value")){
                     obj_cel["name"]="";
                     obj_name[tab_head.rows[0].cells[k].attributes.value.value]=obj_cel;
@@ -208,7 +209,7 @@ function showAllSensors(){
                 }
                 
             }
-            
+            /*
             atr.cells[c_no].innerHTML=i+1;//序号从1开始
             atr.cells[c_id].innerHTML=sensors[i].id;//标签id   1/4 74/270
             //atr.cells[0].style.cssText="display:none"
@@ -232,47 +233,41 @@ function showAllSensors(){
             //atr.cells[tablehead_len-1].style.cssText="";
             if(parseInt(jfjk_base_config.realdatashowmodle))//是否显示全部标签还是只显示有读数的标签
                 atr.style="display:none;"
-            $table.appendChild(atr);//we are famly
+            //$table.appendChild(atr);//we are famly*/
             jisuanyichangbili("离线");
-            obj_name.编号.name=i+1;
+            obj_name.序号.name=i+1;
             obj_name.标签编号.name=sensors[i].id;
             obj_name.测量点名称.name=parentname+sname;
             obj_name.分组.name=">>>"
             arr_realdata.push(obj_name);
         }
-        if(window.parent.wsconnect){
+        //console.log(arr_realdata[0]);
+        /*if(window.parent.wsconnect){
             var action="GetReals" ;
             var para=JSON.parse("{}");
             window.parent.wssend(action,para);
-        }else{
+        }else*/{
             getrealdatabynodeid(-1);
         }
         //page=new Page(pageSize,'realtable','realdata-tbody','pageindex');
         //page.changePage(0);
         createvue();
+        decoderealdata();
     }
 }
 function showdetails(asensorid){//功能接口，显示一个新的页面，用于显示次标签的数据详情和图示
-    if(window.parent.wsconnect){
+    /*if(window.parent.wsconnect){
         var action="GetReals" ;
         var para=JSON.parse("{}");
         window.parent.wssend(action,para);
-    }else{
+    }else*/{
         getrealdatabynodeid(-1);
     }
     if(!isNumber(asensorid)){
         asensorid=asensorid.parentNode.cells[1].innerText;
     }
     sessionStorage.sensorId=parseInt(asensorid);//此处sessionStorage.sensorId首字母为小写。
-    window.parent.tablehead=(allselect);
-    /*var target = "detail.html"; 
-    //判断是否打开 
-    if (objWin == null || objWin.closed) { 
-        objWin = window.open(target); 
-    } else { 
-        objWin.location.replace(target); 
-    } 
-    objWin.focus();*/
+    window.parent.tablehead=(allselect);                              
     window.parent.document.getElementById("tree_chi").style.display="none";
     //window.parent.document.getElementById("tree").style.pointerEvents ="none";
     window.parent.document.getElementById('tree').style.height='100%';
@@ -280,14 +275,14 @@ function showdetails(asensorid){//功能接口，显示一个新的页面，用�
     stopPropagation();
     /**/
 }
-$(function () {
+/*$(function () {
     $(".btn").click(function(){
         $(this).button('toggle');
         dname= $(".btn:checked").val();
         catalog=getcatalog(dname);
         gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj,sessionStorage.jssj);
     });
-});
+});*/
 function appendalldisplaytype(){
     try{
     for(var i=display_type.childNodes.length;i>0;i--)
@@ -321,13 +316,9 @@ function appendalldisplaytype(){
                 if(isrepeat)
                     break;
                 if(p==0){
-                    //name=s_des[p].name;
                     catalog=s_des[p].folder;//Catalog;
-                    //ainput.checked=true;
-                    //lab.className=""
                     add_displaytype(display_type,s_des[p].name,s_des[p].folder,s_des[p].desc,allconfigs[ac].type,true);
                 }else{
-                    //lab.className="";
                     add_displaytype(display_type,s_des[p].name,s_des[p].folder,s_des[p].desc,allconfigs[ac].type,false);
                 }
             }
@@ -335,9 +326,9 @@ function appendalldisplaytype(){
     }
     }
     if(sessionStorage.realdata_index && sessionStorage.realdata_index>=hidden_cells&&sessionStorage.realdata_index<(p+hidden_cells))
-        $.sortTable.sort('realtable',sessionStorage.realdata_index)
+        $.sortTable.sort('my_table',sessionStorage.realdata_index)
     else
-        $.sortTable.sort("realtable",hidden_cells);
+        $.sortTable.sort("my_table",hidden_cells);
     }catch(err){
         showstateinfo(err.message,"realdata/appendalldisplaytype");
     }
@@ -352,35 +343,29 @@ function add_displaytype(parent,name,folder,text,type,check){
     ainput.setAttribute("folder",folder);
     ainput.setAttribute("datatype",type);
     ainput.className="btn";
-    //ainput.setAttribute('onclick','checkboxclick("'+s_des[p].Name+'")')
     ainput.innerText=text;
     ainput.className="catalog";
     var spn=document.createElement("span");
     spn.innerHTML=text;
-    //if(check){
-        //name=s_des[p].name;
-        //catalog=s_des[p].type;//Catalog;
     ainput.checked=check;
-        //lab.className=""
-    //}else{
     lab.className="";
     //} 
     lab.appendChild(ainput);
     lab.appendChild(spn);
     parent.appendChild(lab);
-    var tab=$("#realdata-tbody");
+    /*var tab=$("#realdata-tbody");
     if(tab[0].rows.length>0){
         tableaddcell();
-    }    
+    }*/    
 }
-function tableaddcell(){
+/*function tableaddcell(){
     var ttd=document.createElement("td");
     ttd.setAttribute("display","none");
     var tab_rows=$("#realdata-tbody")[0].rows;
     var tab_len=tab_rows.length;
     for(let i=0;i<tab_len;i++)
         tab_rows[i].appendChild(ttd);
-}
+}*/
 //"刷新"按钮点击事件
 function btn_refresh_click(obj){
     allselect = $('[name="options"]');
@@ -405,7 +390,6 @@ function refresh_tabhead(sel){
     count=0;
     var tableheadcel={};
     if(sel){
-        //tab_head=document.getElementById("tab_head");
         for (var j = tab_head.rows.length - 1; j >= 0; j--) {
             tab_head.removeChild(tab_head.rows[j]);
         }
@@ -414,7 +398,7 @@ function refresh_tabhead(sel){
         var th_th=document.createElement("th");
         th_th.setAttribute("style","display:none");
         th_th.setAttribute("width","180px");
-        th_th.innerHTML="编号";
+        th_th.innerHTML="序号";
         th_tr.appendChild(th_th);
         var th_th=document.createElement("th");
         th_th.setAttribute("style","display:none");
@@ -422,7 +406,7 @@ function refresh_tabhead(sel){
         th_th.innerHTML="标签编号";
         th_tr.appendChild(th_th);
         th_th=document.createElement("th");
-        th_th.setAttribute("onclick","$.sortTable.sort('realtable',2)");
+        th_th.setAttribute("onclick","$.sortTable.sort('my_table',2)");
         th_th.setAttribute("width","180px");
         var aa=document.createElement("a");
         aa.setAttribute("href","javascript:");
@@ -430,7 +414,7 @@ function refresh_tabhead(sel){
         th_th.appendChild(aa);
         th_tr.appendChild(th_th);
         th_th=document.createElement("th");
-        th_th.setAttribute("onclick","$.sortTable.sort('realtable',3)");
+        th_th.setAttribute("onclick","$.sortTable.sort('my_table',3)");
         aa=document.createElement("a");
         aa.setAttribute("href","javascript:");
         aa.innerHTML='测量时间<span class="time"></span>';
@@ -443,7 +427,7 @@ function refresh_tabhead(sel){
             th_th=document.createElement("th");
             th_th.setAttribute("width","180px");
             let atype=sel[k].attributes.datatype.value;
-            th_th.setAttribute("onclick","$.sortTable.sort('realtable',"+(k+hidden_cells)+",'"+atype+"',)");
+            th_th.setAttribute("onclick","$.sortTable.sort('my_table',"+(k+hidden_cells)+",'"+atype+"',)");
             aa=document.createElement("a");
             aa.setAttribute("href","javascript:");
             th_th.setAttribute("value",sel[k].value);
@@ -455,14 +439,6 @@ function refresh_tabhead(sel){
                 count--;
             }
         }
-        /*th_th=document.createElement("th");
-        th_th.innerHTML="查看历史数据";
-        th_th.setAttribute("width","180px");
-        th_tr.appendChild(th_th);
-        th_th=document.createElement("th");
-        th_th.innerHTML="查看告警信息";
-        th_th.setAttribute("width","180px");
-        th_tr.appendChild(th_th);*/
         th_th=document.createElement("th");
         th_th.setAttribute("width","180px");
         th_th.innerHTML="类别";
@@ -479,7 +455,6 @@ function refresh_tabhead(sel){
         th_tr.appendChild(th_th);
         tab_head.appendChild(th_tr);
     }else{
-        //var tab_head=document.getElementById("tab_head");
         for (var j = tab_head.rows.length - 1; j >= 0; j--) {
             tab_head.removeChild(tab_head.rows[j]);
         }
@@ -487,7 +462,7 @@ function refresh_tabhead(sel){
         th_tr.setAttribute("id","th_tr");
         var th_th=document.createElement("th");
         th_th.setAttribute("style","display:none");
-        th_th.innerHTML="编号";
+        th_th.innerHTML="序号";
         th_th.setAttribute("width","150px");
         th_tr.appendChild(th_th);
         var th_th=document.createElement("th");
@@ -496,7 +471,7 @@ function refresh_tabhead(sel){
         th_th.setAttribute("width","150px");
         th_tr.appendChild(th_th);
         th_th=document.createElement("th");
-        th_th.setAttribute("onclick","$.sortTable.sort('realtable',2)");
+        th_th.setAttribute("onclick","$.sortTable.sort('my_table',2)");
         var aa=document.createElement("a");
         aa.setAttribute("href","javascript:");
         aa.innerHTML='测量点名称<span class="sensorname"></span>';
@@ -504,7 +479,7 @@ function refresh_tabhead(sel){
         th_th.setAttribute("width","150px");
         th_tr.appendChild(th_th);
         th_th=document.createElement("th");
-        th_th.setAttribute("onclick","$.sortTable.sort('realtable',3)");
+        th_th.setAttribute("onclick","$.sortTable.sort('my_table',3)");
         aa=document.createElement("a");
         aa.setAttribute("href","javascript:");
         aa.innerHTML='测量时间<span class="time"></span>';
@@ -519,7 +494,7 @@ function refresh_tabhead(sel){
                     continue;
                 }else{
                     var thd=document.createElement("td");
-                    thd.setAttribute("onclick","$.sortTable.sort('realtable',"+(count+hidden_cells)+")");
+                    th_th.setAttribute("onclick","$.sortTable.sort('my_table',(count+hidden_cells))");
                     aa=document.createElement("a");
                     aa.setAttribute("href","javascript:");
                     aa.innerHTML=obj_realdata[i].name+'<span class="value"'+count>+'</span>';
@@ -532,14 +507,7 @@ function refresh_tabhead(sel){
                 }
             }
         }
-        /*th_th=document.createElement("th");
-        th_th.innerHTML="查看历史数据";
-        th_th.setAttribute("width","150px");
-        th_tr.appendChild(th_th);
-        th_th=document.createElement("th");
-        th_th.innerHTML="查看告警信息";
-        th_th.setAttribute("width","150px");
-        th_tr.appendChild(th_th);*/
+        
         th_th=document.createElement("th");
         th_th.setAttribute("width","150px");
         th_th.innerHTML="类别";
@@ -562,7 +530,7 @@ function stopWorker() {
     w1.terminate();
     w1 = undefined;
 };
-//根据数据列值获取Catalog。
+//根据数据列值获取Catalog。表格排序时调用
 function getCatalog(adatatype,index){
     try{
     var catalog="";
@@ -570,8 +538,7 @@ function getCatalog(adatatype,index){
     typename=catalogsel[index].value;
     sessionStorage.typename=typename;
     titlename=catalogsel[index].textContent;//显示项的标题 //20200518
-    updatachart(typename);//0709 更新图表配置
-    refreshData();
+    
     //return catalog;
     var isfindconfig=false;
     if(allconfigs){
@@ -639,46 +606,24 @@ function getCatalog(adatatype,index){
         }
     }
     catalog=catalogsel[index].attributes.folder.nodeValue;
+    updatachart(typename);//0709 更新图表配置
+    refreshData();
     return catalog;
     }catch(err){
         showstateinfo(err.message,"realdata/getCatalog");
     }
 }
 function cleartable(){
-    var table=$('#realdata-tbody');
-    table.empty();
-    /*var sensors = JSON.parse(localStorage.getItem("sensors"));
-    var sensors_length;
-    if(sensors)
-        sensors_length=sensors.length;
-    allselect = $('[name="options"]');
-    for(var i=0;i<sensors_length;i++){
-        var tr=document.createElement("tr");
-        tr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
-        for(var j=0;j<allselect.length+5;j++){
-            var td=document.createElement("td");
-            switch (j){
-                case 1:
-                    td.innerHTML=sensors[i].Value.name;
-                    break;
-                case 2:
-                case 3:
-                    break;
-                default:
-                    td.style.cssText="display:none;"
-                    break;
-            }
-            tr.appendChild(td);
-        }
-        table[0].appendChild(tr);
-    }*/
+    var table_vue=$('#mytbody');
+    table_vue.empty();
     is_have=false;
 }
 function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数据，asensorid 当前标签id，isload 是否与主菜单标签表同步
     try{
     var v_sel = $('[name="options"]');
     //$('#realdata-tbody').empty();
-    var $table = document.getElementById('realdata-tbody');
+    //var $table = document.getElementById('realdata-tbody');
+    var vtable = document.getElementById('mytbody');
     if(!obj_realdata){
         obj_realdata=JSON.parse(localStorage.getItem("realdata"));
     }
@@ -711,7 +656,10 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                 if(window.parent.realdataid<parseInt(obj_realdata[j].id))
                     window.parent.realdataid=parseInt(obj_realdata[j].id);
                 //$table = document.getElementById('realdata-tbody');
-                var tab_rows_len=$table.rows.length;
+                vtable = document.getElementById('mytbody');
+                var tab_rows_len=vtable.rows.length;
+                if(!tab_rows_len)
+                    tab_rows_len=arr_realdata.length;
                 dname=obj_realdata[j].name;
                 realdatafolder=obj_realdata[j].folder;
                 isfindtype=false;
@@ -725,8 +673,9 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                     isnew=true;
                 }*/
                 sid=obj_realdata[j].sensorId;
-                for(p=0;p<tab_rows_len;p++){
-                    if($table.rows[p].cells[c_id].innerHTML==obj_realdata[j].sensorId){
+                for(p=0;p<arr_realdata.length;p++){//是否为新的标签项,相同标签的数据默认连续
+                    //if($table.rows[p].cells[c_id].innerHTML==obj_realdata[j].sensorId ){}
+                    if(arr_realdata[p].标签编号.name==obj_realdata[j].sensorId ){ 
                         isfindtype=true;
                         break;
                     }
@@ -757,7 +706,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         //haverealdata=true;
                         break;
                     }
-                }
+                }/**/
                 var data_value;
                 if(isfind){//在需要显示的标签列表
                     //isnew=true;
@@ -766,7 +715,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         data_value=(obj_data.value*1).toFixed(Number_of_decimal)
                     else
                         data_value=obj_data.value;
-                    for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
+                    /*for(var k=0;k<v_sel.length;k++){//对照用户所选显示项，添加显示值到对应列，
                         if(v_sel[k].value==dname){
                             break;
                         }
@@ -778,22 +727,47 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         refresh_tabhead(v_sel);//
                         tablehead_len++;//第一次进入统计比例错误的问题，不应该递增。
                         tableaddcell();
-                    }
+                    }*/
                     if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，//
-                        var data_obj={}//实时数据对象
+                        /*var data_obj={}//实时数据对象
                         atr=document.createElement("tr");
-                        atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
+                        atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick*/
+                        var obj_name={};
                         for(var k=0;k<tablehead_len;k++){
-                            var atd=document.createElement("td");
+                            /*var atd=document.createElement("td");
                             //atd.setAttribute("width","150px");
                             atd.innerHTML= "";
                             atr.appendChild(atd);
                             if(tab_head.rows[0].cells[k].attributes.hasOwnProperty("value"))
                                 data_obj[tab_head.rows[0].cells[k].attributes.value.value]=i
                             else
-                                data_obj[tab_head.rows[0].cells[k].innerText]=i;
+                                data_obj[tab_head.rows[0].cells[k].innerText]=i;*/
+                            var obj_cel={};
+                            obj_cel.isshow=true;
+                            if(tab_head.rows[0].cells[k].attributes.hasOwnProperty("style")){
+                                obj_cel.isshow=false;
+                            }
+                            if(tab_head.rows[0].cells[k].attributes.hasOwnProperty("value")){
+                                obj_cel["name"]="";
+                                obj_name[tab_head.rows[0].cells[k].attributes.value.value]=obj_cel;
+                            }
+                            else{
+                                obj_cel["name"]="";
+                                obj_name[tab_head.rows[0].cells[k].innerText]=obj_cel;
+                            }
                         }
-                        atr.cells[c_no].innerHTML=pt;
+                        obj_name.序号.name=arr_realdata.length+1;
+                        obj_name.标签编号.name=sid;
+                        obj_name.测量点名称.name=sname;
+                        obj_name.分组.name=">>>";
+                        obj_name.测量时间.name=dateToString(obj_data.time,2);
+                        if((!chartOption.chart_min)||(!chartOption.chart_max)||(chartOption.chart_min==0 || chartOption.chart_min)&&(chartOption.chart_max==0 ||chartOption.chart_max)&&(data_value*1>chartOption.chart_min*1)&&(data_value*1<chartOption.chart_max*1)){
+                            if(obj_name.hasOwnProperty(dname))
+                                obj_name[dname].name=data_value;
+                        }
+                        obj_name["信息"].name=obj_data.message;
+                        arr_realdata.push(obj_name);
+                        /*atr.cells[c_no].innerHTML=pt;
                         atr.cells[c_no].style.cssText="display:none";
                         atr.cells[c_id].innerHTML=sid;//标签id   1/4 74/270
                         atr.cells[c_id].style.cssText="display:none";
@@ -838,13 +812,15 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                             add_displaytype(display_type,dname,realdatafolder,dname,false);
                             v_sel = $('[name="options"]');
                             tablehead_len++;
-                        }*/
+                        }
                         $table.appendChild(atr);
-                        pt++;
+                        pt++;*/
                     }else{//不是新标签，更新对应的数据栏。 Asia Europe Africa America
-                        let tab_row_len=$table.rows.length;
+                        //let tab_row_len=$table.rows.length;
+                        //if(!tab_row_len)
+                        let    tab_row_len=arr_realdata.length;
                         for(var l=0;l<tab_row_len;l++){
-                            if($table.rows[l].cells[c_id].innerHTML==obj_data.sensorId){
+                            /*if($table.rows[l].cells[c_id].innerHTML==obj_data.sensorId){
                                 if($table.rows[l].cells[c_time].value<dateToString(obj_data.time,2)||$table.rows[l].cells[c_time].innerHTML==""){//更新测量时间
                                     $table.rows[l].cells[c_time].innerHTML=dateToString(obj_data.time,2).substring(10,19);
                                     $table.rows[l].cells[c_time].value=dateToString(obj_data.time,2);
@@ -870,28 +846,26 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                                         break;
                                     }
                                 }
-                                /*if((k>=v_sel.length)&&(!isbreak)){//如果没有在类型列表中，要如何处置
+                                if((k>=v_sel.length)&&(!isbreak)){//如果没有在类型列表中，要如何处置
                                     //需要表头标题添加name，所有列表项添加一列（cell）
                                     add_displaytype(display_type,dname,realdatafolder,dname,false);
                                     v_sel = $('[name="options"]');
                                 }*/
                                 if(arr_realdata[l].标签编号.name==obj_data.sensorId){
                                     arr_realdata[l].测量时间.name=dateToString(obj_data.time,2);
-                                    if(arr_realdata[l].hasOwnProperty(dname))
-                                        arr_realdata[l][dname].name=data_value;
-                                    arr_realdata[l]["信息"].name=obj_data.message;
+                                    if((!chartOption.chart_min)||(!chartOption.chart_max)||(chartOption.chart_min==0 || chartOption.chart_min)&&(chartOption.chart_max==0 ||chartOption.chart_max)&&(data_value*1>chartOption.chart_min*1)&&(data_value*1<chartOption.chart_max*1)){
+                                        if(arr_realdata[l].hasOwnProperty(dname))
+                                            arr_realdata[l][dname].name=data_value;
+                                    }
+                                    arr_realdata[l]["信息"].name=obj_data.message;break;
                                 }
-                                break;
-                            }
-                            
+                            //}
                         }
                     }
                     /*var xs = 1;//sensors[i].Value.Factor;  //数据结构修改，后台的value数据已经乘上系数，svalue为未乘以系数的原始数据
-                    鹿柴：
                     if(isbreak){
                         continue;
                     }
-                    
                     $(".time").text('');
                     $(".sensorname").text('');
                     $(".value1").text('');
@@ -899,19 +873,9 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                     break;*/
                 }
             }
-        }else{//如果没有显示控制项（分组配置项） 20200509 编写，还需测试完善。
+        }else{//如果没有显示控制项（分组配置项） 20220218 编写，还需测试完善。
+            if (sensors)
             for (var j=0;j<realdata_len;j++) {
-                dname=obj_realdata[j].name;
-                //grouptype=obj_realdata[j].type;//Catalog;
-                if(obj_realdata[j].SensorId==sid){//是否为新的标签项
-                    isnew=false;
-                }else{ 
-                    sid=obj_realdata[j].sensorId;
-                    isnew=true;
-                }
-                if(obj_realdata[j].sensorId==asensorid)
-                    nodata=false;
-                if (sensors&&isnew)
                 for (var i = 0; i < sensors_length; i++) {//是否在需要显示的标签列表中
                     isfindtype=false;
                     if(obj_realdata[j].sensorId==sensors[i].id){
@@ -934,7 +898,18 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         isfind=true;
                         break;
                     }
+                }/**/
+                dname=obj_realdata[j].name;
+                for(p=0;p<arr_realdata.length;p++){//是否为新的标签项,相同标签的数据默认连续
+                    //if($table.rows[p].cells[c_id].innerHTML==obj_realdata[j].sensorId ){}
+                    if(arr_realdata[p].标签编号.name==obj_realdata[j].sensorId ){ 
+                        isfindtype=true;
+                        break;
+                    }
                 }
+                isnew=!isfindtype;
+                if(obj_realdata[j].sensorId==asensorid)
+                    nodata=false;
                 if(isfind){//在需要显示的标签列表
                         //isnew=true;
                     obj_data = (obj_realdata)[j];////sid
@@ -943,7 +918,67 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                     else
                         data_value=obj_data.value;
                     if(isnew){//如果是新的标签，就创建一行，添加所有的td单元，
-                        atr=document.createElement("tr");
+                        var obj_name;
+                        for(var k=0;k<tablehead_len;k++){
+                            /*var atd=document.createElement("td");
+                            //atd.setAttribute("width","150px");
+                            atd.innerHTML= "";
+                            atr.appendChild(atd);
+                            if(tab_head.rows[0].cells[k].attributes.hasOwnProperty("value"))
+                                data_obj[tab_head.rows[0].cells[k].attributes.value.value]=i
+                            else
+                                data_obj[tab_head.rows[0].cells[k].innerText]=i;*/
+                            var obj_cel={};
+                            obj_cel.isshow=true;
+                            if(tab_head.rows[0].cells[k].attributes.hasOwnProperty("style")){
+                                obj_cel.isshow=false;
+                            }
+                            if(tab_head.rows[0].cells[k].attributes.hasOwnProperty("value")){
+                                obj_cel["name"]="";
+                                obj_name[tab_head.rows[0].cells[k].attributes.value.value]=obj_cel;
+                            }
+                            else{
+                                obj_cel["name"]="";
+                                obj_name[tab_head.rows[0].cells[k].innerText]=obj_cel;
+                            }
+                        }
+                        obj_name.序号.name=arr_realdata.length+1;
+                        obj_name.标签编号.name=sid;
+                        for (var i = 0; i < sensors_length; i++) {//是否在需要显示的标签列表中
+                            isfind=false;
+                            if(sid==sensors[i].id){
+                                let sensor_obj = sensors[i].Value;
+                                type_td = sensor_obj.type;//Catalog;//
+                                sname = sensor_obj.name;
+                                //parentid=sensors[i].Value.parentId;
+                                if(sensor_obj.parentId!="-1"){  
+                                    if((sensor_obj.parentId!=parentid)){//20201221
+                                        parentid=sensor_obj.parentId;
+                                        for(var k=0;k<sensors_length;k++){
+                                            if(sensors[k].id==parentid){
+                                                parentname=sensors[k].Value.name+"_";
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    //sensors.splice(i, 1);
+                                }
+                                sname=parentname+sname;
+                                isfind=true;
+                                break;
+                            }
+                        }
+                        obj_name.测量点名称.name=sname;
+                        obj_name.分组.name=">>>";
+                        obj_name.测量时间.name=dateToString(obj_data.time,2);
+                        if((!chartOption.chart_min)||(!chartOption.chart_max)||(chartOption.chart_min==0 || chartOption.chart_min)&&(chartOption.chart_max==0 ||chartOption.chart_max)&&(data_value*1>chartOption.chart_min*1)&&(data_value*1<chartOption.chart_max*1)){
+                            if(obj_name.hasOwnProperty(dname))
+                                obj_name[dname].name=data_value;
+                        }
+                        obj_name["信息"].name=obj_data.message;
+                        arr_realdata.push(obj_name);
+                        atable.updata(1);//添加选项后重新渲染列表,这里也可能不用此命令。
+                        /*atr=document.createElement("tr");
                         //atr.setAttribute("height","35px");
                         tablehead_len=tab_head.rows[0].cells.length;
                         for(var k=0;k<tablehead_len;k++){
@@ -984,11 +1019,11 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                         atr.cells[tablehead_len-1].innerHTML=obj_data.message;
                         atr.cells[tablehead_len-1].style.cssText="display:none";
                         $table.appendChild(atr);
-                        pt++;
+                        pt++;*/
                     }else{//不是新标签
-                        let tab_row_len=$table.rows.length;
+                        let tab_row_len=arr_realdata.length;//$table.rows.length;
                         for(var l=0;l<tab_row_len;l++){//定位到指定行
-                            if($table.rows[l].cells[c_id].innerHTML==obj_data.sensorId){
+                            /*if($table.rows[l].cells[c_id].innerHTML==obj_data.sensorId){
                                 for(var k in tab_head.rows[0].cells){
                                     if(obj_data.name==tab_head.rows[0].cells[k].innerHTML){//添加到指定列
                                         if((!chartOption.chart_min)||(!chartOption.chart_max)||(chartOption.chart_min==0 || chartOption.chart_min)&&(chartOption.chart_max==0 ||chartOption.chart_max)&&(data_value*1>chartOption.chart_min*1)&&(data_value*1<chartOption.chart_max*1))
@@ -1009,8 +1044,16 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                                         break;
                                     }
                                 }
-                                break;
-                            }
+                                break;*/
+                                if(arr_realdata[l].标签编号.name==obj_data.sensorId){
+                                    arr_realdata[l].测量时间.name=dateToString(obj_data.time,2);
+                                    if((!chartOption.chart_min)||(!chartOption.chart_max)||(chartOption.chart_min==0 || chartOption.chart_min)&&(chartOption.chart_max==0 ||chartOption.chart_max)&&(data_value*1>chartOption.chart_min*1)&&(data_value*1<chartOption.chart_max*1)){
+                                        if(arr_realdata[l].hasOwnProperty(dname))
+                                            arr_realdata[l][dname].name=data_value;
+                                    }
+                                    arr_realdata[l]["信息"].name=obj_data.message;break;
+                                }
+                            //}
                         }
                     }
                 }
@@ -1021,11 +1064,12 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
             return;
         }
         alert_obj=[];
-        var tableLength = $table.rows.length;
+        vtable=document.getElementById("mytbody");
+        var tableLength =arr_realdata.length;// $table.rows.length;
         if (tableLength > 0) {
             tab_head=document.getElementById("tab_head");
             //alertcount=[0,0,0,0,0]
-            maxOfRealdata=($table.rows[0].cells[title_index].innerHTML)*1;
+            /*maxOfRealdata=($table.rows[0].cells[title_index].innerHTML)*1;
             maxvaluetime=($table.rows[0].cells[c_time].innerHTML);
             maxOfRealdataName=($table.rows[0].cells[c_name].innerHTML);
             if(!maxOfRealdata)
@@ -1041,21 +1085,38 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                 }
                 //jisuanyichangbili(($table.rows[int].cells[title_index].innerHTML)*1);//
                 jisuanyichangbili($table.rows[int].cells[c_time].innerHTML,($table.rows[int].cells[tab_head.rows[0].cells.length-2].innerHTML));
+            }*/
+            maxOfRealdata=(vtable.rows[0].cells[title_index].innerHTML)*1;
+            maxvaluetime=(vtable.rows[0].cells[c_time].innerHTML);
+            maxOfRealdataName=(vtable.rows[0].cells[c_name].innerHTML);
+            if(!maxOfRealdata)
+                maxOfRealdata=0;
+            for (var int = 0; int < tableLength; int++) {
+                if (vtable.rows[int].cells[c_id].innerHTML == sessionStorage.SensorId) {
+                    sessionStorage.t_p = int;
+                }
+                if((vtable.rows[int].cells[title_index].innerHTML)*1>maxOfRealdata){
+                    maxOfRealdata=(vtable.rows[int].cells[title_index].innerHTML)*1
+                    maxvaluetime=(vtable.rows[int].cells[c_time].innerHTML);
+                    maxOfRealdataName=(vtable.rows[int].cells[c_name].innerHTML);
+                }
+                //jisuanyichangbili(($table.rows[int].cells[title_index].innerHTML)*1);//
+                jisuanyichangbili(vtable.rows[int].cells[c_time].innerHTML,(vtable.rows[int].cells[tab_head.rows[0].cells.length-2].innerHTML));
             }
             if (typeof (sessionStorage.t_p) != "undefined") {
-                sname = $table.rows[sessionStorage.t_p].cells[c_name].innerHTML;
+                sname = vtable.rows[sessionStorage.t_p].cells[c_name].innerHTML;
                 //chartOption.chart_type = $table.rows[sessionStorage.t_p].cells[6].innerHTML;
-                sensor_Id = parseInt($table.rows[sessionStorage.t_p].cells[c_id].innerHTML);
-                var lasttime = $table.rows[sessionStorage.t_p].cells[c_time].value;
-                var shottime=$table.rows[sessionStorage.t_p].cells[c_time].innerHTML;
+                sensor_Id = parseInt(vtable.rows[sessionStorage.t_p].cells[c_id].innerHTML);
+                var lasttime = vtable.rows[sessionStorage.t_p].cells[c_time].value;
+                var shottime=vtable.rows[sessionStorage.t_p].cells[c_time].innerHTML;
                 //var myChart2 = echarts.init(document.getElementById('realdata_chart'));
                 updatachart(typename);
-                value0 = ($table.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;//字符转实数
+                value0 = (vtable.rows[sessionStorage.t_p].cells[title_index].innerHTML)*1;//字符转实数
                 //happentime=lasttime;
                 //value1=parseFloat($table.rows[sessionStorage.t_p].cells[3].innerHTML);
                 //var heightpx = $("#realdata-tbody tr").height();// + 1;//加1是网格线的宽度
                 //if(!heightpx)
-                //var heightpx = $("#mytbody tr").height();
+                var heightpx = $("#mytbody tr").height();
                 var ppt = parseInt(sessionStorage.t_p);
                 /**if(ppt<pageSize){
                     curPage=0;
@@ -1064,7 +1125,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                 }
                 //tableclick($table.rows[curPage]);*/
                 //$("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
-                $table.rows[ppt].style.backgroundColor = color_table_cur;
+                vtable.rows[ppt].style.backgroundColor = color_table_cur;
                 var btable=document.getElementById("mytbody");
                 btable.rows[ppt].style.backgroundColor=color_table_cur;
                 //tableclick($table.rows[ppt],true);
@@ -1102,6 +1163,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
                     }
                     window.parent.treelocationforsensorid(sensor_Id);
                 } else {
+                    $("#datadiv").scrollTop((ppt) * heightpx);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
                     isfirst = false; //
                     //myChart2.showLoading();
                     if(!isload)
@@ -1147,18 +1209,15 @@ function localrowbysensorid(asensorid){
     //isfirst=true;
     //decoderealdata(null,asensorid,true);//是否可以用其他函数代替（定位到指定的当前行）
     //btn_refresh_click();
-    var $table = document.getElementById('realdata-tbody');
-    if($table.style.display=="none")
-    $table = document.getElementById('mytbody');
-    let tablehead_len=$table.rows.length;
+    //var $table = document.getElementById('realdata-tbody');
+    var vtable = document.getElementById('mytbody');
+    let tablehead_len=vtable.rows.length;
     for (var int = 0; int < tablehead_len; int++) {
-        if ($table.rows[int].cells[c_id].innerHTML == (asensorid+"")) {
+        if (vtable.rows[int].cells[c_id].innerHTML == (asensorid+"")) {
             sessionStorage.t_p = int;
-            var row=$table.rows[int];
+            var row=vtable.rows[int];
             tableclick(row);
-            var heightpx = $("#realdata-tbody tr").height();
-            if(!heightpx)
-                heightpx = $("#mytbody tr").height();// + 1;//加1是网格线的宽度
+            var heightpx = $("#mytbody tr").height();// + 1;//加1是网格线的宽度
             var ppt = +sessionStorage.t_p;
             /*if(ppt>pageSize){
                 curPage=parseInt(ppt/pageSize);
@@ -1681,7 +1740,6 @@ function initseries(data) {
         ]
     };
     myChart4.setOption(option4);
-
 }
 //window.setInterval("getrealdatabynodeid(-1)",60000);
 function refreshData() {
@@ -1702,23 +1760,7 @@ function refreshData() {
     option.series[0].detail.formatter = chartOption.chart_sigle + value + ' \n\n' +"时间："+happentime;//+chart_unit;
     option.series[0].data[0].name = chartOption.chart_unit;//sname;
     option.title.text = sname+":  "+titlename+" 24h 峰值";
-    /*for (var i = 0; i < option.series.length; i++) {
-        option.series[i].axisLine.lineStyle.color = colors;
-        option.series[i].max = chart_max;
-        option.series[i].min = chartOption.chart_min;
-        value = option.series[i].data[0].value;
-        option.series[i].detail.formatter = chartOption.chart_sigle + value + ': \n\n' + option.series[i].name + ' ';//+chart_unit;
-        option.series[i].data[0].name = chart_unit;//sname;
-        option.title.text = sname+" : "+titlename;//添加显示项的标题指示；*/
-        //形成进度条式的填充仪表效果并分段显示不同延时用于指示不同状态。    
-        /*if(value<20){
-            option.series[i].axisLine.lineStyle.color[0]=[value/100,'blue'];
-        }else if(value<80){
-            option.series[i].axisLine.lineStyle.color[0]=[value/100,"green"];
-        }else{
-            option.series[i].axisLine.lineStyle.color[0]=[value/100,"red"];
-        }
-    }*/
+    
     myChart.setOption(option);
     option4.series[0].data[0].value = val1;
     option4.series[0].max = chartOption.chart_max;
@@ -2125,37 +2167,26 @@ function jisuanyichangbili(isonline,iswarning){//一个标签有多个类型的�
     }else{
         alert_obj[iswarning]=1;
     }
-    /*
-    //if(avalue>alertconfig[3]){
-    //    alertcount[4]++;
-    //}else if(avalue>alertconfig[2]){
-    //    alertcount[3]++;
-    //}else 
-    if(avalue>alertconfig[1]){
-        alertcount[2]++;
-    }else if(avalue<alertconfig[0]){
-        alertcount[1]++;
-    }else{
-        alertcount[0]++;
-    }*/
+   
 }
 function createvue(){
     if(atable){
         //console.log(atable.$children);
-        // 实例
+        // 实例 大江歌罢掉头东 邃密穷科济世穷 面壁十年图破壁 难酬蹈海亦英雄 天高云淡 望断南飞燕 不到长城非好汉 屈指行程二万 六盘山上高峰
         //const comp = atable.$children[0]
-        // 淘汰机制
+        // 淘汰机制 红旗漫卷西风 今日长缨在手 何时缚住苍龙 海上生明月 天涯共此时 情人怨遥夜 竟夕起相思 灭烛怜光满 披衣觉露滋 不堪盈手赠 还寝梦佳期
         //comp.remove = () => {
-        // 删除dom
-        //var imtable=;
+        // 删除dom 金樽清酒斗十千 玉盘珍馐值万钱 停杯投箸不能食 拔剑四顾心茫然 欲渡黄河冰塞川 将登太行雪满山 闲时垂钓碧溪上 忽复乘舟梦日边
+        //var imtable=;//行路难 行路难 多歧路 今安在 长风破浪会有时 直挂云帆济沧海
         //imtable.remove(temp);
-        document.getElementById("temp").parentNode.removeChild(document.getElementById("temp"))
+        document.getElementById("temp").parentNode.removeChild(document.getElementById("temp"))//删除实例本身
         //}
         //Vue.extend('extable').$mount('#itable')
-        atable.istempshow=!atable.istempshow;   
+        //atable.istempshow=!atable.istempshow;   
         atable.destroy();
-        document.getElementById("itable").appendChild(temp);
+        document.getElementById("itable").appendChild(temp);//添加组件模板
         atable=null;
+        //atable.updata(3);
     }//else
     {
     var obj_name=arr_realdata[0];
@@ -2165,7 +2196,7 @@ function createvue(){
              str +='<td style="display:none">{{item.'+key+'.name}}</td>';
         }else{
             if(key=="分组"){
-                str +='<td onclick="showdetails(this)">{{item.'+key+'.name}}</td>';
+                str +='<td onclick="showdetails(this)"><a>{{item.'+key+'.name}}</a></td>';
             }else{
                 str +='<td>{{item.'+key+'.name}}</td>';
             }
@@ -2173,66 +2204,77 @@ function createvue(){
     }
     /*<td style="display:none" >{{item.标签编号.name}}</td><td>{{item.测量点名称.name}}</td><td>{{item.测量时间.name}}</td>\
         <td v-show="isshow">{{item.temp.name}}</td><td>{{item.分组.name}}</td>
+        我失骄杨君失柳，杨柳轻飏直上重霄九。问讯吴刚何所有，吴刚捧出桂花酒。寂寞嫦娥舒广袖，万里长空且为忠魂舞。忽报人间曾伏虎，泪飞顿作倾盆雨。
     */
-    tempstr='<div id="temp"><table id="my_table" style="margin:auto;">\
-            <tbody id="mytbody">\
-                <tr v-for="item in filterdata" onclick="tableclick(this,true)" >'+str+'</tr> \
-            </tbody>\
-        </table>\
-        <button @click="updatedatas(3)">update</button></div>';
+    tempstr='<div id="temp">\
+            <table id="my_table" style="margin:auto;">\
+                <tbody id="mytbody">\
+                    <tr v-for="item in filterdata" onclick="tableclick(this,true)">'+str+'</tr> \
+                </tbody>\
+            </table>\
+        </div>';
         atable=new Vue({
             el:"#itable",
             components:{
                 extable:{
                     template: tempstr,
-                    props:{aisshow2:isshow2},
+                    //props:{aisshow2:isshow2},
                     data: function(){ 
                         return {
                             datas_vue:arr_realdata,
-                            isshow:true,
+                            //isshow:true,
+                            //key:2,
                         }
                     },
-                    watch:{
+                    /*watch:{
                         aisshow2:function(){
                             this.isshow=isshow2;
                         }
-                    },
+                    },*/
                     methods:{
                         updatedatas(num) {
-                            adata[0].value+=parseInt(num);
-                            this.isshow=!this.isshow;
+                            //adata[0].value+=parseInt(num);
+                            //this.isshow=!this.isshow;
+                            //调用内置强制重新渲染 下面两句都要同时使用，否则不能刷新
+                            this.datas_vue=arr_realdata;
+                            this.datas_vue.$set();
+                            //this.$forceUpdate();
                             
                         },
                         destroy() {
-                            
                             this.$destroy();
                         },
                     },
                     computed:{
-                        filterdata:function(){
-                            return this.datas_vue;//.filter( function(data){
-                                //return (data.id % 2==0)
-                            //});
-                            
+                        filterdata:function(){//显示全部还是只显示在线(有数)
+                            if(parseInt(jfjk_base_config.realdatashowmodle)){
+                                return this.datas_vue.filter( function(adata){
+                                    return (adata.测量时间.name!='');
+                                });
+                            }else{
+                                return this.datas_vue;
+                            }
                         },
+                        
                     }
                 }
             },
             data:{
-                istempshow:true,
-                aisshow2:true,
-            },
+                //istempshow:true,
+                //aisshow2:true,
+                key:0,
+            },/**/
             methods:{
             destroy() {
-                this.istempshow=false;
+                //this.istempshow=false;
                 this.$destroy();
             },
             updata(num){
                 this.$refs.mychild.updatedatas(num);
+                //this.key+=1;
             }   
             }
         });
-            //document.body.appendChild(atable.$el)
     }  
 }     
 /**

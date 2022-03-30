@@ -16,7 +16,7 @@
         <script type="text/javascript" src="js/echarts.js"></script>
         <!--<script type="text/javascript" src="js/cvi_busy_lib.js"></script>
         <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>-->
-        
+        <script type="text/javascript" src="js/vue.js"></script>
         <script type="text/javascript" src="js/function.js"></script>
         <style>
             .container{
@@ -79,6 +79,9 @@
                         </div>
                         <div class="modal-body">
                             <div id="modal_details" align="center" style="background-color: rgb(150, 148, 148); color:white">
+                                <template id="ul_detail">
+                                <extable ref="mychild"></extable>
+                            </template>
                             </div>
                         </div>
                         <div class="modal-foot">
@@ -100,12 +103,12 @@
                                 <th class="lable" style="width:100px;">操作控制</th>
                                 <th class="lable" style="width:100px;">关联信息</th>
                             </tr>
-                        </thead><!---->
+                        </thead>
                         <tbody id="guard_tbody">
-                            <tr class="bg" >
+                            <!--<tr class="bg" >
                             <td class="lable" id="door1">door1</td>
                             <td class="lable" id="name_door1">1#大门</td>
-                            <td class="normal" id="sf_door1">关门</td>
+                            <td class="normal " id="sf_door1">关门</td>
                             <td class="lable" id="info_door1">正常关闭</td>
                             <td class="set"><img src="res/close.png" style="height:30px;vertical-align: middle;" onclick="guard_changestated(this,'door1')" title="点击进行状态控制"/></td>
                             <td class="set"><button data-toggle="modal" data-target="#guard_modal" onclick="guard_modal_details(this,'door1')">更多<b class="caret"></b></button></td>
@@ -117,6 +120,15 @@
                             <td class="lable" id="info_door2">长时间打开</td>
                             <td class="set" ><img src="res/open.png" style="height:30px;vertical-align: middle;" onclick="guard_changestated(this,'door2')" title="点击进行状态控制"/></td>
                             <td class="set"><button data-toggle="modal" data-target="#guard_modal" onclick="guard_modal_details(this,'door2')">更多<b class="caret"></b></button></td>
+                        </tr>-->
+                        <tr class="bg" v-for="item in guards">
+                            <td class="lable" >{{item.id}}</td>
+                            <td class="lable" :id="'name_'+item.id">{{item.name}}</td>
+                            <!--<td :class="[isNormal ? 'normal': 'unnormal']" :id="'sf_'+item.id">{{item.state}}</td>-->
+                            <td :class="item.class" :id="'sf_'+item.id">{{item.state}}</td>
+                            <td class="lable" :id="'info_'+item.id">{{item.info}}</td>
+                            <td class="set"><img :src="item.filename" :id="item.id" style="height:30px;vertical-align:middle;" onclick="guard_changestated(this,this.id)" title="点击进行状态控制"/></td>
+                            <td class="set"><button data-toggle="modal" :value="item.id"  data-target="#guard_modal" onclick="guard_modal_details(this,this.value)">更多<b class="caret"></b></button> </td>
                         </tr>
                     </tbody>
                 </table>
@@ -145,7 +157,7 @@
                         </tr><!---->
                         </thead>
                         <tbody id="light_tbody">
-                        <tr class="bg" >
+                        <!--<tr class="bg" >
                             <td class="lable" id="light1">l001</td>
                             <td class="lable" id="name_light1">主控室</td>
                             <td class="normal" id="sf_light1">点亮</td>
@@ -160,7 +172,15 @@
                             <td class="lable" id="info_light2">正常关闭</td>
                             <td class="set" ><img src="res/d3.png" style="height:30px;vertical-align: middle;" onclick="light_changestated(this,'light2')"/></td>
                             <td class="set"><button data-toggle="modal" data-target="#guard_modal"  onclick="light_modal_details(this,'light2')">更多<b class="caret"></b></button></td>
-                        </tr><!--  -->
+                        </tr>  -->
+                        <tr class="bg" v-for="item in lights">
+                            <td class="lable" :id="item.id">{{item.id}}</td>
+                            <td class="lable" :id="'name_'+item.id">{{item.name}}</td>
+                            <td :class="item.class" :id="'sf_'+item.id">{{item.state}}</td>
+                            <td class="lable" :id="'info_'+item.id">{{item.info}}</td>
+                            <td class="set" ><img :src="item.filename" :value="item.id" style="height:30px;vertical-align: middle;" onclick="light_changestated(this,this.attributes.value.value)"/></td>
+                            <td class="set"><button data-toggle="modal" data-target="#guard_modal" :value="item.id" onclick="light_modal_details(this,this.value)">更多<b class="caret"></b></button></td>
+                        </tr>
                         </tbody>
                     </table>
                     <div class="fudongdiv" id="light_fudong" onmousedown="light_hideself(this) ">
@@ -185,10 +205,10 @@
                         <td class="lable" style="width:100px;">运行状态</td>
                         <td class="lable" style="width:100px;">设置复位</td>
                         <td class="lable" style="width:100px;">关联信息</td>
-                        </tr><!---->
+                        </tr>
                         </thead>
                         <tbody id="smoken_tbody">
-                        <tr class="bg" >
+                        <!--<tr class="bg" >
                         <td class="lable">smokeing-01</td>
                         <td class="lable" id="name_smoking-01">1#感应区</td>
                         <td class="normal" id="sf_smoking-01">正常</td>
@@ -203,6 +223,14 @@
                             <td class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="smoking_changestated(this,'smoking0102')"/></td>
                             <td class="set"><button id="btn_reset_2"  onclick="smoking_reset('smoking0102')">设置/复位</button></td>
                             <td class="set"><button data-toggle="modal" data-target="#guard_modal"  id="btn_other_2" onclick="smoken_modal_details(this,'smoking0102')">更多<b class="caret"></b></button></td>
+                        </tr>-->
+                        <tr class="bg" v-for="item in smokedetectors">
+                            <td class="lable">{{item.id}}</td>
+                            <td class="lable" :id="'name_'+item.id">{{item.name}}</td>
+                            <td :class="item.class" :id="'sf_'+item.id">{{item.state}}</td>
+                            <td class="set" ><img :src="item.filename" style="height:30px;vertical-align: middle;" :value="item.id" onclick="smoking_changestated(this,this.attributes.value.value)"/></td>
+                            <td class="set"><button :id="item.id"  onclick="smoking_reset(this.id)">设置/复位</button></td>
+                            <td class="set"><button data-toggle="modal" data-target="#guard_modal" id="'btn_'+item.id" :value="item.id" onclick="smoken_modal_details(this,this.value)">更多<b class="caret"></b></button></td>
                         </tr>
                         </tbody>
                     </table>
@@ -228,10 +256,10 @@
                         <td class="lable" style="width:100px;">运行状态</td>
                         <td class="lable" style="width:100px;">设置复位</td>
                         <td class="lable" style="width:100px;">关联信息</td>
-                        </tr><!---->
+                        </tr>
                         </thead>
                         <tbody id="flooding_tbody">
-                        <tr class="bg" >
+                        <!--<tr class="bg" >
                         <td class="lable" id="bh_1">flooding-01</td>
                         <td class="lable" id="name_flooding-01">1#配电柜</td>
                         <td class="normal" id="sf_flooding-01">正常</td>
@@ -246,6 +274,14 @@
                             <td class="set" ><img src="res/on.png" style="height:30px;vertical-align: middle;" onclick="flooding_changestated(this,'flooding-01-02')"/></td>
                             <td class="set"><button onclick="flooding_reset('flooding-01-02')">设置/复位</button></td>
                             <td class="set"><button data-toggle="modal" data-target="#guard_modal" onclick="flooding_modal_details(this,'flooding-01-02')">更多<b class="caret"></b></button></td>
+                        </tr>-->
+                        <tr class="bg" v-for="item in floodings">
+                            <td class="lable">{{item.id}}</td>
+                            <td class="lable" :id="'name_'+item.id">{{item.name}}</td>
+                            <td :class="item.class" :id="'sf_'+item.id">{{item.state}}</td>
+                            <td class="set" ><img :src="item.filename" style="height:30px;vertical-align: middle;" :value="item.id" onclick="flooding_changestated(this,this.attributes.value.value)"/></td>
+                            <td class="set"><button :id="item.id" onclick="flooding_reset(this.id)">设置/复位</button></td>
+                            <td class="set"><button data-toggle="modal" data-target="#guard_modal" :value="item.id" onclick="flooding_modal_details(this,this.value)">更多<b class="caret"></b></button></td>
                         </tr>
                         </tbody>
                     </table>
@@ -268,35 +304,35 @@
                         <img src="res/ups.jpg" style="width:100%; height:100%;min-width: 800px;min-height: 600px;z-index:-1"/>
                         <!---->
                         <div class="textbox" id="txb-shidian" style="left:6%;top:15%;">
-                            <li >Ａ相电压<input class="ups-edit" id="sd_a" value="220.34" title="输入端电压UA"/></li>
-                            <li >Ｂ相电压<input class="ups-edit" id="sd_b" value="220.34" title="输入端电压UB"/></li>
-                            <li >Ｃ相电压<input class="ups-edit" id="sd_c" value="220.34" title="输入端电压UC"/></li>
-                            <li >输入频率<input class="ups-edit" id="sd_pl" value="50.01" title="输入端频率"/></li>
+                            <li >Ａ相电压<input class="ups-edit" id="sd_a" v-model="input_ua" value="220.34" title="输入端电压UA"/></li>
+                            <li >Ｂ相电压<input class="ups-edit" id="sd_b" v-model="input_ub" value="220.34" title="输入端电压UB"/></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="sd_c" v-model="input_uc" value="220.34" title="输入端电压UC"/></li>
+                            <li >输入频率<input class="ups-edit" id="sd_pl" v-model="input_f" value="50.01" title="输入端频率"/></li>
                         </div>
                         <div class="textbox" id="txb-batter" style="left:6%;top:60%;">
-                            <li>电池状态<input class="ups-stated" id="bat_state" value="正常"/></li>
-                            <li>电池容量<input class="ups-edit" id="bat_con" value="220.34"/></li>
-                            <li>电池电压<input class="ups-edit" id="bat_val" value="220.34"/></li>
-                            <li>电池频率<input class="ups-edit" id="bat_pl" value="50"/></li>
+                            <li>电池状态<input class="ups-stated" id="bat_state" v-model="bat_state" value="正常"/></li>
+                            <li>电池容量<input class="ups-edit" id="bat_con" v-model="bat_con" value="220.34"/></li>
+                            <li>电池电压<input class="ups-edit" id="bat_val" v-model="bat_u" value="220.34"/></li>
+                            <li>电池频率<input class="ups-edit" id="bat_pl" v-model="bat_f" value="50"/></li>
                         </div>
                         <div class="textbox" id="txb-switch" style="left:35%;top:4%;">
-                            <li >Ａ相电压<input class="ups-edit" id="pl_a" value="220.34" title="旁路电压UA"/></li>
+                            <li >Ａ相电压<input class="ups-edit" id="pl_a" v-model="pl_ua" value="220.34" title="旁路电压UA"/></li>
                             <li></li>
-                            <li style="display: inline">Ｂ相电压<input class="ups-edit" id="pl_b" value="220.34" title="旁路电压UB"/></li>
-                            <li style="display: inline">旁路频率<input class="ups-edit" id="pl_pl" value="49.99" title="旁路频率"/></li>
-                            <li >Ｃ相电压<input class="ups-edit" id="pl_c" value="220.34" title="旁路电压UC"/></li>
+                            <li style="display: inline">Ｂ相电压<input class="ups-edit" id="pl_b" v-model="pl_ub" value="220.34" title="旁路电压UB"/></li>
+                            <li style="display: inline">旁路频率<input class="ups-edit" id="pl_pl" v-model="pl_uc" value="49.99" title="旁路频率"/></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="pl_c" v-model="pl_f" value="220.34" title="旁路电压UC"/></li>
                         </div>
                         <div class="textbox" id="txb-device" style="left:73%;top:48%;">
-                            <li >Ａ相电压<input class="ups-edit" id="dev_a" value="220.34" title="设备端电压UA"/></li>
-                            <li >Ｂ相电压<input class="ups-edit" id="dev_b" value="220.34" title="设备端电压UB"/></li>
-                            <li >Ｃ相电压<input class="ups-edit" id="dev_c" value="220.34" title="设备端电压UC"/></li>
-                            <li >输出频率<input class="ups-edit" id="dev_pl" value="50.01" title="设备端频率"/></li>
+                            <li >Ａ相电压<input class="ups-edit" id="dev_a" v-model="output_ua" value="220.34" title="设备端电压UA"/></li>
+                            <li >Ｂ相电压<input class="ups-edit" id="dev_b" v-model="output_ub" value="220.34" title="设备端电压UB"/></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="dev_c" v-model="output_uc" value="220.34" title="设备端电压UC"/></li>
+                            <li >输出频率<input class="ups-edit" id="dev_pl" v-model="output_f" value="50.01" title="设备端频率"/></li>
                         </div>
                         <div class="textbox" id="txb-ups" style="left:40%;top:70%;">
-                            <li >Ａ相电压<input class="ups-edit" id="ups_a" value="212.34" title="UPS输入端电压UA"/></li>
-                            <li >Ｂ相电压<input class="ups-edit" id="ups_b" value="210.34" title="UPS输入端电压UB"/></li>
-                            <li >Ｃ相电压<input class="ups-edit" id="ups_c" value="211.34" title="UPS输入端电压UC"/></li>
-                            <li >输入频率<input class="ups-edit" id="ups_pl" value="50.1" title="UPS输入端频率"/></li>
+                            <li >Ａ相电压<input class="ups-edit" id="ups_a" v-model="ups_ua" value="212.34" title="UPS输入端电压UA"/></li>
+                            <li >Ｂ相电压<input class="ups-edit" id="ups_b" v-model="ups_ub" value="210.34" title="UPS输入端电压UB"/></li>
+                            <li >Ｃ相电压<input class="ups-edit" id="ups_c" v-model="ups_uc" value="211.34" title="UPS输入端电压UC"/></li>
+                            <li >输入频率<input class="ups-edit" id="ups_pl" v-model="ups_f" value="50.1" title="UPS输入端频率"/></li>
                         </div>
                     </div>
                     <script type="text/javascript" src="js/ups.js"></script>
@@ -304,7 +340,7 @@
                 <div class="tab-pane fade" id="tab_room">
                     <div align="center">
                         <!--<h2 style="text-align:center">动力监测</h2>style="text-align:center;margin:0px; padding-top: 10px;color:#000;"-->
-                        <div style="width:805px;background:#adf7b8;">
+                        <div id="room_power" style="width:805px;background:#adf7b8;">
                             <h4 >输入端</h4>
                             <div class="input">
                                 <table class="format">
@@ -314,13 +350,13 @@
                                         </td>-->
                                         <td >
                                             <div class="donghuan" style="width:320px;display: flex;text-align: center;align-items: center;">
-                                                <ul style="color:#fff;list-style-type:none;font-size: 16px;width:100%;margin-bottom: 0px">
-                                                    <li>PT变比:<lable id="PT_A">1:1</lable></li>
-                                                    <li>CT变比:<lable id="CT_A">20:5</lable></li>
-                                                    <li>PT变比:<lable id="PT_B">1:1</lable></li>
-                                                    <li>CT变比:<lable id="CT_B">20:5</lable></li>
-                                                    <li>PT变比<lable id="PT_C">1:1</lable></li>
-                                                    <li>CT变比:<lable id="CT_C">20:5</lable></li>
+                                                <ul style="color:#fff;list-style-type:none;font-size: 14px;width:100%;margin-bottom: 0px">
+                                                    <li>PT变比:<label id="PT_A">{{PT_A}}</label></li>
+                                                    <li>CT变比:<label id="CT_A">{{CT_A}}</label></li>
+                                                    <li>PT变比:<label id="PT_B">{{PT_B}}</label></li>
+                                                    <li>CT变比:<label id="CT_B">{{CT_B}}</label></li>
+                                                    <li>PT变比<label id="PT_C">{{PT_C}}</label></li>
+                                                    <li>CT变比:<label id="CT_C">{{CT_C}}</label></li>
                                                 </ul>
                                             </div>
                                         </td>
@@ -355,18 +391,18 @@
                                 <table class="format">
                                     <tr>
                                         <!--<td class="donghuan">
-                                            <div class="donghuan"> 
+                                            <div class="donghuan">
                                             </div>
                                         </td>-->
                                         <td>
                                             <div class="donghuan" style="width:320px;display: flex;text-align: center;align-items: center;left:-200px;">
-                                                <ul style="color:#fff;list-style-type:none;font-size: 16px;width:100%; ">
-                                                    <li>PT变比:<lable id="pt_a">1:1</lable></li>
-                                                    <li>CT变比:<lable id="ct_a">200:5</lable></li>
-                                                    <li>PT变比:<lable id="pt_b">1:1</lable></li>
-                                                    <li>CT变比:<lable id="ct_b">200:5</lable></li>
-                                                    <li>PT变比:<lable id="pt_c">1:1</lable></li>
-                                                    <li>CT变比:<lable id="ct_c">200:5</lable></li>
+                                                <ul style="color:#fff;list-style-type:none;font-size: 14px;width:100%; ">
+                                                    <li>PT变比:<label id="pt_a">{{pt_a}}</label></li>
+                                                    <li>CT变比:<label id="ct_a">{{ct_a}}</label></li>
+                                                    <li>PT变比:<label id="pt_b">{{pt_b}}</label></li>
+                                                    <li>CT变比:<label id="ct_b">{{ct_b}}</label></li>
+                                                    <li>PT变比:<label id="pt_c">{{pt_c}}</label></li>
+                                                    <li>CT变比:<label id="ct_c">{{ct_c}}</label></li>
                                                 </ul>
                                             </div>
                                         </td>

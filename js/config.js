@@ -3,9 +3,9 @@ var jfjk_base_config={};
 // 1. 后台服务器地址：用引号括起来默认："http://localhost";"http://192.168.1.10";"http://www.bdjka.com"等。
 //后台服务器地址列表：
 var secc=-1;
-//_api与服务器通信地址列表，系统自动进行通道测试，保存首个通信正常地址进行数据交互；
+//_api与服务器通信地址列表，系统自动进行通道测试，保存首个通信正常地址进行数据交互； 
 var server_url_list=[
-    "http://localhost:20000/",
+    "http://localhost:22000/",
     "http://192.168.10.250:20000/",
     "http://yun.hebjka.com:20000/"
 ];

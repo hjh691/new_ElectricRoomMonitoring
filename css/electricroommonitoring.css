@@ -131,7 +131,7 @@
 	.topbar #app_name{
 		position:relative;
 		float:left;
-		left:15px;
+		left:10px;
 		font-size:2.6em;
 		font-style:bold;/**/
 		color:white;
@@ -144,17 +144,25 @@
 	.topbar #yhname{
 		position:relative;
 		float:left;
-		left:50px;
+		left:40px;
 		color:white;
-		font-size:1.2em;
+		font-size:1.4em;
 	}
 	.topbar #yhout{
 		position:relative;
 		float:left;
-		left:90px;
+		left:80px;
 		color:white;
-		font-size:1.2em;
+		font-size:1.4em;
 	}/* border-radius */
+	.topbar #serviceset{
+		position:relative;
+		float:left;
+		left:60px;
+		color:white;
+		font-size:1.4em;
+		line-height: 80px;
+	}
 	.navigation{
 		vertical-align:center;
 		overflow: auto
@@ -500,6 +508,9 @@
 	#nav13{
 		background:url(../res/bar.jpg) no-repeat center top;
 	}
+	#nav20{
+		background:url(../res/table.jpg) no-repeat center top;
+	}
 	#footer{
 		clear: both;
 		height:2em;
@@ -517,10 +528,10 @@
 	}
 	.aside {
 		height: 98%;
-		width: 15%;
+		
 		position: relative;
 		float:left;
-		background:rgba(8, 177, 106, 0.3);/* #243747;*/
+		background:rgba(8, 177, 106, 0.3);/* #243747;width: 15%;*/
 		transition: width .5s;
 	}
 	.aside-hide {
@@ -577,4 +588,23 @@
 		background-size: 10px 2px;
 		margin-top: 7px;
 		margin-left:  -25px;
+	}
+	.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12,
+	.col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, 
+	.col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, 
+	.col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, 
+	.col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, 
+	.col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, 
+	.col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, 
+	.col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, 
+	.col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, 
+	.col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+		margin: 0px;
+		padding-left:5px;
+		padding-right: 5px;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+	.row{
+		margin: 0;
 	}

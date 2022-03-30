@@ -18,15 +18,6 @@ var sname="",sid,type_td,title_index=3;//,hidden_cells=3
 let isfirst = "true",isrefreshbtn=false;
 var maxval = 0, minval = 0, maxvalue = 0, minvalue = 0,value0=0,maxOfRealdata=0;//value0未定义错误
 var maxvaluetime="",happentime="",maxOfRealdataName="";
-//var colors = [];
-//var pageSize = 10;    //每页显示的记录条数
-//var curPage = 0;        //当前页
-//var lastPage;        //最后页
-//var direct = 0;        //方向
-//var len;            //总行数
-//var page;            //总页数
-//var begin;
-//var end;
 var count=0;
 var $table;
 //var sign = '>';
@@ -37,14 +28,16 @@ var tab_head;
 var backgroudcolor='#999';
 var sensors
 var sensors_length=0;
-//var obj_realdata;
-//var datas = [];
-//var alertconfig=[70,100,120,140,];
-//var alertcount=[0,0,0,0];//;
-//let haverealdata=false;
 var catalog="Defalt";
 const c_no=0,c_id=1,c_name=2,c_pname=5,c_time=3,c_statu=8,c_mes=7,c_didian=4,c_val=6,c_next=9;
 //var display_type=document.getElementById("display_type");
+var arr_realdata=[];
+var atable;
+var adata=[];
+var tempstr="";
+var imtable=document.getElementById("itable");
+var temp=document.getElementById("temp");
+
 initrealdata_iot();
 history.pushState(null, null, document.URL);
 window.addEventListener('popstate', function () {
@@ -101,7 +94,7 @@ function initpage() {
     appendalldisplaytype();/*"display_type"*/
     //btn_refresh_click();
     window.parent.closeloadlayer();
-    showAllSensors();
+    btn_refresh_click();
     //var topTable = $("table").eq(0).offset().top;//获取表格位置
     var c_top =  $('.oa-nav_top').height() ? $('.oa-nav_top').height() : 0;//获取导航高度没有可填0
     $("#datadiv").scroll(function() {
@@ -122,40 +115,47 @@ function initpage() {
     if(sessionStorage.getItem("chartoption")){
         chartOption=JSON.parse(sessionStorage.getItem("chartoption"));
     }
-    btn_refresh_click();
+    
 }
 function showAllSensors(){
     var parentid=-1,parentname="";
     sensors = JSON.parse(localStorage.getItem("sensors"));
     $('#others_realdata_tbody').empty();
+    arr_realdata=[];
     $table = document.getElementById('others_realdata_tbody');
+    tablehead_len=tab_head.rows[0].cells.length;
     //添加所有的标签项
     if(sensors!=null){
         sensors_length=sensors.length
         for(var i=0;i<sensors_length;i++){
-            //var tr=document.createElement("tr");
-            //tr.setAttribute("onclick","tableclick(this)");
+          var obj_name=new Object(); 
             var td_did=document.createElement("td");
             td_did.innerHTML=sensors[i].id;
             if(sensors[i].Value.parentId=="-1"){
-                parentname="";
+              parentname="";
             }else if(sensors[i].Value.parentId!=parentid){
-                parentid=sensors[i].Value.parentId;
-                for(var j=0;j<sensors.length;j++){
-                    if(sensors[j].id==parentid){
-                        parentname=sensors[j].Value.name;
-                        break;
-                    }
+              parentid=sensors[i].Value.parentId;
+              for(var j=0;j<sensors.length;j++){
+                if(sensors[j].id==parentid){
+                  parentname=sensors[j].Value.name;
+                  break;
                 }
+              }
             }
             atr=document.createElement("tr");
             //atr.setAttribute("style","padding:5px 5px")
             atr.setAttribute("onclick", "tableclick(this,true)");//ondblclick
-            for(var k=0;k<10;k++){//tablehead_len
-                var atd=document.createElement("td");
-                //atd.setAttribute("width","150px");
-                //atd.innerHTML= "&nbsp;";
-                atr.appendChild(atd);
+            for(var k=0;k<tablehead_len;k++){//tablehead_len
+              var atd=document.createElement("td");
+              atr.appendChild(atd);
+              var obj_cel={};
+              obj_cel.name="";
+              obj_cel.isshow=true;
+              if(tab_head.rows[0].cells[k].attributes.hasOwnProperty("style")&&tab_head.rows[0].cells[k].attributes.style.value.indexOf("display:none")>=0){
+                //atd.setAttribute("style",tab_head.rows[0].cells[k].attributes.style.value);
+                obj_cel.isshow=false;
+              }
+              obj_name[tab_head.rows[0].cells[k].innerText]=obj_cel;
             }
             atr.cells[c_no].innerHTML=i+1;//序号从1开始计数
             //atr.cells[0].style.cssText="width:80px";
@@ -173,13 +173,31 @@ function showAllSensors(){
             if(parseInt(jfjk_base_config.realdatashowmodle))
                 atr.style="display:none;"
             $table.appendChild(atr);//
+            obj_name.序号.name=i+1;
+            obj_name.设备编号.name=sensors[i].id;
+            obj_name.设备名称.name=sensors[i].Value.name;
+            obj_name.上级分组.name=parentname;//+sname;
+            obj_name.分组.name=">>>"
+            arr_realdata.push(obj_name);
             
         }
+        createvue();
+        decoderealdata();
         jisuanyichangbili();
     }
 }
 function showdetails(asensorid){//功能接口，显示一个新的页面，用于显示此标签的数据详情和图示
-    sessionStorage.sensorId=parseInt(asensorid);//此处sensorId首字母为小写。
+  if(window.parent.wsconnect){
+    var action="GetReals" ;
+    var para=JSON.parse("{}");
+    window.parent.wssend(action,para);
+  }else{
+      getrealdatabynodeid(-1);
+  }
+  if(!isNumber(asensorid)){
+    asensorid=asensorid.parentNode.cells[1].innerText;
+  }  
+  sessionStorage.sensorId=parseInt(asensorid);//此处sensorId首字母为小写。
     /*var target = "detail.html"; 
     //判断是否打开 
     if (objWin == null || objWin.closed) { 
@@ -292,6 +310,7 @@ function btn_refresh_click(obj){
         decodedatas();*/
     isrefreshbtn=true;
     cleartable();
+    showAllSensors();
 }
 function refresh_tabhead(sel){
     count=0;
@@ -512,6 +531,8 @@ function getCatalog(atype,afolder,aname){
 }
 function cleartable(){
     //$('#others_realdata_tbody').empty();
+    var table_vue=$('#mytbody');
+    table_vue.empty();
     var showtable=document.getElementById("others_realdata_tbody");
     var tab_len=showtable.rows.length;
     if(parseInt(sessionStorage.realdatashowmodle)){//刷新列表内容，剔除不在线的标签。202108118
@@ -524,11 +545,11 @@ function cleartable(){
             showtable.rows[j].cells[c_statu].innerHTML="";
         }
     }
-    /*if(window.parent.wsconnect){
+    if(window.parent.wsconnect){
         var action="GetReals" ;
         var para=JSON.parse("{}");
         window.parent.wssend(action,para);
-    }else*/{
+    }else{
         getrealdatabynodeid(-1);
     }
 }
@@ -537,6 +558,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         //var v_sel = $('[name="options"]');
         //$('#others_realdata_tbody').empty();
         $table = document.getElementById('others_realdata_tbody');
+        var vtable = document.getElementById('mytbody');
         if(!obj_realdata){
             obj_realdata=JSON.parse(localStorage.getItem("realdata"));
         }
@@ -567,6 +589,9 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                     window.parent.realdataid=parseInt(obj_realdata[j].id);
                 $table = document.getElementById('others_realdata_tbody');
                 tab_rows_len=$table.rows.length;
+                var tab_rows_len=vtable.rows.length;
+                if(!tab_rows_len)
+                    tab_rows_len=arr_realdata.length;
                 dname=obj_realdata[j].name;
                 realdatafolder=obj_realdata[j].folder;
                 isfindtype=false;
@@ -574,8 +599,12 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                 for(p=0;p<tab_rows_len;p++){
                     if($table.rows[p].cells[c_id].innerHTML==obj_realdata[j].sensorId){
                         isfindtype=true;
-                        break;
+                        //break;
                     }
+                    if(arr_realdata[p].设备编号.name==obj_realdata[j].sensorId ){ 
+                      isfindtype=true;
+                      break;
+                  }
                 }
                 isnew=!isfindtype;
                 if (sensors)//&&isnew
@@ -676,13 +705,24 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                                     //atr.cells[k+hidden_cells].style.backgroundColor="#ffff00";
                                     if($table.rows[l].cells[c_mes].innerHTML&&($table.rows[l].cells[c_mes].innerHTML.indexOf(obj_data.message)<0)){
                                         $table.rows[l].cells[c_mes].innerHTML+=";"+obj_data.message;
-                                    }else{
+                                    }else if(!$table.rows[l].cells[c_mes].innerHTML){
                                         $table.rows[l].cells[c_mes].innerHTML=obj_data.message;
                                     }
                                 }
                                 $table.rows[l].cells[c_statu].innerHTML='运行';//obj_data.folder;
                                 $table.rows[l].style=""
                                 /**/
+                                if(arr_realdata[l].设备编号.name==obj_data.sensorId){
+                                  arr_realdata[l].测量时间.name=dateToString(obj_data.time,2).substring(10,19);
+                                  arr_realdata[l]["实时值"].name=str_hh;
+                                  arr_realdata[l].状态.name="运行"
+                                  if(arr_realdata[l]["信息"].name&&(arr_realdata[l]["信息"].name.indexOf(obj_data.message)<0)){
+                                    arr_realdata[l]["信息"].name+=";"+obj_data.message;
+                                }else if(!arr_realdata[l]["信息"].name){
+                                  arr_realdata[l]["信息"].name=obj_data.message;
+                                }
+                                  break;
+                              }
                                 break;
                             }
                         }
@@ -815,6 +855,17 @@ function decoderealdata(obj_realdata,asensorid,isload) {
                     if(($table.rows[int].offsetTop-30)>(divheight))
                         $("#datadiv").scrollTop($table.rows[int].offsetTop-30);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
                     $table.rows[ppt].style.backgroundColor = color_table_cur;
+                    break;
+                }
+            }
+            for (var int = 0; int < tab_rows_len; int++) {
+                if (vtable.rows[int].cells[c_id].innerHTML == sessionStorage.SensorId) {
+                    sessionStorage.t_p = int;
+                    var ppt = parseInt(sessionStorage.t_p);
+                    var divheight=$("#datadiv").height();
+                    if((vtable.rows[int].offsetTop-30)>(divheight))
+                        $("#datadiv").scrollTop(vtable.rows[int].offsetTop-30);//表格重新滚动定位到选定的行datadiv为table的上级div的id；
+                    vtable.rows[ppt].style.backgroundColor = color_table_cur;
                     break;
                 }
             }
@@ -1018,6 +1069,23 @@ function localrowbysensorid(asensorid){
             var row=$table.rows[int];
             tableclick(row);
             var heightpx = $("#others_realdata_tbody tr");//
+            var ppt =heightpx[int].offsetTop-30;//该行的对顶部偏移量。-30是去掉标题。
+            /*if(ppt>pageSize){
+                curPage=parseInt(ppt/pageSize);
+            }else{
+                curPage=0;
+            }*/
+            $("#datadiv").scrollTop((ppt));
+        }
+    }
+    let vtable = document.getElementById('mytbody');
+     tablehead_len=vtable.rows.length;
+    for (var int = 0; int < tablehead_len; int++) {
+        if (vtable.rows[int].cells[c_id].innerHTML == (asensorid+"")) {
+            sessionStorage.t_p = int;
+            var row=vtable.rows[int];
+            tableclick(row);
+            var heightpx = $("#mytbody tr");//
             var ppt =heightpx[int].offsetTop-30;//该行的对顶部偏移量。-30是去掉标题。
             /*if(ppt>pageSize){
                 curPage=parseInt(ppt/pageSize);
@@ -1846,51 +1914,111 @@ function initecharts(){
     //});
 }
 function jisuanyichangbili(avalue){
-    var iyunxing=0,igaojing=0;//,ilixian=0;
-    $table = document.getElementById('others_realdata_tbody');
-    let total=$table.rows.length;
-    for (var int = 0; int < total; int++) {
-        if($table.rows[int].cells[c_statu].innerText=="运行"){
-            iyunxing++;
-            if($table.rows[int].cells[c_mes].innerText!="" && $table.rows[int].cells[c_mes].innerText!=null){
-                igaojing++;
-            }
-        }
-    }
-    $("#total").text(total);
-    $("#yunxing").text(iyunxing);
-    $("#normal").text(iyunxing-igaojing);
-    $("#warning").text(igaojing);
-    $("#outline").text(total-iyunxing);
-    /*var my_canvas=document.getElementById("canvas");
-    my_canvas.width=my_canvas.parentNode.clientWidth;//*0.8;
-    var awidth=my_canvas.width;
-    var x1=awidth*(iyunxing/total);
-    var x2=x1*(igaojing/iyunxing);
-    var y=my_canvas.height*0.95;
-    var ctx=my_canvas.getContext("2d");
-    ctx.clearRect(0,0,x1,y);
-    ctx.strokeStyle="green";
-    ctx.fillStyle="green";
-    ctx.strokeRect(1,1,x1,y);
-    ctx.fillStyle="red";
-    ctx.strokeStyle="red";
-    ctx.strokeRect(x1,1,awidth-x1,y);
-    ctx.fillStyle="orange";
-    ctx.strokeStyle="orange";
-    ctx.strokeRect(0,0,x2,y);
-    /*if(avalue>alertconfig[3]){
-        alertcount[4]++;
-    }else if(avalue>alertconfig[2]){
-        alertcount[3]++;
-    }else if(avalue>alertconfig[1]){
-        alertcount[2]++;
-    }else if(avalue>alertconfig[0]){
-        alertcount[1]++;
-    }else{
-        alertcount[0]++;
-    }*/
+  var iyunxing=0,igaojing=0;//,ilixian=0;
+  $table = document.getElementById('others_realdata_tbody');
+  var vtable = document.getElementById('mytbody');
+  let total=vtable.rows.length;
+  for (var int = 0; int < total; int++) {
+      if(vtable.rows[int].cells[c_statu].innerText=="运行"){
+          iyunxing++;
+          if(vtable.rows[int].cells[c_mes].innerText!="" && vtable.rows[int].cells[c_mes].innerText!=null){
+              igaojing++;
+          }
+      }
+  }
+  $("#total").text(total);
+  $("#yunxing").text(iyunxing);
+  $("#normal").text(iyunxing-igaojing);
+  $("#warning").text(igaojing);
+  $("#outline").text(total-iyunxing);
 }
+function createvue(){
+  if(atable){
+    document.getElementById("temp").parentNode.removeChild(document.getElementById("temp"))//删除实例本身 
+    atable.destroy();
+    document.getElementById("itable").appendChild(temp);//添加组件模板
+    atable=null;
+  }//else
+  {
+  var obj_name=arr_realdata[0];
+  var str="";
+  for(let key in obj_name){
+      if(obj_name[key].isshow==false){
+           str +='<td style="display:none">{{item.'+key+'.name}}</td>';
+      }else{
+        if(key=="实时值"){
+          str+='<td style="padding:0.5em 0 .2em .5em;text-align:left;width:250px;word-break:break-all">{{item.'+key+'.name}}</td>';
+        }else   
+        if(key=="分组"){
+              str +='<td onclick="showdetails(this)"><a>{{item.'+key+'.name}}</a></td>';
+          }else{
+              str +='<td>{{item.'+key+'.name}}</td>';
+          }
+      }
+  }
+  
+  tempstr='<div id="temp"><table id="my_table" style="margin:auto;">\
+          <tbody id="mytbody">\
+              <tr v-for="item in filterdata" onclick="tableclick(this,true)">'+str+'</tr> \
+          </tbody>\
+          </table>\
+      </div>';
+      atable=new Vue({
+          el:"#itable",
+          components:{
+              extable:{
+                  template: tempstr,
+                  //props:{aisshow2:isshow2},
+                  data: function(){ 
+                      return {
+                          datas_vue:arr_realdata,
+                          //isshow:true,
+                      }
+                  },
+                  /*watch:{
+                      aisshow2:function(){
+                          this.isshow=isshow2;
+                      }
+                  },*/
+                  methods:{
+                      updatedatas(num) {
+                          adata[0].value+=parseInt(num);
+                          //this.isshow=!this.isshow;
+                      },
+                      destroy() {
+                          this.$destroy();
+                      },
+                  },
+                  computed:{
+                      filterdata:function(){//显示全部还是只显示在线(有数)
+                          if(parseInt(jfjk_base_config.realdatashowmodle)){
+                              return this.datas_vue.filter( function(adata){
+                                  return (adata.测量时间.name!='');
+                              });
+                          }else{
+                              return this.datas_vue;
+                          }
+                      },
+                      
+                  }
+              }
+          },
+          data:{
+              //istempshow:true,
+              //aisshow2:true,
+          },/**/
+          methods:{
+          destroy() {
+              //this.istempshow=false;
+              this.$destroy();
+          },
+          updata(num){
+              this.$refs.mychild.updatedatas(num);
+          }   
+          }
+      });
+  }  
+}     
 /**
  * 解决在首次登录今日实时数据页面时数据不立即显示的问题，标签名称添加上级名称，区分同名标签；
  * 状态统计添加图形序列的数值显示；

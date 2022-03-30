@@ -1,3 +1,20 @@
+var arr_smokedetectors=[];
+for(let i=0;i<3;i++){
+    var obj_light=new Object();
+    obj_light.id="smokedetectors"+i;
+    obj_light.name=i+"# 设备";
+    obj_light.state="正常";
+    //obj_light.info="正常关闭"
+    obj_light.class="normal";//"unenabled";
+    obj_light.filename="res/on.png";
+    arr_smokedetectors.push(obj_light);
+}
+var v_smokedetectors=new Vue({
+    el:'#smoken_tbody',
+    data:{
+        smokedetectors:arr_smokedetectors,
+    }
+});
 //改变状态，使用时需向服务器发送命令，成功返回后页面更改状态指示
 function smoking_changestated(obj,eId){
     var em=document.getElementById("sf_"+eId);
@@ -30,7 +47,7 @@ function smoking_reset(eId){
 //创建信息的遥控状态行（变化、名称、指示状态、运行状态、复位按钮、更多按钮。
 /**
 */
-function createline(id,name,state){
+/*function createline(id,name,state){
     var filename="'res/on.png'";
     var ediv=document.createElement("tr");
     ediv.className="bg";
@@ -74,7 +91,7 @@ function createline(id,name,state){
     ediv.appendChild(epother);
     return ediv;
 }
-document.getElementById("smoken_tbody").appendChild(createline("smoking0103","name1","告警"));
+document.getElementById("smoken_tbody").appendChild(createline("smoking0103","name1","告警"));*/
 //浮动窗口，某个遥控装置的详细信息
 function smoking_other(obj,eid){
     document.getElementById("smoking_fudong").style.left=(obj.parentElement.parentElement.offsetParent.offsetLeft+obj.parentElement.parentElement.offsetWidth)+"px";
@@ -94,7 +111,7 @@ function smoking_hideself(obj){
 //更多信息
 function smoken_modal_details(obj,eid){
     document.getElementById("modal_name").innerHTML= document.getElementById("name_"+eid).innerHTML;
-    var detail=document.getElementById("modal_details");
+    /*var detail=document.getElementById("modal_details");
     while(detail.hasChildNodes()) //当div下还存在子节点时 循环继续 卤
     { 
         detail.removeChild(detail.firstChild); 
@@ -111,5 +128,46 @@ function smoken_modal_details(obj,eid){
         labright.innerHTML=[j]+"";
         row.appendChild(labright);
         detail.appendChild(row);
+    }*/
+    info_detail={};
+    info_detail.名称=document.getElementById("name_"+eid).innerHTML;;
+    info_detail.地点="smokedector02";
+    info_detail.时间="smokedector03";
+     if(v_infodetail){
+        v_infodetail.info_details=info_detail;
+        v_infodetail.update(1);
+        /*document.getElementById("ul_detail").parentNode.removeChild(document.getElementById("ul_detail"))//删除实例本身 
+        v_infodetail.destroy();
+        document.getElementById("modal_details").appendChild(div_temp);//添加组件模板
+        v_infodetail=null;
+    }
+    {
+        v_infodetail=new Vue({
+            el:"#modal_details",
+            components:{
+                extable:{template:'<ul id="ul_detail">\
+                    <li v-for="(detail, key ,index) in info_details">{{index}}-{{key}}-{{detail}}</li>\
+                </ul>',
+                data:function(){
+                    return {info_details:info_detail};
+                },
+                methods:{
+                    destroy() {
+                    //this.istempshow=false;
+                    this.$destroy();
+                    },
+                },
+                },
+            },   
+            /*data:{
+                info_details:info_detail,
+            }
+            methods:{destroy() {
+                //this.istempshow=false;
+                this.$destroy();
+                }
+            },
+        });*/
+        
     } 
 }

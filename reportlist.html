@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>报表查询</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" href="css/electricroommonitoring.css" />
+	<script  src="js/vue.js"> </script> 
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
+	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+    <style>
+        fieldset
+{
+	display:block;
+	border:1px solid #7F9DB9;
+}
+/*预览*/
+legend{
+  margin-bottom: 2px;
+}
+.preview
+{
+	width:98%;/* 450px;*/
+	padding:5px; 
+	margin-left:1px;
+	border:1px solid #7F9DB9;
+}
+.panel{
+	margin-bottom: 5px;
+}
+select{
+		font-size:15px;
+		width:253px;
+		vertical-align:-10%;
+        margin-bottom: 5px;
+	}
+label{
+    font-size: 15px;
+}
+    </style>
+</head>
+<body>
+    <div class="container" style="margin:5px;">
+        <div class="row panel panel-default">
+            <div class="col-xs-12 ">
+                <div id="reporttype" style="margin-top: 5px;" ><label>
+                    报表类型：</label>
+                <select id="configlist" name="public-choice" v-model="couponSelected" @change="getCouponSelected">                                        
+                    <option :value="list.configId" v-for="list in reportlist" :id="list.configId" >{{list.name}}&lt{{list.type}}&gt </option> 
+                </select><a href="javascript:void(0)"><span class="glyphicon glyphicon-refresh" onclick="getReportConfig()" style="margin-left: 10px;"></span></a>
+                <input type="button" class="btn" data-toggle="modal" data-target="#myModal" value="详细配置项" onclick="showconfig();" style="margin-left: 10px;"/>
+                <!--<button class="selected" id="goback" style="width: 60px;float: right;" onclick="goback()">返回</button>
+                 起止时间:     refreshbinary()    onchange="getbinary()"
+                <input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="kssj_history" style="width:190px;font-size:16px;height: 30px;"></input>至
+                <input type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"  id="jssj_history" style="width:190px;font-size:16px;height: 30px;" ></input>
+                <input class="button" type="button" id="chaxun" value="查询" onclick="queryhistorydata()" style="font-size:16px;height: 35px;" ></input>   )exporttoexcel(-->
+                <br>    
+                <label title="自定义起止时间">起止时间：</label>
+                    <input type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})"  id="kssj_report" 
+                    style="width:160px;font-size:1.2em;height: 30px;"/>至
+                    <input type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})"  id="jssj_report" 
+                    style="width:160px;font-size:1.2em;height: 30px;" />
+                    <button class="selected" id="chaxun" style="width: 60px;margin-left: 20px;" onclick="queryreportlist()">查询</button>
+                    <button class="selected" id="chaxun2" style="width: 60px;display: none;" onclick="creatreport()" >创建</button>
+                    <a href="javascript:void(0)"  onclick="exporttoxls()">
+                        <img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;"></a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 600px;overflow: auto;" >
+							<ul id="v_reportlist" style="list-style-type:none;font-size: 14px;">
+								<template id="temp1">
+									<vue_reportlist></vue_reportlist>
+								</template> 
+							</ul>
+            </div>
+            <div class="col-xs-9 col-md-9 col-lg-10 ">
+							<div id="itable" style="text-align: center;">
+								<template v-if="istempshow" id="temp2">
+									<extable ref="mychild"></extable>
+								</template>
+							</div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog"><!---->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" 
+							data-dismiss="modal" aria-hidden="true">
+							&times;           </button>
+						<h4 class="modal-title" id="bind_name">报表包含项目列</h4>
+					</div>
+					<div class="modal-body">
+						<!--<h3 id="bind_name">1#</h3><br> --> 
+						<div id="details">
+							<ul id="reportlist" style="list-style-type:none" >
+								<template id="temp">
+									<v_li></v_li>
+								</template>                    
+							</ul>
+						</div>       
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" 
+							data-dismiss="modal">关闭            </button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal -->
+		</div>
+    </div>
+    <script type="text/javascript">
+			window.parent.updatapcnav(20);
+			sessionStorage.pageindex=400;
+			getReportConfig();
+			var arr_configs=[],arr_reportitem=[],arr_report=[],arr_titles=[],arr_items=[];
+			var vm=null,v_list=null,v_reportlist=null,atable=null;
+			var configId,caption;
+			var temp=document.getElementById("temp");
+			var temp1=document.getElementById("temp1");
+			var temp2=document.getElementById("temp2");
+			function init_page(){
+				let ckssj=new Date((getCurrentDate(1)).replace(/-/g,"/"));
+				$("#kssj_report").val(dateToString((ckssj.setDate(1)),1));
+				$("#jssj_report").val(getCurrentDate(1));
+				queryreportlist();
+			}
+			function creatreport(){
+				let name=document.getElementById('configlist').selectedOptions[0].text;
+				let kssj=$("#kssj_report").val();
+
+				let intent=confirm('即将为你创建'+kssj+'日开始的 《'+name+'》\r 点击确定开始创建，取消返回。\r创建成功后可点击"查询"按钮进行查询');
+				if(intent){
+					if(!(window.parent.wsconnect)){
+						sendorder('CreateReportManual?configId='+configId+'&from='+kssj,createreportmanual_bc);
+					}/*else{
+						var apara=new Object();
+						apara.configId=parseInt(configId);
+						apara.from=kssj;
+						window.parent.wssend("CreateReportManual",apara)
+					}*/
+				}
+			}
+			function createreportmanual_bc(data){
+				console.log(data);
+			}
+			function queryreportlist(){//查询特定类型特定时间的报表
+				var kssj=$("#kssj_report").val(),jssj=$("#jssj_report").val();
+				if(configId && kssj && jssj){
+					if(!(window.parent.wsconnect)){
+						sendorder('GetReportList?configId='+configId+'&from='+kssj+'&to='+jssj,getreportlist_bc);
+					}/*else{
+						var apara=new Object();
+						apara.configId=parseInt(configId);
+						apara.from=kssj;
+						apara.to=jssj;
+						window.parent.wssend("GetReportList",apara)
+					}*/
+				}
+			}
+			function getreportlist_bc(result){
+				arr_report=result.datas
+				showreportlist();//显示特定类型特定时间内的所有报表
+			}
+			function showreportlist(){//显示特定类型特定时间内的所有报表
+				let temp_str='<div id="temp1">\
+						<li :id="step(index)" :value="item.reportId" onclick="lightlist(this.id)" v-for="(item ,index) in reportlists">{{item.name}} &lt {{item.time.substring(0,10)}} &gt </li>\
+						</div>'
+				if(v_reportlist){
+					document.getElementById("temp1").parentNode.removeChild(document.getElementById("temp1"))
+					v_reportlist.destroy();
+					document.getElementById("v_reportlist").appendChild(temp1);
+					v_reportlist=null;
+				}
+				{
+					v_reportlist=new Vue({
+						el: '#v_reportlist',
+						components:{
+							vue_reportlist:{
+								template: temp_str,
+								data: function(){ 
+									return {
+										reportlists:arr_report,
+									}
+								},
+								methods:{
+									destroy() {
+										this.$destroy();
+									},
+									step:function(idx){
+								return "item"+idx;
+							},
+								},
+							}
+						},
+						methods:{
+							destroy() {
+								this.$destroy();
+							},
+							
+						},/**/
+					});
+				}
+			}
+			function goback(){//返回
+					window.parent.showLeftMenu(false);
+					history.go(-1);
+			}
+			function getReportConfig(){//获取报表配置项
+				if(!(window.parent.wsconnect)){
+					sendorder("GetReportConfigs",getreportconfiglist_bc);
+				}/*else{
+					window.parent.wssend("GetReportConfigs")
+				}*/
+			}
+			function getreportconfiglist_bc(data){//获取报表配置项回调函数
+					//console.log(data);
+					arr_configs=data;
+					if(!vm){//报表配置项列表
+						vm = new Vue({
+							el: '#reporttype',
+							data:{
+								reportlist:arr_configs,
+								couponSelected: '',
+							},
+							created(){
+								//如果没有这句代码，select中初始化会是空白的，默认选中就无法实现
+								this.couponSelected = this.reportlist[0].configId;
+								configId=this.couponSelected;
+							},
+							methods:{
+								getCouponSelected(){
+									configId=this.couponSelected;
+									if(v_list){
+										document.getElementById("temp").parentNode.removeChild(document.getElementById("temp"))
+										v_list.destroy();
+										document.getElementById("reportlist").appendChild(temp);
+										v_list=null;
+									}
+									showconfig();
+									queryreportlist();
+								}
+							}
+						});
+					}
+					init_page();
+			}
+			function showconfig(){//显示选定报表所包含的项目列表
+				var template_str='<div id="temp"><div v-for="(list ,index) in itemlist">\
+						<li>标题：{{list.title}} &#124 名称：{{list.name}} &#124 分组：{{list.folder}}  &#124  类型：{{list.type}} </li>\
+						</div></div>'
+				let opts=document.getElementsByTagName('option');
+				for(let p=opts.length;p--;){
+					if(opts[p].selected){
+						for(let i=0;i<arr_configs.length;i++){
+							if(arr_configs[i].configId==opts[p].value){
+								arr_reportitem=arr_configs[i].reportItems;
+								document.getElementById("bind_name").innerHTML=opts[p].innerText+"所包含项目";
+							}
+						}
+					}
+				}
+				if(!v_list){
+					v_list=new Vue({
+						el:'#reportlist',
+						components:{
+							v_li:{
+								template: template_str,
+								data: function(){ 
+									return {
+										itemlist: arr_reportitem,
+									}
+								},
+								methods:{
+									destroy() {
+										this.$destroy();
+									},
+								},
+							}
+						},
+						methods:{
+							destroy() {
+								this.istempshow=false;
+								this.$destroy();
+							},
+						}
+					});
+				}
+			}
+			function refreshconfigs(){
+
+			}
+			function lightlist(idx){//报表列表的点击事件
+				let ullist=document.getElementById("temp1");
+				let list=ullist.children;
+				for(let p=list.length;p--;){
+					if(list[p].id!==idx){
+						list[p].style.backgroundColor='#FFFFFF'//*其他*/}[p].classList.remove("personal");
+						}
+					else {
+						/*点击的*/
+						list[p].style.backgroundColor='#D2D2D2'//*点击的*/}classList.add("personal");
+						let reportid=list[p].value;
+						console.log(reportid);
+						getreportdetail(reportid);
+					}
+				}
+			}
+			//获取报表内容
+			function getreportdetail(reportid){
+				if(reportid){
+					if(!(window.parent.wsconnect)){
+						sendorder('GetReportDetail?reportId='+reportid,getreportdetail_bc);
+					}/*else{
+						var apara=new Object();
+						apara.reportId=parseInt(reportid);
+						window.parent.wssend("GetReportDetail",apara)
+					}*/
+				}
+			}
+			//报表内容回调函数
+			function getreportdetail_bc(result){
+				console.log(result);
+				arr_titles=result.titles;
+				arr_items=result.items;
+				strcaption=result.name+'<'+result.time.substr(0,10)+'>';
+				createvue();
+			}
+			function createvue(){
+				if(atable){
+					//console.log(atable.$children);
+					// 实例
+					//const comp = atable.$children[0]
+					// 淘汰机制
+					//comp.remove = () => {
+					// 删除dom
+					//var imtable=;
+					//imtable.remove(temp);
+					document.getElementById("temp2").parentNode.removeChild(document.getElementById("temp2"))
+					//}
+					//Vue.extend('extable').$mount('#itable')
+					atable.istempshow=!atable.istempshow;   
+					atable.destroy();
+					document.getElementById("itable").appendChild(temp2);
+					atable=null;
+				}//else
+				{
+					/*var obj_name=arr_realdata[0];
+					var str="";
+					for(let key in obj_name){
+						if(obj_name[key].isshow==false){
+							str +='<td style="display:none">{{item.'+key+'.name}}</td>';
+						}else{
+							if(key=="分组"){
+									str +='<td onclick="showdetails(this)">{{item.'+key+'.name}}</td>';
+							}else{
+									str +='<td>{{item.'+key+'.name}}</td>';
+							}
+						}
+					}
+					<td style="display:none" >{{item.标签编号.name}}</td><td>{{item.测量点名称.name}}</td><td>{{item.测量时间.name}}</td>\
+							<td v-show="isshow">{{item.temp.name}}</td><td>{{item.分组.name}}</td>"
+							
+					*/
+					tempstr='<div id="temp2" style="width:99%;height:550px;overflow:auto;"><table id="my_table" style="margin:auto;width:99%;text-align:center">\
+									<caption style="text-align:center"><h4>{{acaption}}</h4></caption>\
+									<tr><th v-for="t in titles">{{t}}</th></tr>\
+									<tbody id="mytbody" style="height:530px; overflow:auto;">\
+											<tr v-for="item in items" onclick="tableclick(this,true)"><td v-for="data in item">{{data}}</td></tr> \
+									</tbody>\
+								</table>\
+							</div>';
+					atable=new Vue({
+						el:"#itable",
+						components:{
+							extable:{
+								template: tempstr,
+								//props:{aisshow2:isshow2},
+								data: function(){ 
+									return {
+										titles:arr_titles,
+										items:arr_items,
+										acaption:strcaption,
+										//isshow:true,
+									}
+								},
+								//watch:{
+									//aisshow2:function(){
+											//this.isshow=isshow2;
+									//}
+								//},
+								methods:{
+									updatedatas(num) {
+										adata[0].value+=parseInt(num);
+										//this.isshow=!this.isshow;
+									},
+									destroy() {
+										this.$destroy();
+									},
+								},
+								computed:{
+									filteritems:function(){
+										return this.items.filter( function(data){
+											return (data)
+										});
+									},
+								}/**/
+							}
+						},
+						data:{
+							istempshow:true,
+							//aisshow2:true,
+						},
+						methods:{
+							destroy() {
+								this.istempshow=false;
+								this.$destroy();
+							},
+							updata(num){
+								this.$refs.mychild.updatedatas(num);
+							}   
+						}
+					});
+					//document.body.appendChild(atable.$el)//
+				}  
+			}     
+
+			function base64(content) {
+		return window.btoa(unescape(encodeURIComponent(content)));
+	}
+	function tableToExcel(tableID, fileName) {
+		var excelContent = $("#" + tableID).html();
+		// 		alert(excelContent);
+		var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";
+		excelFile += "<head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head>";
+		excelFile += "<body><table width='10%'  border='1'>";
+		excelFile += excelContent;
+		excelFile += "</table></body>";
+		excelFile += "</html>";
+		var link = "data:application/vnd.ms-excel;base64," + base64(excelFile);
+		var a = document.createElement("a");
+		a.download = fileName + ".xls";
+		a.href = link;
+		a.click();
+	}
+	function exporttoxls(){
+		if(document.getElementById("my_table") && strcaption)
+			tableToExcel('my_table',strcaption);
+	}
+    </script>
+</body>
+</html>

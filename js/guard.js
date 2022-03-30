@@ -1,3 +1,21 @@
+var arr_guard=[];
+for(var i=0;i<3;i++){
+    var obj_row=new Object();
+    obj_row.id="door"+i;
+    obj_row.name=i+"号门";
+    obj_row.state="打开";
+    obj_row.info="正常打开";
+    obj_row.class="normal";
+    obj_row.filename="res/close.png";
+    arr_guard.push(obj_row);
+}
+var v_guard=new Vue({
+    el:'#guard_tbody',
+    data:{
+        guards:arr_guard,
+        isNormal:true,
+    }
+})
 function guard_changestated(obj,eId){
     var em=document.getElementById("sf_"+eId);
     if(obj.src.indexOf("res/close.png")>=0){
@@ -74,7 +92,7 @@ function createline(id,name,state,info){
     ediv.appendChild(epother);
     return ediv;
 }
-document.getElementById("guard_tbody").appendChild(createline("door3","name3","关门","正常关闭"));
+//document.getElementById("guard_tbody").appendChild(createline("door3","name3","关门","正常关闭"));
 
 function guard_other(obj,eid){
     document.getElementById("guard_fudong").style.left=(obj.parentElement.parentElement.offsetParent.offsetLeft+obj.parentElement.parentElement.offsetWidth)+"px";
@@ -84,7 +102,7 @@ function guard_other(obj,eid){
 }
 function guard_modal_details(obj,eid){
     document.getElementById("modal_name").innerHTML= document.getElementById("name_"+eid).innerHTML;
-    var detail=document.getElementById("modal_details");
+    /*var detail=document.getElementById("modal_details");
     while(detail.hasChildNodes()) //当div下还存在子节点时 循环继续 卤
     { 
         detail.removeChild(detail.firstChild); 
@@ -101,7 +119,48 @@ function guard_modal_details(obj,eid){
         labright.innerHTML=[j]+"";
         row.appendChild(labright);
         detail.appendChild(row);
-    } 
+    } */
+    info_detail={};
+    info_detail.名称=document.getElementById("name_"+eid).innerHTML;;
+    info_detail.地点="guard02";
+    info_detail.时间="guard03";
+     if(v_infodetail){
+        v_infodetail.info_details=info_detail;
+        v_infodetail.update(1);
+        /*document.getElementById("ul_detail").parentNode.removeChild(document.getElementById("ul_detail"))//删除实例本身 
+        v_infodetail.destroy();
+        document.getElementById("modal_details").appendChild(div_temp);//添加组件模板
+        v_infodetail=null;*/
+    }
+    /*{
+        v_infodetail=new Vue({
+            el:"#modal_details",
+            components:{
+                extable:{template:'<ul id="ul_detail">\
+                    <li v-for="(detail, key ,index) in info_details">{{index}}-{{key}}-{{detail}}</li>\
+                </ul>',
+                data:function(){
+                    return {info_details:info_detail};
+                },
+                methods:{
+                    destroy() {
+                    //this.istempshow=false;
+                    this.$destroy();
+                    },
+                },
+                },
+            },   
+            /*data:{
+                info_details:info_detail,
+            }
+            methods:{destroy() {
+                //this.istempshow=false;
+                this.$destroy();
+                }
+            },
+        });
+        
+    }*/
 }
 function guard_hideself(obj){
     obj.style.display="none"

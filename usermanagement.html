@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用户管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/electricroommonitoring.css" />
+    <script  src="js/vue.js"> </script> 
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script  type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
+    <script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
+    <script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+    <style>
+      .row{
+        margin-top: 20px;
+        font-size: 12px;
+      }
+      input{
+        font-size: 1.6em;
+      }
+      li{font-size: 1.6em;}
+      button{
+        font-size: 1.6em;
+      }
+      [v-cloak]{
+        display:none;
+      }
+    </style>
+</head>
+<body>
+    <div class="container" style="margin:5px;">
+        <div class="row" id="usermanagement" v-cloak>
+          <div class="col-xs-4 col-md-4 col-lg-3" style="border: rgb(192, 190, 190) solid 1px;height: 700px;" align="center" >
+            <a href="javascript:void(0)" onclick="getuserlist()"><button style="width:150px;height:30px;font-size: 1.6em;">用户列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
+            <ul id="v_userlist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">
+              <li v-for="(user,idx) in users" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="idx" @click="changeuser(idx)">{{user.name}}</a></li>
+            </ul>
+          </div>
+          <div class="col-xs-4 col-md-4 col-lg-4">
+            <h3>详细配置项</h3>
+            <div class="container" id="userprofile-format"><!--align="center"-->
+              <div class="row">
+                <div class="col-xs-4 table-lable"> 用户编号:</div>
+                <div class="col-xs-8"><input id="user_id" type="text" readonly="readonly" style="width:250px;font-size: 1.6em;" v-model="userdetail.id" value=""/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4 table-lable"> 用户名:</div>
+                <div class="col-xs-8"><input id="user_name" type="text" v-model="userdetail.name" style="width:250px;" value=""/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4 table-lable"> 显示名:</div>
+                <div class="col-xs-8"><input id="user_display" type="text" v-model="userdetail.display" style="width:150px;" value=""/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4 table-lable"> 邮箱:</div>
+                <div class="col-xs-8"><input id="user_email" type="text" v-model="userdetail.email" style="width:150px;" value=""/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4 table-lable"> 电话:</div>
+                <div class="col-xs-8"><input id="user_tel" type="text" v-model="userdetail.tele" style="width:150px;" value=""/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4 table-lable"> 密码:</div>
+                <div class="col-xs-8"><input id="user_password" type="text" v-model="userdetail.pass" style="width:150px;" value=""/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4 table-lable"> 权限:</div>
+                <div class="col-xs-8">
+                  <ul style="list-style-type:none;margin-left:20px;">
+                  <li id="user_permission" v-for="(role,key,index) in roles" ><input :id="'user_'+key" type="checkbox" :value="role"/>{{role}}</li>
+                  <!--<li id="user_permission2" ><input id="user_guest" type="checkbox" value="来宾"/>来宾</li>
+                  <li id="user_permission3" ><input id="user_user" type="checkbox" value="用户"/>用户</li>
+                  <li id="user_permission4"><input id="user_client" type="checkbox" value="客户"/>客户</li>-->
+                  </ul>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12" align="center"><button style="width:100px;" onclick="adduser()">添加</button>
+                <button style="width:100px;" onclick="modifyuser()">修改</button>
+                <button style="width:100px;" onclick="deleteuser()">删除</button></div>
+              </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var userlist=[],userroles={};
+      var userconfig={};
+      var pt=0;
+      var v_user;
+      var isadduser=false;
+      initusermanagement();
+      function initusermanagement(){
+        getuserroles();
+        
+      }
+      function getuserroles(){
+        
+        sendorder("_manager/ListUserRole",getuserroles_bc);
+      }
+      function getuserroles_bc(data){
+        userroles={};
+        userroles=data;
+        getuserlist();
+      }
+      function getuserlist(){
+        userlist=[];
+        sendorder("_manager/ListUser",getlistuser_bc);
+      }
+      function getlistuser_bc(data){
+        //console.log(data);
+        userlist=data;
+        if(userlist.length>=0){
+          
+          if(isadduser){
+            pt=userlist.length-1;
+            isadduser=false;
+          }
+          userconfig=userlist[pt];
+          if(!v_user){
+            v_user=new Vue({
+              el:'#usermanagement',
+              data:{
+                users:userlist,
+                userdetail:userconfig,
+                roles:userroles,
+              },
+              
+              methods:{
+                changeuser(index){
+                  //userconfig=userlist[index];
+                  /*pt=index;
+                  elem=$("#"+pt);
+                  this.userdetail=userlist[pt];//
+                  userconfig=this.userdetail;
+                  decodeuserroles(userconfig.roles);
+                  refreshlist(elem[0]);*/
+                  this.$nextTick(function(){
+                    pt=index;
+                    elem=$("#"+pt);
+                    this.userdetail=userlist[pt];//
+                    userconfig=this.userdetail;
+                    decodeuserroles(userconfig.roles);
+                    refreshlist(elem[0]);
+                    //showmsg("aaa");
+                  })
+                },
+                destroy() {
+                  this.$destroy();
+                },
+              },
+              //inject:['reload'],
+            });
+          }else{
+            v_user.users=userlist
+            v_user.userdetail=userconfig;
+            //v_user.users.$set("users",userlist);
+            //v_user.reload();
+          }
+        
+          decodeuserroles(userconfig.roles);
+          let elem=$("#"+pt);
+          while(!elem)
+            elem=$("#"+pt);
+          refreshlist(elem[0]);
+
+          v_user.changeuser(pt);
+        }
+      }
+      function decodeuserroles(roles){
+        if(roles.indexOf("admin")>=0){
+          $("#user_admin").prop("checked",true)
+        }else{
+          $("#user_admin").prop("checked",false);
+        }
+        if(roles.indexOf("guest")>=0){
+          $("#user_guest").prop("checked",true)
+        }else{
+          $("#user_guest").prop("checked",false);
+        }
+        if(roles.indexOf("user")>=0){
+          $("#user_user").prop("checked",true)
+        }else{
+          $("#user_user").prop("checked",false);
+        }
+      }
+      function codeuserroles(){
+        userconfig.roles="";
+        if($("#user_admin").is(":checked")){
+          userconfig.roles+="admin";
+        }
+        if($.trim(userconfig.roles)){
+          if($("#user_guest").is(":checked")){
+            userconfig.roles+=",guest";
+          }
+        }else{
+          if($("#user_guest").is(":checked")){
+            userconfig.roles+="guest";
+          }
+        }
+        if($.trim(userconfig.roles)){
+          if($("#user_user").is(":checked")){
+            userconfig.roles+=",user";
+          }
+        }else{
+          if($("#user_user").is(":checked")){
+            userconfig.roles+="user";
+          }
+        }
+      }
+      function modifyuser(){
+        codeuserroles();
+        if (confirm("您确定要修改用户“"+userconfig.name+'”的配置信息吗')) {
+          sendorder("_manager/ModifyUser",modifyuser_bc,userconfig);
+        }         
+      }
+      function modifyuser_bc(data){
+        if(data)
+          showmsg("用户信息修改成功!");
+        //else
+          //showmsg("用户信息修改失败!")
+        //console.log(data);
+      }
+      function deleteuser(){
+        pt=pt-1;
+        if(pt<0)
+          pt=0;
+        if (confirm("您确定要删除用户“"+userconfig.name+'”吗')) {
+          sendorder("_manager/DeleteUser",deleteuser_bc,userconfig);
+        }
+      }
+      function deleteuser_bc(data){
+        if(data)
+          showmsg("用户"+userconfig.dispaly+"删除成功!");
+        getuserlist();
+      }
+      function adduser(){
+        userconfig.name="新用户_"+Math.floor(Math.random() * 100);
+        userconfig.display=null;
+        userconfig.roles="guest"
+        userconfig.pass="<password>";
+        sendorder("_manager/AddUser",adduser_bc,userconfig);
+      }
+      function adduser_bc(data){
+        console.log(data);
+        isadduser=true;
+        getuserlist();
+
+
+      }
+    </script>
+</body>
+</html>

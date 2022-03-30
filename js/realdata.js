@@ -205,11 +205,11 @@ function showAllSensors(){
             $table.appendChild(atr);//we are famly
             jisuanyichangbili("离线");
         }
-        if(window.parent.wsconnect){
+        /*if(window.parent.wsconnect){
             var action="GetReals" ;
             var para=JSON.parse("{}");
             window.parent.wssend(action,para);
-        }else{
+        }else*/{
             getrealdatabynodeid(-1);
         }
         //page=new Page(pageSize,'realtable','realdata-tbody','pageindex');
@@ -217,11 +217,11 @@ function showAllSensors(){
     }
 }
 function showdetails(asensorid){//功能接口，显示一个新的页面，用于显示次标签的数据详情和图示
-    if(window.parent.wsconnect){
+    /*if(window.parent.wsconnect){
         var action="GetReals" ;
         var para=JSON.parse("{}");
         window.parent.wssend(action,para);
-    }else{
+    }else*/{
         getrealdatabynodeid(-1);
     }
     sessionStorage.sensorId=parseInt(asensorid);//此处sessionStorage.sensorId首字母为小写。

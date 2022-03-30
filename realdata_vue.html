@@ -46,11 +46,12 @@
 		background: #ccc;
     }
     .container{
-			width: 97%;
+			width: 99%;
 			height:100%;
             margin-left: 5px;
 			margin-right: 5px;
 			margin:0px;
+			padding: 0;
         }
   </style>
 </head>
@@ -82,9 +83,9 @@
 			<div class="col-xs-12 col-md-12 col-lg-6" style="border: rgb(90, 89, 89) solid 0px;height: 400px;" align="center">
 				<div id="realdata_chart"></div>
 			</div>
-            <div class="col-xs-12 col-md-12 col-lg-6" style="border: rgb(90, 89, 89) solid 0px;height: 400px;">
+        <div class="col-xs-12 col-md-12 col-lg-6" style="border: rgb(90, 89, 89) solid 0px;height: 400px;">
 				<div class="condition" style="font-size: 1.2em;border:solid  rgba(8, 177, 106, 0.5) 2px;border-radius: 10px;width: 
-				auto;height:35px;line-height: 35px;"><label> 显示内容:</label>
+				auto;height:35px;line-height: 35px;"><label style="margin-left:15px;"> 显示内容:</label>
 					<span id="display_type_realdata">
 					</span>
 					<span>
@@ -104,17 +105,16 @@
 							<!--<th style="color:#0000ff" onclick="sortt('.value2')"><a href="javascript:">均值 <span></span></a></th>
 							<th >查看历史数据</th>
 							<th >查看告警信息</th>--><!--width="80%"
-							<th style="width:18px;border:0px solid black;"></th>-->
+							<th style="width:18px;border:0px solid black;"></th><tbody id="realdata-tbody" style="top:35px;display: none;">
+					</tbody>-->
 						</tr>
 					</thead>
-					<tbody id="realdata-tbody" style="top:35px;display: none;">
-					</tbody>
 				</table>
-                <div id="itable">
-                    <template v-if="istempshow" id="temp">
-						<extable ref="mychild"></extable>
-					</template>
-                </div>
+         <div id="itable">
+						<template id="temp">
+							<extable ref="mychild"></extable>
+						</template>
+					</div>       
 			</div>
 			<div style="text-align: center;font-size: 1.1em;display:none;">
 				<a id="btn0"></a>
@@ -136,7 +136,7 @@
 			</div>
 		</div>
 	</div>
-		<script type="text/javascript" src="js_test/vue.js"></script>
+		<script type="text/javascript" src="js/vue.js"></script>
 		<script type="text/javascript" src="js/realdata_vue.js">
 		</script>
 </body>

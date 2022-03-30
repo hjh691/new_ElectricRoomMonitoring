@@ -1,3 +1,20 @@
+var arr_lights=[];
+for(let i=0;i<3;i++){
+    var obj_light=new Object();
+    obj_light.id="light"+i;
+    obj_light.name=i+"# 设备";
+    obj_light.state="熄灭";
+    obj_light.info="正常关闭"
+    obj_light.class="unenabled";//"normal";
+    obj_light.filename="res/d3.png";
+    arr_lights.push(obj_light);
+}
+var v_light=new Vue({
+    el:'#light_tbody',
+    data:{
+        lights:arr_lights,
+    }
+})
 function light_changestated(obj,eId){
     var em=document.getElementById("sf_"+eId);
     if(obj.src.indexOf("res/d3.png")>=0){
@@ -25,7 +42,7 @@ function light_changestated(obj,eId){
         reset.innerHTML="正常";
         reset.setAttribute("class","normal");
     }
-}*/
+}
 function createline(id,name,state,info){
     var filename="'res/d2.png'";
     var ediv=document.createElement("tr");
@@ -74,7 +91,7 @@ function createline(id,name,state,info){
 }
 for(var i=3;i<5;i++){
     document.getElementById("light_tbody").appendChild(createline("l00"+i,"name"+i,"故障","无法点亮"));
-}
+}*/
 function light_other(obj,eid){
     document.getElementById("light_fudong").style.left=(obj.parentElement.parentElement.offsetParent.offsetLeft+obj.parentElement.parentElement.offsetWidth)+"px";
     document.getElementById("light_fudong").style.top=(obj.offsetParent.offsetParent.offsetTop+obj.offsetParent.offsetTop)+"px";
@@ -87,7 +104,7 @@ function light_hideself(obj){
 //更多信息
 function light_modal_details(obj,eid){
     document.getElementById("modal_name").innerHTML= document.getElementById("name_"+eid).innerHTML;
-    var detail=document.getElementById("modal_details");
+    /*var detail=document.getElementById("modal_details");
     while(detail.hasChildNodes()) //当div下还存在子节点时 循环继续 卤
     { 
         detail.removeChild(detail.firstChild); 
@@ -104,5 +121,18 @@ function light_modal_details(obj,eid){
         labright.innerHTML=[j]+"";
         row.appendChild(labright);
         detail.appendChild(row);
-    } 
+    }*/
+    info_detail={};
+    info_detail.名称=document.getElementById("name_"+eid).innerHTML;;
+    info_detail.地点="light02";
+    info_detail.时间="light03";
+    info_detail.编号="003";
+     if(v_infodetail){
+        v_infodetail.info_details=info_detail;
+        v_infodetail.update(1);
+        /*document.getElementById("ul_detail").parentNode.removeChild(document.getElementById("ul_detail"))//删除实例本身 
+        v_infodetail.destroy();
+        document.getElementById("modal_details").appendChild(div_temp);//添加组件模板
+        v_infodetail=null;*/
+    }
 }

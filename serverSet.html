@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>报表查询</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/electricroommonitoring.css" />
+	<script  src="js/vue.js"> </script> 
+  <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+  <script src="js/bootstrap.js"></script>
+	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
+	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+    <style>
+     
+    </style>
+</head>
+<body>
+    <div class="container" style="margin:5px;">
+        <div>
+          <div class="col-xs-3 col-md-2 col-lg-2" style="border: rgb(192, 190, 190) solid 0px;height: 700px;overflow: auto;" >
+            <ul id="v_optionlist" style="list-style-type:none;font-size: 18px;text-align: center;padding-top: 20px;">
+              <li v-for="(option, index) in options" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="'li'+index" :value="index" onclick="load(this)">{{option}}</a></li>
+            </ul>
+          </div>
+          <div class="col-xs-9 col-md-10 col-lg-10 " style="position:relative;height:95%;">
+            <div>
+              <iframe id="iframe_option" style="width:100%;height:740px;overflow: auto;" frameborder="0">
+              </iframe>
+            </div>
+          </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var v_opation=new Vue({
+        el:'#v_optionlist',
+        data:{
+          options:["用户管理","权限管理","连接管理","节点管理","标签管理","报表管理","图形管理"]
+        }
+      });
+      function load(opt){
+        refreshlist(opt);
+        switch(parseInt(opt.attributes.value.value)){
+          case 0:
+            $("#iframe_option").attr('src','usermanagement.html');
+            break;
+        }
+      }
+    </script>
+</body>
+</html>

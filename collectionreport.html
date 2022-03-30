@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/jquery-ui.css" /> 
+	<link rel="stylesheet" href="css/electricroommonitoring.css"/>
+	<title>统计报表</title>
+	<script  type="text/javascript" src="js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.js" ></script>
+    <script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+    <script  type="text/javascript" src="js/config.js"></script>
+    <script  type="text/javascript" src="js/function.js"></script>
+    <style>
+        th,td
+	{
+        border:1px solid black;
+        text-align:center;
+        /*line-height:center;*/
+        width: 150px;
+        height:30px;
+    }	
+	th{
+		border:1px solid black;
+		font-size: 16px;
+    }	
+	table {
+		/*设置相邻单元格的边框间的距离*/
+		border-spacing: 0;
+		/*表格设置合并边框模型*/
+		border-collapse: collapse;
+		text-align: center;
+	}
+	/*关键设置 tbody出现滚动条height: 450px;overflow-y: scroll;*/
+	table tbody {
+		display: block;
+		height: 500px;
+		overflow-y: scroll;
+	}
+	table thead,
+	tbody tr {
+		display: table;
+		table-layout: fixed;
+	}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="panel panel-default" style="margin-bottom: 0;height: 80px;" >
+            <div>
+                <div class="btn-group" data-toggle="buttons" id="btn_group">
+                    <label class="btn btn-primary active" id="btn_day" onclick="reportofday()"><input type="radio" class="catalog" name="options" value="" folder="">日报</label>
+                    <label class="btn btn-primary " id="btn_week" onclick="reportofweek()"><input type="radio" class="catalog" name="options" value="" folder="">周报</label>
+                    <label class="btn btn-primary " id="btn_month" onclick="reportofmonth()"><input type="radio" class="catalog" name="options" value="" folder="">月报</label>
+                    <label class="btn btn-primary " id="btn_season" onclick="reportofseason()" style="display:none"><input type="radio" class="catalog" name="options" value="" folder="" >季报</label>
+                    <label class="btn btn-primary " id="btn_year" onclick="reportofyear()" style="display:none"><input type="radio" class="catalog" name="options" value="" folder="" >年报</label>
+                </div>
+                <input type="text" class="time" id="kssj_collection" style="height:30px;line-height: 30px;"/><label id="label_end"></label>
+                <div class="btn-group  dropdown" style="margin-left:10px;font-size:14px" >
+                    <a  class="btn-default" id="selecttype" href="#" data-toggle ="dropdown">标签</a>
+                    <a  class="btn-default" href = "#" data-toggle ="dropdown"><i class= "caret">
+                    </i></a> 
+                    <ul  class="dropdown-menu dropdown_item">
+                    <li id="li_sensor"><a href="javascript:void(0)" onclick="selecttype(0)">标签</a></li> 
+                    <li id="li_node"><a href="javascript:void(0)" onclick="selecttype(1)">站点</a></li>
+                    </ul > 
+                </div>
+            </div>
+            <div class="condition">
+                <span><label style="width:50px;font-size: 14px;"> 类别：</label></span>
+                <span id="display_type" class="btn-group"  data-toggle="buttons">
+                </span>
+                <span >
+					<button class="btn btn-primary" id="btn_tongji"  onclick="collection() " 
+				style="font-size:14px; margin-left: 20px;" >开始统计</button>
+				<a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:10px;" onclick="exporttoexcel('collectiontable')">
+					<img src="res/dcexcel.jpg" alt="Big Boat" title="导出到Excel" class="img-thumbnail img-responsive" style="width:40px;" ></a>
+				</span>
+            </div>
+            <div class="panel panel-default" style="text-align:center;margin-bottom: 0;height:600px;">
+                <table id="collectiontable" style="margin: auto; overflow:auto;">
+                    <caption  style="text-align: center;font-size:22px;color:black;">
+                        <b id="collect_caption" style="margin-right:10px" >报表</b>
+                    </caption>
+                    <thead><!---->
+                        <tr>
+                            <th>名称:</th>
+                            <td id="tj_name" style="border:1px solid black;font-size: 14px;" colspan="3"></td>
+                            <th>日期:</th>
+                            <td id="tj_during" style="border:1px solid black;font-size: 14px;" colspan="2"></td>
+                        </tr>
+                        <tr>
+                            <th>设备总数</th>
+                            <th id="tj_count" style="border:1px solid black;"></th>
+                            <th>在线数</th>
+                            <th id="tj_online" style="border:1px solid black;"></th>
+                            <th>总告警次数</th>
+                            <th id="tj_warcount" style="border:1px solid black;" colspan="2"></th>
+                        </tr>
+                        <tr>
+                            <td style="display: none;">编号</td>
+                            <th onclick="$.sortTable.sort('collectiontable',1)" style="border:1px solid black;">时段(日期)</th>
+                            <th onclick="$.sortTable.sort('collectiontable',2)" style="border:1px solid black;">最大值</th>
+                            <th onclick="$.sortTable.sort('collectiontable',3)" style="border:1px solid black;">发生时刻</th>	
+                            <th onclick="$.sortTable.sort('collectiontable',4)" style="border:1px solid black;">最小值</th>
+                            <th onclick="$.sortTable.sort('collectiontable',5)" style="border:1px solid black;">发生时刻</th>	
+                            <th onclick="$.sortTable.sort('collectiontable',6)" style="border:1px solid black;">平均值</th>
+                            <th onclick="$.sortTable.sort('collectiontable',6)" style="border:1px solid black;">告警次数</th>
+                            <!--<th style="width:18px;border:0px solid black;"></th<th>测量点编号</th>>height:520px -->
+                        </tr>
+                    </thead>
+                    <tbody id="collection-tbody" >
+                    </tbody>
+                </table>
+                <div style="text-align: center;margin:6px;font-size: 18px;float:bottom;">
+                    <a id="btn0"></a>
+                    <input id="pageSize" type="text" size="1" maxlength="3" value="" style="text-align: center;"/><a> 条 </a> <a href="javascript:void(0)" id="pageSizeSet" onclick="setPageSize()">设置</a>&nbsp;
+                    <a id="sjzl"></a>&nbsp;
+                    <a  href="javascript:void(0)" id="btn1" onclick="page.firstPage()">首页</a>
+                    <a  href="javascript:void(0)" id="btn2" onclick="page.prePage()">上一页</a>
+                    <a  href="javascript:void(0)" id="btn3" onclick="page.nextPage()">下一页</a>
+                    <a  href="javascript:void(0)" id="btn4" onclick="page.lastPage()">尾页</a>&nbsp;
+                    <a>转到&nbsp;</a>
+                    <input id="changePage" type="text" size="1" maxlength="4"/>
+                    <a>页&nbsp;</a>
+                    <a  href="javascript:void(0)" id="btn5" onclick="changePage()">跳转</a>
+                    <span id="pageindex" style="display: none;"></span>
+                    <a href="javascript:void(0)" style="left:50px;text-align:right;margin-left:50px;display:none;" id="tongji" onclick="tongji('tongjitable')">告警统计</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<script type="text/javascript" src="js/collection.js"></script>-->
+    <script type="text/javascript">
+        var catalog="",dname,tname="",childclassname="";
+        var sele_type=0,type="",tj_time,warn_count=0;
+        var during=0;
+        var sensors = JSON.parse(localStorage.getItem("sensors"));
+        var sensors_length=sensors.length;
+        $(document).ready(function(){
+            initcollection();
+            
+        });
+        function initcollection(){
+            sessionStorage.pageindex=16;
+            updatapcnav(16);
+            $('.time').bind('focus',function(){WdatePicker({el:this})});
+            var inputa=$("#kssj_collection")
+            inputa.val(getCurrentDate(1))
+            sensors=JSON.parse(localStorage.getItem("sensors"));
+            configs=JSON.parse(localStorage.Config);
+            appenddisplaytype(sessionStorage.SensorId);
+            window.parent.closeloadlayer();
+        }
+        
+        function reportofday(){
+            var inputa=$("#kssj_collection");
+            inputa.unbind('focus');
+            inputa.bind('focus',function(){WdatePicker({el:this,dateFmt:'yyyy-MM-dd'});});
+            $("#li_node").attr("style","display:black");
+            during=0;
+        }
+        function reportofweek(){
+            var inputa=$("#kssj_collection")
+            inputa.unbind('focus');
+            inputa.bind('focus',function(){WdatePicker({el:this,isShowWeek:true,dateFmt:'yyyy-MM-dd'});});
+            $("#li_node").attr("style","display:none");
+            $("#selecttype").text("标签");
+            during=1;
+        }
+        function reportofmonth(){
+            var inputa=$("#kssj_collection")
+            inputa.unbind('focus');
+            inputa.bind('focus',function(){WdatePicker({el:this,dateFmt:'yyyy-MM'});});
+            $("#li_node").attr("style","display:none");
+            $("#selecttype").text("标签");
+            during=2;
+        }
+        function selecttype(aindex){
+            sele_type=aindex;
+            switch (aindex){
+            case 0:
+                $("#selecttype").text("标签");
+                break;
+            case 1:
+                $("#selecttype").text("站点");
+                break;
+            }
+        }
+        function collection(){
+            var kssj,jssj;
+            switch (during){
+            case 0:
+                $("#collect_caption").text(sessionStorage.sensorallpathname+tname+" 日报表");
+                $("#tj_count").text("1");
+                $("#tj_online").text("1");
+
+                tj_time=$("#kssj_collection").val();
+                sessionStorage.kssj=tj_time+" 00:00:00";
+                sessionStorage.jssj=tj_time+" 23:59:59";
+                break;
+            case 1:
+                $("#collect_caption").text(sessionStorage.sensorallpathname+tname+" 周报表");
+                tj_time=$("#kssj_collection").val().replace(/-/g,"/")+" 00:00:00";
+                tj_date=new Date(tj_time);
+                week=tj_date.getDay();
+                kssj=new Date(tj_date.setDate(tj_date.getDate()-parseInt(week)));
+                jssj=new Date(tj_date.setDate(tj_date.getDate()+8));
+                sessionStorage.kssj=dateToString(kssj,2);
+                sessionStorage.jssj=dateToString(jssj,2);
+                tj_time=sessionStorage.kssj+"-"+sessionStorage.jssj;
+                break;
+            case 2:
+                $("#collect_caption").text(sessionStorage.sensorallpathname+tname+" 月报表");
+                tj_time=$("#kssj_collection").val()
+                if(tj_time.length==7){
+                    tj_time=tj_time.replace(/-/g,"/")+"/01 00:00:00";
+                }else if(tj_time.length==10){
+                    tj_time=tj_time.replace(/-/g,"/")+" 00:00:00";
+                }
+                tj_date=new Date(tj_time);
+                kssj=new Date(tj_date.setDate(1));
+                tj_date.setMonth(tj_date.getMonth()+1);
+                jssj=new Date(tj_date.setSeconds(tj_date.getSeconds()-1));
+                sessionStorage.kssj=dateToString(kssj,2);
+                sessionStorage.jssj=dateToString(jssj,2);
+                tj_time=tj_time.substr(0,7);
+                break;
+            }
+            if(sele_type==0){
+                gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
+                $("#collect_caption").text(sessionStorage.sensorallpathname+tname+" 日报表");
+            }else if(sele_type==1){
+                $("#collect_caption").text(sessionStorage.sensorallpathname.substr(0,sessionStorage.sensorallpathname.indexOf("_"))+tname+" 日报表");
+                gethistorybynode(sessionStorage.nodeId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
+            }
+        }
+    function appenddisplaytype(element_id,time){
+    try{
+        var lcatalog="",ldname="";
+        var display_type=document.getElementById("display_type")
+        for(var i=display_type.childElementCount;i>0;i--)
+        display_type.removeChild(display_type.childNodes[i]);
+        initconfigOption();
+        if(element_id>=0){
+            if(sensors){
+            let sensors_len=sensors.length;
+            for(var k=0;k<sensors_len;k++){
+                if(sensors[k].Value.id==element_id){
+                    scatalog=sensors[k].Value.type;//catalog;//读取对应的Catalog项1
+                    if(scatalog)
+                        scatalog=scatalog.toLowerCase();
+                    break;
+                }
+            }}
+            if(configs){
+                let configs_len=configs.length;
+                for(var i=0;i<configs_len;i++){
+                    if((configs[i].type.toLowerCase()==scatalog)){//&&(configs.hasOwnProperty(scatalog))){//检查配置中是否有catalog项
+                        var s_des=configs[i].details;//如果有，读取其所有配置项
+                        var inside=false;
+                        for(var p in s_des){
+                            var lab=document.createElement("label");
+                            ldname=s_des[p].name;//Name
+                            lcatalog=s_des[p].folder;//Catalog; //not type
+                            tname=s_des[p].desc;//20201023
+                            if(!jQuery.isEmptyObject(s_des[p].details)){
+                                for(var detail in s_des[p].details){
+                                    switch(s_des[p].details[detail].name.toLowerCase()){
+                                        case "Type".toLowerCase():
+                                            configOption.childclassname=s_des[p].details[detail].value;
+                                            break;
+                                        case "Unit".toLowerCase():
+                                            configOption.unit=s_des[p].details[detail].value;
+                                            break;
+                                        case "Top".toLowerCase():
+                                            configOption.maxvalue=s_des[p].details[detail].value;
+                                            break;
+                                        case "Bot".toLowerCase():
+                                            configOption.minvalue=s_des[p].details[detail].value;
+                                            break;
+                                    }
+                                }
+                            }/**/
+                            lab.innerHTML='<input class="catalog" type="radio" name="options" childtype="'+configOption.childclassname+'" folder="'+lcatalog+'" value="'+ldname+'" >'+tname;
+                            if(sessionStorage.datatype){
+                                if(s_des[p].name==sessionStorage.datatype){//如果有原先的选择
+                                    lab.className="btn btn-primary btn1 active";
+                                    dname=ldname;
+                                    catalog=lcatalog;
+                                    childclassname=configOption.childclassname;
+                                    inside=true;
+                                }else{
+                                    lab.className="btn btn-primary btn1";
+                                }
+                            }else{ //没有选择项，则默认为第一项
+                                if(p==0){
+                                    lab.className="btn btn-primary btn1 active";
+                                    dname=ldname;
+                                    catalog=lcatalog;
+                                }else{
+                                    lab.className="btn btn-primary btn1";
+                                }
+                            }
+                            //lab.innerHTML=s_des[p].Desc;
+                            display_type.appendChild(lab);
+                        }
+                        if(!inside && sessionStorage.datatype){
+                            display_type.childNodes[1].className="btn btn-primary active";
+                            dname=display_type.children[0].children[0].defaultValue;
+                        }
+                        break;
+                    }
+                }
+            }else{
+            }
+        }
+        $(".btn1").click(function(){//用于动态加载的元素的点击响应。
+            $(this).button('toggle');
+            var eobj=$(".catalog:checked")
+            dname= eobj.val();
+            tname= eobj[0].parentNode.innerText;
+            sessionStorage.datatype=dname;//保存选择项的值，用于页面刷新时恢复当前数据。
+            catalog=eobj[0].getAttribute("folder");//getcatalog(dname);
+            childclassname=eobj[0].getAttribute("childtype");
+            //flashbutton();
+            //gethistorydata(sessionStorage.SensorId,catalog,dname,sessionStorage.kssj, sessionStorage.jssj);
+        });
+    }catch(err){
+        showstateinfo(err.message,"historydata/appenddisplaytype");
+    }
+}
+function decodedatas(obj_data,flag){
+    try{
+        var count = 0;
+        var maxvalue=-1,minvalue=-1,avgvalue=-1,ps=0,ct=1,maxval=-1,minval=-1,hourvalue=-1;
+        //var stime=new Date(sessionStorage.kssj).getTime();
+        var stime=new Date(Date.parse(sessionStorage.kssj.replace(/-/g,"/"))).getTime();
+        var etime=new Date(Date.parse(sessionStorage.jssj.replace(/-/g,"/"))).getTime();
+        var maxtime="",mintime="";
+        var senconds=etime-stime;
+        //var pa = [],pb = [],pc = [];
+        //var jiange="";
+        //var seriess=[];
+        warn_count=0;
+        //myChart.clear();
+        $("#collection-tbody").empty();
+        var tbl = document.getElementById('collection-tbody');
+        /*var tableLength = tbl.rows.length;
+        for (var int = 0; int < tableLength; int++) {
+            tbl.deleteRow(0);
+        }*/
+        
+        document.getElementById("tj_name").innerHTML=sessionStorage.SensorName;
+        document.getElementById("tj_during").innerHTML=tj_time;//sessionStorage.kssj+"—"+sessionStorage.jssj
+        
+        if((obj_data==null)||(obj_data.length<=0)){
+            //document.getElementById('count_val').innerHTML = count + "条";
+            //document.getElementById('normal_count').innerHTML = sessionStorage.SensorName;
+            return;
+        }else if(sessionStorage.nodetype==2){//Math.ceil(senconds/1000/60)<1430//如果是机房监控，则显示所有数据，并使图形显示为阶梯图，表示开关状态。
+            step='end';
+            for (var i = 0; i <obj_data.length; i++) {
+                var tr = document.createElement('tr');
+                if (i % 2 == 0) {//此处抵消css定义的table隔行变色的显示效果.来显示机房监控的状态列表 
+                    tr.setAttribute('style', "background-color:#16b9c9");
+                }
+                let obj_i=obj_data[i];
+                var tdname = document.createElement('td');
+                tdname.className="seneorname";// setAttribute('class', 'seneorname');
+                var tdtime = document.createElement('td');
+                tdtime.className="time";// setAttribute('class', 'time');
+                var tdvalue1 = document.createElement('td');
+                tdvalue1.className="value1";// setAttribute('class', 'value1'); //给单元格添加类名属性
+                var tdvalue2 = document.createElement('td');
+                tdvalue2.className="value2";// setAttribute('class', 'value2');
+                var tdvalue3=document.createElement("td");
+                tdvalue3.className="value3";// setAttribute("class",'value3');
+                tdname.innerHTML=sessionStorage.sensorallpathname;// sessionStorage.SensorName;
+                tdvalue1.innerHTML = obj_i.value;
+                //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
+                tdtime.innerHTML = dateToString(obj_i.time,2);; //jsonObject[i].color;
+                tdvalue2.innerHTML = obj_i.value;
+                tdvalue3.innerHTML= obj_i.value;
+                //tr.appendChild(tdname);
+                tr.appendChild(tdtime);
+                tr.appendChild(tdvalue1);
+                tr.appendChild(tdvalue2);
+                tr.appendChild(tdvalue3);
+                //var tbody = document.getElementById('historydata-tbody');
+                tbl.appendChild(tr);
+                pa.push([strtodatetime(strtime+":00"), obj_i.value, ps]);
+                pb.push([strtodatetime(strtime+":00"), obj_i.value, ps]);
+                pc.push([strtodatetime(strtime+":00"), obj_i.value , ps]);
+                ps++;
+            }
+            //ps=obj_data.length;
+        }else if(flag==1){
+            document.getElementById("tj_name").innerHTML=sessionStorage.sensorallpathname.substr(0,sessionStorage.sensorallpathname.indexOf("_"));//sessionStorage.SensorName;
+            sortarray(obj_data);
+            temp=obj_data[0].sensorId;
+            var sensorname=getsensornamebyid(temp);
+            maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
+            hourvalue=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
+            maxtime=mintime=dateToString(obj_data[0].time,2);
+            tongji();
+            avgvalue=(avgvalue/ct);
+            var tr = document.createElement('tr');
+            tr.setAttribute("onclick","tableclick(this)");
+            var tdid = document.createElement('td');
+            tdid.setAttribute('class', 'id');
+            tdid.setAttribute("style","display:none");
+            var tdtime = document.createElement('td');
+            tdtime.className='time';
+            var tdhourvalue=document.createElement('td');
+            tdhourvalue.className="hvalue";
+            var tdvalue1 = document.createElement('td');//最大值
+            tdvalue1.className='value1'; //给单元格添加类名属性
+            var tdvalue2 = document.createElement('td');//平均值
+            tdvalue2.className='value2';
+            var tdmaxtime=document.createElement('td');
+            tdmaxtime.className="maxtime";
+            var tdvalue3=document.createElement("td");//最小值
+            tdvalue3.className='value3';
+            var tdmintime=document.createElement('td');
+            tdmintime.className="mintime";
+            var tdwarntimes=document.createElement('td');
+            tdwarntimes.className="warntimes";
+            tdid.innerHTML=ps;//sessionStorage.SensorName;
+            if(type=="pd"){
+                tdvalue1.innerHTML = minvalue;
+                tdmaxtime.innerHTML=mintime;
+                tdvalue3.innerHTML = maxvalue;
+                tdmintime.innerHTML=maxtime;
+            }else{
+                tdvalue1.innerHTML = maxvalue;
+                tdmaxtime.innerHTML=maxtime;
+                tdvalue3.innerHTML = minvalue;
+                tdmintime.innerHTML=mintime;
+            }
+            //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
+            tdtime.innerHTML =sensorname;//+":00";// strtime; //jsonObject[i].color;
+            tdhourvalue.innerHTML=hourvalue;
+            tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
+            tdwarntimes.innerHTML=count;
+            tr.appendChild(tdid);
+            tr.appendChild(tdtime);
+            //tr.appendChild(tdhourvalue);
+            tr.appendChild(tdvalue1);
+            //tr.appendChild(tdvalue2);
+            tr.appendChild(tdmaxtime);
+            tr.appendChild(tdvalue3);
+            tr.appendChild(tdmintime);
+            tr.appendChild(tdvalue2);
+            tr.appendChild(tdwarntimes);
+            //var tbody = document.getElementById('historydata-tbody');
+            tbl.appendChild(tr);
+            $.sortTable.sort('collectiontable',1);
+            $("#tj_count").text(sensors_length);
+            $("#tj_online").text(ps);
+        }else if(Math.ceil(senconds/1000/60)<=1440){
+            step=false;
+            //jiange="按小时统计";
+            var temp_value=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
+            if(isNaN(temp_value)){
+                obj_data[0].value=-1;
+            }
+            maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
+            //maxval=minval=maxvalue;
+            hourvalue=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
+            maxtime=mintime=dateToString(obj_data[0].time,2);//.replace(/T/g," ").substring(0,19);
+            var strtime=dateToString(obj_data[0].time,2).replace(/T/g," ").substr(0,13);
+            var temp=parseInt(strtime.substr(11));
+            jisuan(11,13);
+            avgvalue=(avgvalue/ct);
+            var tr = document.createElement('tr');
+            tr.setAttribute("onclick","tableclick(this)");
+            //var tdname = document.createElement('td');
+            //tdname.setAttribute('class', 'seneorname');
+            var tdtime = document.createElement('td');
+            tdtime.className='time';
+            var tdhourvalue=document.createElement('td');
+            tdhourvalue.className="hvalue";
+            var tdvalue1 = document.createElement('td');//最大值
+            tdvalue1.className='value1'; //给单元格添加类名属性
+            var tdvalue2 = document.createElement('td');//平均值
+            tdvalue2.className='value2';
+            var tdmaxtime=document.createElement('td');
+            tdmaxtime.className="maxtime";
+            var tdvalue3=document.createElement("td");//最小值
+            tdvalue3.className='value3';
+            var tdmintime=document.createElement('td');
+            tdmintime.className="mintime";
+            var tdwarntimes=document.createElement('td');
+            tdwarntimes.className="warntimes";
+            //tdname.innerHTML=sessionStorage.SensorName;
+            if(type=="pd"){
+                tdvalue1.innerHTML = minvalue;
+                tdmaxtime.innerHTML=mintime;
+                tdvalue3.innerHTML = maxvalue;
+                tdmintime.innerHTML=maxtime;
+            }else{
+                tdvalue1.innerHTML = maxvalue;
+                tdmaxtime.innerHTML=maxtime;
+                tdvalue3.innerHTML = minvalue;
+                tdmintime.innerHTML=mintime;
+            }
+            //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
+            tdtime.innerHTML =temp+":00";// strtime; //jsonObject[i].color;
+            tdhourvalue.innerHTML=hourvalue;
+            tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
+            tdwarntimes.innerHTML=count;
+            //tr.appendChild(tdname);
+            tr.appendChild(tdtime);
+            //tr.appendChild(tdhourvalue);
+            tr.appendChild(tdvalue1);
+            //tr.appendChild(tdvalue2);
+            tr.appendChild(tdmaxtime);
+            tr.appendChild(tdvalue3);
+            tr.appendChild(tdmintime);
+            tr.appendChild(tdvalue2);
+            tr.appendChild(tdwarntimes);
+            //var tbody = document.getElementById('historydata-tbody');
+            tbl.appendChild(tr);
+            //pa.push([strtodatetime(strtime+":00"), maxvalue, ps]);
+            //pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps]);
+            //pc.push([strtodatetime(strtime+":00"),minvalue , ps]);
+        }else{
+            step=false;
+            //jiange="按日统计";
+            var temp_value=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
+            if(isNaN(temp_value)){
+                obj_data[0].value=-1
+            }
+            maxvalue=minvalue=avgvalue=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
+            maxval=minval=maxvalue;
+            hourvalue=parseFloat(obj_data[0].value).toFixed(Number_of_decimal);
+            maxtime=mintime=dateToString(obj_data[0].time,2);//.replace(/T/g," ").substring(0,19);
+            var strtime=dateToString(obj_data[0].time,2).replace(/T/g," ").substr(0,10);
+            var temp=parseInt(strtime.substr(8));
+            jisuan(8,10);//参数是区日期时间格式串的起始和结束位置的由零算起的索引值。2020-04-16 14:50:10，
+            avgvalue=(avgvalue/ct);
+            var tr = document.createElement('tr');
+            tr.setAttribute("onclick","tableclick(this)");
+            //var tdname = document.createElement('td');//
+            //tdname.setAttribute('class', 'seneorname');//
+            var tdtime = document.createElement('td');
+            tdtime.className='time';
+            var tdhourvalue=document.createElement('td');
+            tdhourvalue.className="hvalue";
+            var tdvalue1 = document.createElement('td');//最大值
+            tdvalue1.className='value1'; //给单元格添加类名属性
+            var tdvalue2 = document.createElement('td');//平均值
+            tdvalue2.className='value2';
+            var tdmaxtime=document.createElement('td');
+            tdmaxtime.className="maxtime";
+            var tdvalue3=document.createElement("td");//最小值
+            tdvalue3.className='value3';
+            var tdmintime=document.createElement('td');
+            tdmintime.className="mintime";
+            var tdwarntimes=document.createElement('td');
+            tdwarntimes.className="warntimes";
+            //tdname.innerHTML=sessionStorage.SensorName;
+            if(type=="pd"){
+                tdvalue1.innerHTML = minvalue;
+                tdmaxtime.innerHTML=mintime;
+                tdvalue3.innerHTML = maxvalue;
+                tdmintime.innerHTML=maxtime;
+            }else{
+                tdvalue1.innerHTML = maxvalue;
+                tdmaxtime.innerHTML=maxtime;
+                tdvalue3.innerHTML = minvalue;
+                tdmintime.innerHTML=mintime;
+            }
+            //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
+            tdtime.innerHTML =temp;// strtime; //jsonObject[i].color;
+            tdhourvalue.innerHTML=hourvalue;
+            tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
+            tdwarntimes.innerHTML=count;
+            //tr.appendChild(tdname);
+            tr.appendChild(tdtime);
+            //tr.appendChild(tdhourvalue);
+            tr.appendChild(tdvalue1);
+            tr.appendChild(tdmaxtime);
+            tr.appendChild(tdvalue3);
+            tr.appendChild(tdmintime);
+            tr.appendChild(tdvalue2);
+            tr.appendChild(tdwarntimes);
+            //var tbody = document.getElementById('historydata-tbody');
+            tbl.appendChild(tr);
+            //pa.push([strtodatetime(strtime+":00"), maxvalue, ps])
+            //pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps])
+            //pc.push([strtodatetime(strtime+":00"),minvalue , ps])
+        }
+        //表标题
+        //document.getElementById("his_caption").innerHTML=sessionStorage.sensorallpathname+"  "+jiange+" 报表";//sessionStorage.SensorName
+        //count =ps+1;//obj_data.length;
+        //document.getElementById('count_val').innerHTML ="<span class='badge' style='font-size:18px'>"+ count + "条";
+        //document.getElementById('station_name').innerHTML = sessionStorage.stationName;
+        //document.getElementById('normal_count').innerHTML = "<span class='badge' style='font-size:18px'>"+sessionStorage.SensorName;
+        //var lengenddata = [];
+        //lengenddata.push("最大值");
+        //lengenddata.push("平均值");
+        //lengenddata.push("最小值");
+        if(maxval==minval){
+            maxval=1.5*maxval;
+            minval=minval/2;
+        }else if(maxval-minval<=1){
+            var disvalue=(maxval-minval);
+            maxval=(maxval*1+disvalue).toFixed(Number_of_decimal);
+            minval=(minval*1-disvalue).toFixed(Number_of_decimal);
+        }else{
+            var disvalue=(maxval-minval);
+            maxval=(maxval*1+disvalue*0.2).toFixed(Number_of_decimal);
+            minval=(minval*1-disvalue*0.2).toFixed(Number_of_decimal);
+        }
+        $("#tj_warcount").text(warn_count);
+        //drawchart();
+        function drawchart() {
+            //var myChart = echarts.init(document.getElementById('main'));
+            var option = {
+                color: ['#FFFF00', '#FF0000','#00ff00'],//
+                backgroundColor: '#b0b0b0',
+                title : {
+                    text : sessionStorage.SensorName+":"+tname+'    变化趋势图  ',
+                    x:"center",
+                    subtext:jiange+"   "+sessionStorage.kssj+"——"+sessionStorage.jssj,
+                    subtextStyle:{
+                        color: "#000",
+                    }
+                },/**/
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        var date = new Date(params.value[0]);
+                        data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' +
+                            date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+                        return data + '<br/>' + params.value[1];
+                    }
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        mark: {
+                            show: true
+                        },
+                        dataView: {
+                            show: true,
+                            readOnly: false,
+                            optionToContent: function (opt) {
+                                //let axisData = opt.xAxis[0].data; //坐标数据
+                                let series = opt.series; //折线图数据
+                                let tdHeads = '<td  >时间</td>'; //表头
+                                let tdBodys = ''; //数据
+                                series.forEach(function (item) {
+                                    //组装表头
+                                    tdHeads += '<td >'+item.name+'</td>';
+                                });
+                                let table = '<table border="1" ><tbody><tr>'+tdHeads+'</tr>';
+                                for (let i = 0, l = series[0].data.length; i < l; i++) {
+                                    for (let j = 0; j < series.length; j++) {
+                                        //组装表数据
+                                        strtime=dateToString((series[j].data[i][0]),2);
+                                        tdBodys += '<td>'+ series[j].data[i][1]+'</td>';
+                                    }
+                                    table += '<tr><td >'+strtime+'</td>'+tdBodys+'</tr>';
+                                    tdBodys = '';
+                                }
+                                table += '</tbody></table>';
+                                return table;
+                            }
+                        },
+                        magicType: { //
+                            show: true,
+                            type: ['line']
+                        },
+                        //, 'bar', 'stack', 'tiled'// 
+                        restore: {
+                            show: true
+                        },
+                        saveAsImage: {
+                            show: true
+                        }
+                    }
+                },
+                legend: {
+                    data: lengenddata,
+                    orient:"horizontal",//"vertical",//
+                    x:'left',
+                    y:'30',
+                    //color: 'white',
+                },
+                grid: {
+                    y2: 80
+                },
+                xAxis: [{
+                    type: 'time',
+                    splitNumber: 10,
+                    axisLine: {
+                        lineStyle: {
+                            color: 'black',
+                            width: 2
+                        },
+                        onZero:false
+                    }
+                }],
+                yAxis: [{
+                    type: 'value',
+                    axisLine: {
+                        lineStyle: {
+                            color: 'black',
+                            width: 2
+                        }
+                    },
+                    min:minval,
+                    max:maxval,/**/
+                }],
+                dataZoom: [{
+                    type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+                    xAxisIndex: 0,
+                    show: true,
+                    start: 0,
+                    end:100,
+                },
+                {   // 这个dataZoom组件，也控制x轴。
+                    type: 'inside', // 这个 dataZoom 组件是 inside 型 dataZoom 组件  
+                    start: 0,      // 左边在 10% 的位置。
+                    end: 100,       // 右边在 60% 的位置。 
+                },
+                ],
+                series: [{
+                    name: lengenddata[0],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text,
+                    type: 'line',
+                    step: step,
+                    showAllSymbol: true,
+                    symbolSize: 5,
+                    data: pa,
+                    smooth: true,
+                    smoothMonotone: 'x',
+                },
+                {
+                    name: lengenddata[1],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"177",
+                    type: 'line',
+                    step: step,
+                    showAllSymbol: true,
+                    symbolSize: 5,
+                    data: pb,
+                    smooth: true,
+                    smoothMonotone: 'x',
+                },
+                {
+                    name: lengenddata[2],//document.getElementById("jcdd").options[document.getElementById("jcdd").selectedIndex].text+"最小值",
+                    type: 'line',
+                    step: step,
+                    showAllSymbol: true,
+                    symbolSize: 5,
+                    data: pc,
+                    smooth: true,
+                    smoothMonotone: 'x',
+                }
+                ]
+            };/**/
+            option1 = {
+                tooltip: {},
+                backgroundColor: '#fff',
+                color: ['#f46d43','#313695'],//, '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61',  '#d73027', '#a50026'],//
+                visualMap: {
+                    show: false,
+                    dimension: 2,
+                    min: 0,
+                    max: 30,
+                    inRange: {
+                        //color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+                    }
+                },
+                xAxis3D: {
+                    type: 'category'
+                },
+                yAxis3D: {
+                    type: 'category'
+                },
+                zAxis3D: {
+                    type: 'value'
+                },
+                grid3D: {
+                    viewControl: {
+                        projection: 'orthographic'
+                    }
+                },
+                series: seriess,
+            };
+
+            myChart.hideLoading();
+            if(childclassname=="UHFdata")
+                myChart.setOption(option1)
+            else
+                myChart.setOption(option);
+            //myChart.on('click',function(params){
+            //    if(params.name==""){}
+            //});
+            myChart.resize;
+        }
+        function jisuan(a1,a2){
+            for (var i = 1; i <obj_data.length; i++) {
+                if(isNaN(parseFloat(obj_data[i].value))){
+                    obj_data[i].value=-1;
+                }
+                let obj_i=obj_data[i];
+                if((parseInt(dateToString(obj_i.time,2).substr(a1,a2))==temp)){
+                    if(obj_i.message!=null && obj_i.message!="" && obj_i.message!="null"){
+                        warn_count++;
+                        count++;
+                    }
+                    if(parseFloat(obj_i.value)>maxvalue){
+                        maxvalue=parseFloat(obj_data[i].value).toFixed(Number_of_decimal);
+                        maxtime=dateToString(obj_data[i].time,2);//.replace(/T/g," ").substring(0,19);;
+                    }
+                    if(parseFloat(obj_i.value)<minvalue){
+                        minvalue=parseFloat(obj_i.value).toFixed(Number_of_decimal);
+                        mintime=dateToString(obj_i.time,2);//.replace(/T/g," ").substring(0,19);;
+                    }
+                    /*if(parseFloat(obj_data[i].value)>maxval){
+                        maxval=parseFloat(obj_data[i].value);
+                    }
+                    if(parseFloat(obj_data[i].value)<minval){
+                        minval=parseFloat(obj_data[i].value);
+                    }*/
+                    avgvalue=(parseFloat(avgvalue)+parseFloat(obj_i.value));
+                    ct++;
+                }else{
+                    avgvalue=(avgvalue/ct);
+                    var tr = document.createElement('tr');
+                    tr.setAttribute("onclick","tableclick(this)");
+                    //var tdname = document.createElement('td');
+                    //tdname.setAttribute('class', 'seneorname');
+                    var tdtime = document.createElement('td');
+                    tdtime.className='time';
+                    var tdhourvalue=document.createElement('td');
+                    tdhourvalue.className="hvalue";
+                    var tdvalue1 = document.createElement('td');//最大值
+                    tdvalue1.className='value1'; //给单元格添加类名属性
+                    var tdvalue2 = document.createElement('td');//平均值
+                    tdvalue2.className='value2';
+                    var tdmaxtime=document.createElement('td');
+                    tdmaxtime.className="maxtime";
+                    var tdvalue3=document.createElement("td");//最小值
+                    tdvalue3.className='value3';
+                    var tdmintime=document.createElement('td');
+                    tdmintime.className="mintime";
+                    var tdwarntimes=document.createElement('td');
+                    tdwarntimes.className="warntimes";
+                    //tdname.innerHTML=sessionStorage.SensorName;
+                    if(type=="pd"){
+                        tdvalue1.innerHTML = minvalue;
+                        tdmaxtime.innerHTML=mintime;
+                        tdvalue3.innerHTML = maxvalue;
+                        tdmintime.innerHTML=maxtime;
+                    }else{
+                        tdvalue1.innerHTML = maxvalue;
+                        tdmaxtime.innerHTML=maxtime;
+                        tdvalue3.innerHTML = minvalue;
+                        tdmintime.innerHTML=mintime;
+                    }
+                    //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
+                    if(a1==11){
+                        tdtime.innerHTML = temp+":00";//strtime;//
+                    }else{tdtime.innerHTML =temp;}// strtime; +":00" //jsonObject[i].color;
+                    tdhourvalue.innerHTML=hourvalue;
+                    tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
+                    tdwarntimes.innerHTML=count;
+                    //tr.appendChild(tdname);
+                    tr.appendChild(tdtime);
+                    //tr.appendChild(tdhourvalue);
+                    tr.appendChild(tdvalue1);
+                    tr.appendChild(tdmaxtime);
+                    tr.appendChild(tdvalue3);
+                    tr.appendChild(tdmintime);
+                    tr.appendChild(tdvalue2);
+                    tr.appendChild(tdwarntimes);
+                    //var tbody = document.getElementById('historydata-tbody');
+                    tbl.appendChild(tr);
+                    //pa.push([strtodatetime(strtime+":00"), maxvalue, ps]);
+                    //pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps]);
+                    //pc.push([strtodatetime(strtime+":00"),minvalue , ps]);
+                    maxvalue=minvalue=avgvalue=parseFloat(obj_i.value).toFixed(Number_of_decimal);
+                    hourvalue=parseFloat(obj_i.value).toFixed(Number_of_decimal);
+                    maxtime=mintime=dateToString(obj_i.time,2);//.replace(/T/g," ").substring(0,19);;
+                    strtime=dateToString(obj_i.time,2).replace(/T/g," ").substr(0,a2);
+                    temp=parseInt(strtime.substr(a1));
+                    count=0;
+                    ps++;
+                    ct=1;
+                }
+                
+                maxval=maxval>maxvalue*1?maxval:maxvalue*1;//20200910 append 
+                minval=minval<minvalue*1?minval:minvalue*1;
+            }
+        }
+        function tongji(){
+            for (var i = 1; i <obj_data.length; i++) {
+                if(isNaN(parseFloat(obj_data[i].value))){
+                    obj_data[i].value=-1;
+                }
+                let obj_i=obj_data[i];
+                if((obj_i.sensorId==temp)){
+                    if(obj_i.message!=null && obj_i.message!="" && obj_i.message!="null"){
+                        warn_count++;
+                        count++;
+                    }
+                    if(parseFloat(obj_i.value)>maxvalue){
+                        maxvalue=parseFloat(obj_data[i].value).toFixed(Number_of_decimal);
+                        maxtime=dateToString(obj_data[i].time,2);//.replace(/T/g," ").substring(0,19);;
+                    }
+                    if(parseFloat(obj_i.value)<minvalue){
+                        minvalue=parseFloat(obj_i.value).toFixed(Number_of_decimal);
+                        mintime=dateToString(obj_i.time,2);//.replace(/T/g," ").substring(0,19);;
+                    }
+                    /*if(parseFloat(obj_data[i].value)>maxval){
+                        maxval=parseFloat(obj_data[i].value);
+                    }
+                    if(parseFloat(obj_data[i].value)<minval){
+                        minval=parseFloat(obj_data[i].value);
+                    }*/
+                    avgvalue=(parseFloat(avgvalue)+parseFloat(obj_i.value));
+                    ct++;
+                }else{
+                    avgvalue=(avgvalue/ct);
+                    var tr = document.createElement('tr');
+                    tr.setAttribute("onclick","tableclick(this)");
+                    var tdid = document.createElement('td');
+                    tdid.setAttribute('class', 'id');
+                    tdid.setAttribute("style","display:none");
+                    var tdtime = document.createElement('td');
+                    tdtime.className='time';
+                    var tdhourvalue=document.createElement('td');
+                    tdhourvalue.className="hvalue";
+                    var tdvalue1 = document.createElement('td');//最大值
+                    tdvalue1.className='value1'; //给单元格添加类名属性
+                    var tdvalue2 = document.createElement('td');//平均值
+                    tdvalue2.className='value2';
+                    var tdmaxtime=document.createElement('td');
+                    tdmaxtime.className="maxtime";
+                    var tdvalue3=document.createElement("td");//最小值
+                    tdvalue3.className='value3';
+                    var tdmintime=document.createElement('td');
+                    tdmintime.className="mintime";
+                    var tdwarntimes=document.createElement('td');
+                    tdwarntimes.className="warntimes";
+                    tdid.innerHTML=ps;
+                    if(type=="pd"){
+                        tdvalue1.innerHTML = minvalue;
+                        tdmaxtime.innerHTML=mintime;
+                        tdvalue3.innerHTML = maxvalue;
+                        tdmintime.innerHTML=maxtime;
+                    }else{
+                        tdvalue1.innerHTML = maxvalue;
+                        tdmaxtime.innerHTML=maxtime;
+                        tdvalue3.innerHTML = minvalue;
+                        tdmintime.innerHTML=mintime;
+                    }
+                    //tdename.innerHTML=data.Result[i].SensorName;//jsonObject[i].name;
+                    //if(a1==11){
+                        tdtime.innerHTML = sensorname;//strtime;//
+                    //}else{tdtime.innerHTML =temp;}// strtime; +":00" //jsonObject[i].color;
+                    tdhourvalue.innerHTML=hourvalue;
+                    tdvalue2.innerHTML = avgvalue.toFixed(Number_of_decimal);
+                    tdwarntimes.innerHTML=count;
+                    tr.appendChild(tdid);
+                    tr.appendChild(tdtime);
+                    //tr.appendChild(tdhourvalue);
+                    tr.appendChild(tdvalue1);
+                    tr.appendChild(tdmaxtime);
+                    tr.appendChild(tdvalue3);
+                    tr.appendChild(tdmintime);
+                    tr.appendChild(tdvalue2);
+                    tr.appendChild(tdwarntimes);
+                    //var tbody = document.getElementById('historydata-tbody');
+                    tbl.appendChild(tr);
+                    //pa.push([strtodatetime(strtime+":00"), maxvalue, ps]);
+                    //pb.push([strtodatetime(strtime+":00"), avgvalue.toFixed(Number_of_decimal), ps]);
+                    //pc.push([strtodatetime(strtime+":00"),minvalue , ps]);
+                    maxvalue=minvalue=avgvalue=parseFloat(obj_i.value).toFixed(Number_of_decimal);
+                    hourvalue=parseFloat(obj_i.value).toFixed(Number_of_decimal);
+                    maxtime=mintime=dateToString(obj_i.time,2);//.replace(/T/g," ").substring(0,19);;
+                    //strtime=dateToString(obj_i.time,2).replace(/T/g," ").substr(0,a2);
+                    temp=obj_i.sensorId;
+                    sensorname=getsensornamebyid(temp);
+                    count=0;
+                    ps++;
+                    ct=1;
+                }
+                
+                //maxval=maxval>maxvalue*1?maxval:maxvalue*1;//20200910 append 
+                //minval=minval<minvalue*1?minval:minvalue*1;
+            }
+        }
+    }catch(err){
+        showstateinfo(err.message,"decodedatas");
+    }
+}//
+    function getsensornamebyid(sensorid){
+        var sname,parentname,parentid=-1;
+        for(var i=0;i<sensors_length;i++){
+            if(sensors[i].id==sensorid){
+                sname=sensors[i].Value.name;
+                /*if(sensors[i].Value.parentId=="-1"){
+                    parentname="";
+                    break;
+                }else if(sensors[i].Value.parentId!=parentid){
+                    parentid=sensors[i].Value.parentId;
+                    for(var j=0;j<sensors.length;j++){
+                        if(sensors[j].id==parentid){
+                            parentname=sensors[j].Value.name+"_";
+                            break;
+                        }
+                    }
+                    if(j<sensors_length)
+                    break;
+                }*/
+
+            }
+        }
+        return sname;
+    }
+    </script>
+</body>
+</html>

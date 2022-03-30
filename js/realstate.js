@@ -5,8 +5,44 @@ window.addEventListener('popstate', function () {
 var obj_realdata;
 var isfirst=true;
 var temp=0;
-var tabcount=$("#nav").find("li");
+var tabcount=$("#nav").find("li").length;
 var pt = [0,0,0,0,0,0,0,0];
+var info_detail=new Object();
+    info_detail.名称="name";
+    info_detail.地点="adrress";
+    info_detail.时间="time";
+var div_temp=document.getElementById("ul_detail");
+var v_infodetail=new Vue({
+    el:"#modal_details",
+    components:{
+        extable:{template:'<ul id="ul_detail">\
+            <li v-for="(detail, key ,index) in info_details" style="text-align:left;">{{index}} -- {{key}} -- {{detail}}</li>\
+        </ul>',
+        data:function(){
+            return {info_details:info_detail};
+        },
+        methods:{
+            destroy() {
+            this.$destroy();
+            },
+            updatedatas(num){
+                this.info_details=info_detail;
+                //this.$set();
+            }
+        },
+        },
+    },   
+    
+    methods:{
+        destroy() {
+        this.$destroy();
+        },
+        update(num){
+            this.$refs.mychild.updatedatas(num);
+        }
+    },
+});
+
 initpage();
 $(function (){$("[data-toggle='popover']").popover();});
 $(".tab a:last").tab("show");
@@ -309,6 +345,7 @@ function initpage() {
     sessionStorage.framepage="realstate.html";
     sessionStorage.pageindex=10;
     window.parent.closeloadlayer();
+    
     var parentid=-100,parentname="";
 	var maps=[];
     if (typeof (Worker) !== "undefined") {//只在网络状态下可用，本地磁盘目录下不可用。
