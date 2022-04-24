@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>节点管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/electricroommonitoring.css" />
+    <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+		<script src="js/vue.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
+		<script type="text/javascript" src="js/FileSaver.js"></script>
+		<script type="text/javascript" src="js/xlsx.core.min.js"></script>
+    <script  type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+    <style>
+      body{height: 99%;}
+      .row{
+        margin-top: 5px;
+        font-size: 12px;
+      }
+      input{
+        font-size: 1.6em;
+      }
+      li{font-size: 16px;}
+      button{
+        font-size: 1.4em;
+      }
+			select{
+        font-size: 1.2em;
+      }
+      [v-cloak]{
+        display:none;
+      }
+      label{
+        font-size: 1.4em;
+      }
+    </style>
+</head>
+<body>
+    <div class="container" style="margin:5px;">
+        <div class="row" id="nodemanagement" >
+          <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 650px;" >
+            <label >节点: </label><a onclick="shownodetree()" style="margin-left: 5px;"><label id="node"> 选择</label><i class= "caret">
+            </i></a> <div id="nodetree" style="width:100%;height:400px;display:none;overflow: auto;">
+            </div><br>
+            
+            <a href="javascript:void(0)" onclick="GetSensorsByNode()"><button style="width:150px;height:30px;font-size: 1.2em;">标签列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
+            <!--<ul id="v_nodelist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">
+              <li v-for="(node,idx) in nodes" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="idx" @click="changenode(idx)">{{node.value.name}}</a></li>
+            </ul>-->
+            <div id="sensortree" style="height:90%;overflow: auto;"></div>
+          </div>
+          <div class="col-xs-9 col-md-9 col-lg-10">
+            <ul class="nav nav-tabs" disabled="disabled" id="nav">
+							<li class="active"><a href="#tab1" data-toggle="tab">单个管理</a></li>
+							<li ><a href="#tab2" data-toggle="tab">批量管理</a></li>
+						</ul>
+						<div class="tab-content" id="tab-content">
+            <div class="container tab-pane in active fade" id="tab1"><!--align="center"-->
+              <div class="col-xs-12 col-md-6 col-lg-4">
+                <div id="sensorprofile">
+								<div class="row">
+                  <div class="col-xs-2 col-lg-2 table-lable"> 名称:</div>
+                  <div class="col-xs-8"><input id="sensor_name" type="text" v-model="nodedetail.name" style="width:200px;" value=""/>
+                  </div>
+                </div>
+								<div class="row">
+                  <div class="col-xs-2 col-lg-2 table-lable"> 地址:</div>
+                  <div class="col-xs-8"><input id="address" type="text" readonly="readonly" style="width:200px;font-size: 1.6em;" v-model="nodedetail.address" value=""/>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-2 col-lg-2 table-lable"> 厂家:</div>
+                  <div class="col-xs-8"><input id="company" type="text" v-model="nodedetail.company" style="width:200px;" value=""/>
+                  </div>
+                </div>
+								<div class="row">
+                  <div class="col-xs-2 col-lg-2 table-lable"> 编号:</div>
+                  <div class="col-xs-8"><input id="serial" type="text" style="width:200px;font-size: 1.6em;" v-model="nodedetail.serial" value=""/>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-2 col-lg-2 table-lable"> 位置:</div>
+                  <div class="col-xs-8"><input id="location" type="text" v-model="nodedetail.location" style="width:200px;" value=""/>
+                  </div>
+                </div>
+							</div>
+								<div class="row">
+									<div class="col-xs-2 col-lg-2 table-lable"> 类型:</div>
+									<div class="col-xs-8 col-lg-10" id="sensortypelist">
+										<span><select id="sensortype" style="width:200px" onchange="sensortypechange()">
+											<option v-for="sensortype in sensortypes" :value="sensortype.type">{{sensortype.desc}}</option></select></span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-2 col-lg-2 table-lable"> 配置:</div>
+									<div class="col-xs-8 col-lg-10" id="sensorcofiglist">
+										<span id="senconfig">
+											 <my_v_sensorconfig ref="mychild"></my_v_sensorconfig>
+											 <button style="width:65px;" onclick="tocongifmanagement()">新建</button>
+										</span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-2 col-lg-2 table-lable"> 选项:</div>
+									<div class="col-xs-8 col-lg-10">
+										<span id="configitem">
+											<v_configdetail ref="child_detail"></v_configdetail>
+											<button style="width:65px;" onclick="showconfig()">详情</button></span>
+									</div>
+								</div><br>
+								<div class="row">
+									<div class="col-xs-12" align="center"><button style="width:100px;" onclick="addsensor()">添加</button>
+									<button style="width:100px;" onclick="modifysensor()">修改</button>
+									<button style="width:100px;" onclick="deletesensor()">删除</button></div>
+								</div>
+              </div>
+							<div class="col-sx-12 col-md-6 col-lg-8">
+								<div id="sensorconfigdetail" style="display:none">
+									<div class="row">
+										<div class="col-xs-3 col-lg-2 table-lable"> 目录:</div>
+										<div class="col-xs-8"><input id="name" type="text" v-model="sensorconfigdetail.folder" style="width:200px;" value=""/>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3 col-lg-2 table-lable"> 名称:</div>
+										<div class="col-xs-8"><input id="add" type="text" readonly="readonly" style="width:200px;font-size: 1.6em;" v-model="sensorconfigdetail.name" value=""/>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3 col-lg-2 table-lable"> 描述:</div>
+										<div class="col-xs-8"><input id="factor" type="text" v-model="sensorconfigdetail.desc" style="width:200px;" value=""/>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3 col-lg-2 table-lable"> 类型:</div>
+										<div class="col-xs-8"><span><select id="configtype" style="width:200px" onchange="configtypechange()">
+											<option v-for="configtype in sensorconfigtypes" :value="configtype.type">{{configtype.desc}}</option></select></span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3 col-lg-2 table-lable"> 参数:</div>
+										<div class="col-xs-8"><button style="width:100px;" onclick="modifypara()">详细内容</button>
+											<button style="width:100px;" onclick="tocongifmanagement()">管理</button>
+										</div>
+									</div>
+									<div class="modal fade" id="guard_modal" tabindex="-1" role="dialog" aria-labelledby="modal_name" aria-hidden="true" align="center" style="top:50px;">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-head">
+													<button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+													<h4 class="modal-title" id="modal_name">项目列表</h4>
+												</div>
+												<div class="modal-body" align="left">
+													<div id="modal_details" style="background-color: rgb(212, 209, 209);height:500px;overflow: auto;">
+														<!--template id="configtypedetail">
+															<extable ref="mychild"></extable>
+														</template-->
+														<div v-for="(item,index) in detail" style="border: rgb(192, 190, 190) solid 1px;">
+															<div class="row">
+																<label class="col-xs-3 col-md-2 col-lg-2" >名称:</label>
+																<label class="col-x2-9 col-md-8 col-lg-6">{{item.name}}</label>
+															</div>
+															<div class="row" >
+																<label class="col-xs-3 col-md-2 col-lg-2" >描述:</label>
+																<label class="col-x2-9 col-md-8 col-lg-6">{{item.desc}}</label>
+															</div>
+															<div class="row">
+																<label class="col-xs-3 col-md-2 col-lg-2" >数值:</label>
+																<input class="col-x2-9 col-md-8 col-lg-6" :id="index" :value="item.value" onchange="savetodetail(this.id,this.value)"/>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="modal-foot">
+													<button type="button" class="btn btn-default" data-dismiss="modal" >关闭</button>
+												</div>
+											</div>
+										</div>
+									</div><br>
+									<div class="row" style="display:none;">
+										<div class="col-xs-12">
+										<button style="width:100px;" onclick="">添加</button>
+										<button style="width:100px;" onclick="">修改</button>
+										<button style="width:100px;" onclick="">删除</button>
+										</div>
+									</div>
+								</div>
+							</div><!---->
+            </div>
+						<div class="container tab-pane" id="tab2">
+							<div class="row">
+								<label for="sensor_src">文件：</label>
+								<input type="file" id="file" onchange="previewHandle(this)" accept="application/json,application/vnd.ms-excel " style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;display:none"/>
+								<input type="text" id="sensor_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')" title="标签配置文件全路径名称"/>
+								<button  onclick="selectFile()" style="width:60px;height:35px;margin-left: 10px;">浏览</button>
+								<button onclick="importsensors()" style="width:60px;height:35px;margin-left: 10px;">导入</button>
+								<button  onclick="exporttoexcel()" style="width:120px;height:35px;margin-left: 10px;">导出EXCEL</button>
+								<button  onclick="exporttojson()" style="width:120px;height:35px;margin-left: 10px;">导出JSON</button>
+								<button  onclick="clearsensorsbynode()" style="width:60px;height:35px;">清空</button>
+							</div>
+							<div class="row">
+								<div class="col-xs-12 col-md-8 col-lg-7" id="temp_tree" style="height:550px;overflow: auto;border: rgb(192, 190, 190) solid 1px;"></div>
+							</div>
+						</div>
+					</div>
+          </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var nodelist=[],sensortypes=[],sensorconfigtypes=[];
+      var sensorconfig=[],nodeconfig={},temp_sensorconfig=[],temp_configdetails=[];
+      var NodeId=0,nodeid=1,sensor_nodeid=1;
+      var v_node,v_sensorconfig,v_configdetail,v_configtype;
+      var isaddsensor=false;
+			var nodestree=$("#nodetree");
+			var tree1=$("#sensortree"),tree2=$("#temp_tree");
+			var treeseneors;
+			var obj_sensor;
+      initnodemanagement();
+      function initnodemanagement(){
+        getsensortypes();
+				getsensorconfig();
+				getsensorconfigtype();
+      }
+      function getsensortypes(){//获取标签的类型列表
+        sendorder("_manager/GetSensorTypes",getsensortype_bc);
+      }
+      function getsensortype_bc(data){
+        sensortypes=[];
+        sensortypes=data;
+        var v_nodetype=new Vue({
+          el:"#sensortypelist",
+          data:{
+            sensortypes:sensortypes,
+          },
+        })/**/
+				getnodelist();
+      }
+			//标签类型发生改变
+			function sensortypechange(){
+				creatsensorconfig($("#sensortype").val());
+			}
+      function getnodelist(){//获取节点列表
+        nodelist=[];
+        sendorder("_manager/GetNodes",getnodes_bc);
+      }
+      function getnodes_bc(data){
+        nodelist=buildnode(data,0);
+        inittreeview(nodelist);
+      }
+      function shownodetree(){//显示节点列表树
+        $("#nodetree").show();
+      }
+			//获取标签的配置(项目)列表
+			function getsensorconfig(){
+				sendorder("_manager/GetSensorConfigs",getsensorconfig_bc);
+			}
+			function getsensorconfig_bc(data){
+				sensorconfig=data;
+				creatsensorconfig($("#sensortype").val());
+			}
+			function creatsensorconfig(type,config){
+				temp_sensorconfig=[];
+				for(var i=0;i<sensorconfig.length;i++){
+				if(sensorconfig[i].type==type)
+					temp_sensorconfig.push(sensorconfig[i])
+				}
+				getsensorconfigdetail(type,config||temp_sensorconfig[0] && temp_sensorconfig[0].name);
+				if(v_sensorconfig){
+					v_sensorconfig.update();
+				}else{
+					v_sensorconfig=new Vue({
+					el:'#senconfig',
+					components:{
+						my_v_sensorconfig:{
+							template:'<select id="sensorconfig" style="width:130px" onchange="sensortypeconfigchange()">\
+							<option v-for="sensorconfig in sensorconfigs" :value="sensorconfig.name">{{sensorconfig.name}}</option></select>',
+							data:function(){
+								return {sensorconfigs:temp_sensorconfig}
+							},
+							methods:{
+								destroy() {
+									this.$destroy();
+								},
+								updatedatas(num){
+                  this.sensorconfigs=temp_sensorconfig;
+									$("#sensorconfig").val(config);
+                  //this.$set();
+                },
+                savetodetail(idx,avalue){
+                  //details[idx].value=avalue;
+                }
+							}
+						},
+					},
+					methods:{
+						destroy() {
+              this.$destroy();
+              },
+						update(){
+							this.$refs.mychild.updatedatas(0);
+							//this.$forceUpdate()
+						},
+					}
+				});
+				}
+				$("#sensorconfig").val(config);
+			}
+			//标签类型配置的值发生改变时
+			function sensortypeconfigchange(){
+				getsensorconfigdetail($("#sensortype").val(),$("#sensorconfig").val());
+			}
+			function getsensorconfigdetail(sensortype,sensortypeconfig){
+				if(sensortype&&sensortypeconfig)
+					sendorder("_manager/GetSensorConfigDetailByName?type="+sensortype+"&name="+sensortypeconfig,getsensorconfigdetail_bc)
+				else{
+					getsensorconfigdetail_bc(null)
+				}
+			}
+			function getsensorconfigdetail_bc(data){
+				temp_configdetails=[];
+				if(data)
+				temp_configdetails=data.details;
+				creatconfigdetail();
+			}
+			//创建标签配置列表vue实例
+			function creatconfigdetail(){
+				if(v_configdetail){
+					v_configdetail.update();
+				}else{
+					v_configdetail=new Vue({
+					el:'#configitem',
+					components:{
+						v_configdetail:{
+							template:'<select id="configdetail"  style="width:130px" onchange="detailitemchange()">\
+											<option v-for="item in configdetails" :value="item.type">{{item.folder+"-"+item.name}}</option></select>',
+							data:function(){
+								return {configdetails:temp_configdetails}
+							},
+							methods:{
+								destroy() {
+									this.$destroy();
+								},
+								updatedatas(num){
+                  this.configdetails=temp_configdetails;
+                  //this.$set();
+									creatconfigtypes(temp_configdetails[0]);
+                },
+                savetodetail(idx,avalue){
+                  //details[idx].value=avalue;
+                }
+							}
+						},
+					},
+					methods:{
+						destroy() {
+              this.$destroy();
+              },
+						update(){
+							this.$refs.child_detail.updatedatas(0);
+							//this.$forceUpdate()
+						},
+					}
+				});
+				}
+			}
+			function getsensorconfigtype(){
+				sendorder("_manager/ListSensorConfigItem",getsensorconfigtype_bc);
+			}
+			function getsensorconfigtype_bc(data){
+				sensorconfigtypes=data;
+			}
+			//创建配置类型vue实例
+			function creatconfigtypes(aconfigdetail){
+				if(!aconfigdetail)
+					aconfigdetail={name:'',desc:'',folder:'',type:'',details:[]}
+				if(v_configtype){
+					v_configtype.update(aconfigdetail);
+				}else{
+					v_configtype=new Vue({
+						el:"#sensorconfigdetail",
+						data:{
+							sensorconfigtypes:sensorconfigtypes,
+							sensorconfigdetail:aconfigdetail,
+							detail:sensorconfigtypes[0].details,
+						},
+						methods:{
+							update(adata){
+								if(adata){
+									this.sensorconfigdetail=adata;
+									$("#configtype").val(adata.type);
+								}else{
+									this.sensorconfigdetail={name:'',desc:'',folder:'',type:'',details:[]};
+									$("#configtype").val('');
+								}
+								if($("#configtype").prop("selectedIndex")!=-1){
+									this.detail=sensorconfigtypes[$("#configtype").prop("selectedIndex")].details;
+									for(var i=0;i<adata.details.length;i++)
+										for(var j=0;j<this.detail.length;j++){
+											if(this.detail[j].name==adata.details[i].name){
+												this.detail[j].value=adata.details[i].value
+											}
+										}
+								}else{
+									this.detail=[];
+								};
+								//this.$forceUpdate();
+							}
+						}
+					})
+				}
+				if(aconfigdetail){
+					$("#configtype").val(aconfigdetail.type);
+				}
+			}
+			function detailitemchange(){
+				var obj_configdetial=temp_configdetails[$("#configdetail").prop("selectedIndex")]
+				if(obj_configdetial)
+				v_configtype.update(obj_configdetial)
+			}
+			//显示配置项参数页面
+			function showconfig(){
+				if($("#sensorconfigdetail").is(":hidden"))
+					$("#sensorconfigdetail").show()
+				else
+					$("#sensorconfigdetail").hide()
+			}
+			//显示配置类型的参数编辑页
+			function modifypara(){
+				v_configtype.update(temp_configdetails[$("#configdetail").prop("selectedIndex")]);
+				$("#guard_modal").modal('show');
+			}
+      function modifysensor(){
+        //nodeconfig.id=data.id;
+				//nodeconfig.nodeId=data.NodeId;
+				nodeconfig.name=$("#sensor_name").val();
+				//nodeconfig.parentId=data.ParentId;
+				nodeconfig.address=$("#address").val();
+				nodeconfig.company=$("#company").val();
+				nodeconfig.location=$("#location").val();
+				nodeconfig.serial=$("#serial").val();
+				//nodeconfig.time=data.Time;
+				nodeconfig.type=$("#sensortype").val();
+				nodeconfig.config=$("#sensorconfig").val(); 
+				if (confirm("您确定要修改标签“"+nodeconfig.name+'”的配置信息吗')) {
+          sendorder("_manager/ModifySensor",modifynode_bc,nodeconfig);
+        }         
+      }
+      function modifynode_bc(data){
+				if(data)
+          showmsg("节点信息修改成功!");
+				GetSensorsByNode();
+      }
+      function deletesensor(){
+        sensor_nodeid=tree1.treeview("getParent",sensor_nodeid).nodeId;// nodeconfig.parentId;
+        if (confirm("您确定要删除标签“"+nodeconfig.name+'”吗')) {
+          sendorder("_manager/DeleteSensor",deletesensor_bc,nodeconfig);
+        }
+      }
+      function deletesensor_bc(data){
+        if(data)
+          showmsg("节点"+nodeconfig.name+"删除成功!");
+        GetSensorsByNode();
+      }
+      function addsensor(){
+				nodeconfig.name="新标签_"+Math.floor(Math.random() * 1000);
+        nodeconfig.parentId=nodeconfig.id;
+        nodeconfig.type=null;//$("#sensortype").val();
+        nodeconfig.config=null;
+				nodeconfig.nodeId=NodeId;
+				nodeconfig.address=null;
+				nodeconfig.company=null;
+				nodeconfig.location=null;
+				nodeconfig.serial=null;
+				nodeconfig.time=getCurrentDate(2).replace(/ /,"T");
+        sendorder("_manager/AddSensor",addsensor_bc,nodeconfig);
+      }
+      function addsensor_bc(data){
+        isaddsensor=true;
+        GetSensorsByNode();
+      }
+			function decodesensortype(atype){
+				if(!atype)
+					atype='';
+				$("#sensortype").val(atype);
+				/*var sel=document.getElementById("sensortype");
+				var options=sel.options;
+				if(options){
+					options[0].defaultSelected = true;
+					options[0].selected = true;
+				}
+				for (var i = 0; i < options.length; i++) {
+					if (options[i].value == atype) {
+						options[i].defaultSelected = true;
+						options[i].selected = true;
+						break;
+					}
+				}*/
+			}
+			function decodesensorconfig(aconfig){
+				if(!aconfig)
+					aconfig='';
+				$("#sensorconfig").val(aconfig);
+			}
+      function buildnode(data, level) {
+			var tree = [];
+			/*if(level==0){// 
+				//*for (i = 0; i <1; i++) {
+					var anodes = new Object();
+					anodes.text = "节点列表" ;
+					anodes.id = -1;
+					anodes.type="";
+					anodes.nodes = [];
+					tree.push(anodes);
+				//}
+				//alert("该用户没有复合条件的节点数据,<br>请使用其他用户名称登录",info_showtime);
+			} */
+			if(data == null || typeof(data) == "undefined"|| data.length==0 ){
+				//return tree;
+			}else {
+				let data_len=data.length;
+				for (var j = 0; j < data_len; j++) {
+					var anodes = new Object();
+					anodes.text = data[j].value.name;//+"[Id:"+data[j].value.id+"]";
+					anodes.id = data[j].value.id;
+          //anodes.expanded=true;
+					anodes.ParentId=data[j].value.parentId;
+					anodes.type = data[j].value.type;
+					anodes.config = data[j].value.config;
+					anodes.time = data[j].value.time;
+					anodes.level = level;
+					if (data[j].value.hasOwnProperty("nodeId")) {
+						anodes.NodeId = data[j].value.nodeId;
+					}
+					if (data[j].children&&data[j].children.length != 0) {
+						anodes.nodes = [];
+						anodes.nodes = buildnode(data[j].children, level + 1)
+					}
+					tree.push(anodes);
+				}
+			}
+			return tree;
+		}
+    function inittreeview(anodes) {
+			try{
+			//obj.nodes=(JSON.parse( node));
+			//tree[1]=obj;
+			var mnodes = [];
+			var nodes = new Object();
+				nodes.text = "节点列表" ;
+				nodes.id = -1;
+				nodes.type="";
+				nodes.nodes = [];
+			mnodes.push(nodes);
+			if (anodes == null) {
+				mnodes[0].nodes = buildnode();
+			} else {
+				mnodes[0].nodes = anodes;
+			}
+			nodestree.treeview({
+				data: mnodes,    // 数据源
+				showCheckbox: false,   //是否显示复选框
+				highlightSelected: true,    //是否高亮选中
+				//nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
+				//nodeIcon: 'glyphicon glyphicon-lock',
+				emptyIcon: '',    //没有子节点的节点图标
+				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象
+				multiSelect: false,    //多选
+				searchResultColor: "black",
+				//color: "#fff",//所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
+				//backColor: "rgba(0, 101, 105, 1);", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				showBorder: false,
+				//borderColor: "#000000", //边框颜色。如果不想要可见的边框，则可以设置showBorder为false。        String
+				//nodeIcon: "glyphicon glyphicon-stop", //所有节点的默认图标
+				//checkedIcon: "glyphicon glyphicon-check", //节点被选中时显示的图标         String
+				//collapseIcon: "glyphicon glyphicon-minus", //节点被折叠时显示的图标        String
+				//expandIcon: "glyphicon glyphicon-plus", //节点展开时显示的图标        String
+				//emptyIcon: "glyphicon", //当节点没有子节点的时候显示的图标              String
+				//enableLinks: false, //是否将节点文本呈现为超链接。前提是在每个节点基础上，必须在数据结构中提供href值。        Boolean
+				//highlightSearchResults: true, //是否高亮显示被选中的节点        Boolean
+				//levels: 2, //设置整棵树的层级数  Integer
+				//multiSelect: false, //是否可以同时选择多个节点      Boolean
+				onhoverColor: "#3075a5", //光标停在节点上激活的默认背景色      String
+				//selectedIcon: "glyphicon glyphicon-stop", //节点被选中时显示的图标     String
+				//searchResultBackColor: "", //当节点被选中时的背景色
+				//searchResultColor: "", //当节点被选中时的前景色
+				selectedBackColor: "#85e494", //当节点被选中时的背景色
+				selectedColor: "#000", //当节点被选中时的前景色
+				//showBorder: true, //是否在节点周围显示边框 btn-praty
+				//showCheckbox: false, //是否在节点上显示复选框
+				//showIcon: true, //是否显示节点图标
+				//showTags: false, //是否显示每个节点右侧的标记。前提是这个标记必须在每个节点基础上提供数据结构中的值。
+				//uncheckedIcon: "glyphicon glyphicon-unchecked", //未选中的复选框时显示的图标，可以与showCheckbox一起使用
+				//onNodeChecked: function (event,data) {
+				//	console.log("nodeId = "+data.nodeId);
+				//	console.log("id = "+data.id);
+				//},
+				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
+					var selectnode=nodestree.treeview('getSelected')[0];
+					nodestree.treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
+					nodestree.treeview("revealNode",[selectnode.nodeId, { levels: 1, silent: true }])//展开所选节点
+					nodestree.treeview("expandNode",[selectnode.nodeId, { levels: 1, silent: true }])//展开所选节点
+					nodeid = data.nodeId;
+					NodeId=data.id;
+          $("#node").text(data.text);
+					nodestree.treeview("revealNode",[data.nodeId, { levels: 1, silent: true }]);
+          $("#nodetree").hide();
+          GetSensorsByNode(data.id);
+				},
+				/*onSearchComplete:function(event, data) { 
+					var firstSearchResult = nodestree.find('ul').find('li[data-nodeid='+ sessionStorage.selNodeId +']');
+					//nodestree.scrollTop(firstSearchResult[0].offsetTop);
+				},
+				*方法
+				 * checkAll(options);//选中所有树节点
+				checkNode(node | nodeId, options);  //选中一个给定nodeId的树节点
+				clearSearch();//清除查询结果
+				collapseAll(options);//折叠所有树节点
+				collapseNode(node | nodeId, options);//折叠一个给定nodeId的树节点和它的子节点
+				disableAll(options);//禁用所有树节点
+				disableNode(node | nodeId, options);//禁用一个给定nodeId的树节点
+				enableAll(options);//激活所有树节点
+				enableNode(node | nodeId, options);//激活给定nodeId的树节点
+				expandAll(options);//展开所有节点
+				expandNode(node | nodeId, options);//展开给定nodeId的树节点
+				getCollapsed();//返回被折叠的树节点数组
+				getDisabled();//返回被禁用的树节点数组
+				getEnabled();//返回被激活的树节点数组  
+				getExpanded();//返回被展开的树节点数组
+				getNode(nodeId);//返回与给定节点id相匹配的单个节点对象。
+				getParent(node | nodeId);//返回给定节点id的父节点
+				getSelected();//返回被选定节点的数组。
+				getSiblings(node | nodeId);//返回给定节点的兄弟节点数组
+				getUnselected();//返回未选择节点的数组
+				remove();//删除the tree view component.删除绑定的事件，内部附加的对象，并添加HTML元素。
+				revealNode(node | nodeId, options);//显示给定的树节点，将树从节点扩展到根。
+				search(pattern, options);//在树视图中搜索匹配给定字符串的节点，并在树中突出显示它们。返回匹配节点的数组。
+				selectNode(node | nodeId, options);//选择一个给定的树节点
+				toggleNodeChecked(node | nodeId, options);//Toggles a nodes checked state; checking if unchecked, unchecking if checked.
+				toggleNodeDisabled(node | nodeId, options);//切换节点的禁用状态;
+				toggleNodeExpanded(node | nodeId, options);//切换节点的展开与折叠状态
+				toggleNodeSelected(node | nodeId, options);//切换节点的选择状态
+				uncheckAll(options);//不选所有节点
+				uncheckNode(node | nodeId, options);//不选给定nodeId的节点
+				unselectNode(node | nodeId, options);//不选给定nodeId的节点
+				事件：
+				*nodeChecked (event, node) - 一个节点被checked.
+				*nodeUnchecked (event, node) - 一个节点被unchecked.
+				*nodeCollapsed (event, node) - 一个节点被折叠.
+				*nodeDisabled (event, node) - 一个节点被禁用.
+				*nodeEnabled (event, node) - 一个节点被启用.
+				*nodeExpanded (event, node) - 一个节点被展开.
+				*nodeSelected (event, node) - 一个节点被选择.
+				*nodeUnselected (event, node) - 取消选择一个节点.
+				*searchComplete (event, results) - 搜索完成之后触发.
+				*searchCleared (event, results) - 搜索结果被清除之后触发.
+				*/
+			});
+			nodestree.treeview('collapseAll');//关闭展开
+			if (nodeid == "" || nodeid == null) {
+				nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
+			}
+			
+			var firstNode = nodestree.treeview("getNode", nodeid);
+			nodestree.treeview("revealNode",[firstNode.nodeId, { levels: 1, silent: true }])//展开所选节点
+			nodestree.treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
+			//nodestree.treeview('search', [ firstNode.text, { ignoreCase: false, exactMatch: true }]);//匹配node的text属性
+			//获取指定node的sensors
+			//GetSensorsByNode(sessionStorage.nodeid);
+			/*infotreedata = [];
+			infotreeobj.id = firstNode.id;
+			infotreeobj.name = firstNode.text;
+			if (firstNode.hasOwnProperty("nodes")) {
+				infotreeobj.value = firstNode.nodes.length;
+			} else {
+				infotreeobj.value = 0;
+			}
+			infotreeobj.children = [];
+			infotreeobj.level = firstNode.level;
+			//infotreeobj.isload="false";
+			if ((firstNode.hasOwnProperty("nodes")) && (firstNode.nodes.length > 0) && (firstNode.level < 2)) {
+				infotreeobj.children = decode(firstNode.nodes);
+			}
+			infotreedata.push(infotreeobj);
+			maps = [];*/
+			//localStorage.setItem("sensors", null);
+			//localStorage.setItem("sensor_tree",null);
+			//if(!firstNode.hasOwnProperty("nodes"))
+			//GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
+			//GetBinariesByType("NodeGraphic", infotreeobj.id);
+			//refreshinfotree(firstNode);
+			/*if(firstNode.Catalog=="视频监控"){
+				sessionStorage.nodetype=0;
+				updatanav(sessionStorage.nodetype);
+			}else if(firstNode.Catalog=="机房监控"){
+				sessionStorage.nodetype=2;
+				updatanav(sessionStorage.nodetype);
+			}else{updatanav(sessionStorage.nodetype);}*/
+			//setTimeout(function(){if(sessionStorage.pageindex==0){
+			//	document.getElementById("iframe_main").src="infototal.html";
+			//}},3000);
+			function getThe_level_nodeid(anode, alevel) {
+				while (anode.level > alevel) {
+					anode = (nodestree.treeview("getParent", anode));
+				}
+				return anode;
+			}
+			}catch(err){
+				showstateinfo(err.message,"nodemanagement/inittreeview");
+			}
+			function refreshinfotree(anode){
+				infotreedata = [];
+				infotreeobj.id = anode.id;
+				infotreeobj.name = anode.text;
+				infotreeobj.children = [];
+				infotreeobj.level = anode.level;
+				//infotreeobj.isload="false";
+				if ((anode.hasOwnProperty("nodes")) && (anode.nodes.length > 0)) {
+					infotreeobj.children = decode(anode.nodes);
+					infotreeobj.value = anode.nodes.length;
+					//var arr_node = buildsensor1(anode.nodes);
+					//infotreeobj.value = arr_node.length;
+				} else {
+					infotreeobj.value = 0;
+				}
+				infotreedata.push(infotreeobj);
+			}
+		}
+    //获取指定节点包含的标签信息
+		function GetSensorsByNode(anodeid){//20200928 add
+			if(!anodeid)
+				anodeid=NodeId;
+			try{
+				//if(wsconnect){
+				//	wssend("GetSensorsByNode",JSON.parse('{"nodeId":'+anodeid+'}'))
+				//}else{
+					sendorder("_manager/GetSensorsByNode?nodeId="+anodeid,getsensorsbynode_bc);
+				//}
+			}catch(err){
+				showstateinfo(err.message,"mainpage/GetSensorsByNode");
+			}
+		}
+		//回调函数
+		function getsensorsbynode_bc(aresult){
+			if (!jQuery.isEmptyObject(aresult.sensors)) {
+				//localStorage.setItem("sensor_tree",JSON.stringify(aresult.sensors));
+				treeseneors=aresult.sensors;//JSON.parse(localStorage.getItem("sensor_tree"))
+				maps = [];
+				if(!jQuery.isEmptyObject(aresult.configs)){
+					var config=new Object();
+					config=aresult.configs;
+					//localStorage.setItem("Config",JSON.stringify(config));
+				}else{
+					//localStorage.setItem("Config",null);
+				}
+				if(!jQuery.isEmptyObject(aresult.typeConfigs)){
+					var configs=new Object();
+					configs=aresult.typeConfigs;
+					//localStorage.setItem("Configs",JSON.stringify(configs));
+				}else{
+					//localStorage.setItem("Configs",null);
+				}
+				//allsensors = new Object();
+				//buildsensor2(allsensors, result.sensors, "");
+				//var sensors = buildsensor(result.sensors);//(JSON.parse(localStorage.getItem("sensors")));
+				//localStorage.setItem("sensors", JSON.stringify(sensors));
+				var treenode=buildnode_level2(treeseneors,0);
+				//	tree2=true;
+				//inittreeview_level2(treenode);
+			} else {
+				//tree2=false;
+				//localStorage.setItem("sensor_tree",null);
+				treeseneors=JSON.parse(null);//(localStorage.getItem("sensor_tree"))
+				var treenode=buildnode_level2(treeseneors,0);
+				//localStorage.setItem("sensors", null);
+				if(!jQuery.isEmptyObject(aresult.typeConfigs)){
+					var configs=new Object();
+					configs=aresult.typeConfigs;
+					//localStorage.setItem("Configs",JSON.stringify(configs));
+				}else{
+					//localStorage.setItem("Configs",null);
+				}
+				if(!jQuery.isEmptyObject(aresult.configs)){
+					var config=new Object();
+					config=aresult.configs;
+					//localStorage.setItem("Config",JSON.stringify(config));
+				}else{
+					//localStorage.setItem("Config",null);
+				}
+				//sessionStorage.SensorId=-1;//清除标签id，避免一些没有标签的节点借用保存的标签id形成错误的查询条件
+			}
+			inittreeview_level2(treenode,tree1);
+				if(!v_node){/**/
+					v_node=new Vue({
+						el:'#sensorprofile',
+						data:{
+							nodedetail:nodeconfig,
+						},
+						methods:{
+							changenode(index){
+								this.$nextTick(function(){
+									
+								})
+							},
+							destroy() {
+								this.$destroy();
+							},
+						},
+					});
+				}else{
+					v_node.nodes=nodelist
+					v_node.nodedetail=nodeconfig;
+					//v_node.nodes.$set("nodes",nodelist);
+					//v_node.reload();
+				}
+		}
+		function inittreeview_level2(anodes,obj) {
+			var mnodes = [];
+			var nodes = new Object();
+				nodes.text = "节点列表" ;
+				nodes.id = -1;
+				nodes.type="";
+				nodes.nodes = [];
+			mnodes.push(nodes);
+			if (anodes == null) {
+				mnodes[0].nodes = buildnode();
+			} else {
+				mnodes[0].nodes = anodes;
+			}
+			/*if(!anodes){
+				var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"));
+				anodes=buildnode_level2(treeseneors,0);
+			}*/
+			var sensorarray;
+			obj.treeview({
+				data: mnodes,    // 数据源
+				showCheckbox: false,   //是否显示复选框
+				highlightSelected: true,    //是否高亮选中
+				//nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
+				//nodeIcon: 'glyphicon glyphicon-lock',//
+				emptyIcon: '',    //没有子节点的节点图标
+				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象 
+				multiSelect: false,//multiselect,    //是否可以多选，采用变量控制，在切换页面时设置。
+				//searchResultColor: "#FFF",
+				//color: "#fff",//所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
+				//backColor: "#073738",//"rgba(0, 151, 105, 1);", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				showBorder: false, //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				onhoverColor: "#3075a5", //光标停在节点上激活的默认背景色      String
+				selectedBackColor: "#85e494", //当节点被选中时的背景色
+				selectedColor: "#000", //当节点被选中时的前景色
+				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
+					//var selectnode=$("#tree_chi").treeview('getSelected');
+					//$("#tree_chi").treeview('collapseAll')//,nodeid);//关闭展开 
+					//for (var i = 0; i < data.level; i++) {//逐级展开所选节点的父节点。
+					//	var p_node = getThe_level_nodeid(data, i);
+					//	tree1.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+					//}
+					//tree1.treeview("revealNode",[data.nodeId, { levels: 2, silent: true }]);
+					//setSelectOption("jcdd", data.id);
+					sensor_nodeid=data.nodeId;
+					sessionStorage.SensorId=data.id;
+					nodeconfig.id=data.id;
+					nodeconfig.nodeId=data.NodeId;
+					nodeconfig.name=data.text;
+					nodeconfig.parentId=data.ParentId;
+					nodeconfig.address=data.Address;
+					nodeconfig.company=data.Company;
+					nodeconfig.location=data.Location;
+					nodeconfig.serial=data.Serial;
+					nodeconfig.time=data.Time;
+					if(v_node)
+					v_node.nodedetail=nodeconfig;
+					decodesensortype(data.Catalog);
+					creatsensorconfig(data.Catalog,data.Config);
+					//decodesensorconfig(sensortypeconfig);
+					//if(!multiselect)//多选时，标签id不被保存；用于恢复所选项
+					sessionStorage.sel_id=data.id;
+					var offset=Math.ceil($('#tree').outerHeight()+50);
+					var firstSearchResult = tree1.find('ul').find('li[data-nodeid='+ sensor_nodeid +']');
+					if(firstSearchResult.length>0)//避免树形菜单为空时，可能报错
+						tree1.scrollTop(firstSearchResult[0].offsetTop-offset);
+					/*try{if ((sessionStorage.pageindex==2)||(sessionStorage.pageindex==17)){
+						iframemain[0].contentWindow.localrowbysensorid(data.id);//实时数据页面的点击标签树形菜单进行实时数据列表定位
+						}else{
+							iframemain[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
+						}
+					}catch(e){}
+					sessionStorage.SensorName=data.text;
+					sessionStorage.sensorallpathname=getSensorAllPathName(data);
+					
+					sensorarray=tree1.treeview("getSelected");
+					if(sensorarray.length>6){
+						tree1.treeview("unselectNode",[data.nodeId]);
+						//dialog.html("对比测量点不能大于6个!");//jquery的对话框
+						//dialog.dialog("open");//,info_showtime);
+						showstateinfo("对比测量点不能大于6个","inittreeview_level2");
+						showmsg("对比测量点不能大于6个");
+						iframemain[0].contentWindow.stoptimer(iframemain[0].contentWindow.timer);//停止闪烁
+						return;
+					}else {
+						showselectesensors();
+					}
+                    //catalog=getcatalog(dname);
+                    //queryhistorydata();//0710
+					//对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO 
+					clickNode(event, data)*/
+				},
+				/*onNodeUnselected : function(event,data){
+					clickNode(event, data);
+					sensorarray=tree1.treeview("getSelected");
+					showselectesensors();
+				},*/
+				onSearchComplete:function(event, data) { //data返回的符合条件的node数组。
+					/*if( isEmpty(data)){
+						return; 
+					}*/
+					//如果查找到的位置数据超出当前范围滚动条直接滚动到搜索结果中的第一条数据的位置
+					//var tnodeId = data[0].nodeId;
+					var offset=Math.ceil($('#tree').outerHeight()+50);
+					var firstSearchResult = tree1.find('ul').find('li[data-nodeid='+ sensor_nodeid +']');
+					if(firstSearchResult.length>0)//避免树形菜单为空时，可能报错
+						tree1.scrollTop(firstSearchResult[0].offsetTop-offset);
+				},
+			});
+			sensorarray=tree1.treeview("getSelected");
+			if(mnodes.length>0){
+				tree1.treeview('expandAll');//关闭展开collapseAll
+				if (sensor_nodeid == "" || sensor_nodeid == null) {
+					sensor_nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
+				}
+				//$("#tree_chi").treeview('checkAll'  , { silent:   true   });
+				var allnode=tree1.treeview("getUnselected");
+				var currentNode=null;
+				/*for(var j=0;j<allnode.length;j++){//根据所保存的标签编号（id）来确定那个标签被选中。
+					if(allnode[j].id==sessionStorage.sel_id)
+					{	currentNode=allnode[j]
+						sensor_nodeid=allnode[j].nodeId;
+						break;
+					}
+				}*/
+				if(isaddsensor){
+					currentNode=null;
+					sensor_nodeid=tree1.treeview('search', [ nodeconfig.name, { ignoreCase: false, exactMatch: true }])[0].nodeId;
+					isaddsensor=false;
+				}
+				//var firstSearchResult = $('#tree_chi').find('ul').find('li[data-nodeid='+ sessionStorage.jfjk_nodeid +']');
+					//$("#tree_chi" ).scrollTop(firstSearchResult[0].offsetTop);
+				if(currentNode==null)
+					currentNode = tree1.treeview("getNode", sensor_nodeid);
+				if(!currentNode.hasOwnProperty("NodeId"))
+					currentNode = tree1.treeview("getNode", 0);
+				tree1.treeview("revealNode",currentNode);//, { levels: 2, silent: true }]);
+				//tree1.treeview('expandNode', [currentNode, { levels: 2, silent: true }]);//展开第一个节点
+				//for (var i = 0; i < currentNode.level; i++) {//逐级展开所选节点的父节点。
+				//	var p_node = getThe_level_nodeid(currentNode, i);
+				//	tree1.treeview('expandNode', [p_node.nodeId, { levels: 1, silent: true }]);
+				//}
+				//tree1.treeview('expandNode', [currentNode.nodeId, { levels: 1, silent: true }]);
+				//$('#tree_chi').treeview('expandNode', [ tree_chi[0].id, { levels: 2, silent: true } ]);
+				tree1.treeview('selectNode', currentNode);//, { silent: true }
+				//sessionStorage.SensorId=currentNode.id;//获取标签id。此处即节点id（node.id)
+				//sessionStorage.SensorName=currentNode.text;//获取标签名称，用于列表显示用.20201110
+				//sessionStorage.sensorallpathname=getSensorAllPathName(currentNode);
+				//tree1.treeview("selectNode", currentNode.id);//将第一个节点设置为选中状态*/**/
+				//tree1.treeview("search",[currentNode.text, { ignoreCase: false, exactMatch: true }]);//
+				/**///
+				
+			}
+			function getSensorAllPathName(anode){
+				var allpathname=anode.text;
+				if(anode.parentId!=null  && anode!="undefined"){
+					var parentnode=tree1.treeview("getNode",anode.parentId);
+					allpathname=parentnode.text+"_"+allpathname;
+					if(parentnode.parentId!=null && parentnode.parentId!="undefined"){
+						getSensorAllPathName(parentnode);
+					}
+				}
+				return allpathname
+			}
+			function getThe_level_nodeid(anode, alevel) {
+				while (anode.level > alevel) {
+					anode = (tree1.treeview("getParent", anode));
+				}
+				return anode;
+			}/**/
+			function showselectesensors(){
+				if(sessionStorage.pageindex==4){
+					iframemain[0].contentWindow.document.getElementById("sel-sensorname").value='所选标签:';
+					for(var i=0;i<sensorarray.length;i++){
+						iframemain[0].contentWindow.document.getElementById("sel-sensorname").value+=sensorarray[i].text+" , ";
+					}
+					iframemain[0].contentWindow.flashbutton();
+				}else
+				if(sessionStorage.pageindex==5||sessionStorage.pageindex==3)
+					iframemain[0].contentWindow.flashbutton();
+			}
+		}
+		
+		function buildnode_level2(data, level) {
+			var tree = [];
+			if (data == null || typeof(data) == "undefined") {
+			}else
+			for (var j = 0; j < data.length; j++) {
+				var anodes = new Object();
+				anodes.text = data[j].value.name;//20201021+"[Id:"+data[j].value.id+"]"
+				anodes.id = data[j].value.id;
+				anodes.ParentId=data[j].value.parentId;
+				anodes.NodeId=data[j].value.nodeId;//----
+				anodes.Catalog = data[j].value.type;//Catalog;
+				anodes.Address=data[j].value.address;//----
+				anodes.Company=data[j].value.company;//company 厂家
+				anodes.Serial=data[j].value.serial;//----
+				anodes.Location=data[j].value.location;//----
+				anodes.Config = data[j].value.config;
+				anodes.Time = data[j].value.time;
+				anodes.level = level;
+				//anodes.color = "#fff"*/
+				if (data[j].value.hasOwnProperty("nodeId")) {
+					anodes.NodeId = data[j].value.nodeId;
+				}
+				//var chi_len = data[j].Children.length; 
+				if (data[j].children&&data[j].children.length != 0) {
+					anodes.nodes = [];
+					anodes.nodes = buildnode_level2(data[j].children, level + 1);
+				}
+				tree.push(anodes);
+			}
+			var compare = function (obj1, obj2) {
+				if(obj1 && obj2){
+					var val1 = obj1.text;
+					var val2 = obj2.text;
+					if (val1 < val2) {
+						return -1;
+					} else if (val1 > val2) {
+						return 1;
+					} else {
+						return 0;
+					}
+				}
+			}
+			/*for(var i=0;i<tree.length-1;i++){
+				for(var j=i+1;j<tree.length;j++){
+					if(tree[i].text.toLowerCase()>tree[j].text.toLowerCase()){
+						var tempstr=tree[i];
+						tree[i]=tree[j];
+						tree[j]=tempstr;
+					}	
+				}
+			}*/
+			tree.sort(compare);
+				return tree;
+			}
+			function tocongifmanagement(){//跳转至配置管理页进行配置项的添加、修改、删除
+				window.parent.document.getElementById("li7").click();
+			}
+			//
+			function selectFile(){  
+				//触发 文件选择的click事件  
+				$("#file").trigger("click");  
+
+			//其他code如 alert($("#file").attr("value"))  
+			}  
+			/* 获取 文件的路径 ，用于测试*/  
+			function previewHandle(fileDOM) {
+				var file = fileDOM.files[0], // 获取文件
+					imageType = /^application\/json/,
+					reader = '';
+				var ext_filename = file.name.split(".")[1];
+				
+				$("#sensor_src").val(file.name);
+				// 判断是否支持FileReader    
+				if (window.FileReader) {
+					reader = new FileReader();
+				}
+				// IE9及以下不支持FileReader
+				else {
+					alert("您的浏览器不支持图片预览功能，如需该功能请升级您的浏览器！");
+					return;
+				}
+				if(file.size>2000000){
+					alert("文件太大，请选择不答应2M的图形文件！");
+					return;
+				}
+				// 读取完成
+				switch(ext_filename){    
+				case "json":
+					reader.onload = function (event) {
+						var re = event.target.result;
+						if(re.match(/^[\[]/g))
+							obj_sensor=(JSON.parse(re))
+						else{
+							var t=re.split('\r');
+							for(var i=0;i<t.length;i++)
+								t[i]=JSON.parse(t[i]);
+							obj_sensor=decodeexceltojson(t);
+						}
+						var treenode=buildnode_level2(obj_sensor,0);
+						inittreeview_level2(treenode,tree2);
+					};
+					reader.readAsText(file,"utf-8");
+					break;
+				case "xls":
+				case "xlsx":
+					reader.onload = function(e) {
+						var data = e.target.result;
+						var workbook = XLSX.read(data, {type: 'binary'});
+						var sheetNames = workbook.SheetNames;
+						sheetNames.forEach(name => {
+							var worksheet = workbook.Sheets[name]; // 只能通过工作表名称来获取指定工作表
+							var obj_excel=XLSX.utils.sheet_to_json(worksheet);
+							obj_excel=JSON.stringify(obj_excel);
+							obj_excel=obj_excel.replace(/"Id"/g,'"id"').replace(/"ParentId"/g,'"parentId"').replace(/"Name"/g,'"name"').replace(/"NodeId"/g,'"nodeId"')
+							.replace(/"Type"/g,'"type"').replace(/"Config"/g,'"config"').replace(/"Time"/g,'"time"').replace(/"Company"/g,'"company"').replace(/"Serial"/g,'"serial"').replace(/"Address"/g,'"address"');
+							obj_excel=JSON.parse(obj_excel);
+							obj_sensor=decodeexceltojson(obj_excel);
+							var treenode=buildnode_level2(obj_sensor,0);
+							inittreeview_level2(treenode,tree2);
+						});
+					};
+					reader.readAsBinaryString(file);
+				}
+			}
+			//将读取的excel表格数据转换成JSON对象数组；
+			function decodeexceltojson(aexcel){
+				var obj=[];
+				if(!aexcel){
+					return obj;
+				}
+				var tempb_obj={};
+				
+				for(var i=0;i<aexcel.length;i++){
+					var tempa_obj=new Object();
+					tempa_obj.value=(aexcel[i]);
+					tempa_obj.children=[];
+					tempa_obj.value.time=new Date(tempa_obj.value.time);//.replace(/ /,"T").replace(/\//g,"-");
+					var isfind=compare(obj,tempa_obj,0);
+					if(isfind==0)
+					{
+						obj.push(tempa_obj);
+					}
+				}
+				return obj;
+			}
+			function compare(obja,objb,velev){
+				var istrue=0
+				for(var j=0;j<obja.length;j++){
+					if(parseInt(obja[j].value.id)==parseInt(objb.value.parentId)){
+						obja[j].children.push(objb);
+						return istrue=1;
+					}else 
+					if(parseInt(obja[j].value.parentId)==parseInt(objb.value.id)){
+						objb.children.push(obja[j]);
+						obja[j]=objb;
+						return istrue=1;
+					}else if(obja[j].children.length>0){
+						istrue=compare(obja[j].children,objb,velev+1);
+						if(istrue)
+							return istrue
+					}
+					console.log(istrue);
+				}
+				return istrue;
+			}
+			//清空指定节点的所有标签
+			function clearsensorsbynode(anodeid){
+				if (confirm("您确定要清空所有标签吗")) {
+					if(!anodeid)
+						anodeid=NodeId;
+					sendorder("_manager/ClearSensorsByNode?nodeId="+anodeid,clearsensorsbynode_bc);
+				}
+			}
+			//清空指定节点的所有标签命令回调函数
+			function clearsensorsbynode_bc(data){
+				if(data){
+					GetSensorsByNode();
+					alert("节点"+$("#node").text()+"的标签已清空！");
+				}
+			}
+			//上传批量标签
+			function importsensors(){
+				if (confirm("您确定要导入所列标签到节点"+$("#node").text()+"里吗?")) {
+					if(obj_sensor)
+						sendorder("_manager/ImportSensors?nodeId="+NodeId,importsensors_bc,obj_sensor)
+					else
+						alert("请选择要导入的标签");
+				}
+			}
+			//批量上传标签命令回调函数
+			function importsensors_bc(data){
+				if(data){
+					GetSensorsByNode();
+					alert("标签导入成功");
+				}
+			}
+			/*导出成json格式的文本文件*/
+			function exporttojson(){
+				var o_json=JSON.stringify(treeseneors)
+				var blob = new Blob([o_json], {type: "text/plain;charset=utf-8"});
+    		saveAs(blob, "save.json");
+			}
+			/*导出成excel文件*/
+			function exporttoexcel(){
+				maps=[];
+				var sensor_arr=buildsensor(treeseneors)
+				var sheet=XLSX.utils.json_to_sheet(sensor_arr);
+				var blob = sheet2blob(sheet);
+				openDownloadDialog(blob, '导出.xls');
+				//console.log(sheet);
+			}
+			//将对象转换成适合sheet格式的数组
+			function buildsensor(aSensors) {
+				if ((typeof(aSensors) != "undefined") && (aSensors != null)) {
+					let sensors_len=aSensors.length;
+					for (var i = 0; i < sensors_len; i++) {
+						if ((aSensors[i] != null) && (!jQuery.isEmptyObject(aSensors[i].value))) {
+							var map = new Object();
+							//map.id = aSensors[i].value.id;
+							map = aSensors[i].value;
+							maps.push(map);
+						}
+						if ((aSensors[i] != null) && (!jQuery.isEmptyObject(aSensors[i].children))) {
+							buildsensor(aSensors[i].children);
+						}
+					}
+					var compare = function (obj1, obj2) {
+						var val1 = obj1.name;
+						var val2 = obj2.name;
+						if (val1 < val2) {
+							return -1;
+						} else if (val1 > val2) {
+							return 1;
+						} else {
+							return 0;
+						}
+					}
+					return (maps.sort(compare));
+				}
+			}
+			// 将一个sheet转成最终的excel文件的blob对象，然后利用URL.createObjectURL下载
+			function sheet2blob(sheet, sheetName) {
+				sheetName = sheetName || 'sheet1';
+				var workbook = {
+					SheetNames: [sheetName],
+					Sheets: {}
+				};
+				workbook.Sheets[sheetName] = sheet;
+				// 生成excel的配置项
+				var wopts = {
+					bookType: 'xlsx', // 要生成的文件类型
+					bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
+					type: 'binary'
+				};
+				var wbout = XLSX.write(workbook, wopts);
+				var blob = new Blob([s2ab(wbout)], {type:"application/octet-stream"});
+				// 字符串转ArrayBuffer
+				function s2ab(s) {
+					var buf = new ArrayBuffer(s.length);
+					var view = new Uint8Array(buf);
+					for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+					return buf;
+				}
+				return blob;
+			}
+			/**
+			* 通用的打开下载对话框方法，没有测试过具体兼容性
+			* @param url 下载地址，也可以是一个blob对象，必选
+			* @param saveName 保存文件名，可选
+			*/
+			function openDownloadDialog(url, saveName){
+				if(typeof url == 'object' && url instanceof Blob)
+				{
+					url = URL.createObjectURL(url); // 创建blob地址
+				}
+				var aLink = document.createElement('a');
+				aLink.href = url;
+				aLink.download = saveName || ''; // HTML5新增的属性，指定保存文件名，可以不要后缀，注意，file:///模式下不会生效
+				var event;
+				if(window.MouseEvent) event = new MouseEvent('click');
+				else
+				{
+					event = document.createEvent('MouseEvents');
+					event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+				}
+				aLink.dispatchEvent(event);
+			}
+		</script><!---->
+</body>
+</html>

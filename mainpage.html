@@ -200,6 +200,7 @@
 		var userdata;
 		const c_id=0,c_name=1,c_time=2,c_val=3,c_dataname=4,c_mes=5; 
 		var ws,wscount=0,wsconnect=false;
+		var iframepagename="";
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
@@ -586,7 +587,7 @@
 						localStorage.setItem("sensors", null);
 						sessionStorage.nodeId = data.id;
 						
-						(!data.hasOwnProperty("nodes"))
+						//(!data.hasOwnProperty("nodes"))
 							GetBinariesByType("NodeGraphic", sessionStorage.nodeId);//将GetBinariesByType与GetSensorsByNode顺序颠倒，以便执行refreshiframe
 						sessionStorage.eventTypeSelected="";
 						GetSensorsByNode(data.id);
@@ -1191,20 +1192,24 @@
 			}
 		}
 		function showreportlist(el){
+			
 			if(el.value=="后台维护"){
+				iframepagename=iframemain.attr("src");
 				el.value="前端浏览";
 				$("#aside").hide();
 				$("#navigation").hide();
+				showLeftMenu(true);
 				iframemain.attr("src","serverSet.html");
-				sessionStorage.pageindex=400;
-			
+				//sessionStorage.pageindex=400;
+				
 			}else{
 				el.value="后台维护";
 				$("#aside").show();
 				$("#navigation").show();
-				//iframemain.attr("src","realdata_vue.html");
+				showLeftMenu(false);
+				iframemain.attr("src",iframepagename);
 				//sessionStorage.pageindex=2;
-				history.go(-1);
+				//history.go(-1);
 			
 			}
 			//showLeftMenu(true);
@@ -1262,7 +1267,7 @@
 					localStorage.setItem("Configs",null);
 				}
 				allsensors = new Object();
-				//buildsensor2(allsensors, result.sensors, "");
+				buildsensor2(allsensors, result.sensors, "");//一次状态图用到
 				var sensors = buildsensor(result.sensors);//(JSON.parse(localStorage.getItem("sensors")));
 				localStorage.setItem("sensors", JSON.stringify(sensors));
 				try{
@@ -1918,7 +1923,7 @@
 					//}
 					//tree1.treeview("revealNode",[data.nodeId, { levels: 2, silent: true }]);
 					//setSelectOption("jcdd", data.id);
-                    sessionStorage.jfjk_nodeid=data.nodeId;
+					sessionStorage.jfjk_nodeid=data.nodeId;
 					sessionStorage.SensorId=data.id;
 					if(!multiselect)//多选时，标签id不被保存；用于恢复所选项
 						sessionStorage.sel_id=data.id;
@@ -2322,6 +2327,8 @@
 			para=JSON.parse('{"AccessToken":"'+sessionStorage.accessToken+'"}');
 		sendstr(action,para)
 	}
+
+	
 	</script>
 </body>
 </html>

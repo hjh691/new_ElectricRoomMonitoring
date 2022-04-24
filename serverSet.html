@@ -17,7 +17,7 @@
 <body>
     <div class="container" style="margin:5px;">
         <div>
-          <div class="col-xs-3 col-md-2 col-lg-2" style="border: rgb(192, 190, 190) solid 0px;height: 700px;overflow: auto;" >
+          <div class="col-xs-3 col-md-2 col-lg-1" style="border: rgb(192, 190, 190) solid 0px;height: 700px;overflow: auto;width:auto;" >
             <ul id="v_optionlist" style="list-style-type:none;font-size: 18px;text-align: center;padding-top: 20px;">
               <li v-for="(option, index) in options" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="'li'+index" :value="index" onclick="load(this)">{{option}}</a></li>
             </ul>
@@ -34,7 +34,7 @@
       var v_opation=new Vue({
         el:'#v_optionlist',
         data:{
-          options:["用户管理","权限管理","连接管理","节点管理","标签管理","报表管理","图形管理"]
+          options:["用户管理","权限管理","连接管理","节点管理","标签管理","报表管理","图形管理","配置管理"]
         }
       });
       function load(opt){
@@ -42,6 +42,21 @@
         switch(parseInt(opt.attributes.value.value)){
           case 0:
             $("#iframe_option").attr('src','usermanagement.html');
+            break;
+          case 2:
+            $("#iframe_option").attr("src","connectionmanagement.html");
+            break;
+          case 3:
+            $("#iframe_option").attr('src','nodemanagement.html');
+            break;
+          case 4:
+            $("#iframe_option").attr('src',"sensormanagement.html");
+            break;
+          case 5:
+            $("#iframe_option").attr('src','reportmanagement.html');
+            break;
+          case 7:
+            $("#iframe_option").attr('src',"configmanagement.html");
             break;
         }
       }

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>节点管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/electricroommonitoring.css" />
+    <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+		<script src="js/vue.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
+    <script  type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+    <style>
+      body{height: 99%;}
+      .row{
+        margin-top: 20px;
+        font-size: 12px;
+      }
+      input{
+        font-size: 1.6em;
+      }
+      li{font-size: 16px;}
+      button{
+        font-size: 1.6em;
+      }
+      [v-cloak]{
+        display:none;
+      }
+    </style>
+</head>
+<body>
+    <div class="container" style="margin:5px;">
+        <div class="row" id="nodemanagement" >
+          <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 650px;" >
+            <a href="javascript:void(0)" onclick="getnodelist()"><button style="width:150px;height:30px;font-size: 1.2em;">节点列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
+            <!--<ul id="v_nodelist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">
+              <li v-for="(node,idx) in nodes" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="idx" @click="changenode(idx)">{{node.value.name}}</a></li>
+            </ul>-->
+            <div id="nodetree">
+              
+            </div>
+          </div>
+          <div class="col-xs-9 col-md-8 col-lg-6">
+            <h3>详细配置</h3>
+            <div class="container" ><!--align="center"-->
+              <div id="nodeprofile">
+                <div class="row">
+                  <div class="col-xs-4 table-lable"> 节点编码:</div>
+                  <div class="col-xs-8"><input id="node_id" type="text" readonly="readonly" style="width:250px;font-size: 1.6em;" v-model="nodedetail.id" value=""/>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-4 table-lable"> 上级节点编码:</div>
+                  <div class="col-xs-8"><input id="parent_id" type="text" readonly="readonly" style="width:250px;font-size: 1.6em;" v-model="nodedetail.parentId" value=""/>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-4 table-lable"> 名称:</div>
+                  <div class="col-xs-8"><input id="node_name" type="text" v-model="nodedetail.name" style="width:300px;" value=""/>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4 table-lable"> 类型:</div>
+                <div class="col-xs-8" id="nodetypelist">
+                  <span><select id="nodetype" style="width:150px"><option value=""></option>
+                    <option v-for="nodetype in nodetypes" :value="nodetype.name">{{nodetype.name}}</option></select></span>
+                </div>
+              </div>
+              <br><br>
+              <!---->
+              <div class="row">
+                <div class="col-xs-12" align="center"><button style="width:100px;" onclick="addnode()">添加</button>
+                <button style="width:100px;" onclick="modifynode()">修改</button>
+                <button style="width:100px;" onclick="deletenode()">删除</button></div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var nodelist=[],nodetypes={};
+      var nodeconfig={};
+      var pt=0,nodeid=0;
+      var v_node;
+      var isaddnode=false;
+			var nodestree=$("#nodetree");
+      initnodemanagement();
+      function initnodemanagement(){
+        getnodetypes();
+      }
+      function getnodetypes(){
+        sendorder("_manager/ListNodeConfigItem",getnodeconfigitem_bc);
+      }
+      function getnodeconfigitem_bc(data){
+        nodetypes={};
+        nodetypes=data;
+        var v_nodetype=new Vue({
+          el:"#nodetypelist",
+          data:{
+            nodetypes:nodetypes,
+          },
+        })/**/
+        getnodelist();
+      }
+      function getnodelist(){
+        nodelist=[];
+        sendorder("_manager/GetNodes",getnodes_bc);
+      }
+      function getnodes_bc(data){
+        nodelist=buildnode(data,0);
+        inittreeview(nodelist);
+        if(nodelist.length>=0){
+          if(!v_node){/**/
+            v_node=new Vue({
+              el:'#nodeprofile',
+              data:{
+                nodedetail:nodeconfig,
+              },
+             methods:{
+                changenode(index){
+                  this.$nextTick(function(){
+                    
+                  })
+                },
+                destroy() {
+                  this.$destroy();
+                },
+              },
+            });
+          }else{
+            v_node.nodes=nodelist
+            v_node.nodedetail=nodeconfig;
+            //v_node.nodes.$set("nodes",nodelist);
+            //v_node.reload();
+          }
+        }
+      }
+      function modifynode(){
+        nodeconfig.type=$("#nodetype").val();
+				if (confirm("您确定要修改节点“"+nodeconfig.name+'”的配置信息吗')) {
+          sendorder("_manager/ModifyNode",modifynode_bc,nodeconfig);
+        }         
+      }
+      function modifynode_bc(data){
+				if(data)
+          showmsg("节点信息修改成功!");
+				getnodelist();
+      }
+      function deletenode(){
+        nodeid=nodestree.treeview("getParent",nodeid).nodeId;// nodeconfig.parentId;
+        if (confirm("您确定要删除节点“"+nodeconfig.name+'”吗')) {
+          sendorder("_manager/DeleteNode",deletenode_bc,nodeconfig);
+        }
+      }
+      function deletenode_bc(data){
+        if(data)
+          showmsg("节点"+nodeconfig.dispaly+"删除成功!");
+        getnodelist();
+      }
+      function addnode(){
+				nodeconfig.name="新节点_"+Math.floor(Math.random() * 1000);
+        nodeconfig.parentId=nodeconfig.id;
+        nodeconfig.type=$("#nodetype").val();
+        nodeconfig.config="string";
+        sendorder("_manager/AddNode",addnode_bc,nodeconfig);
+      }
+      function addnode_bc(data){
+        isaddnode=true;
+        getnodelist();
+      }
+			function decodenodetype(atype){
+				var sel=document.getElementById("nodetype");
+				var options=sel.options;
+				if(options){
+					options[0].defaultSelected = true;
+					options[0].selected = true;
+				}
+				for (var i = 0; i < options.length; i++) {
+					if (options[i].value == atype) {
+						options[i].defaultSelected = true;
+						options[i].selected = true;
+						break;
+					}
+				}
+			}
+      function buildnode(data, level) {
+			var tree = [];
+			/*if(level==0){// 
+				//*for (i = 0; i <1; i++) {
+					var anodes = new Object();
+					anodes.text = "节点列表" ;
+					anodes.id = -1;
+					anodes.type="";
+					anodes.nodes = [];
+					tree.push(anodes);
+				//}
+				//alert("该用户没有复合条件的节点数据,<br>请使用其他用户名称登录",info_showtime);
+			} */
+			if(data == null || typeof(data) == "undefined"|| data.length==0 ){
+				//return tree;
+			}else {
+				let data_len=data.length;
+				for (var j = 0; j < data_len; j++) {
+					var anodes = new Object();
+					anodes.text = data[j].value.name;//+"[Id:"+data[j].value.id+"]";
+					anodes.id = data[j].value.id;
+          //anodes.expanded=true;
+					anodes.ParentId=data[j].value.parentId;
+					anodes.type = data[j].value.type;
+					anodes.config = data[j].value.config;
+					anodes.time = data[j].value.time;
+					anodes.level = level;
+					if (data[j].value.hasOwnProperty("nodeId")) {
+						anodes.NodeId = data[j].value.nodeId;
+					}
+					if (data[j].children&&data[j].children.length != 0) {
+						anodes.nodes = [];
+						anodes.nodes = buildnode(data[j].children, level + 1)
+					}
+					tree.push(anodes);
+				}
+			}
+			return tree;
+		}
+    function inittreeview(anodes) {
+			try{
+			//obj.nodes=(JSON.parse( node));
+			//tree[1]=obj;
+			mnodes = [];
+			var nodes = new Object();
+				nodes.text = "节点列表" ;
+				nodes.id = -1;
+				nodes.type="";
+				nodes.nodes = [];
+			mnodes.push(nodes);
+			if (anodes == null) {
+				mnodes[0].nodes = buildnode();
+			} else {
+				mnodes[0].nodes = anodes;
+			}
+			nodestree.treeview({
+				data: mnodes,    // 数据源
+				showCheckbox: false,   //是否显示复选框
+				highlightSelected: true,    //是否高亮选中
+				//nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
+				//nodeIcon: 'glyphicon glyphicon-lock',
+				emptyIcon: '',    //没有子节点的节点图标
+				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象
+				multiSelect: false,    //多选
+				searchResultColor: "black",
+				//color: "#fff",//所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
+				//backColor: "rgba(0, 101, 105, 1);", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				showBorder: false,
+				//borderColor: "#000000", //边框颜色。如果不想要可见的边框，则可以设置showBorder为false。        String
+				//nodeIcon: "glyphicon glyphicon-stop", //所有节点的默认图标
+				//checkedIcon: "glyphicon glyphicon-check", //节点被选中时显示的图标         String
+				//collapseIcon: "glyphicon glyphicon-minus", //节点被折叠时显示的图标        String
+				//expandIcon: "glyphicon glyphicon-plus", //节点展开时显示的图标        String
+				//emptyIcon: "glyphicon", //当节点没有子节点的时候显示的图标              String
+				//enableLinks: false, //是否将节点文本呈现为超链接。前提是在每个节点基础上，必须在数据结构中提供href值。        Boolean
+				//highlightSearchResults: true, //是否高亮显示被选中的节点        Boolean
+				//levels: 2, //设置整棵树的层级数  Integer
+				//multiSelect: false, //是否可以同时选择多个节点      Boolean
+				onhoverColor: "#3075a5", //光标停在节点上激活的默认背景色      String
+				//selectedIcon: "glyphicon glyphicon-stop", //节点被选中时显示的图标     String
+				//searchResultBackColor: "", //当节点被选中时的背景色
+				//searchResultColor: "", //当节点被选中时的前景色
+				selectedBackColor: "#85e494", //当节点被选中时的背景色
+				selectedColor: "#000", //当节点被选中时的前景色
+				//showBorder: true, //是否在节点周围显示边框 btn-praty
+				//showCheckbox: false, //是否在节点上显示复选框
+				//showIcon: true, //是否显示节点图标
+				//showTags: false, //是否显示每个节点右侧的标记。前提是这个标记必须在每个节点基础上提供数据结构中的值。
+				//uncheckedIcon: "glyphicon glyphicon-unchecked", //未选中的复选框时显示的图标，可以与showCheckbox一起使用
+				//onNodeChecked: function (event,data) {
+				//	console.log("nodeId = "+data.nodeId);
+				//	console.log("id = "+data.id);
+				//},
+				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
+					var selectnode=nodestree.treeview('getSelected')[0];
+					nodestree.treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
+					nodestree.treeview("revealNode",[selectnode.nodeId, { levels: 1, silent: true }])//展开所选节点
+					nodestree.treeview("expandNode",[selectnode.nodeId, { levels: 1, silent: true }])//展开所选节点
+					nodeid = data.nodeId;
+					nodeconfig.id=data.id;
+					nodeconfig.name=data.text;
+					nodeconfig.parentId=data.ParentId;
+					if(v_node)
+					v_node.nodedetail=nodeconfig;
+					decodenodetype(data.type);
+					nodestree.treeview("revealNode",[data.nodeId, { levels: 1, silent: true }]);
+				},
+				/*onSearchComplete:function(event, data) { 
+					var firstSearchResult = nodestree.find('ul').find('li[data-nodeid='+ sessionStorage.selNodeId +']');
+					//nodestree.scrollTop(firstSearchResult[0].offsetTop);
+				},
+				*方法
+				 * checkAll(options);//选中所有树节点
+				checkNode(node | nodeId, options);  //选中一个给定nodeId的树节点
+				clearSearch();//清除查询结果
+				collapseAll(options);//折叠所有树节点
+				collapseNode(node | nodeId, options);//折叠一个给定nodeId的树节点和它的子节点
+				disableAll(options);//禁用所有树节点
+				disableNode(node | nodeId, options);//禁用一个给定nodeId的树节点
+				enableAll(options);//激活所有树节点
+				enableNode(node | nodeId, options);//激活给定nodeId的树节点
+				expandAll(options);//展开所有节点
+				expandNode(node | nodeId, options);//展开给定nodeId的树节点
+				getCollapsed();//返回被折叠的树节点数组
+				getDisabled();//返回被禁用的树节点数组
+				getEnabled();//返回被激活的树节点数组  
+				getExpanded();//返回被展开的树节点数组
+				getNode(nodeId);//返回与给定节点id相匹配的单个节点对象。
+				getParent(node | nodeId);//返回给定节点id的父节点
+				getSelected();//返回被选定节点的数组。
+				getSiblings(node | nodeId);//返回给定节点的兄弟节点数组
+				getUnselected();//返回未选择节点的数组
+				remove();//删除the tree view component.删除绑定的事件，内部附加的对象，并添加HTML元素。
+				revealNode(node | nodeId, options);//显示给定的树节点，将树从节点扩展到根。
+				search(pattern, options);//在树视图中搜索匹配给定字符串的节点，并在树中突出显示它们。返回匹配节点的数组。
+				selectNode(node | nodeId, options);//选择一个给定的树节点
+				toggleNodeChecked(node | nodeId, options);//Toggles a nodes checked state; checking if unchecked, unchecking if checked.
+				toggleNodeDisabled(node | nodeId, options);//切换节点的禁用状态;
+				toggleNodeExpanded(node | nodeId, options);//切换节点的展开与折叠状态
+				toggleNodeSelected(node | nodeId, options);//切换节点的选择状态
+				uncheckAll(options);//不选所有节点
+				uncheckNode(node | nodeId, options);//不选给定nodeId的节点
+				unselectNode(node | nodeId, options);//不选给定nodeId的节点
+				事件：
+				*nodeChecked (event, node) - 一个节点被checked.
+				*nodeUnchecked (event, node) - 一个节点被unchecked.
+				*nodeCollapsed (event, node) - 一个节点被折叠.
+				*nodeDisabled (event, node) - 一个节点被禁用.
+				*nodeEnabled (event, node) - 一个节点被启用.
+				*nodeExpanded (event, node) - 一个节点被展开.
+				*nodeSelected (event, node) - 一个节点被选择.
+				*nodeUnselected (event, node) - 取消选择一个节点.
+				*searchComplete (event, results) - 搜索完成之后触发.
+				*searchCleared (event, results) - 搜索结果被清除之后触发.
+				*/
+			});
+			nodestree.treeview('collapseAll');//关闭展开
+			if (nodeid == "" || nodeid == null) {
+				nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
+			}
+			if(isaddnode){
+				nodeid=nodestree.treeview('search', [ nodeconfig.name, { ignoreCase: false, exactMatch: true }])[0].nodeId;
+				isaddnode=false;
+			}
+			var firstNode = nodestree.treeview("getNode", nodeid);
+			nodestree.treeview("revealNode",[firstNode.nodeId, { levels: 1, silent: true }])//展开所选节点
+			nodestree.treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
+			//nodestree.treeview('search', [ firstNode.text, { ignoreCase: false, exactMatch: true }]);//匹配node的text属性
+			//获取指定node的sensors
+			//GetSensorsByNode(sessionStorage.nodeid);
+			/*infotreedata = [];
+			infotreeobj.id = firstNode.id;
+			infotreeobj.name = firstNode.text;
+			if (firstNode.hasOwnProperty("nodes")) {
+				infotreeobj.value = firstNode.nodes.length;
+			} else {
+				infotreeobj.value = 0;
+			}
+			infotreeobj.children = [];
+			infotreeobj.level = firstNode.level;
+			//infotreeobj.isload="false";
+			if ((firstNode.hasOwnProperty("nodes")) && (firstNode.nodes.length > 0) && (firstNode.level < 2)) {
+				infotreeobj.children = decode(firstNode.nodes);
+			}
+			infotreedata.push(infotreeobj);
+			maps = [];*/
+			//localStorage.setItem("sensors", null);
+			//localStorage.setItem("sensor_tree",null);
+			//if(!firstNode.hasOwnProperty("nodes"))
+			//GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
+			//GetBinariesByType("NodeGraphic", infotreeobj.id);
+			//refreshinfotree(firstNode);
+			/*if(firstNode.Catalog=="视频监控"){
+				sessionStorage.nodetype=0;
+				updatanav(sessionStorage.nodetype);
+			}else if(firstNode.Catalog=="机房监控"){
+				sessionStorage.nodetype=2;
+				updatanav(sessionStorage.nodetype);
+			}else{updatanav(sessionStorage.nodetype);}*/
+			//setTimeout(function(){if(sessionStorage.pageindex==0){
+			//	document.getElementById("iframe_main").src="infototal.html";
+			//}},3000);
+			function getThe_level_nodeid(anode, alevel) {
+				while (anode.level > alevel) {
+					anode = (nodestree.treeview("getParent", anode));
+				}
+				return anode;
+			}
+			}catch(err){
+				showstateinfo(err.message,"nodemanagement/inittreeview");
+			}
+			function refreshinfotree(anode){
+				infotreedata = [];
+				infotreeobj.id = anode.id;
+				infotreeobj.name = anode.text;
+				infotreeobj.children = [];
+				infotreeobj.level = anode.level;
+				//infotreeobj.isload="false";
+				if ((anode.hasOwnProperty("nodes")) && (anode.nodes.length > 0)) {
+					infotreeobj.children = decode(anode.nodes);
+					infotreeobj.value = anode.nodes.length;
+					//var arr_node = buildsensor1(anode.nodes);
+					//infotreeobj.value = arr_node.length;
+				} else {
+					infotreeobj.value = 0;
+				}
+				infotreedata.push(infotreeobj);
+			}
+		}
+      
+    </script><!---->
+</body>
+</html>

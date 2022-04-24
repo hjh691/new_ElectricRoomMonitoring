@@ -136,31 +136,31 @@ function initlogin() {
 }
 //读取本地图片
 function previewHandle(fileDOM) {
-    var file = fileDOM.files[0], // 获取文件
-        imageType = /^image\//,
-        reader = '';
-    // 文件是否为图片
-    if (!imageType.test(file.type)) {
-        alert("请选择图片！");
-        return;
-    }
-    // 判断是否支持FileReader    
-    if (window.FileReader) {
-        reader = new FileReader();
-    }
-    // IE9及以下不支持FileReader
-    else {
-        alert("您的浏览器不支持图片预览功能，如需该功能请升级您的浏览器！");
-        return;
-    }
-    // 读取完成    
-    reader.onload = function (event) {
-        // 获取图片DOM
-        var img = document.getElementById("preview-img");
-        // 图片路径设置为读取的图片    
-        jfjk_base_config.bg_src = event.target.result;
-    };
-    reader.readAsDataURL(file);
+	var file = fileDOM.files[0], // 获取文件
+		imageType = /^image\//,
+		reader = '';
+	// 文件是否为图片
+	if (!imageType.test(file.type)) {
+		alert("请选择图片！");
+		return;
+	}
+	// 判断是否支持FileReader    
+	if (window.FileReader) {
+		reader = new FileReader();
+	}
+	// IE9及以下不支持FileReader
+	else {
+		alert("您的浏览器不支持图片预览功能，如需该功能请升级您的浏览器！");
+		return;
+	}
+	// 读取完成    
+	reader.onload = function (event) {
+		// 获取图片DOM
+		var img = document.getElementById("preview-img");
+		// 图片路径设置为读取的图片    
+		jfjk_base_config.bg_src = event.target.result;
+	};
+	reader.readAsDataURL(file);
 }
 //判断用户名和密码输入是否符合语法  used by electricroommonitor 
 function LoginOrder(name, ps,flag,order,callback,datas) {
@@ -1756,7 +1756,8 @@ function sleep(numberMillis) {
 function getname(key){
 	if(key)
 		key=key.toLowerCase();
-	var allconfig=JSON.parse(localStorage.allConfigs);
+	if(localStorage.allConfigs)
+		var allconfig=JSON.parse(localStorage.allConfigs);
 	if(allconfig){
 		let all_config_len=allconfig.length;
 		for(var i=0;i<all_config_len;i++){
@@ -1871,7 +1872,7 @@ function updatapcnav(obj){
 		//}
 	}
 	//if(window.parent.tree2)
-		//window.parent.inittreeview_level2();
+		window.parent.inittreeview_level2();
 		window.parent.document.getElementById("tree").style.pointerEvents ="auto";
 		switch(obj){//控制标签树形菜单是否显示。
 		case 3:
@@ -2820,6 +2821,20 @@ function refreshlist(tr){
     $(tr.parentNode).css("background", '#85e494');
 	}
 }
+function clone(obj) { 
+	if(obj === null) return null 
+	if(typeof obj !== 'object') return obj;
+	if(obj.constructor===Date) return new Date(obj); 
+	if(obj.constructor === RegExp) return new RegExp(obj);
+	var newObj = new obj.constructor ();  //保持继承链
+	for (var key in obj) {
+		if (obj.hasOwnProperty(key)) {   //不遍历其原型链上的属性
+			var val = obj[key];
+			newObj[key] = typeof val === 'object' ? arguments.callee(val) : val; // 使用arguments.callee解除与函数名的耦合
+		}
+	}  
+	return newObj;  
+};
 /***
  * 后台服务器故障时的登录提示内容，信息提示框的样式，信息提示框添加手动关闭功能。避免出现空白提示框的边框而不能消除。
  * 

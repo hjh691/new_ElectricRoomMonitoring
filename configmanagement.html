@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>节点管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/electricroommonitoring.css" />
+    <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+		<script src="js/vue.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
+    <script  type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+    <style>
+      body{height: 99%;}
+      .row{
+        margin-top: 5px;
+        font-size: 12px;
+      }
+      input{
+        font-size: 1.6em;
+      }
+      li{font-size: 16px;}
+      button{
+        font-size: 1.6em;
+      }
+			select{
+        font-size: 1.2em;
+      }
+      [v-cloak]{
+        display:none;
+      }
+      label{
+        font-size: 1.4em;
+      }
+    </style>
+</head>
+<body>
+    <div class="container" style="margin:5px;">
+        <div class="row" id="configmanagement" >
+          <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 650px;" >
+            <div class="row">
+              <lable class="table-lable" for="sensortypelist">类型:</lable>
+                <span id="sensortypelist"><select id="sensortype" style="width:150px" onchange="sensortypechange()">
+                  <option v-for="sensortype in sensortypes" :value="sensortype.type">{{sensortype.desc}}</option></select></span>
+            </div>
+            <div class="row">
+              <lable class="table-lable" for="sensortypelist">配置:</lable>
+                <span id="senconfig"  style="width:150px" >
+                   <my_v_sensorconfig ref="mychild"></my_v_sensorconfig>
+									 <button style="width:60px;" onclick="showaddrow()">新建</button>
+                </span>
+            </div>
+						<div class="row" id="addrow" style="display:none;">
+              <lable class="table-lable" for="sensortypelist">名称:</lable>
+                <span>
+                   <input id="configname" type="text" style="width:80px;font-size: 14px;" placeholder="输入配置名称" value="" />
+									 <button style="width:60px;" onclick="addconfig()">添加</button>
+                </span>
+            </div>
+            <a href="javascript:void(0)" onclick="sensortypeconfigchange()"><button style="width:150px;height:30px;font-size: 1.2em;">项目列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
+            <!--<ul id="v_nodelist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">
+              <li v-for="(node,idx) in nodes" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="idx" @click="changenode(idx)">{{node.value.name}}</a></li>
+            </ul>-->
+            <div id="sensortree" style="height:90%;overflow: auto;">
+							<span id="configitem">
+								<v_configdetail ref="child_detail"></v_configdetail>
+								</span>
+						</div>
+          </div>
+          <div class="col-xs-9 col-md-9 col-lg-10">
+            <div class="container" id="tab1"><!--align="center"-->
+              <div class="col-xs-12 col-md-6 col-lg-6">
+								<div class="row">
+									<lable class="table-lable">预置列表:</lable>
+										<span ><select id="configdetails" style="width:300px">
+											<option v-for="config in allconfig">{{config.parentdesc+'-'+config.folder+'-'+config.name+'-'+config.desc}}
+											
+											</option></select>
+											<button style="width:60px;" onclick="resetdefault()">预置</button>
+										</span>
+								</div>
+								<br>
+								<div id="sensorconfigdetail">
+									<div class="row">
+										<div class="col-xs-3 col-lg-2 table-lable"> 目录:</div>
+										<div class="col-xs-8"><input id="name" type="text" v-model="sensorconfigdetail.folder" style="width:200px;" value=""/>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3 col-lg-2 table-lable"> 名称:</div>
+										<div class="col-xs-8"><input id="add" type="text" readonly="readonly" style="width:200px;font-size: 1.6em;" v-model="sensorconfigdetail.name" value=""/>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3 col-lg-2 table-lable"> 描述:</div>
+										<div class="col-xs-8"><input id="factor" type="text" v-model="sensorconfigdetail.desc" style="width:200px;" value=""/>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3 col-lg-2 table-lable"> 类型:</div>
+										<div class="col-xs-8"><span><input id="txt_configtype" type="text" v-model="sensorconfigdetail.type" style="width:100px;" oninput="updateconfigtype()"/>
+											<select id="configtype" style="width:100px;" onchange="configtypechange()">
+											<option v-for="configtype in sensorconfigtypes" :value="configtype.type">{{configtype.desc}}</option></select>
+											</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3 col-lg-2 table-lable"> 参数:</div>
+										<div class="col-xs-8"><button style="width:100px;" onclick="modifypara()">参数设置</button>
+											<button style="width:100px;" onclick="setdefault()">重置</button>
+										</div>
+									</div>
+									<div class="modal fade" id="guard_modal" tabindex="-1" role="dialog" aria-labelledby="modal_name" aria-hidden="true" align="center" style="top:50px;">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-head">
+													<button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+													<h4 class="modal-title" id="modal_name">项目列表</h4>
+												</div>
+												<div class="modal-body" align="left">
+													<div id="modal_details" style="background-color: rgb(212, 209, 209);height:500px;overflow: auto;">
+														<div v-for="(item,index) in detail" style="border: rgb(192, 190, 190) solid 1px;">
+															<div class="row">
+																<label class="col-xs-3 col-md-2 col-lg-2" >名称:</label>
+																<label class="col-x2-9 col-md-8 col-lg-8">{{item.name}}</label>
+															</div>
+															<div class="row" >
+																<label class="col-xs-3 col-md-2 col-lg-2" >描述:</label>
+																<label class="col-x2-9 col-md-8 col-lg-8">{{item.desc}}</label>
+															</div>
+															<div class="row">
+																<label class="col-xs-3 col-md-2 col-lg-2" >数值:</label>
+																<input class="col-x2-9 col-md-8 col-lg-8" :id="index" :value="item.value" onchange="savetodetail(this.id,this.value)"/>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="modal-foot">
+													<button type="button" class="btn btn-default" data-dismiss="modal" onclick="saveconfigdetail()">确认并关闭</button>
+												</div>
+											</div>
+										</div>
+									</div><br>
+								</div>
+								
+								<!--div class="row">
+									<div class="col-xs-2 col-lg-2 table-lable"> 选项:</div>
+									<div class="col-xs-8 col-lg-10">
+										<button style="width:65px;" onclick="showconfig()">详情</button>
+									</div>
+								</div-->
+								<div class="row">
+									<div class="col-xs-12"><button style="width:100px;" onclick="addconfigdetail()">添加</button>
+									<button style="width:100px;" onclick="deleteconfigdetail()">删除</button></div>
+								</div><br>
+								<div class="row">
+									<div class="col-xs-12">
+										<button style="width:200px;" onclick="seveconfigdetail()">保存设置</button>
+									</div>
+								</div>
+              </div>
+							<div class="col-sx-12 col-md-6 col-lg-8">
+								
+							</div><!---->
+            </div>
+          </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var nodelist=[],sensortypes=[],sensorconfigtypes=[];
+      var sensorconfig=[],nodeconfig={},temp_sensorconfig=[],temp_configdetails=[];
+      var pt=0,nodeid=1,sensor_nodeid=1;
+      var v_node,v_sensorconfig,v_configdetail,v_configtype,v_allconfig;
+      var isaddsensor=false;
+      initnodemanagement();
+      function initnodemanagement(){
+        getsensortypes();
+				getsensorconfig();
+				getsensorconfigtype();
+      }
+			function showaddrow(){
+				$("#addrow").show();
+			}
+			function addconfig(){
+				if($("#configname").val()){
+					var newconfig=new Object();
+					newconfig.name=$("#configname").val();
+					newconfig.type=$("#sensortype").val();
+					newconfig.desc=$("#sensortype option:selected").text();
+					newconfig.editable=false;
+					newconfig.details=null;
+					temp_sensorconfig.push(newconfig);
+					v_sensorconfig.update(newconfig.name);
+					$("#sensorconfig").val(newconfig.name);
+					temp_configdetails=[];
+					v_configdetail.update();
+					$("#addrow").hide();
+				}else{
+					alert("请输入配置名称");
+				}
+			}
+      function getsensortypes(){//获取标签的类型列表
+        sendorder("_manager/GetSensorTypes",getsensortype_bc);
+      }
+      function getsensortype_bc(data){
+        sensortypes=[];
+        sensortypes=data;
+				//var config=data;
+        var v_nodetype=new Vue({
+          el:"#sensortypelist",
+          data:{
+            sensortypes:sensortypes,
+          },
+        });/**/
+				createallconfig();
+				//getnodelist();
+				sensortypechange();
+      }
+			//标签类型发生改变
+			function sensortypechange(){
+				creatsensorconfig($("#sensortype").val());
+			}
+			function createallconfig(){
+				var allconfigs=[];
+				for(var i=0;i<sensortypes.length;i++){
+					if(sensortypes[i].details.length>0){
+						for(var j=0;j<sensortypes[i].details.length;j++){
+							sensortypes[i].details[j].parentdesc=sensortypes[i].desc;
+							sensortypes[i].details[j].parenttype=sensortypes[i].type;
+							allconfigs.push(sensortypes[i].details[j]);
+						}
+					}
+				}
+				v_allconfig=new Vue({
+					el:"#configdetails",
+					data:{
+						allconfig:allconfigs,
+					},
+					/*methods:{
+						update(atype){
+							this.allconfig=sensortypes;
+							this.filterconfigs=(sensortypes.filter(function(config){
+								return ((config.details.length>0) && (config.type==atype))}));
+							this.$forceUpdate();
+						},
+						filterconfigs:  function  ()  { 
+							return  sensortypes.filter(function(config){
+								return ((config.details.length>0) && (config.type==$("#sensortype").val()))})
+						}
+					}*/
+				});
+				$("#configdetails").val("");
+			}
+			//获取标签的配置(项目)列表
+			function getsensorconfig(){
+				sendorder("_manager/GetSensorConfigs",getsensorconfig_bc);
+			}
+			function getsensorconfig_bc(data){
+				sensorconfig=data;
+				creatsensorconfig($("#sensortype").val());
+			}
+			function creatsensorconfig(type,config){
+				temp_sensorconfig=[];
+				for(var i=0;i<sensorconfig.length;i++){
+				if(sensorconfig[i].type==type)
+					temp_sensorconfig.push(sensorconfig[i])
+				}
+				getsensorconfigdetail(type,config||temp_sensorconfig[0] && temp_sensorconfig[0].name);
+				if(v_sensorconfig){
+					v_sensorconfig.update(config||temp_sensorconfig[0] && temp_sensorconfig[0].name);
+				}else{
+					v_sensorconfig=new Vue({
+					el:'#senconfig',
+					components:{
+						my_v_sensorconfig:{
+							template:'<select id="sensorconfig" style="width:80px" onchange="sensortypeconfigchange()">\
+							<option v-for="sensorconfig in sensorconfigs" :value="sensorconfig.name">{{sensorconfig.name}}</option></select>',
+							data:function(){
+								return {sensorconfigs:temp_sensorconfig}
+							},
+							methods:{
+								destroy() {
+									this.$destroy();
+								},
+								updatedatas(num){
+                  this.sensorconfigs=temp_sensorconfig;
+									this.$nextTick(function(){
+									$("#sensorconfig").val(num||config);
+									})
+                  //this.$set();
+                },
+                savetodetail(idx,avalue){
+                  //details[idx].value=avalue;
+                }
+							}
+						},
+					},
+					methods:{
+						destroy() {
+              this.$destroy();
+              },
+						update(apara){
+							this.$refs.mychild.updatedatas(apara);
+							//this.$forceUpdate()
+						},
+					}
+				});
+				}
+				$("#sensorconfig").val(config);
+			}
+			//标签类型配置的值发生改变时
+			function sensortypeconfigchange(){
+				getsensorconfigdetail($("#sensortype").val(),$("#sensorconfig").val());
+			}
+			function getsensorconfigdetail(sensortype,sensortypeconfig){
+				if(sensortype&&sensortypeconfig)
+					sendorder("_manager/GetSensorConfigDetailByName?type="+sensortype+"&name="+sensortypeconfig,getsensorconfigdetail_bc)
+				else{
+					getsensorconfigdetail_bc(null)
+				}
+			}
+			function getsensorconfigdetail_bc(data){
+				temp_configdetails=[];
+				if(data && data.details)
+				temp_configdetails=data.details;
+				creatconfigdetail();
+			}
+			//创建标签配置列表vue实例
+			function creatconfigdetail(){
+				if(v_configdetail){
+					v_configdetail.update();
+				}else{
+					v_configdetail=new Vue({
+					el:'#configitem',
+					components:{
+						v_configdetail:{//  style="width:150px" onchange="detailitemchange()"
+							template:'<ul id="configdetail">\
+											<li v-for="(item,idx) in configdetails" :value="item.type">\
+												<a href="javascript:void(0)" :id="idx" @click="changedetail(idx)">{{item.folder+"-"+item.name}}</a>\
+											</li></ul>',
+							data:function(){
+								return {configdetails:temp_configdetails}
+							},
+							methods:{
+								destroy() {
+									this.$destroy();
+								},
+								changedetail(idx){
+									this.$nextTick(function(){
+									if(idx>=$("#configdetail li").length)
+										idx=0;
+									pt=idx;
+                  let elem=$("#"+pt);
+                  refreshlist(elem[0]);
+									var obj_configdetial=temp_configdetails[idx]
+									if(obj_configdetial)
+									v_configtype.update(obj_configdetial);
+									})
+								},
+								updatedatas(num){
+                  this.configdetails=temp_configdetails;
+                  //this.$set();
+									this.changedetail(pt);
+									creatconfigtypes(temp_configdetails[0]);
+                },
+                savetodetail(idx,avalue){
+                  //details[idx].value=avalue;
+                }
+							}
+						},
+					},
+					methods:{
+						destroy() {
+              this.$destroy();
+              },
+						update(){
+							this.$refs.child_detail.updatedatas(0);
+							//this.$forceUpdate()
+						},
+					}
+				});
+				}
+
+			}
+			function getsensorconfigtype(){
+				sendorder("_manager/ListSensorConfigItem",getsensorconfigtype_bc);
+			}
+			function getsensorconfigtype_bc(data){
+				sensorconfigtypes=data;
+			}
+			//创建配置类型vue实例
+			function creatconfigtypes(aconfigdetail){
+				if(!aconfigdetail)
+					aconfigdetail={name:'',desc:'',folder:'',type:'',details:[]}
+				if(v_configtype){
+					v_configtype.update(aconfigdetail);
+				}else{
+					v_configtype=new Vue({
+						el:"#sensorconfigdetail",
+						data:{
+							sensorconfigtypes:sensorconfigtypes,
+							sensorconfigdetail:aconfigdetail,
+							detail:sensorconfigtypes[0].details,
+						},
+						methods:{
+							update(adata){
+								if(adata){
+									this.sensorconfigdetail=adata;
+									$("#configtype").val(adata.type);
+								}else{
+									//this.sensorconfigdetail={name:'',desc:'',folder:'',type:'',details:[]};
+									//$("#configtype").val('');
+								}
+								if($("#configtype").prop("selectedIndex")!=-1){
+									this.detail=sensorconfigtypes[$("#configtype").prop("selectedIndex")].details;
+									if(adata&&adata.details&&adata.details.length>0){
+										for(var i=0;i<adata.details.length;i++){
+											for(var j=0;j<this.detail.length;j++){
+												if(i==0)//首次将所有项目清除，然后匹配赋值。
+													this.detail[j].value=null;
+												if(this.detail[j].name==adata.details[i].name){
+													this.detail[j].value=adata.details[i].value;
+													break;
+												}
+											}
+											if(j>=this.detail.length){
+												this.detail.push(adata.details[i]);
+											}
+										}
+									}else{
+										for(var j=0;j<this.detail.length;j++){
+											this.detail[j].value=null;
+										}
+									}
+								}else{
+									this.detail=[];
+								};
+								//this.$forceUpdate();
+							}
+						}
+					})
+				}
+				if(aconfigdetail){
+					$("#configtype").val(aconfigdetail.type);
+				}
+			}
+			function configtypechange(){
+				v_configtype.sensorconfigdetail.type=$("#configtype").val();
+			}
+			function updateconfigtype(){
+				var atype=$("#txt_configtype").val();
+				$("#configtype").val(atype);
+			}
+			//显示配置项参数页面
+			function showconfig(){
+				
+				if($("#sensorconfigdetail").is(":hidden"))
+					$("#sensorconfigdetail").show()
+				else
+					$("#sensorconfigdetail").hide()
+			}
+			//显示配置类型的参数编辑页
+			function modifypara(){
+				//v_configtype.update(temp_configdetails[pt]);
+				$("#guard_modal").modal('show');
+			}
+      function modifysensor(){
+        //nodeconfig.id=data.id;
+				//nodeconfig.nodeId=data.NodeId;
+				nodeconfig.name=$("#sensor_name").val();
+				//nodeconfig.parentId=data.ParentId;
+				nodeconfig.address=$("#address").val();
+				nodeconfig.company=$("#company").val();
+				nodeconfig.location=$("#location").val();
+				nodeconfig.serial=$("#serial").val();
+				//nodeconfig.time=data.Time;
+				nodeconfig.type=$("#sensortype").val();
+				nodeconfig.config=$("#sensorconfig").val(); 
+				if (confirm("您确定要修改标签“"+nodeconfig.name+'”的配置信息吗')) {
+          sendorder("_manager/ModifySensor",modifynode_bc,nodeconfig);
+        }         
+      }
+      function modifynode_bc(data){
+				if(data)
+          showmsg("节点信息修改成功!");
+				GetSensorsByNode();
+      }
+      function deleteconfigdetail(){
+        /*sensor_nodeid=tree1.treeview("getParent",sensor_nodeid).nodeId;// nodeconfig.parentId;
+        if (confirm("您确定要删除标签“"+nodeconfig.name+'”吗')) {
+          sendorder("_manager/DeleteSensor",deletesensor_bc,nodeconfig);
+        }*/
+				if(pt>=0){
+					temp_configdetails.splice(pt,1);
+				}
+				v_configdetail.update();
+      }
+      /*function deletesensor_bc(data){
+        if(data)
+          showmsg("节点"+nodeconfig.name+"删除成功!");
+        GetSensorsByNode();
+      }*/
+      function addconfigdetail(){
+				var configitem={};
+				configitem.folder="Default";
+				configitem.name="属性_"+Math.floor(Math.random() * 100);
+				configitem.desc=configitem.folder+":"+configitem.name;
+				configitem.type=$("#txt_configtype").val();
+				configitem.details=v_configtype.detail;
+				temp_configdetails.push(configitem);
+				pt=temp_configdetails.length-1;
+				v_configdetail.update();
+				//nodeconfig.time=getCurrentDate(2).replace(/ /,"T");
+        //sendorder("_manager/AddSensor",addsensor_bc,nodeconfig);
+      }
+      function addsensor_bc(data){
+        //isaddsensor=true;
+        //GetSensorsByNode();
+      }
+			function savetodetail(idx,avalue){
+				v_configtype.detail[idx].value=avalue;
+			}
+			function saveconfigdetail(){
+				if (confirm("您确定要保存所做的修改吗?")) {
+					var item=[];
+					for(var para in v_configtype.detail){
+						if(v_configtype.detail[para].value){
+							item.push(v_configtype.detail[para]);
+						}
+					}
+					if(item.length>0)
+						temp_configdetails[pt].details=item;
+					else
+						temp_configdetails[pt].details=null;
+				}
+			}
+			function setdefault(){
+			
+				v_configtype.update();
+			}
+			function seveconfigdetail(){
+				if(temp_sensorconfig){
+					var temp_config=temp_sensorconfig[$("#sensorconfig").prop("selectedIndex")];
+					temp_config.details=temp_configdetails;
+					if (confirm("您确定要保存配置“"+temp_config.desc+'-'+temp_config.name+'”所做的修改吗?')) {	
+						sendorder("_manager/ImportSensorConfig",importsensorconfig_bc,temp_config);
+					}
+				}
+			}
+			function importsensorconfig_bc(data){
+				//console.log(data);
+			}
+			function resetdefault(){
+				if (confirm("预置配置项将删除原来的参数配置!\r确定要继续吗? ")) {
+					var t_configdetail=$("#configdetails").val();
+					var index=$("#configdetails").prop("selectedIndex");
+					var var_config=v_allconfig.allconfig[index];
+					for(var i=0;i<sensortypes.length;i++){
+						if(sensortypes[i].type==var_config.parenttype){
+							for(j=0;j<sensortypes[i].details.length;j++){
+								if(sensortypes[i].details[j].folder==var_config.folder && sensortypes[i].details[j].name==var_config.name){
+									temp_configdetails.splice(pt,1,sensortypes[i].details[j]);
+									//let elem=$("#"+pt);
+									//elem.text(var_config.folder+'-'+var_config.name);
+									break;
+								}
+							}
+							break;
+						}
+					}
+					v_configdetail.update();
+				}
+				//var obj_configdetial=temp_configdetails[pt]
+				//if(obj_configdetial)
+				//	v_configtype.update(obj_configdetial);
+									
+			}
+			/*
+			function decodesensortype(atype){
+				if(!atype)
+					atype='';
+				$("#sensortype").val(atype);
+				var sel=document.getElementById("sensortype");
+				var options=sel.options;
+				if(options){
+					options[0].defaultSelected = true;
+					options[0].selected = true;
+				}
+				for (var i = 0; i < options.length; i++) {
+					if (options[i].value == atype) {
+						options[i].defaultSelected = true;
+						options[i].selected = true;
+						break;
+					}
+				}
+			}
+			function decodesensorconfig(aconfig){
+				if(!aconfig)
+					aconfig='';
+				$("#sensorconfig").val(aconfig);
+			}*/
+
+    </script><!---->
+</body>
+</html>

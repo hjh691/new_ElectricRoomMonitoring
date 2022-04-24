@@ -37,7 +37,11 @@
         var tree_obj=window.parent.$("#tree_chi");
         var obj_node=tree_obj.treeview("getSelected");
         if(obj_node.length>0)//判断有没有选中项
-        {tree_obj.treeview("unselectNode",obj_node[0]);}//使选择项为不选中，为下一步选择所有未选择项准备//	$("#sel-sensorname").val("所选标签: "+tree_obj.treeview("getSelected")[0].text);
+        {
+            for(var i=0;i<obj_node.length;i++){
+                tree_obj.treeview("unselectNode",obj_node[i]);
+            }
+        }//使选择项为不选中，为下一步选择所有未选择项准备//	$("#sel-sensorname").val("所选标签: "+tree_obj.treeview("getSelected")[0].text);
         var sensor=tree_obj.treeview("getUnselected");//选取未选中项
         if(sensor && sel_sensor){
             var nodeid;

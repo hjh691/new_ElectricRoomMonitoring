@@ -973,42 +973,38 @@ function changepaint(index){
   function settextbinding(){
     var items=canvas.getActiveObject();
     if(items){
-    if(items._objects){
-      alert("请选择单个对象");
-          return;
-    }
-    else{
-      if(items.__proto__.type=="text" || items.__proto__.type=="textbox"){
-        if($("#binding").val())  
-        items.set("binding",$("#binding").val());
-      canvas.renderAll();
+      if(items._objects){
+        alert("请选择单个对象");
+            return;
+      }
+      else{
+        if(items.__proto__.type=="text" || items.__proto__.type=="textbox"){
+          if($("#binding").val())  
+          items.set("binding",$("#binding").val());
+        canvas.renderAll();
+        }
       }
     }
   }
-}
-
-
-  
-
-    function emport(){
-      const dataURL = this.canvas.toDataURL({//导出成png图片
-          width: this.canvas.width,
-          height: this.canvas.height,
-          left: 0,
-          top: 0,
-          format: 'png',
-      });
-      const link = document.createElement('a');//虚拟一个a元素，和link下载然后再删掉a元素。
-      link.download = 'canvas.png';
-      link.href = dataURL;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+  function emport(){
+    const dataURL = this.canvas.toDataURL({//导出成png图片
+      width: this.canvas.width,
+      height: this.canvas.height,
+      left: 0,
+      top: 0,
+      format: 'png',
+    });
+    const link = document.createElement('a');//虚拟一个a元素，和link下载然后再删掉a元素。
+    link.download = 'canvas.png';
+    link.href = dataURL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
   function save(){
-      var json =canvas.toSVG(['binding']);//JSON.stringify( canvas.toDatalessJSON(['binding']) );// 保存为json
-      var blob = new Blob([json], {type: "text/plain;charset=utf-8"});
-      saveAs(blob, "save.svg");
+    var json =canvas.toSVG(['binding']);//JSON.stringify( canvas.toDatalessJSON(['binding']) );// 保存为json
+    var blob = new Blob([json], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "save.svg");
   }
   function importfromfile(){
     $("#file").trigger("click");
@@ -1030,32 +1026,32 @@ function changepaint(index){
   function upload(input) {  
     //支持chrome IE10  
     if (window.FileReader) {  
-        var file = input.files[0];
-        var filename=getObjectURL(file); //input.value值为细虚拟路径，不能得到文件内容。   
-        var reader = new FileReader();  
-        reader.onload = function(enent) {  
-          //console.log(this.result)  ;
-          loadCanvasfromsvg(file.name,this.result,filename);  
-        }  
-        reader.readAsText(file);  
+      var file = input.files[0];
+      var filename=getObjectURL(file); //input.value值为细虚拟路径，不能得到文件内容。   
+      var reader = new FileReader();  
+      reader.onload = function(enent) {  
+        //console.log(this.result)  ;
+        loadCanvasfromsvg(file.name,this.result,filename);  
+      }  
+      reader.readAsText(file);  
     }   
     //支持IE 7 8 9 10  
     else if (typeof window.ActiveXObject != 'undefined'){  
-        var xmlDoc;   
-        xmlDoc = new ActiveXObject("Microsoft.XMLDOM");   
-        xmlDoc.async = false;   
-        xmlDoc.load(input.value);   
-        loadCanvasfromsvg(xmlDoc.xml);   
+      var xmlDoc;   
+      xmlDoc = new ActiveXObject("Microsoft.XMLDOM");   
+      xmlDoc.async = false;   
+      xmlDoc.load(input.value);   
+      loadCanvasfromsvg(xmlDoc.xml);   
     }   
     //支持FF  
     else if (document.implementation && document.implementation.createDocument) {   
-        var xmlDoc;   
-        xmlDoc = document.implementation.createDocument("", "", null);   
-        xmlDoc.async = false;   
-        xmlDoc.load(input.value);   
-        console.log(xmlDoc.xml);  
+      var xmlDoc;   
+      xmlDoc = document.implementation.createDocument("", "", null);   
+      xmlDoc.async = false;   
+      xmlDoc.load(input.value);   
+      console.log(xmlDoc.xml);  
     } else {   
-        alert('error');   
+      alert('error');   
     }   
 }  
 function uploadpicture(efile){
@@ -1077,7 +1073,6 @@ function uploadpicture(efile){
       image.onload = function(event) {
         // console.log(event, this);
         URL.revokeObjectURL(this.src);
-          
         var imgInstance = new fabric.Image(image,{
           left:0,
           top:0,
@@ -1110,10 +1105,9 @@ function loadCanvasfromsvg(filename,txt_string,pathname){
   switch(ext_filename.toLowerCase()){
     case "json":
       canvas.loadFromJSON(json, canvas.renderAll.bind(canvas), function(o, object) {//加载JSON图形，JSON可以是json对象，也可以是josn字符串
-          // `o` = json object //o是json 对象（单个）
-          // `object` = fabric.Object instance //object 是根据o转换的fabric实例
-          // ... do some stuff ...
-          
+        // `o` = json object //o是json 对象（单个）
+        // `object` = fabric.Object instance //object 是根据o转换的fabric实例
+        // ... do some stuff ...
       }
       //json可以是json对象，也可是json字符串。
       );

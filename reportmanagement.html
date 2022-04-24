@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>报表管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/electricroommonitoring.css" />
+    <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
+    <script  src="js/vue.js"> </script> 
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
+    <script  type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
+    <script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+    <style>
+      .row{
+        margin-top: 10px;
+        font-size: 12px;
+      }
+      .row-detail{
+        margin-top: 5px;
+      }
+      input{
+        font-size: 1.6em;
+      }
+      li{font-size: 1.6em;}
+      button{
+        font-size: 1.6em;
+      }
+      select{
+        font-size: 1.2em;
+      }
+      [v-cloak]{
+        display:none;
+      }
+    </style>
+</head>
+<body>
+  <div class="container" style="margin:5px;">
+    <div class="row" >
+      <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 700px;" align="center" >
+        <a href="javascript:void(0)" onclick="getreportconfigs()"><button style="width:150px;height:30px;font-size: 1.2em;">报表配置列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
+        <ul id="v_reportlist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">
+          <li v-for="(reportconfig,idx) in reportconfigs" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="idx" @click="changeconnection(idx)">{{reportconfig.name}}</a></li>
+        </ul>
+      </div>
+      <div class="col-xs-9 col-md-9 col-lg-10">
+        <div class="container"><!--align="center"-->
+          <div class="col-xs-12 col-md-6 col-lg-4">
+            <h3>详细配置项</h3>
+            <div class="row">
+              <div class="col-xs-3 table-lable"> 报表类型:</div>
+              <div class="col-xs-8">
+                <!--<input id="typename" type="text" style="width:100px;">
+                <input id="isserver" type="text" style="width:50px;"><button style="width:100px;" onclick="modifypara(0)">参数配置</button>
+                <button style="width:60px;" onclick="setdefault(0)">重置</button>-->
+                <select id="reporttype" style="width:140px">
+                <option v-for="(role,key) in roles" :id="'connection_'+key" :value="role">{{role}}</option>
+                </select>
+                
+              </div>
+            </div>
+            <div id="connectionnameid">
+              <div class="row">
+                <div class="col-xs-3 table-lable"> 报表名称:</div>
+                <div class="col-xs-8"><input id="report_name" type="text" v-model="connectiondetail.name" style="width:140px;" value=""/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-3 table-lable"> 起始时间:</div>
+                <div class="col-xs-8"><input type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})"  id="kssj_report" v-model="connectiondetail.startTime.substr(0,10)"
+                  style="width:140px;font-size:1.2em;height: 30px;"/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-3 table-lable"> 节点编号:</div>
+                <div class="col-xs-8"><input id="reportfornodes" type="text" v-model="connectiondetail.nodeIds" style="width:140px;" value=""/>
+                  <button style="width:60px;" onclick="selectnodes()">选择</button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-3 table-lable"> 栏目列表:
+              </div>
+              <div class="col-xs-8"><button style="width:60px;" onclick="showcell_edit()">编辑</button>
+                <!--<input id="typename" type="text" style="width:100px;">
+                <input id="isserver" type="text" style="width:50px;"><button style="width:100px;" onclick="modifypara(1)">参数配置</button>
+                <select id="protocol" style="width:140px">
+                <option v-for="(protocol,key,idx) in protocols" :id="'connection_'+key" :value="protocol.name">{{protocol.desc}}</option>
+                </select>-->
+              </div>
+            </div>
+            <div class="row">
+              <ul id="cell_list" style="border: rgb(192, 190, 190) solid 1px;list-style-type:none;text-align: center;padding-top: 5px;height: 300px;overflow: auto;">
+                <li v-for="(reportitem,idx) in reportitems" style="margin-top:10px;margin-bottom:10px;"><a href="javascript:void(0)" :id="'item_'+idx" @click="changereportitem(idx)">
+                  {{reportitem.title+' : '+ reportitem.folder+'-'+reportitem.name+'-'+reportitem.type}}</a></li>
+              </ul>
+              <div class="col-xs-12" align="center"><button style="width:100px;" onclick="addreportconfig()">添加</button>
+              <button style="width:100px;" onclick="modifyconnection()">修改</button>
+              <button style="width:100px;" onclick="deleteconnection()">删除</button></div>
+            </div>
+          </div>
+          <div class="col-sx-11 col-md-5 col-lg-6" id="cell_edit" style="margin-left:10px;padding-top:200px;display: none;">
+            
+            <div style="border: rgb(192, 190, 190) solid 1px;">
+              <div class="row">
+                <lable class=" col-xs-4 col-lg-2 table-lable">预置列表:</lable>
+                  <div class="col-xs-8"><select id="configdetails" style="width:230px">
+                    <option v-for="config in allconfig">{{config.parentdesc+'-'+config.folder+'-'+config.name}}
+                    
+                    </option></select>
+                    <button style="width:60px;" onclick="resetdefault()">预置</button>
+                  </div>
+              </div>
+              <div id="reportcell">
+                <div class="row">
+                  <div class="col-xs-4 col-lg-2 table-lable"> 目录:</div>
+                  <div class="col-xs-8"><input id="folder" type="text" v-model="reportcelldetails.folder" style="width:300px;" value=""/>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-4 col-lg-2 table-lable"> 名称:</div>
+                  <div class="col-xs-8"><input id="name" type="text" readonly="readonly" style="width:300px;font-size: 1.6em;" v-model="reportcelldetails.name" value=""/>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-4 col-lg-2 table-lable"> 标题:</div>
+                  <div class="col-xs-8"><input id="title" type="text" v-model="reportcelldetails.title" style="width:300px;" value=""/>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4 col-lg-2 table-lable"> 类型:</div>
+                <div class="col-xs-8">
+                  <select id="celltype" style="width:300px" onchange="celltypechange()">
+                    <option v-for="(role,key) in roles" :id="'cell_'+key"  :value="role">{{role}}</option>
+                  </select>
+                </div>
+              </div><br>
+              <div class="row"  align="center">
+                <div class="col-xs-12"><button style="width:130px;" onclick="addconfigdetail()">添加</button>
+                <button style="width:130px;" onclick="deleteconfigdetail()">删除</button>
+                <button style="width:130px;" onclick="setoldest()">重置</button>
+              </div>
+              </div>
+              <div class="row"  align="center">
+                <div class="col-xs-12">
+                  <button style="width:400px;" onclick="hidecellconfig()">保存并关闭</button>
+                </div>
+              </div><br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="guard_modal" tabindex="-1" role="dialog" aria-labelledby="modal_name" aria-hidden="true" style="top:50px;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-head" align="center">
+            <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="modal_name" >节点目录列表</h4>
+          </div>
+          <div class="modal-body" align="left">
+            <div id="modal_details" style="background-color: rgb(212, 209, 209);">
+              <div id="tree" style="height:70%;overflow: auto;"></div>
+            </div>
+          </div>
+          <div class="modal-foot" align="right">
+            <button type="button" class="btn btn-default" onclick="setdetail()" style="margin-right:20px;margin-bottom: 20px;">确认并关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    var reportlist=[],sensortypes=[],reporttype=[],reportroles=[],nodelist=[],reportitems=[];
+    var details={},reportconfig={};
+    var report_index=0,report_item_detail_index=0;
+    var v_report,v_allconfig,v_reportnameid,v_reportitem,v_infodetail;
+    var idaddreportconfig=false,curdetail=0;
+    var hostpara=null,propara=null,connectparadetail={},protocolparadetail={};
+    var nodestree=$("#tree");
+    initconnectionmanagement();
+    function initconnectionmanagement(){
+      getnodelist();
+      getreporttype();
+      getreportstatistics();
+      getsensortypes();
+      
+      //getprotocolconfigitem();
+    }
+    function getnodelist(){//获取节点列表
+      nodelist=[];
+      sendorder("_manager/GetNodes",getnodes_bc);
+    }
+    function getnodes_bc(data){
+      nodelist=buildnode(data,0);
+      inittreeview(nodelist);
+    }
+    //显示节点树
+    function selectnodes(){
+      
+      var obj_node=nodestree.treeview("getSelected");
+      if(obj_node.length>0){//判断有没有选中项
+        for(var i=0;i<obj_node.length;i++){
+          nodestree.treeview("unselectNode",obj_node[i]);//使选择项为不选中，为下一步选择所有未选择项准备
+        }
+      }//
+      var sensor=nodestree.treeview("getUnselected");//选取未选中项
+      if(sensor && reportconfig.nodeIds){
+        var nodeid;
+        let sel_sersor_len=reportconfig.nodeIds.length,sensors_len=sensor.length;
+        for (var i =sel_sersor_len-1 ; i >=0; i--) {//使得最后选中的标签维最靠前面的标签，树形菜单定位到第一个被选中的标签位置；原来（正序）为最后一个
+          for(var j=0;j<sensors_len;j++){
+            if(reportconfig.nodeIds[i]==sensor[j].id){
+              //if(i==0)
+              nodeid=sensor[j].text;
+              nodestree.treeview("selectNode",sensor[j].nodeId);
+              break;
+            }
+          }
+        }
+        nodestree.treeview("search",[nodeid+'', { ignoreCase: false, exactMatch: true }]);
+      }
+      $("#guard_modal").modal('show');
+    }
+    function getreporttype(){
+      sendorder("_manager/ListReportType",getreporttype_bc);
+    }
+    function getreporttype_bc(data){
+      reporttype=[];
+      reporttype=data;
+      var v_connectiontype=new Vue({
+        el:"#reporttype",
+        data:{
+          roles:reporttype,
+        }
+      })
+      getreportconfigs();
+    }
+    function getreportconfigs(){
+      reportlist=[];
+      sendorder("_manager/GetReportConfigs",getreportconfigs_bc);
+    }
+    function getreportconfigs_bc(data){
+      //console.log(data);
+      let elem;
+      reportlist=data;
+      if(reportlist.length>0){
+        if(idaddreportconfig){
+          report_index=reportlist.length-1;
+          idaddreportconfig=false;
+        }
+        reportconfig=reportlist[report_index];
+        if(!v_report){
+          v_report=new Vue({
+            el:'#v_reportlist',
+            data:{
+              reportconfigs:reportlist,
+              //detail:details,
+            },
+            methods:{
+              changeconnection(index){
+                this.$nextTick(function(){
+                  report_index=index;
+                  elem=$("#"+report_index);
+                  refreshlist(elem[0]);
+                  this.connectiondetail=reportlist[report_index];//
+                  reportconfig=this.connectiondetail;
+                  decodereportroles(reportconfig);
+                  refeshconnectionnameid();
+                })
+              },
+              destroy() {
+                this.$destroy();
+              },
+            },
+          });
+        }else{
+          v_report.reportconfigs=reportlist
+          v_report.connectiondetail=reportconfig;
+        }
+        v_report.changeconnection(report_index);
+      }else{
+        if(!v_report){
+          v_report=new Vue({
+            el:'#v_reportlist',
+            data:{
+              reportconfigs:reportlist,
+              //detail:details,
+            },
+            methods:{
+              changeconnection(index){
+                this.$nextTick(function(){
+                  report_index=index;
+                  elem=$("#"+report_index);
+                  refreshlist(elem[0]);
+                  this.connectiondetail=reportlist[report_index];//
+                  reportconfig=this.connectiondetail;
+                  decodereportroles(reportconfig);
+                })
+              },
+              destroy() {
+                this.$destroy();
+              },
+            },
+          });
+        }else{
+          v_report.reportconfigs=reportlist
+          v_report.connectiondetail=reportconfig;
+        }
+        $("#reporttype").val("");
+      }
+      refeshconnectionnameid();
+    }
+    
+    function getsensortypes(){//获取标签的类型列表
+        sendorder("_manager/GetSensorTypes",getsensortype_bc);
+      }
+      function getsensortype_bc(data){
+        sensortypes=[];
+        sensortypes=data;
+				createallconfig();
+      }
+			
+			function createallconfig(){
+				var allconfigs=[];
+				for(var i=0;i<sensortypes.length;i++){
+					if(sensortypes[i].details.length>0){
+						for(var j=0;j<sensortypes[i].details.length;j++){
+							sensortypes[i].details[j].parentdesc=sensortypes[i].desc;
+							sensortypes[i].details[j].parenttype=sensortypes[i].type;
+							allconfigs.push(sensortypes[i].details[j]);
+						}
+					}
+				}
+				v_allconfig=new Vue({
+					el:"#configdetails",
+					data:{
+						allconfig:allconfigs,
+					},
+				});
+				$("#configdetails").val("");
+			}
+    function refeshconnectionnameid(){
+      if(!v_reportnameid){
+        v_reportnameid=new Vue({
+          el:'#connectionnameid',
+          data:{
+            connectiondetail:reportconfig,
+          }
+        })
+      }else{
+        v_reportnameid.connectiondetail=reportconfig;
+        //v_reportnameid.update();
+      }
+    }
+    function decodereportroles(areportconfig){
+      $("#reporttype").val(areportconfig.type);
+      if(areportconfig.reportItems)
+        reportitems=areportconfig.reportItems
+      else
+        reportitems=[];
+      createreportitemlist(reportitems);
+    }
+    function createreportitemlist(adetails){
+      if(v_reportitem){
+        v_reportitem.update(adetails)
+      }else{
+        v_reportitem=new Vue({
+          el:'#cell_list',
+          data:{
+            reportitems:adetails,
+          },
+          methods:{
+            update(adata) {
+              this.reportitems=adata;
+              if(this.reportItems)
+                details=this.reportitems[report_item_detail_index]
+              else
+                details={};
+              createdetail(details)
+            },
+            changereportitem(idx){
+              this.$nextTick(function(){
+                report_item_detail_index=idx;    
+                elem=$("#item_"+idx);
+                  refreshlist(elem[0]);
+                  if(this.reportitems&&this.reportitems.length>0){
+                    details=this.reportitems[idx];
+                    $("#celltype").val(details.type);
+                  }
+                  else{
+                    details={};
+                    $("#celltype").val('');
+                  }
+                  createdetail(details);
+              })
+            }
+          }
+        })
+      }
+      v_reportitem.changereportitem(0);
+    }
+    function getreportstatistics(){
+      sendorder("_manager/ListReportStatistics",getreportstatistics_bc);
+    }
+    function getreportstatistics_bc(data){
+      reportroles=data;
+      var v_reportstatisctics=new Vue({
+        el:"#celltype",
+        data:{
+          roles:reportroles,
+        }
+      });
+      $("#celltype").val('');
+    }
+    function showcell_edit(){
+      //createddetail();
+      $("#cell_edit").show();
+    }
+    function setdefault(idx){
+      switch(idx){
+        case 0:
+          var inx=$('#reporttype').prop('selectedIndex')
+          if(inx<0)
+            curparas=[]
+          else
+            curparas=clone(reporttype[inx].details);
+          break;
+        case 1:
+          var index=$("#protocol").prop("selectedIndex");
+          if(index<0)
+            curproparas=[]
+          else
+            curproparas=clone(protocolconfigs[index].details);
+        break;
+      }
+    }
+    function setdetail(){
+      var obj_node=nodestree.treeview("getSelected");
+      if(reportconfig.nodeIds && reportconfig.nodeIds.length>0){
+        reportconfig.nodeIds.splice(0,reportconfig.nodeIds.length);
+      }else{
+        reportconfig.nodeIds=[];
+      }
+      for(var i=0;i<obj_node.length;i++)
+        reportconfig.nodeIds.push(obj_node[i].id);
+      $("#guard_modal").modal('hide');
+    }
+    function codeconnectionroles(){
+      var type=[];
+      if($('#reporttype').val())
+        type=$('#reporttype').val().split('-');
+      reportconfig.type=type[0];
+      if(type[1]=="server"){
+        reportconfig.server=1
+      }else{
+        reportconfig.server=0
+      }
+      reportconfig.protocol=$("#protocol").val();
+      //ToDo reportconfig.hostParas/proParas;
+      var obj={};
+      for(var para in curparas){
+        if(curparas[para].value)
+          obj[curparas[para].name]=curparas[para].value;
+      }
+      if(!$.isEmptyObject(obj))
+        reportconfig.hostParas=JSON.stringify(obj)
+      else
+        reportconfig.hostParas=null;
+      var objp={};
+      for(var para in curproparas){
+        if(curproparas[para].value)
+          objp[curproparas[para].name]=curproparas[para].value;
+      }
+      if(!$.isEmptyObject(objp))
+        reportconfig.proParas=JSON.stringify(objp)
+      else
+        reportconfig.proParas=null;
+    }
+    function modifyconnection(){
+      reportconfig.type=$("#reporttype").val();
+      if (confirm("您确定要修改报表“"+reportconfig.name+'”的配置信息吗')) {
+        sendorder("_manager/ModifyReportConfig",modifyreportconfig_bc,reportconfig);
+      }
+    }
+    function modifyreportconfig_bc(data){
+      if(data)
+        showmsg("报表配置信息修改成功!");
+      //sendorder("_manager/GetUserById?id="+userconfig.id,getuserbyid_bc);
+    }
+    /*function getuserbyid_bc(data){
+      userconfig=data;
+      v_user.userdetail=userconfig;
+    }*/
+    function deleteconnection(){
+      report_index=report_index-1;
+      if(report_index<0)
+        report_index=0;
+      if (confirm("您确定要删除报表“"+reportconfig.name+'”吗')) {
+        sendorder("_manager/DeleteReportConfig?configId="+reportconfig.configId,deletereportconfig_bc);
+      }
+    }
+    function deletereportconfig_bc(data){
+      if(data)
+        showmsg("报表"+reportconfig.name+"删除成功!");
+      getreportconfigs();
+    }
+    function addreportconfig(){
+      reportconfig.name="新报表_"+Math.floor(Math.random() * 100);
+      reportconfig.type=reporttype[0];
+      reportconfig.startTime=getCurrentDate(2).replace(/ /,"T");
+      reportconfig.nextTime=null;
+      reportconfig.nodeIds=null;
+      reportconfig.reportItems=null;
+      sendorder("_manager/AddReportConfig",addreportconfig_bc,reportconfig);
+    }
+    function addreportconfig_bc(data){
+      console.log(data);
+      idaddreportconfig=true;
+      getreportconfigs();
+    }
+    function createdetail(adata){
+      if(v_infodetail){
+        v_infodetail.update(adata);
+      }else{
+        v_infodetail=new Vue({
+          el:"#reportcell",
+          data:{
+            reportcelldetails:adata,
+          },
+          methods:{
+            update(apara){
+              this.reportcelldetails=apara;
+            }
+          },
+        });
+      }
+    }
+    function savetodetail(idx,avalue){
+      switch(curdetail){
+        case 0:
+          curparas[parseInt(idx)].value=avalue;
+          break;
+        case 1:
+          curproparas[parseInt(idx)].value=avalue;
+          break;
+      }            
+    }
+    function buildnode(data, level) {
+			var tree = [];
+			/*if(level==0){// 
+				//*for (i = 0; i <1; i++) {
+					var anodes = new Object();
+					anodes.text = "节点列表" ;
+					anodes.id = -1;
+					anodes.type="";
+					anodes.nodes = [];
+					tree.push(anodes);
+				//}
+				//alert("该用户没有复合条件的节点数据,<br>请使用其他用户名称登录",info_showtime);
+			} */
+			if(data == null || typeof(data) == "undefined"|| data.length==0 ){
+				//return tree;
+			}else {
+				let data_len=data.length;
+				for (var j = 0; j < data_len; j++) {
+					var anodes = new Object();
+					anodes.text = data[j].value.name;//+"[Id:"+data[j].value.id+"]";
+					anodes.id = data[j].value.id;
+          //anodes.expanded=true;
+					anodes.ParentId=data[j].value.parentId;
+					anodes.type = data[j].value.type;
+					anodes.config = data[j].value.config;
+					anodes.time = data[j].value.time;
+					anodes.level = level;
+					if (data[j].value.hasOwnProperty("nodeId")) {
+						anodes.NodeId = data[j].value.nodeId;
+					}
+					if (data[j].children&&data[j].children.length != 0) {
+						anodes.nodes = [];
+						anodes.nodes = buildnode(data[j].children, level + 1)
+					}
+					tree.push(anodes);
+				}
+			}
+			return tree;
+		}
+    function inittreeview(anodes) {
+			try{
+			//obj.nodes=(JSON.parse( node));
+			//tree[1]=obj;
+			var mnodes = [];
+			var nodes = new Object();
+				nodes.text = "节点列表" ;
+				nodes.id = -1;
+				nodes.type="";
+				nodes.nodes = [];
+			mnodes.push(nodes);
+			if (anodes == null) {
+				mnodes[0].nodes = buildnode();
+			} else {
+				mnodes[0].nodes = anodes;
+			}
+			nodestree.treeview({
+				data: mnodes,    // 数据源
+				showCheckbox: false,   //是否显示复选框
+				highlightSelected: true,    //是否高亮选中
+				//nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标 glyphicon-stats
+				//nodeIcon: 'glyphicon glyphicon-lock',
+				emptyIcon: '',    //没有子节点的节点图标
+				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象
+				multiSelect: true,    //多选
+				searchResultColor: "black",
+				//color: "#fff",//所有节点使用的默认前景色，这个颜色会被节点数据上的Color属性覆盖.        String
+				backColor: "rgba(0, 101, 105, 1);", //所有节点使用的默认背景色，这个颜色会被节点数据上的backColor属性覆盖.     String
+				showBorder: false,
+				//borderColor: "#000000", //边框颜色。如果不想要可见的边框，则可以设置showBorder为false。        String
+				//nodeIcon: "glyphicon glyphicon-stop", //所有节点的默认图标
+				//checkedIcon: "glyphicon glyphicon-check", //节点被选中时显示的图标         String
+				//collapseIcon: "glyphicon glyphicon-minus", //节点被折叠时显示的图标        String
+				//expandIcon: "glyphicon glyphicon-plus", //节点展开时显示的图标        String
+				//emptyIcon: "glyphicon", //当节点没有子节点的时候显示的图标              String
+				//enableLinks: false, //是否将节点文本呈现为超链接。前提是在每个节点基础上，必须在数据结构中提供href值。        Boolean
+				//highlightSearchResults: true, //是否高亮显示被选中的节点        Boolean
+				//levels: 2, //设置整棵树的层级数  Integer
+				onhoverColor: "#3075a5", //光标停在节点上激活的默认背景色      String
+				//selectedIcon: "glyphicon glyphicon-stop", //节点被选中时显示的图标     String
+				//searchResultBackColor: "", //当节点被选中时的背景色
+				//searchResultColor: "", //当节点被选中时的前景色
+				selectedBackColor: "#85e494", //当节点被选中时的背景色
+				selectedColor: "#000", //当节点被选中时的前景色
+				//showBorder: true, //是否在节点周围显示边框 btn-praty
+				//showCheckbox: false, //是否在节点上显示复选框
+				//showIcon: true, //是否显示节点图标
+				//showTags: false, //是否显示每个节点右侧的标记。前提是这个标记必须在每个节点基础上提供数据结构中的值。
+				//uncheckedIcon: "glyphicon glyphicon-unchecked", //未选中的复选框时显示的图标，可以与showCheckbox一起使用
+				//onNodeChecked: function (event,data) {
+				//	console.log("nodeId = "+data.nodeId);
+				//	console.log("id = "+data.id);
+				//},
+				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
+					var selectnode=nodestree.treeview('getSelected');
+					//nodestree.treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
+				
+				},
+				/*onSearchComplete:function(event, data) { 
+					var firstSearchResult = nodestree.find('ul').find('li[data-nodeid='+ sessionStorage.selNodeId +']');
+					//nodestree.scrollTop(firstSearchResult[0].offsetTop);
+				},
+				*方法
+				 * checkAll(options);//选中所有树节点
+				checkNode(node | nodeId, options);  //选中一个给定nodeId的树节点
+				clearSearch();//清除查询结果
+				collapseAll(options);//折叠所有树节点
+				collapseNode(node | nodeId, options);//折叠一个给定nodeId的树节点和它的子节点
+				disableAll(options);//禁用所有树节点
+				disableNode(node | nodeId, options);//禁用一个给定nodeId的树节点
+				enableAll(options);//激活所有树节点
+				enableNode(node | nodeId, options);//激活给定nodeId的树节点
+				expandAll(options);//展开所有节点
+				expandNode(node | nodeId, options);//展开给定nodeId的树节点
+				getCollapsed();//返回被折叠的树节点数组
+				getDisabled();//返回被禁用的树节点数组
+				getEnabled();//返回被激活的树节点数组  
+				getExpanded();//返回被展开的树节点数组
+				getNode(nodeId);//返回与给定节点id相匹配的单个节点对象。
+				getParent(node | nodeId);//返回给定节点id的父节点
+				getSelected();//返回被选定节点的数组。
+				getSiblings(node | nodeId);//返回给定节点的兄弟节点数组
+				getUnselected();//返回未选择节点的数组
+				remove();//删除the tree view component.删除绑定的事件，内部附加的对象，并添加HTML元素。
+				revealNode(node | nodeId, options);//显示给定的树节点，将树从节点扩展到根。
+				search(pattern, options);//在树视图中搜索匹配给定字符串的节点，并在树中突出显示它们。返回匹配节点的数组。
+				selectNode(node | nodeId, options);//选择一个给定的树节点
+				toggleNodeChecked(node | nodeId, options);//Toggles a nodes checked state; checking if unchecked, unchecking if checked.
+				toggleNodeDisabled(node | nodeId, options);//切换节点的禁用状态;
+				toggleNodeExpanded(node | nodeId, options);//切换节点的展开与折叠状态
+				toggleNodeSelected(node | nodeId, options);//切换节点的选择状态
+				uncheckAll(options);//不选所有节点
+				uncheckNode(node | nodeId, options);//不选给定nodeId的节点
+				unselectNode(node | nodeId, options);//不选给定nodeId的节点
+				事件：
+				*nodeChecked (event, node) - 一个节点被checked.
+				*nodeUnchecked (event, node) - 一个节点被unchecked.
+				*nodeCollapsed (event, node) - 一个节点被折叠.
+				*nodeDisabled (event, node) - 一个节点被禁用.
+				*nodeEnabled (event, node) - 一个节点被启用.
+				*nodeExpanded (event, node) - 一个节点被展开.
+				*nodeSelected (event, node) - 一个节点被选择.
+				*nodeUnselected (event, node) - 取消选择一个节点.
+				*searchComplete (event, results) - 搜索完成之后触发.
+				*searchCleared (event, results) - 搜索结果被清除之后触发.
+				*/
+			});
+			nodestree.treeview('expandAll');//关闭展开
+			if (nodeid == "" || nodeid == null) {
+				nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
+			}
+			
+			var firstNode = nodestree.treeview("getNode", nodeid);
+			nodestree.treeview("revealNode",[firstNode.nodeId, { levels: 1, silent: true }])//展开所选节点
+			nodestree.treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
+			//nodestree.treeview('search', [ firstNode.text, { ignoreCase: false, exactMatch: true }]);//匹配node的text属性
+			//获取指定node的sensors
+			//GetSensorsByNode(sessionStorage.nodeid);
+			/*infotreedata = [];
+			infotreeobj.id = firstNode.id;
+			infotreeobj.name = firstNode.text;
+			if (firstNode.hasOwnProperty("nodes")) {
+				infotreeobj.value = firstNode.nodes.length;
+			} else {
+				infotreeobj.value = 0;
+			}
+			infotreeobj.children = [];
+			infotreeobj.level = firstNode.level;
+			//infotreeobj.isload="false";
+			if ((firstNode.hasOwnProperty("nodes")) && (firstNode.nodes.length > 0) && (firstNode.level < 2)) {
+				infotreeobj.children = decode(firstNode.nodes);
+			}
+			infotreedata.push(infotreeobj);
+			maps = [];*/
+			//localStorage.setItem("sensors", null);
+			//localStorage.setItem("sensor_tree",null);
+			//if(!firstNode.hasOwnProperty("nodes"))
+			//GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
+			//GetBinariesByType("NodeGraphic", infotreeobj.id);
+			//refreshinfotree(firstNode);
+			/*if(firstNode.Catalog=="视频监控"){
+				sessionStorage.nodetype=0;
+				updatanav(sessionStorage.nodetype);
+			}else if(firstNode.Catalog=="机房监控"){
+				sessionStorage.nodetype=2;
+				updatanav(sessionStorage.nodetype);
+			}else{updatanav(sessionStorage.nodetype);}*/
+			//setTimeout(function(){if(sessionStorage.pageindex==0){
+			//	document.getElementById("iframe_main").src="infototal.html";
+			//}},3000);
+			function getThe_level_nodeid(anode, alevel) {
+				while (anode.level > alevel) {
+					anode = (nodestree.treeview("getParent", anode));
+				}
+				return anode;
+			}
+			}catch(err){
+				showstateinfo(err.message,"nodemanagement/inittreeview");
+			}
+			function refreshinfotree(anode){
+				infotreedata = [];
+				infotreeobj.id = anode.id;
+				infotreeobj.name = anode.text;
+				infotreeobj.children = [];
+				infotreeobj.level = anode.level;
+				//infotreeobj.isload="false";
+				if ((anode.hasOwnProperty("nodes")) && (anode.nodes.length > 0)) {
+					infotreeobj.children = decode(anode.nodes);
+					infotreeobj.value = anode.nodes.length;
+					//var arr_node = buildsensor1(anode.nodes);
+					//infotreeobj.value = arr_node.length;
+				} else {
+					infotreeobj.value = 0;
+				}
+				infotreedata.push(infotreeobj);
+			}
+		}
+    function hidecellconfig(){
+      reportconfig.reportItems=reportitems;
+      $("#cell_edit").hide();
+    }
+    function celltypechange(){
+      details.type=$("#celltype").val();
+      v_infodetail.update(details);
+    }
+    function addconfigdetail(){
+      var new_obj=new Object();
+      new_obj.folder="Default";
+      new_obj.name="Default";
+      new_obj.title="标题_"+Math.floor(Math.random() * 100);
+      var options=$("#celltype option")
+      new_obj.type=options[0].value;
+      reportitems.push(new_obj);
+      v_reportitem.changereportitem(reportitems.length-1);
+    }
+    function deleteconfigdetail(){
+      reportitems.splice(report_item_detail_index,1);
+      v_reportitem.changereportitem((report_item_detail_index-1)||0);
+    }
+    function setoldest(){
+      getreportconfigs();
+      //v_report.changeconnection(report_index);
+    }
+    function resetdefault(){
+      var idx=$("#configdetails").prop("selectedIndex");
+      var sen_type=v_allconfig.allconfig[idx]
+      if(report_item_detail_index>=0 && $("#configdetails").val()){
+        reportitems[report_item_detail_index].folder=sen_type.folder
+        reportitems[report_item_detail_index].name=sen_type.name;
+        v_reportitem.update(reportitems);
+        v_reportitem.changereportitem(report_item_detail_index);
+      }
+    }
+  </script>
+</body>
+</html>
