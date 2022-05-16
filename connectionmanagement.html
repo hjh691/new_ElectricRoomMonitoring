@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>连接管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/electricroommonitoring.css" />
+    <script  src="js/vue.js"> </script> 
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script  type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+    <style>
+      .row{
+        margin-top: 20px;
+        font-size: 12px;
+      }
+      .row-detail{
+        margin-top: 5px;
+      }
+      input{
+        font-size: 1.6em;
+      }
+      li{font-size: 1.6em;}
+      button{
+        font-size: 1.6em;
+      }
+      [v-cloak]{
+        display:none;
+      }
+    </style>
+</head>
+<body>
+  <div class="container" style="margin:5px;">
+    <div class="row" id="connectionmanagement">
+      <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 700px;" align="center" >
+        <a href="javascript:void(0)" onclick="getconnectionlist()"><button style="width:150px;height:30px;font-size: 1.2em;">所有连接列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
+        <ul id="v_connectionlist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">
+          <li v-for="(connection,idx) in connections" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="idx" @click="changeconnection(idx)">{{connection.name}}</a></li>
+        </ul>
+      </div>
+      <div class="col-xs-6 col-md-6 col-lg-5">
+        <h3>详细配置项</h3>
+        <div class="container" id="connectionprofile-format"><!--align="center"-->
+          <div id="connectionnameid">
+            <div class="row">
+              <div class="col-xs-4 table-lable"> 连接编号:</div>
+              <div class="col-xs-8"><input id="connection_id" type="text" readonly="readonly" style="width:100px;" v-model="connectiondetail.id" value=""/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-4 table-lable"> 连接名称:</div>
+              <div class="col-xs-8"><input id="connection_name" type="text" v-model="connectiondetail.name" style="width:300px;" value=""/>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-4 table-lable"> 连接类型:</div>
+            <div class="col-xs-8">
+              <!--<input id="typename" type="text" style="width:100px;">
+              <input id="isserver" type="text" style="width:50px;">-->
+              <select id="connectiontype" style="width:140px">
+              <option v-for="(role,key) in roles" :id="'connection_'+key" :value="role.name">{{role.desc}}</option>
+              </select>
+              <button style="width:100px;" onclick="modifypara(0)">参数配置</button>
+              <button style="width:60px;" onclick="setdefault(0)">重置</button>
+            </div>
+          </div>
+          <div class="row"></div>
+          <div class="col-xs-4 table-lable"> 协议类型:</div>
+            <div class="col-xs-8">
+              <!--<input id="typename" type="text" style="width:100px;">
+              <input id="isserver" type="text" style="width:50px;">-->
+              <select id="protocol" style="width:140px">
+              <option v-for="(protocol,key,idx) in protocols" :id="'connection_'+key" :value="protocol.name">{{protocol.desc}}</option>
+              </select>
+              <button style="width:100px;" onclick="modifypara(1)">参数配置</button>
+              <button style="width:60px;" onclick="setdefault(1)">重置</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12" align="center"><button style="width:100px;" onclick="addconnection()">添加</button>
+            <button style="width:100px;" onclick="modifyconnection()">修改</button>
+            <button style="width:100px;" onclick="deleteconnection()">删除</button></div>
+          </div>
+          
+          
+            
+      </div>
+    </div>
+    <div class="modal fade" id="guard_modal" tabindex="-1" role="dialog" aria-labelledby="modal_name" aria-hidden="true" align="center" style="top:50px;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-head">
+            <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="modal_name"></h4>
+          </div>
+          <div class="modal-body" align="left">
+            <div id="modal_details" style="background-color: rgb(212, 209, 209);">
+              <template id="configdetail">
+                <extable ref="mychild"></extable>
+              </template>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button type="button" class="btn btn-default" onclick="setdetail()">确认并关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    var connectionlist=[],connectionroles=[],protocolconfigs=[],details=[],curparas=[],curproparas=[];
+    var connectionconfig={};
+    var pt=0;
+    var v_connection,v_infodetail,v_connectionnameid;
+    var isaddconnection=false,curdetail=0;
+    var hostpara=null,propara=null,connectparadetail={},protocolparadetail={};
+    initconnectionmanagement();
+    function initconnectionmanagement(){
+      getconnectionconfigitem();
+      getprotocolconfigitem();
+    }
+    function getconnectionconfigitem(){
+      sendorder("_manager/ListConnectionConfigItem",getconnectionconfigitem_bc);
+    }
+    function getconnectionconfigitem_bc(data){
+      connectionroles=[];
+      connectionroles=data;
+      details=connectionroles[0].details
+      var v_connectiontype=new Vue({
+        el:"#connectiontype",
+        data:{
+          roles:connectionroles,
+        }
+      })
+      getconnectionlist();
+    }
+    function getprotocolconfigitem(){
+      sendorder("_manager/ListProtocolConfigItem",getprotocolconfigitem_bc);
+    }
+    function getprotocolconfigitem_bc(data){
+      protocolconfigs=[];
+      protocolconfigs=data;
+      var v_protocoltype=new Vue({
+        el:'#protocol',
+        data:{
+          protocols:protocolconfigs,
+        }
+      })
+    }
+    function getconnectionlist(){
+      connectionlist=[];
+      sendorder("_manager/ListConnection",getlistconnection_bc);
+    }
+    function getlistconnection_bc(data){
+      //console.log(data);
+      let elem;
+      connectionlist=data;
+      if(connectionlist.length>0){
+        if(isaddconnection){
+          pt=connectionlist.length-1;
+          isaddconnection=false;
+        }
+        connectionconfig=connectionlist[pt];
+        if(!v_connection){
+          v_connection=new Vue({
+            el:'#v_connectionlist',
+            data:{
+              connections:connectionlist,
+              //detail:details,
+            },
+            methods:{
+              changeconnection(index){
+                this.$nextTick(function(){
+                  pt=index;
+                  elem=$("#"+pt);
+                  refreshlist(elem[0]);
+                  this.connectiondetail=connectionlist[pt];//
+                  connectionconfig=this.connectiondetail;
+                  connectparadetail=JSON.parse(connectionconfig.hostParas);
+                  protocolparadetail=JSON.parse(connectionconfig.proParas);
+                  decodeconnectionroles(connectionconfig.type,connectionconfig.server);
+                  decodeprotocols(connectionconfig.protocol);
+                  refeshconnectionnameid();
+                  //showmsg("aaa");
+                })
+              },
+              destroy() {
+                this.$destroy();
+              },
+            },
+            //inject:['reload'],
+          });
+        }else{
+          v_connection.connections=connectionlist
+          v_connection.connectiondetail=connectionconfig;
+          //v_connection.connections.$set("connections",connectionlist);
+          //v_connection.reload();
+        }
+        //connectparadetail=JSON.parse(connectionconfig.hostParas);
+        //protocolparadetail=JSON.parse(connectionconfig.proParas);
+        //decodeconnectionroles(connectionconfig.type,connectionconfig.server);
+        //decodeprotocols(connectionconfig.protocol);
+        v_connection.changeconnection(pt);
+      }else{
+        if(!v_connection){
+          v_connection=new Vue({
+            el:'#v_connectionlist',
+            data:{
+              connections:connectionlist,
+              //detail:details,
+            },
+            methods:{
+              changeconnection(index){
+                this.$nextTick(function(){
+                  pt=index;
+                  elem=$("#"+pt);
+                  refreshlist(elem[0]);
+                  this.connectiondetail=connectionlist[pt];//
+                  connectionconfig=this.connectiondetail;
+                  try{
+                    connectparadetail=JSON.parse(connectionconfig.hostParas);
+                    protocolparadetail=JSON.parse(connectionconfig.proParas);
+                  }catch{
+
+                  }
+                  decodeconnectionroles(connectionconfig.type,connectionconfig.server);
+                  decodeprotocols(connectionconfig.protocol);
+                  refeshconnectionnameid();
+                  //showmsg("aaa");
+                })
+              },
+              destroy() {
+                this.$destroy();
+              },
+            },
+            //inject:['reload'],
+          });
+        }else{
+          v_connection.connections=connectionlist
+          v_connection.connectiondetail=connectionconfig;
+          //v_connection.connections.$set("connections",connectionlist);
+          //v_connection.reload();
+        }
+        $("#connectiontype").val("");
+        $("#protocol").val("");
+      }
+      refeshconnectionnameid();
+    }
+    function refeshconnectionnameid(){
+      if(!v_connectionnameid){
+        v_connectionnameid=new Vue({
+          el:'#connectionnameid',
+          data:{
+            connectiondetail:connectionconfig,
+          }
+        })
+      }else{
+        v_connectionnameid.connectiondetail=connectionconfig;
+        //v_connectionnameid.update();
+      }
+    }
+    function decodeconnectionroles(atype,aserver){
+      if(aserver==0)
+        atype+="-client"
+      else
+        atype+="-server"
+      $("#connectiontype").val(atype);
+      var inx=$('#connectiontype').prop('selectedIndex')
+      if(inx<0)
+        curparas=[]
+      else
+        curparas=clone(connectionroles[inx].details);
+      for(key in curparas){
+        curparas[key].value=null;
+        for(p in connectparadetail){
+          if(curparas[key].name==p)
+            curparas[key].value=connectparadetail[p];
+        }
+      }
+      
+    }
+    function decodeprotocols(atype){
+      $("#protocol").val(atype);
+      var index=$("#protocol").prop("selectedIndex");
+      if(index<0)
+        curproparas=[]
+      else
+        curproparas=clone(protocolconfigs[index].details);
+      for(var key in curproparas){
+        curproparas[key].value=null;
+        for(p in protocolparadetail){
+          if(curproparas[key].name==p)
+          curproparas[key].value=protocolparadetail[p];
+        }
+      }
+      
+    }
+    function modifypara(idx){
+      switch(idx){
+        case 0:
+          curdetail=0;
+          $("#modal_name").text($('#connectiontype option:selected').text()+"参数详细配置");
+          details=curparas;//
+          break;
+        case 1:
+          curdetail=1;
+          $("#modal_name").text($("#protocol option:selected").text()+"参数详细配置");
+          details=curproparas;//
+          break;
+      }
+      createddetail();
+      $("#guard_modal").modal('show');
+    }
+    function setdefault(idx){
+      switch(idx){
+        case 0:
+          var inx=$('#connectiontype').prop('selectedIndex')
+          if(inx<0)
+            curparas=[]
+          else
+            curparas=clone(connectionroles[inx].details);
+          break;
+        case 1:
+          var index=$("#protocol").prop("selectedIndex");
+          if(index<0)
+            curproparas=[]
+          else
+            curproparas=clone(protocolconfigs[index].details);
+        break;
+      }
+    }
+    function setdetail(){
+      
+      $("#guard_modal").modal('hide');
+    }
+    function codeconnectionroles(){
+      var type=[];
+      if($('#connectiontype').val())
+        type=$('#connectiontype').val().split('-');
+      connectionconfig.type=type[0];
+      if(type[1]=="server"){
+        connectionconfig.server=1
+      }else{
+        connectionconfig.server=0
+      }
+      connectionconfig.protocol=$("#protocol").val();
+      //ToDo connectionconfig.hostParas/proParas;
+      var obj={};
+      for(var para in curparas){
+        if(curparas[para].value)
+          obj[curparas[para].name]=curparas[para].value;
+      }
+      if(!$.isEmptyObject(obj))
+        connectionconfig.hostParas=JSON.stringify(obj)
+      else
+        connectionconfig.hostParas=null;
+      var objp={};
+      for(var para in curproparas){
+        if(curproparas[para].value)
+          objp[curproparas[para].name]=curproparas[para].value;
+      }
+      if(!$.isEmptyObject(objp))
+        connectionconfig.proParas=JSON.stringify(objp)
+      else
+        connectionconfig.proParas=null;
+    }
+    function modifyconnection(){
+      codeconnectionroles();
+      if (confirm("您确定要修改连接“"+connectionconfig.name+'”的配置信息吗')) {
+        sendorder("_manager/ModifyConnection",modifyconnection_bc,connectionconfig);
+      }
+    }
+    function modifyconnection_bc(data){
+      if(data)
+        showmsg("连接信息修改成功!");
+      //sendorder("_manager/GetUserById?id="+userconfig.id,getuserbyid_bc);
+    }
+    /*function getuserbyid_bc(data){
+      userconfig=data;
+      v_user.userdetail=userconfig;
+    }*/
+    function deleteconnection(){
+      pt=pt-1;
+      if(pt<0)
+        pt=0;
+      if (confirm("您确定要删除连接“"+connectionconfig.name+'”吗')) {
+        sendorder("_manager/DeleteConnection",deleteconnection_bc,connectionconfig);
+      }
+    }
+    function deleteconnection_bc(data){
+      if(data)
+        showmsg("连接"+connectionconfig.dispaly+"删除成功!");
+      getconnectionlist();
+    }
+    function addconnection(){
+      connectionconfig.name="新连接_"+Math.floor(Math.random() * 100);
+      connectionconfig.type=null;
+      connectionconfig.protocol=null
+      connectionconfig.server=0;
+      connectionconfig.config=null;
+      sendorder("_manager/AddConnection",addconnection_bc,connectionconfig);
+    }
+    function addconnection_bc(data){
+      console.log(data);
+      isaddconnection=true;
+      getconnectionlist();
+    }
+    function createddetail(){
+      if(v_infodetail){
+        //v_infodetail.detail=details;
+        v_infodetail.update(1);
+        /*document.getElementById("ul_detail").parentNode.removeChild(document.getElementById("ul_detail"))//删除实例本身 
+        v_infodetail.destroy();
+        document.getElementById("modal_details").appendChild(div_temp);//添加组件模板
+        v_infodetail=null;*/
+      }else{
+        v_infodetail=new Vue({
+          el:"#modal_details",
+          components:{
+            extable:{
+              template:'<div class="row container" id="configdetail" style="height:400px;overflow:auto;">\
+                <div v-for="(item,index) in detail" style="border: rgb(192, 190, 190) solid 1px;">\
+                  <div class="row">\
+                    <label class="col-xs-2 col-md-1 col-lg-1" >名称:</label>\
+                    <label class="col-x2-9 col-md-8 col-lg-6">{{item.name}}</label>\
+                  </div>\
+                  <div class="row" >\
+                    <label class="col-xs-2 col-md-1 col-lg-1" >描述:</label>\
+                    <label class="col-x2-9 col-md-8 col-lg-6">{{item.desc}}</label>\
+                  </div>\
+                  <div class="row">\
+                    <label class="col-xs-2 col-md-1 col-lg-1" >数值:</label>\
+                    <input class="col-x2-9 col-md-8 col-lg-6" :id="index" :value="item.value" onchange="savetodetail(this.id,this.value)"/>\
+                  </div>\
+                </div>\
+              </div>',
+              //prop:[detail],
+              data:function(){
+                return {detail:details};
+              },/**/
+              methods:{
+                destroy() {
+                  this.$destroy();
+                },
+                updatedatas(num){
+                  this.detail=details;
+                  //this.$set();
+                },
+                savetodetail(idx,avalue){
+                  details[idx].value=avalue;
+                }
+              },
+            },
+          },   
+          
+          methods:{
+              destroy() {
+              this.$destroy();
+              },
+              update(num){
+                  this.$refs.mychild.updatedatas(num);
+              }
+          },
+        });
+      }
+    }
+    function savetodetail(idx,avalue){
+      switch(curdetail){
+        case 0:
+          curparas[parseInt(idx)].value=avalue;
+          break;
+        case 1:
+          curproparas[parseInt(idx)].value=avalue;
+          break;
+      }            
+    }
+  </script>
+</body>
+</html>

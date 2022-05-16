@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>分组权限管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/electricroommonitoring.css" />
+    <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+		<script src="js/vue.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
+    <script  type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+    <style>
+      body{height: 99%;}
+      .row{
+        margin-top: 20px;
+        font-size: 12px;
+      }
+      input{
+        font-size: 1.6em;
+      }
+      li{font-size: 16px;}
+      button{
+        font-size: 1.6em;
+      }
+      [v-cloak]{
+        display:none;
+      }
+    </style>
+</head>
+<body>
+    <div class="container" style="margin:5px;">
+      <div class="row">
+        <div class="col-xs-6 col-md-4 col-lg-4" id="v_grouplist" style="height: 650px;">
+          <div style="border: rgb(192, 190, 190) solid 1px;"  align="center">
+            <a href="javascript:void(0)" onclick="getgroup()"><button style="width:200px;height:30px;font-size: 1.2em;">分组列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
+            <ul  style="list-style-type:none;text-align: center;padding-top: 10px;height: 500px;overflow: auto;">
+              <li v-for="(group,idx) in groups" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="'group_'+idx" :value="group.id" @click="changegroup(idx)">{{group.name}}</a></li>
+            </ul><!---->
+          </div>
+          <div style="margin-top:5px;">
+            <label style="font-size:18px;">组名:</label><input id="group_name" type="text" v-model="group.name" style="width:200px;" value=""/>
+          </div>
+          <div style="margin-top:5px;">
+            <button style="width:100px;" onclick="addgroup()">添加</button>
+            <button style="width:100px;" onclick="modifygroup()">修改</button>
+            <button style="width:100px;" onclick="deletegroup()">删除</button>
+          </div>
+        </div>
+        <div class="col-xs-6 col-md-4 col-lg-4" style="height: 650px;"><!--align="center"text-align: center;--> 
+          <div style="border: rgb(192, 190, 190) solid 1px;margin-left: 10px;" >
+            <a href="javascript:void(0)" onclick="getuserlist()"><button style="width:200px;height:30px;font-size: 1.6em;">关联用户列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
+            <ul id="v_userlist" style="list-style-type:none;padding-top: 10px;padding-left: 10px; height: 530px;overflow: auto;">
+              <li v-for="(user,idx) in users" style="margin-top:10px;margin-bottom:10px;font-size: 1.6em;"><input :id="'user_'+idx" type="checkbox" :value="user.id" @click="changeuser(idx)" style="margin-right:5px;" />{{ user.name}}</li>
+            </ul>
+          </div>
+					<div align="center">
+						<button style="margin-top:10px;width:200px;" onclick="saveusergroup()">保存更新</button>
+					</div>
+        </div>
+        <div class="col-xs-6 col-md-4 col-lg-4" style="height:650px;">
+          <div style="border: rgb(192, 190, 190) solid 1px;margin-left: 10px;" >
+            <a href="javascript:void(0)" onclick="GetSensorsByNode()">
+              <button style="width:200px;height:30px;font-size: 1.6em;">关联节点列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span>
+              </button>
+            </a>
+            <div id="nodetree" style="height:530px;overflow: auto;margin-top: 10px;">
+            </div>
+          </div>
+          <div align="center">
+            <button style="margin-top:10px;width:200px;" onclick="savegrouprole()" >保存更新</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var groups=[],users=[];
+      var v_groupslist,v_userslist;
+      var pt=0,nodeid=0;
+			var groupid=-1,group={};
+      var nodestree=$("#nodetree");
+			var isaddgroup=false;
+      initgroupmanagement();
+      function initgroupmanagement(){
+        getuserlist();
+        getnodelist();
+        getgroup();
+      }
+      function getnodelist(){
+        nodelist=[];
+        sendorder("_manager/GetNodes",getnodes_bc);
+      }
+      function getnodes_bc(data){
+        nodelist=buildnode(data,0);
+        inittreeview(nodelist);
+      }
+      function getgroup(){
+        sendorder("_manager/ListGroup",getgroup_bc);
+      }
+      function getgroup_bc(data){
+        groups=data;
+				group=groups[pt];
+        if(isaddgroup){
+					pt=groups.length-1;
+					isaddgroup=false;
+				}
+				if(!v_groupslist){
+          v_groupslist=new Vue({
+            el:'#v_grouplist',
+            data:{
+              groups:groups,
+              group:group,
+            },
+            methods:{
+              changegroup(index){
+                this.$nextTick(function(){
+                  pt=index;
+                  let elem=$("#group_"+pt);
+                  refreshlist(elem[0]);
+                  this.group=groups[pt];
+                  groupid=groups[pt].id;
+									group=this.group;
+                  listusergroupbygroup(groupid);
+                  listgroupralebygroup(groupid);
+                })
+              }
+            }
+          })
+        }else{
+					v_groupslist.groups=groups;
+					v_groupslist.group=group;
+				}
+        v_groupslist.changegroup(pt);
+      }
+      function listusergroupbygroup(g_id){
+        sendorder("_manager/ListUserGroupByGroup?groupId="+g_id,listusergroupbygroup_bc);
+      }
+      function listusergroupbygroup_bc(data){
+        var lis=$('#v_userlist li input');
+        for(j=0;j<lis.length;j++){
+          lis[j].checked=false;
+        }
+        for(i=0;i<data.length;i++){
+          for(j=0;j<lis.length;j++){
+            if(data[i].userId==lis[j].value){
+              lis[j].checked=true;
+              break;
+            }
+          }
+        }
+      }
+      function listgroupralebygroup(g_id){
+        sendorder("_manager/ListGroupRoleByGroup?groupId="+g_id,listgroupralebygroup_bc);
+      }
+      function listgroupralebygroup_bc(data){
+        var obj_node=nodestree.treeview("getSelected");
+				if(obj_node.length>0){//判断有没有选中项
+					for(var i=0;i<obj_node.length;i++){
+						nodestree.treeview("unselectNode",obj_node[i]);//使选择项为不选中，为下一步选择所有未选择项准备
+					}
+				}//
+				var sensor=nodestree.treeview("getUnselected");//选取未选中项
+				if(sensor && data){
+					var nodeid;
+					let sel_sersor_len=data.length,sensors_len=sensor.length;
+					for (var i =sel_sersor_len-1 ; i >=0; i--) {//
+						for(var j=0;j<sensors_len;j++){
+							if(data[i].refId==sensor[j].id){
+								nodeid=sensor[j].text;
+								nodestree.treeview("selectNode",sensor[j].nodeId);
+								break;
+							}
+						}
+					}
+					nodestree.treeview("search",[nodeid+'', { ignoreCase: false, exactMatch: true }]);
+				}
+      }
+      function getuserlist(){
+        users=[];
+        sendorder("_manager/ListUser",getlistuser_bc);
+      }
+      function getlistuser_bc(data){
+        users=data;
+        if(users.length>=0){
+          if(!v_userslist){
+            v_userslist=new Vue({
+              el:'#v_userlist',
+              data:{
+                users:users,
+              },
+              methods:{
+                changeuser(index){
+                  this.$nextTick(function(){
+                    //pt=index;
+                    //elem=$("#user_"+pt);
+                    //this.userdetail=users[pt];//
+                    //userconfig=this.userdetail;
+                    //decodeuserroles(userconfig.roles);
+                    //refreshlist(elem[0]);
+                  })
+                },
+                destroy() {
+                  this.$destroy();
+                },
+              },
+            });
+          }else{
+            v_userslist.users=users;
+          }
+        }
+      }
+			//保存用户组
+			function saveusergroup(){
+				sendorder("_manager/ClearUserGroupsByGroup?groupId="+groupid,clearusergroup_bc);
+			}
+			function clearusergroup_bc(data){
+				if(data){
+					addusergroups();
+				}
+			}
+			function addusergroups(){
+				var usergroups=[];
+        for(var ro in users){
+					if($("#user_"+ro).is(":checked")){
+						var obj_usergroup={'id':0,'groupId':groupid,'config':null,'time':getCurrentDate(2).replace(/ /,"T")};
+						obj_usergroup.userId=parseInt($("#user_"+ro).val());
+						usergroups.push(obj_usergroup);
+					}
+        }
+				sendorder("_manager/AddUserGroups",addusergroups_bc,usergroups);
+			}
+			function addusergroups_bc(data){
+				if(data){
+					showmsg("用户组信息更新保存成功！");
+				}
+			}
+			//保存组权限
+			function savegrouprole(){
+				sendorder("_manager/ClearGroupRolesByGroup?groupId="+groupid,claergrouproles_bc);
+			}
+			function claergrouproles_bc(data){
+				if(data){
+					addgrouproles();
+				}
+			}
+			function addgrouproles(){
+				var selectnode=nodestree.treeview('getSelected');
+				var grouproles=[];
+				if(selectnode)
+				for(var i=0;i<selectnode.length;i++){
+					var grouprole={"id":0,'groupId':groupid,"refName":"Node","time":getCurrentDate(2).replace(/ /,"T"),"config":null};
+					grouprole.refId=selectnode[i].id;
+					grouproles.push(grouprole);
+				}
+				sendorder("_manager/AddGroupRoles",addgrouproles_bc,grouproles);
+			}
+			function addgrouproles_bc(data){
+				if(data){
+					showmsg("组"+group.name+"权限信息保存成功！");
+				}
+			}
+			//修改组信息
+			function modifygroup(){
+				if (confirm("您确定要修改分组“"+group.name+'”的名称吗')) {
+					sendorder("_manager/ModifyGroup",modifygroup_bc,group);
+				}
+			}
+			function modifygroup_bc(data){
+				if(data){
+					showmsg("组"+group.name+'信息修改成功!');
+				}
+			}
+			//删除分组
+			function deletegroup(){
+				if (confirm("您确定要修改报表“"+group.name+'”的配置信息吗')) {
+					sendorder("_manager/ClearGroupRolesByGroup?groupId="+groupid,null);
+					sendorder("_manager/ClearUserGroupsByGroup?groupId="+groupid,null);
+					sendorder("_manager/DeleteGroup",deletegroup_bc,group);
+				}
+			}
+			function deletegroup_bc(data){
+				if(data){
+					showmsg("组"+group.name+"删除成功");
+					pt--;
+					getgroup();
+				}
+			}
+			//添加分组
+			function addgroup(){
+				group.id=0;
+				group.name="新键组_"+Math.floor(Math.random() * 100);
+        group.time=getCurrentDate(2).replace(/ /,"T");
+        group.config=null;
+        sendorder("_manager/AddGroup",addgroup_bc,group);
+			}
+			function addgroup_bc(data){
+				if(data>=0){
+					isaddgroup=true;
+					getgroup();
+				}
+			}
+      function buildnode(data, level) {
+			var tree = [];
+			if(data == null || typeof(data) == "undefined"|| data.length==0 ){
+				//return tree;
+			}else {
+				let data_len=data.length;
+				for (var j = 0; j < data_len; j++) {
+					var anodes = new Object();
+					anodes.text = data[j].value.name;//
+					anodes.id = data[j].value.id;
+          //anodes.expanded=true;
+					anodes.ParentId=data[j].value.parentId;
+					anodes.type = data[j].value.type;
+					anodes.config = data[j].value.config;
+					anodes.time = data[j].value.time;
+					anodes.level = level;
+					if (data[j].value.hasOwnProperty("nodeId")) {
+						anodes.NodeId = data[j].value.nodeId;
+					}
+					if (data[j].children&&data[j].children.length != 0) {
+						anodes.nodes = [];
+						anodes.nodes = buildnode(data[j].children, level + 1)
+					}
+					tree.push(anodes);
+				}
+			}
+			return tree;
+		}
+		function inittreeview(anodes) {
+			try{
+				let mnodes = [];
+				var nodes = new Object();
+					nodes.text = "节点列表" ;
+					nodes.id = -1;
+					nodes.type="";
+					nodes.nodes = [];
+				mnodes.push(nodes);
+				if (anodes == null) {
+					mnodes[0].nodes = buildnode();
+				} else {
+					mnodes[0].nodes = anodes;
+				}
+				nodestree.treeview({
+					data: mnodes,    // 数据源
+					showCheckbox: false,   //是否显示复选框
+					highlightSelected: true,    //是否高亮选中
+					emptyIcon: '',    //没有子节点的节点图标
+					enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象
+					multiSelect: true,    //多选
+					searchResultColor: "black",
+					showBorder: false,
+					onhoverColor: "#3075a5", //
+					selectedBackColor: "#85e494", //当节点被选中时的背景色
+					selectedColor: "#000", //当节点被选中时的前景色
+				});
+				nodestree.treeview('expandAll');//全部展开
+			}catch(err){
+				showstateinfo(err.message,"nodemanagement/inittreeview");
+			}
+		}
+    </script>
+</body>
+</html>

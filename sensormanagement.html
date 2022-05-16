@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>节点管理</title>
+    <title>标签管理</title>
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/electricroommonitoring.css" />
     <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
@@ -41,16 +41,18 @@
 <body>
     <div class="container" style="margin:5px;">
         <div class="row" id="nodemanagement" >
-          <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 650px;" >
+          <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 650px;overflow: auto;" >
             <label >节点: </label><a onclick="shownodetree()" style="margin-left: 5px;"><label id="node"> 选择</label><i class= "caret">
-            </i></a> <div id="nodetree" style="width:100%;height:400px;display:none;overflow: auto;">
-            </div><br>
-            
+            </i></a>
+						<div style="width:100%;overflow:auto"> 
+							<div id="nodetree" style="width:330px;height:400px;display:none;overflow: auto;">
+							</div><br>
+						</div>
             <a href="javascript:void(0)" onclick="GetSensorsByNode()"><button style="width:150px;height:30px;font-size: 1.2em;">标签列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
             <!--<ul id="v_nodelist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">
               <li v-for="(node,idx) in nodes" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="idx" @click="changenode(idx)">{{node.value.name}}</a></li>
             </ul>-->
-            <div id="sensortree" style="height:90%;overflow: auto;"></div>
+            <div id="sensortree" style="width:230px;height:88%;overflow: auto;"></div>
           </div>
           <div class="col-xs-9 col-md-9 col-lg-10">
             <ul class="nav nav-tabs" disabled="disabled" id="nav">
@@ -194,7 +196,7 @@
 							<div class="row">
 								<label for="sensor_src">文件：</label>
 								<input type="file" id="file" onchange="previewHandle(this)" accept="application/json,application/vnd.ms-excel " style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;display:none"/>
-								<input type="text" id="sensor_src" maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')" title="标签配置文件全路径名称"/>
+								<input type="text" id="sensor_src" title="标签配置文件全路径名称"/><!-- maxlength="4" oninput = "value=value.replace(/[^\d]/g,'')"-->
 								<button  onclick="selectFile()" style="width:60px;height:35px;margin-left: 10px;">浏览</button>
 								<button onclick="importsensors()" style="width:60px;height:35px;margin-left: 10px;">导入</button>
 								<button  onclick="exporttoexcel()" style="width:120px;height:35px;margin-left: 10px;">导出EXCEL</button>
@@ -1066,7 +1068,7 @@
 			/* 获取 文件的路径 ，用于测试*/  
 			function previewHandle(fileDOM) {
 				var file = fileDOM.files[0], // 获取文件
-					imageType = /^application\/json/,
+					//imageType = /^application\/json/,
 					reader = '';
 				var ext_filename = file.name.split(".")[1];
 				

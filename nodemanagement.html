@@ -33,12 +33,12 @@
 <body>
     <div class="container" style="margin:5px;">
         <div class="row" id="nodemanagement" >
-          <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 650px;" >
+          <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 650px;overflow:auto;" >
             <a href="javascript:void(0)" onclick="getnodelist()"><button style="width:150px;height:30px;font-size: 1.2em;">节点列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
-            <!--<ul id="v_nodelist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">
+            <!--<ul id="v_nodelist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">width:300px;
               <li v-for="(node,idx) in nodes" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="idx" @click="changenode(idx)">{{node.value.name}}</a></li>
             </ul>-->
-            <div id="nodetree">
+            <div id="nodetree" style="width:280px;overflow:auto">
               
             </div>
           </div>
@@ -157,7 +157,7 @@
       }
       function deletenode_bc(data){
         if(data)
-          showmsg("节点"+nodeconfig.dispaly+"删除成功!");
+          showmsg("节点删除成功!");
         getnodelist();
       }
       function addnode(){
@@ -229,7 +229,7 @@
 			try{
 			//obj.nodes=(JSON.parse( node));
 			//tree[1]=obj;
-			mnodes = [];
+			let mnodes = [];
 			var nodes = new Object();
 				nodes.text = "节点列表" ;
 				nodes.id = -1;

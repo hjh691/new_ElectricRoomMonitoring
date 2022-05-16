@@ -34,7 +34,7 @@
       var v_opation=new Vue({
         el:'#v_optionlist',
         data:{
-          options:["用户管理","权限管理","连接管理","节点管理","标签管理","报表管理","图形管理","配置管理"]
+          options:["用户管理","权限管理","连接管理","节点管理","标签管理","报表管理","图形管理","配置管理","数据管理"]
         }
       });
       function load(opt){
@@ -42,6 +42,9 @@
         switch(parseInt(opt.attributes.value.value)){
           case 0:
             $("#iframe_option").attr('src','usermanagement.html');
+            break;
+          case 1:
+          $("#iframe_option").attr('src','groupmanagement.html');
             break;
           case 2:
             $("#iframe_option").attr("src","connectionmanagement.html");
@@ -55,8 +58,14 @@
           case 5:
             $("#iframe_option").attr('src','reportmanagement.html');
             break;
+          case 6:
+          $("#iframe_option").attr('src','graphicmanagement.html');
+            break;
           case 7:
             $("#iframe_option").attr('src',"configmanagement.html");
+            break;
+          case 8:
+            $("#iframe_option").attr('src',"datamanagement.html");
             break;
         }
       }

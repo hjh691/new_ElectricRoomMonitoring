@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>图形管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/electricroommonitoring.css" />
+    <link rel="stylesheet" href="css/bootstrap-treeview.min.css" />
+    <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+		<script src="js/vue.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/bootstrap-treeview.min.js"></script>
+    <script  type="text/javascript" src="js/jquery.base64.js"></script>
+		<script type="text/javascript" src="js/FileSaver.js"></script>
+    <script  type="text/javascript" src="js/config.js"></script>
+    <script  type="text/javascript" src="js/drawmaps.js"></script>
+    <script  type="text/javascript" src="js/fabric.js"></script>
+    <script type="text/javascript" src="js/layer/layer.js"></script>
+    <script type="text/javascript" src="js/function.js"></script>
+    <style>
+      body{height: 99%;}
+      .row{
+        margin-top: 5px;
+        font-size: 12px;
+      }
+      input{
+        font-size: 1.6em;
+      }
+      li{font-size: 16px;}
+      button{
+        font-size: 1.4em;
+      }
+			select{
+        font-size: 1.2em;
+      }
+      [v-cloak]{
+        display:none;
+      }
+      label{
+        font-size: 1.4em;
+      }
+    </style>
+</head>
+<body>
+  <div class="container" id="graphicmanagement" style="margin:5px;">
+    <div class="row" >
+      <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 650px;overflow: auto;" >
+        <label >节点: </label><a onclick="shownodetree()" style="margin-left: 5px;"><label id="node"> 选择</label><i class= "caret">
+        </i></a> 
+        <div style="width:100%;overflow:auto">
+          <div id="nodetree" style="width:300px;height:400px;display:none;overflow: auto;">
+          </div><br>
+        </div>
+        <a href="javascript:void(0)" onclick="GetGraphicsByNode()"><button style="width:150px;height:30px;font-size: 1.2em;">图形列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
+        <ul id="v_graphiclist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 540px;overflow: auto;" v-cloak>
+          <li v-for="(graphic,idx) in graphics" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="'graphic_'+idx" @click="changegraphic(idx)">{{graphic.name}}</a></li>
+        </ul><!--
+        <div id="sensortree" style="height:90%;overflow: auto;"></div>-->
+      </div>
+      <div class="col-xs-9 col-md-9 col-lg-10">
+        <div class="container">
+          <div class="row">
+            <label> 名称：</label>
+            <input id="graphic_name" type="text" value=""/>
+          </div>
+          <div class="row">
+            <label for="graphicfile_src">文件：</label>
+            <input type="file" id="file" onchange="previewHandle(this)" accept=".vis" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;display:none"/><!--,image/*,application/json,.svg style="display: none;-->
+            <input type="text" id="graphicfile_src" title="图形文件全路径名称"/>
+            <button  onclick="selectFile()" style="width:70px;height:35px;">浏览</button>
+            <button  onclick="savetofile()" style="width:70px;height:35px;margin-left: 10px;">保存</button>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-8 col-lg-7" id="preview" style="height:520px;overflow: auto;border: rgb(192, 190, 190) solid 1px;">
+              <div id="head_map" style="display:none;"></div>
+              <div id="mycanvasdiv" style="background-color:#cccccc;position: relative; text-align: center; overflow: auto;display: none;">
+                <div align="center" >
+                  <canvas id="mycanvas" align="center" width="600px" height="510px">
+                  </canvas>
+                </div>
+              </div>
+              <div id="mycanvasdiv2" style="background-color:#cccccc;position: relative; text-align: center; overflow: auto;">
+                <div align="center" >
+                  <canvas id="mycanvas2" align="center" style="width:600px; height:510px">
+                  </canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:10px;">
+            <button style="width:90px;height:35px;margin-left: 10px;" onclick="addgraphic()">添加</button>
+            <button style="width:70px;height:35px;margin-left: 10px;" onclick="modifygraphic()">修改</button>
+            <button style="width:90px;height:35px;margin-left: 10px;" onclick="deletegraphic()">删除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    var nodestree=$("#nodetree");
+    var NodeId=-1,nodeid=1,pt=0,cwidth=650,cheight=510;
+    var graphics=[],graphic_obj={};
+    var v_graphic,graphicdetail='';
+    var isaddgraphic=false;
+    var fcanvas=new fabric.Canvas("mycanvas2",{
+      backgroundColor: '#ccc',
+      selectionColor: 'blue',
+      width:cwidth,
+      height:cheight,
+      selection:false,
+    }),
+    mCanvas=document.getElementById("mycanvas"),ctx = mCanvas.getContext("2d") ;
+    initgraphicmanagement();
+    function initgraphicmanagement(){
+      getnodelist();
+    }
+    function getnodelist(){//获取节点列表
+      nodelist=[];
+      sendorder("_manager/GetNodes",getnodes_bc);
+    }
+    function getnodes_bc(data){
+      nodelist=buildnode(data,0);
+      inittreeview(nodelist);
+    }
+    function shownodetree(){//显示节点列表树
+      $("#nodetree").show();
+    }
+    function GetGraphicsByNode(anodeid){
+      $("#graphic_name").val(''); 
+      $("#graphicfile_src").val('');
+      if(!anodeid)
+        anodeid=NodeId;
+      sendorder("_manager/GetNodeGraphicsByNode?nodeId="+anodeid,getgraphibynode_bc);
+    }
+    function getgraphibynode_bc(data){
+      if(pt>=data.length)
+        pt=0;
+      if((!data||data.length<=0)&&graphic_obj){
+        graphic_obj={};
+        graphics=[];//.splice(0,graphics.length); 
+      }else{
+        if(isaddgraphic){
+          pt=data.length-1;
+          isaddgraphic=false;
+        }
+        graphics=data;
+        graphic_obj=graphics[pt];
+      }
+      
+      if(!v_graphic){
+        v_graphic=new Vue({
+          el:'#v_graphiclist',
+          data:{
+            graphics:graphics,
+            graphicdetail:graphic_obj,
+          },
+          methods:{
+            changegraphic(index){
+              this.$nextTick(function(){
+                if(graphics.length>0){
+                  pt=index;
+                  let elem=$("#graphic_"+pt);
+                  refreshlist(elem[0]);
+                  this.graphicdetail=graphics[pt];
+                  var graphicid=graphics[pt].id;
+                  graphic_obj=this.graphicdetail;
+                  $("#graphic_name").val(graphic_obj.name);
+                  //document.getElementById("file").value='';
+                  $("#graphicfile_src").val('');
+                  //获取指定id的图形内容
+                  sendorder("_manager/GetNodeGraphics?id="+graphicid,getnodegraphics_bc);
+                  //GetBinary(graphicid);
+                }
+              })
+            }
+          }
+        })
+      }else{
+        v_graphic.graphics=graphics;
+        v_graphic.graphicdetail=graphic_obj;
+      }
+      v_graphic. changegraphic(pt);
+    }
+    function getnodegraphics_bc(data){
+      if(!data || jQuery.isEmptyObject(data.value)){//.Result
+        graphicdetail = null;
+        try {
+          drawmap(JSON.parse(graphicdetail),null,1,cwidth,cheight);
+        } catch(err) {
+        }
+        return;
+      }
+      graphicdetail=($.base64.atob(data.value,true));
+      drawmap((graphicdetail.split("\r\n")),null,1,cwidth,cheight)
+      console.log((data.value));
+    }
+    //
+    function selectFile(){  
+      //触发 文件选择的click事件  
+      $("#file").trigger("click");
+      //
+    }  
+    /* 获取 文件的路径 ，用于测试*/ //
+    function previewHandle(fileDOM) {
+      var file = fileDOM.files[0], // 获取文件
+        reader = '';
+      var ext_filename = file.name.split(".")[1];
+      $("#graphicfile_src").val(file.name);
+      // 判断是否支持FileReader    
+      if (window.FileReader) {
+        reader = new FileReader();
+      }
+      // IE9及以下不支持FileReader//
+      else {
+        alert("您的浏览器不支持图片预览功能，如需该功能请升级您的浏览器！");
+        return;
+      }
+      if(file.size>2000000){
+        alert("文件太大，请选择不答应2M的图形文件！");
+        return;
+      }
+      // 读取完成
+      if(/image\/\w+/.test(file.type)){
+        reader.onload = function (event) {
+          var re = event.target.result;
+          const image = new Image();
+
+          image.src =re;
+          image.onload = function(event) {
+            // console.log(event, this);
+            URL.revokeObjectURL(this.src);
+            var imgInstance = new fabric.Image(image,{
+              left:0,
+              top:0,
+              angle:0,
+              opacity:1
+            });
+            //imgInstance.scaleX=imgInstance.scaleY=window.zoom;
+            fcanvas.clear();//
+            fcanvas.setZoom(1);
+            fcanvas.add(imgInstance);
+            fcanvas.renderAll();
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+      switch(ext_filename){    
+      case "json"://
+        reader.onload = function (event) {
+          var re = event.target.result;
+          graphicdetail=re;
+        };
+        reader.readAsText(file,"utf-8");
+        break;
+      case "svg":
+      reader.onload = function(event) {
+        var re = event.target.result;
+        graphicdetail=re;
+        };
+        reader.readAsText(file,"utf-8");
+        break;
+      case "vis":
+        reader.onload = function(event) {
+          graphicdetail = event.target.result;
+          drawmap((graphicdetail.split("\r\n")),null,1,cwidth,cheight);
+          //var b64=$.base64.btoa(re);
+          //console.log(b64);
+        };
+        reader.readAsText(file,"utf-8");
+        break;
+      }
+      document.getElementById("file").value=''
+    }
+    //保存图形信息到本地文件
+    function savetofile(){
+      var blob = new Blob([graphicdetail], {type: "text/plain;charset=utf-8"});
+      saveAs(blob, graphic_obj.name+".vis");
+    }
+    //修改图形参数配置等
+    function modifygraphic(){
+      if($("#graphic_name").val()){
+        graphic_obj.name=($("#graphic_name").val());
+      }
+      graphic_obj.value=$.base64.btoa(graphicdetail,true);
+      if(confirm('确定要修改图形的配置信息吗')){
+        sendorder("_manager/ModifyNodeGraphics",modifygraphic_bc, graphic_obj);
+      }
+    }
+    function modifygraphic_bc(data){
+      if(data){
+        showmsg("图形数据修改成功!");
+      }
+    }
+    //删除指定图形及内容
+    function deletegraphic(){
+      if(confirm("确定要删除图形："+graphic_obj.name+" 吗？"))
+        sendorder("_manager/DeleteNodeGraphics",deletegraphic_bc,graphic_obj);
+    }
+    function deletegraphic_bc(data){
+      if(data){
+        showmsg("图形"+graphic_obj.name+" 删除成功！");
+      }
+      pt>0?pt--:pt;
+      GetGraphicsByNode(NodeId);
+    }
+    //添加图形
+    function addgraphic(){
+      var obj_graphic={};
+      obj_graphic.id=0;
+      obj_graphic.nodeId=NodeId;
+      obj_graphic.name="新图形_"+Math.floor(Math.random() * 1000);
+      obj_graphic.value=null;
+      sendorder("_manager/AddNodeGraphics",addgraphic_bc,obj_graphic);
+    }
+    function addgraphic_bc(data){
+      if(data){
+        isaddgraphic=true;
+        GetGraphicsByNode(NodeId);
+      }
+    }
+    //解析并初始化节点树
+    function buildnode(data, level) {
+			var tree = [];
+			if(data == null || typeof(data) == "undefined"|| data.length==0 ){
+				
+			}else {
+				let data_len=data.length;
+				for (var j = 0; j < data_len; j++) {
+					var anodes = new Object();
+					anodes.text = data[j].value.name;//+"[Id:"+data[j].value.id+"]";
+					anodes.id = data[j].value.id;
+          //anodes.expanded=true;
+					anodes.ParentId=data[j].value.parentId;
+					anodes.type = data[j].value.type;
+					anodes.config = data[j].value.config;
+					anodes.time = data[j].value.time;
+					anodes.level = level;
+					if (data[j].value.hasOwnProperty("nodeId")) {
+						anodes.NodeId = data[j].value.nodeId;
+					}
+					if (data[j].children&&data[j].children.length != 0) {
+						anodes.nodes = [];
+						anodes.nodes = buildnode(data[j].children, level + 1)
+					}
+					tree.push(anodes);
+				}
+			}
+			return tree;
+		}
+    function inittreeview(anodes) {
+			try{
+			var mnodes = [];
+			var nodes = new Object();
+				nodes.text = "节点列表" ;
+				nodes.id = -1;
+				nodes.type="";
+				nodes.nodes = [];
+			mnodes.push(nodes);
+			if (anodes == null) {
+				mnodes[0].nodes =[];// buildnode();
+			} else {
+				mnodes[0].nodes = anodes;
+			}
+			nodestree.treeview({
+				data: mnodes,    // 数据源
+				showCheckbox: false,   //是否显示复选框
+				highlightSelected: true,    //是否高亮选中
+				emptyIcon: '',    //没有子节点的节点图标
+				enableLinks: false,//为true时，必须在节点属性给出href属性，否则可能发生不可预知的现象
+				multiSelect: false,    //多选
+				searchResultColor: "black",
+				showBorder: false,
+				onhoverColor: "#3075a5", //光标停在节点上激活的默认背景色      String
+				selectedBackColor: "#85e494", //当节点被选中时的背景色
+				selectedColor: "#000", //当节点被选中时的前景色
+				onNodeSelected: function (event, data) {//目录树节点选中事件--提取对应id，获取旗下标签
+					var selectnode=nodestree.treeview('getSelected')[0];
+					nodestree.treeview('collapseAll')//,nodeid);//关闭展开 注释掉用于不主动关闭展开的节点
+					nodestree.treeview("revealNode",[selectnode.nodeId, { levels: 1, silent: true }])//展开所选节点
+					nodestree.treeview("expandNode",[selectnode.nodeId, { levels: 1, silent: true }])//展开所选节点
+					nodeid = data.nodeId;
+					NodeId=data.id;
+          $("#node").text(data.text);
+					nodestree.treeview("revealNode",[data.nodeId, { levels: 1, silent: true }]);
+          $("#nodetree").hide();
+          GetGraphicsByNode(NodeId);
+				},
+			});
+			nodestree.treeview('collapseAll');//关闭展开
+			if (nodeid == "" || nodeid == null) {
+				nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
+			}
+			
+			var firstNode = nodestree.treeview("getNode", nodeid);
+			nodestree.treeview("revealNode",[firstNode.nodeId, { levels: 1, silent: true }])//展开所选节点
+			nodestree.treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
+			}catch(err){
+				showstateinfo(err.message,"graphicmanagement/inittreeview");
+			}
+		}
+    /*
+    生产经营单位主要负责人的职责：
+    （一）建立健全并落实本单位全员安全生产责任制，加强安全生产标准化建设；
+　　（二）组织制定并实施本单位安全生产规章制度和操作规程；
+　　（三）组织制定并实施本单位安全生产教育和培训计划；
+　　（四）保证本单位安全生产投入的有效实施；
+　　（五）组织建立并落实安全风险分级管控和隐患排查治理双重预防工作机制，督促、检查本单位的安全生产工作，及时消除生产安全事故隐患；
+　　（六）组织制定并实施本单位的生产安全事故应急救援预案；
+　　（七）及时、如实报告生产安全事故。
+    生产经营单位安全生产管理机构以及安全生产管理人员的职责：
+    （一）组织或者参与拟订本单位安全生产规章制度、操作规程和生产安全事故应急救援预案；
+　　（二）组织或者参与本单位安全生产教育和培训，如实记录安全生产教育和培训情况；
+　　（三）组织开展危险源辨识和评估，督促落实本单位重大危险源的安全管理措施；
+　　（四）组织或者参与本单位应急救援演练；
+　　（五）检查本单位的安全生产状况，及时排查生产安全事故隐患，提出改进安全生产管理的建议；
+　　（六）制止和纠正违章指挥、强令冒险作业、违反操作规程的行为；
+　　（七）督促落实本单位安全生产整改措施。
+　　生产经营单位可以设置专职安全生产分管负责人，协助本单位主要负责人履行安全生产管理职责。
+
+    */
+  </script>
+</body>
+</html>

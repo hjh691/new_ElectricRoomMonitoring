@@ -1110,7 +1110,7 @@ function getnodegraphics_bc(data){
 	//localStorage.errortime = 0;
 	//sessionStorage.islogin = true;
 	var brefresh=true;
-	if(jQuery.isEmptyObject(data)){//.Result
+	if(!data || jQuery.isEmptyObject(data.value)){//.Result
 		//if (data.Result.Value == null) {
 		//showmsg("没有符合条件的记录",info_showtime);
 		showstateinfo("没有符合条件的记录","GetBinary");
@@ -1129,7 +1129,7 @@ function getnodegraphics_bc(data){
 	}else{
 		localStorage.txid=-1;
 	}
-	//var allsensors=JSON.parse(localStorage.getItem("allsensors"));
+	//var allsensors=JSON.parse(localStorage.getItem("allsensors"));110+105+108+108+90
 	var obj_data=new Object();
 	var contents = ($.base64.atob(data.value,true)).split("\r\n");//.Result
 	//if(jQuery.hasOwnProperty(localStorage.realdata))
@@ -1201,7 +1201,7 @@ function getnodegraphics_bc(data){
 	//window.parent.getrealdatabynodeid(0);
 }
 //绘图函数 in used by electricroommonitoring
-function drawmap(arr,ctx,isrefresh) {
+function drawmap(arr,ctx,isrefresh,cwidth,cheight) {
 	try{
 		var mCanvasDiv=document.getElementById("mycanvasdiv");
 		var mCanvasDiv2=document.getElementById("mycanvasdiv2");
@@ -1220,8 +1220,10 @@ function drawmap(arr,ctx,isrefresh) {
 		//mCanvas.height = document.documentElement.clientHeight;
 		if(ctx==null || ctx==undefined)
 			ctx = mCanvas.getContext("2d");
-		var swidth = cwidth= document.documentElement.clientWidth ;
-		var sheight = cheight=document.documentElement.clientHeight-mheadmap.clientHeight;
+		if(!cwidth)
+			var swidth = cwidth= document.documentElement.clientWidth ;
+		if(!cheight)
+			var sheight = cheight=document.documentElement.clientHeight-mheadmap.clientHeight;
 		mCanvasDiv.style.width= cwidth  + 'px';
 		mCanvasDiv.style.height= cheight + 'px';
 		mCanvasDiv2.style.width=cwidth+"px";

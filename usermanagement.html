@@ -12,7 +12,7 @@
     <script  src="js/vue.js"> </script> 
     <style>
       .row{
-        margin-top: 20px;
+        margin-top: 10px;
         font-size: 12px;
       }
       input{
@@ -30,50 +30,52 @@
 <body>
     <div class="container" style="margin:5px;">
         <div class="row" id="usermanagement" v-cloak>
-          <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 700px;" align="center" >
+          <div class="col-xs-4 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 700px;" align="center" >
             <a href="javascript:void(0)" onclick="getuserlist()"><button style="width:150px;height:30px;font-size: 1.6em;">用户列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
             <ul id="v_userlist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">
               <li v-for="(user,idx) in users" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="idx" @click="changeuser(idx)">{{user.name}}</a></li>
             </ul>
           </div>
-          <div class="col-xs-4 col-md-4 col-lg-4">
-            <h3>详细配置项</h3>
-            <div class="container" id="userprofile-format"><!--align="center"-->
+          <div class="col-xs-8 col-md-9 col-lg-10">
+            <div class="container">
+            <div class="row col-xs-12 col-md-6 col-lg-5" id="userprofile-format">
+              <h3>详细配置项</h3>
+              <!--align="center"
               <div class="row">
-                <div class="col-xs-4 table-lable"> 用户编号:</div>
+                <div class="col-xs-2 table-lable"> 用户编号:</div>
                 <div class="col-xs-8"><input id="user_id" type="text" readonly="readonly" style="width:250px;font-size: 1.6em;" v-model="userdetail.id" value=""/>
                 </div>
-              </div>
+              </div>-->
               <div class="row">
-                <div class="col-xs-4 table-lable"> 用户名:</div>
-                <div class="col-xs-8"><input id="user_name" type="text" v-model="userdetail.name" style="width:250px;" value=""/>
+                <div class="col-xs-6 col-md-4 col-lg-2 table-lable"> 用户名:</div>
+                <div class="col-xs-6"><input id="user_name" type="text" v-model="userdetail.name" style="width:150px;" value=""/>
                 </div>
               </div>
               <div class="row">
-                <div class="col-xs-4 table-lable"> 显示名:</div>
-                <div class="col-xs-8"><input id="user_display" type="text" v-model="userdetail.display" style="width:150px;" value=""/>
+                <div class="col-xs-6 col-md-4 col-lg-2 table-lable"> 显示名:</div>
+                <div class="col-xs-6"><input id="user_display" type="text" v-model="userdetail.display" style="width:150px;" value=""/>
                 </div>
               </div>
               <div class="row">
-                <div class="col-xs-4 table-lable"> 邮箱:</div>
-                <div class="col-xs-8"><input id="user_email" type="text" v-model="userdetail.email" style="width:150px;" value=""/>
+                <div class="col-xs-6 col-md-4 col-lg-2 table-lable"> 邮箱:</div>
+                <div class="col-xs-6"><input id="user_email" type="text" v-model="userdetail.email" style="width:150px;" value=""/>
                 </div>
               </div>
               <div class="row">
-                <div class="col-xs-4 table-lable"> 电话:</div>
-                <div class="col-xs-8"><input id="user_tel" type="text" v-model="userdetail.tele" style="width:150px;" value=""/>
+                <div class="col-xs-6 col-md-4 col-lg-2 table-lable"> 电话:</div>
+                <div class="col-xs-6"><input id="user_tel" type="text" v-model="userdetail.tele" style="width:150px;" value=""/>
                 </div>
               </div>
               <div class="row">
-                <div class="col-xs-4 table-lable"> 密码:</div>
-                <div class="col-xs-8"><input id="user_password" type="text" v-model="userdetail.pass" style="width:150px;" value=""/>
+                <div class="col-xs-6 col-md-4 col-lg-2 table-lable"> 密码:</div>
+                <div class="col-xs-6"><input id="user_password" type="text" v-model="userdetail.pass" style="width:150px;" oninput="value=value.replace(/./g,'*')" onchange="value=value.replace(/./g,'*')"/>
                 </div>
               </div>
               <div class="row">
-                <div class="col-xs-4 table-lable"> 权限:</div>
-                <div class="col-xs-8">
-                  <ul style="list-style-type:none;margin-left:20px;">
-                  <li id="user_permission" v-for="(role,key,index) in roles" ><input :id="'user_'+key" type="checkbox" :value="role"/>{{role}}</li>
+                <div class="col-xs-6 col-md-4 col-lg-2 table-lable"> 权限:</div>
+                <div class="col-xs-6">
+                  <ul style="list-style-type:none;margin-left:10px;">
+                  <li id="user_permission" v-for="(role,key,index) in roles" style="display:inline-block;" ><input :id="'user_'+key" type="checkbox" :value="role"/>{{role}}</li>
                   </ul>
                 </div>
               </div>
@@ -83,6 +85,7 @@
                 <button style="width:100px;" onclick="deleteuser()">删除</button></div>
               </div>
               </div>
+            </div>
           </div>
       </div>
     </div>
@@ -98,7 +101,6 @@
         
       }
       function getuserroles(){
-        
         sendorder("_manager/ListUserRole",getuserroles_bc);
       }
       function getuserroles_bc(data){
@@ -132,12 +134,6 @@
               methods:{
                 changeuser(index){
                   //userconfig=userlist[index];
-                  /*pt=index;
-                  elem=$("#"+pt);
-                  this.userdetail=userlist[pt];//
-                  userconfig=this.userdetail;
-                  decodeuserroles(userconfig.roles);
-                  refreshlist(elem[0]);*/
                   this.$nextTick(function(){
                     pt=index;
                     elem=$("#"+pt);
@@ -152,7 +148,6 @@
                   this.$destroy();
                 },
               },
-              //inject:['reload'],
             });
           }else{
             v_user.users=userlist
@@ -233,8 +228,6 @@
         console.log(data);
         isadduser=true;
         getuserlist();
-
-
       }
     </script>
 </body>

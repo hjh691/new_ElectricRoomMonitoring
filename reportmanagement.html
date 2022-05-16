@@ -52,13 +52,9 @@
             <div class="row">
               <div class="col-xs-3 table-lable"> 报表类型:</div>
               <div class="col-xs-8">
-                <!--<input id="typename" type="text" style="width:100px;">
-                <input id="isserver" type="text" style="width:50px;"><button style="width:100px;" onclick="modifypara(0)">参数配置</button>
-                <button style="width:60px;" onclick="setdefault(0)">重置</button>-->
                 <select id="reporttype" style="width:140px">
                 <option v-for="(role,key) in roles" :id="'connection_'+key" :value="role">{{role}}</option>
                 </select>
-                
               </div>
             </div>
             <div id="connectionnameid">
@@ -83,12 +79,8 @@
             <div class="row">
               <div class="col-xs-3 table-lable"> 栏目列表:
               </div>
-              <div class="col-xs-8"><button style="width:60px;" onclick="showcell_edit()">编辑</button>
-                <!--<input id="typename" type="text" style="width:100px;">
-                <input id="isserver" type="text" style="width:50px;"><button style="width:100px;" onclick="modifypara(1)">参数配置</button>
-                <select id="protocol" style="width:140px">
-                <option v-for="(protocol,key,idx) in protocols" :id="'connection_'+key" :value="protocol.name">{{protocol.desc}}</option>
-                </select>-->
+              <div class="col-xs-8">
+                <button style="width:60px;" onclick="showcell_edit()">编辑</button>
               </div>
             </div>
             <div class="row">
@@ -420,24 +412,6 @@
       //createddetail();
       $("#cell_edit").show();
     }
-    function setdefault(idx){
-      switch(idx){
-        case 0:
-          var inx=$('#reporttype').prop('selectedIndex')
-          if(inx<0)
-            curparas=[]
-          else
-            curparas=clone(reporttype[inx].details);
-          break;
-        case 1:
-          var index=$("#protocol").prop("selectedIndex");
-          if(index<0)
-            curproparas=[]
-          else
-            curproparas=clone(protocolconfigs[index].details);
-        break;
-      }
-    }
     function setdetail(){
       var obj_node=nodestree.treeview("getSelected");
       if(reportconfig.nodeIds && reportconfig.nodeIds.length>0){
@@ -449,37 +423,6 @@
         reportconfig.nodeIds.push(obj_node[i].id);
       $("#guard_modal").modal('hide');
     }
-    function codeconnectionroles(){
-      var type=[];
-      if($('#reporttype').val())
-        type=$('#reporttype').val().split('-');
-      reportconfig.type=type[0];
-      if(type[1]=="server"){
-        reportconfig.server=1
-      }else{
-        reportconfig.server=0
-      }
-      reportconfig.protocol=$("#protocol").val();
-      //ToDo reportconfig.hostParas/proParas;
-      var obj={};
-      for(var para in curparas){
-        if(curparas[para].value)
-          obj[curparas[para].name]=curparas[para].value;
-      }
-      if(!$.isEmptyObject(obj))
-        reportconfig.hostParas=JSON.stringify(obj)
-      else
-        reportconfig.hostParas=null;
-      var objp={};
-      for(var para in curproparas){
-        if(curproparas[para].value)
-          objp[curproparas[para].name]=curproparas[para].value;
-      }
-      if(!$.isEmptyObject(objp))
-        reportconfig.proParas=JSON.stringify(objp)
-      else
-        reportconfig.proParas=null;
-    }
     function modifyconnection(){
       reportconfig.type=$("#reporttype").val();
       if (confirm("您确定要修改报表“"+reportconfig.name+'”的配置信息吗')) {
@@ -489,12 +432,7 @@
     function modifyreportconfig_bc(data){
       if(data)
         showmsg("报表配置信息修改成功!");
-      //sendorder("_manager/GetUserById?id="+userconfig.id,getuserbyid_bc);
     }
-    /*function getuserbyid_bc(data){
-      userconfig=data;
-      v_user.userdetail=userconfig;
-    }*/
     function deleteconnection(){
       report_index=report_index-1;
       if(report_index<0)
@@ -539,36 +477,15 @@
         });
       }
     }
-    function savetodetail(idx,avalue){
-      switch(curdetail){
-        case 0:
-          curparas[parseInt(idx)].value=avalue;
-          break;
-        case 1:
-          curproparas[parseInt(idx)].value=avalue;
-          break;
-      }            
-    }
     function buildnode(data, level) {
 			var tree = [];
-			/*if(level==0){// 
-				//*for (i = 0; i <1; i++) {
-					var anodes = new Object();
-					anodes.text = "节点列表" ;
-					anodes.id = -1;
-					anodes.type="";
-					anodes.nodes = [];
-					tree.push(anodes);
-				//}
-				//alert("该用户没有复合条件的节点数据,<br>请使用其他用户名称登录",info_showtime);
-			} */
-			if(data == null || typeof(data) == "undefined"|| data.length==0 ){
+						if(data == null || typeof(data) == "undefined"|| data.length==0 ){
 				//return tree;
 			}else {
 				let data_len=data.length;
 				for (var j = 0; j < data_len; j++) {
 					var anodes = new Object();
-					anodes.text = data[j].value.name;//+"[Id:"+data[j].value.id+"]";
+					anodes.text = data[j].value.name+"(Id="+data[j].value.id+")";
 					anodes.id = data[j].value.id;
           //anodes.expanded=true;
 					anodes.ParentId=data[j].value.parentId;
@@ -695,7 +612,7 @@
 				*searchCleared (event, results) - 搜索结果被清除之后触发.
 				*/
 			});
-			nodestree.treeview('expandAll');//关闭展开
+			nodestree.treeview('expandAll');//全部展开
 			if (nodeid == "" || nodeid == null) {
 				nodeid = 0;//mnodes[0].text;//如果没有选择项，则选择第一项。
 			}
@@ -703,66 +620,9 @@
 			var firstNode = nodestree.treeview("getNode", nodeid);
 			nodestree.treeview("revealNode",[firstNode.nodeId, { levels: 1, silent: true }])//展开所选节点
 			nodestree.treeview("selectNode", firstNode);//将第一个节点设置为选中状态**
-			//nodestree.treeview('search', [ firstNode.text, { ignoreCase: false, exactMatch: true }]);//匹配node的text属性
-			//获取指定node的sensors
-			//GetSensorsByNode(sessionStorage.nodeid);
-			/*infotreedata = [];
-			infotreeobj.id = firstNode.id;
-			infotreeobj.name = firstNode.text;
-			if (firstNode.hasOwnProperty("nodes")) {
-				infotreeobj.value = firstNode.nodes.length;
-			} else {
-				infotreeobj.value = 0;
-			}
-			infotreeobj.children = [];
-			infotreeobj.level = firstNode.level;
-			//infotreeobj.isload="false";
-			if ((firstNode.hasOwnProperty("nodes")) && (firstNode.nodes.length > 0) && (firstNode.level < 2)) {
-				infotreeobj.children = decode(firstNode.nodes);
-			}
-			infotreedata.push(infotreeobj);
-			maps = [];*/
-			//localStorage.setItem("sensors", null);
-			//localStorage.setItem("sensor_tree",null);
-			//if(!firstNode.hasOwnProperty("nodes"))
-			//GetSensorsByNode(infotreeobj.id);//获取指定节点下的标签信息
-			//GetBinariesByType("NodeGraphic", infotreeobj.id);
-			//refreshinfotree(firstNode);
-			/*if(firstNode.Catalog=="视频监控"){
-				sessionStorage.nodetype=0;
-				updatanav(sessionStorage.nodetype);
-			}else if(firstNode.Catalog=="机房监控"){
-				sessionStorage.nodetype=2;
-				updatanav(sessionStorage.nodetype);
-			}else{updatanav(sessionStorage.nodetype);}*/
-			//setTimeout(function(){if(sessionStorage.pageindex==0){
-			//	document.getElementById("iframe_main").src="infototal.html";
-			//}},3000);
-			function getThe_level_nodeid(anode, alevel) {
-				while (anode.level > alevel) {
-					anode = (nodestree.treeview("getParent", anode));
-				}
-				return anode;
-			}
+			
 			}catch(err){
 				showstateinfo(err.message,"nodemanagement/inittreeview");
-			}
-			function refreshinfotree(anode){
-				infotreedata = [];
-				infotreeobj.id = anode.id;
-				infotreeobj.name = anode.text;
-				infotreeobj.children = [];
-				infotreeobj.level = anode.level;
-				//infotreeobj.isload="false";
-				if ((anode.hasOwnProperty("nodes")) && (anode.nodes.length > 0)) {
-					infotreeobj.children = decode(anode.nodes);
-					infotreeobj.value = anode.nodes.length;
-					//var arr_node = buildsensor1(anode.nodes);
-					//infotreeobj.value = arr_node.length;
-				} else {
-					infotreeobj.value = 0;
-				}
-				infotreedata.push(infotreeobj);
 			}
 		}
     function hidecellconfig(){
