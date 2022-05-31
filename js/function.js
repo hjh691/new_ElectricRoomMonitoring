@@ -103,7 +103,7 @@ function getJsonFile(fileName) {
 		});
 	});
 }
-function showmsg(msg){
+function showmsg(msg,info_showtime){
 	layer.open({
 		time:info_showtime,
 		content:"<div>"+msg+"</div>",
@@ -283,6 +283,7 @@ function login() {
 				//layer.alert(sname);
 				localStorage.username = sname;
 				sessionStorage.password = sps;
+				localStorage.showLeftMenu=false;
 				LoginOrder(sname, sps,0);
 			}
 		}
@@ -329,6 +330,8 @@ function init_var(){
 	sessionStorage.allscreen=false;
 	localStorage.server_url=undefined;
 	localStorage.txid=-1;
+	localStorage.showLeftMenu=false;
+	delete sessionStorage.pageindexofserver;
 }
 //获取用户详细信息 used by electricroommonitor
 function GetUserProfile() {
@@ -1031,7 +1034,7 @@ function getmessagesbysensor(sensorid,folder,name,kssj, jssj) {//,aparent
 						//localStorage.setItem("historymes",JSON.stringify(data.datas));
 						decodedatas( data.datas);//[sensorid]
 					} else {
-						showmsg("没有符合条件的历史数据");
+						showmsg("没有符合条件的历史数据",info_showtime);
 						showstateinfo("没有符合条件的告警历史数据","getmessagesbysensor");
 						//localStorage.setItem("historymes",null);
 						decodedatas(null);
@@ -1063,7 +1066,7 @@ function getmessagesbynode(nodeid,folder,name,kssj, jssj) {//,aparent
 						//localStorage.setItem("historymes",JSON.stringify(data.datas));
 						decodedatas( data.datas);//[sensorid]
 					} else {
-						showmsg("没有符合条件的历史数据");
+						showmsg("没有符合条件的历史数据",info_showtime);
 						showstateinfo("没有符合条件的告警历史数据","getmessagesbynode");
 						//localStorage.setItem("historymes",null);
 						decodedatas(null);
@@ -1124,7 +1127,11 @@ function getnodegraphics_bc(data){
 	
 	if(localStorage.txid!=-1){
 		//brefresh=false;
+		try{
 		drawmap(JSON.parse(sessionStorage.contents),null,1);
+		}catch(err){
+
+		}
 		return;
 	}else{
 		localStorage.txid=-1;
@@ -1133,7 +1140,9 @@ function getnodegraphics_bc(data){
 	var obj_data=new Object();
 	var contents = ($.base64.atob(data.value,true)).split("\r\n");//.Result
 	//if(jQuery.hasOwnProperty(localStorage.realdata))
+	try{
 	var obj_rd=JSON.parse(localStorage.getItem("realdata"));
+	}catch(err){}
 	var obj=[];
 		contents.forEach(function(g){
 			if ($.trim(g).length > 0) {
@@ -1315,7 +1324,9 @@ function drawmap(arr,ctx,isrefresh,cwidth,cheight) {
 			if (!arr[i]) {
 				continue;
 			}
+			try{
 			var strs = JSON.parse(arr[i]);
+			}catch(err){}
 			if(strs.refresh || isrefresh){
 				if (strs.hasOwnProperty("_type")) {
 					pfdp.type = strs._type;
@@ -2228,7 +2239,7 @@ function sendorder(order,callback,datas){
 					showmsg("服务器连接失败，请稍后重试",info_showtime);
 					showstateinfo("服务器连接失败，请稍后重试",order);
 				}else if(errorThrown=="Bad Request"){
-					showmsg("操作失败: "+jqXHR.responseText);
+					showmsg("操作失败: "+jqXHR.responseText,info_showtime);
 				}
 					else{
 					showstateinfo('数据获取失败',order);//showmsg(' 数据获取失败',info_showtime);
@@ -2246,7 +2257,7 @@ function sendorder(order,callback,datas){
 				}
 				callback(null);
 			}catch(err){
-				showstateinfo(err.message,"sendpostorder");
+				showstateinfo(err.message,"sendorder");
 			}
 			},
 			success: function (data, status,xml) {
@@ -2274,7 +2285,7 @@ function sendorder(order,callback,datas){
 					callback(null) ;//应该调用回调函数而不是使用return null
 				}
 			}catch(err){
-				showstateinfo(err.message,"sendpostorder");
+				showstateinfo(err.message,"sendorder");
 			}
 			},
 		});
@@ -2723,7 +2734,9 @@ function WebSocketTest() {
 		};
 		ws.onmessage = function (evt) {//接收到信息时触发此事件，回调函数
 			//var received_msg =decodeURIComponent(evt.data).substring(0,decodeURIComponent(evt.data).indexOf('['));// ;
+			try{
 			var obj_rec=JSON.parse(evt.data);
+			}catch(err){}
 			if(obj_rec){
 				if(obj_rec.result)
 				var rec_datas=obj_rec.result.datas;

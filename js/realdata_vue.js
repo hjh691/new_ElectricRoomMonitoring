@@ -1060,7 +1060,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
             }
         }
         if(nodata){
-            //showmsg("没有所选标签的实时数据");
+            //showmsg("没有所选标签的实时数据",info_showtime);
             return;
         }
         alert_obj=[];
@@ -1812,7 +1812,7 @@ function decodedatas(obj_chartdata) {
         obj_chartdata=JSON.parse(localStorage.getItem("historydata"));
     }
     var dom = document.getElementById('realdata_chart');
-    
+    dom.style.cssText ='';
     if (obj_chartdata == null || obj_chartdata.length==0) {
         maxvalue=0;//20210805 is NaN or 0 to define.
         myChart2.hideLoading();
@@ -1904,13 +1904,13 @@ function decodedatas(obj_chartdata) {
                         optionToContent: function (opt) {
                             //let axisData = opt.xAxis[0].data; //坐标数据
                             let series = opt.series; //折线图数据
-                            let tdHeads = '<td  >时间</td>'; //表头
+                            let tdHeads = '<td >时间</td>'; //表头
                             let tdBodys = ''; //数据
                             series.forEach(function (item) {
                                 //组装表头
-                                tdHeads += `<td >${item.name}</td>`;
+                                tdHeads += `<td>${item.name}</td>`;
                             });
-                            let table = `<table border="1" ><tbody><tr>${tdHeads} </tr>`;
+                            let table = `<table border="1" ><tbody><tr style="height:25px;widht:80px">${tdHeads} </tr>`;
                             let series_data_len=series[0].data.length;
                             for (let i = 0, l = series_data_len; i < l; i++) {
                                 //for (let j = 0; j < series.length; j++) {
@@ -1918,7 +1918,7 @@ function decodedatas(obj_chartdata) {
                                     strtime=dateToString((series[0].data[i][0]),2);
                                     tdBodys += `<td>${ series[0].data[i][1].toFixed(Number_of_decimal)}</td>`;
                                 //}
-                                table += `<tr><td >${strtime}</td>${tdBodys}</tr>`;
+                                table += `<tr style="height:25px;widht:80px"><td >${strtime}</td>${tdBodys}</tr>`;
                                 tdBodys = '';
                             }
                             table += '</tbody></table>';

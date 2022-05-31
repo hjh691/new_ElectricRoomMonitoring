@@ -148,7 +148,9 @@
             $('.time').bind('focus',function(){WdatePicker({el:this})});
             var inputa=$("#kssj_collection")
             inputa.val(getCurrentDate(1))
+            if(localStorage.getItem("sensors"))
             sensors=JSON.parse(localStorage.getItem("sensors"));
+            if(localStorage.Config)
             configs=JSON.parse(localStorage.Config);
             appenddisplaytype(sessionStorage.SensorId);
             window.parent.closeloadlayer();

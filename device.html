@@ -203,7 +203,8 @@
 			$("#devicetable tbody").empty();
 			$table=document.getElementById("device-tbody");
 			//deleterows($table);
-            sensors=JSON.parse(localStorage.getItem("sensors"));
+      if(localStorage.getItem("sensors"))      
+				sensors=JSON.parse(localStorage.getItem("sensors"));
 			if(sensors!=null){
 				for(var i=0;i<sensors.length;i++){
 					var tr=document.createElement("tr");
@@ -291,8 +292,11 @@
 				}
 				if(config){
 					detail.appendChild(creatrow("标签类型: ",config));
-					var configs=JSON.parse(localStorage.Config);
-					var typeconfigs=JSON.parse(localStorage.Configs);
+					var configs,typeconfigs;
+					if(localStorage.Config)
+					configs=JSON.parse(localStorage.Config);
+					if(localStorage.Configs)
+					typeconfigs=JSON.parse(localStorage.Configs);
 					var details,typeconfig;
 					//config='wctm'
 					//if(typeconfigs)

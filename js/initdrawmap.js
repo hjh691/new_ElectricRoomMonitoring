@@ -64,7 +64,11 @@ function initpage(){
     }*/
     if(sessionStorage.txid)
         BinariesId=sessionStorage.txid;
-    var binaries=JSON.parse(localStorage.getItem("binaries"));
+    try{
+        var binaries=JSON.parse(localStorage.getItem("binaries"));
+    }catch(err){
+        
+    }
     if(binaries!=null){
         for(var i=0;i<binaries.length;i++){
             var op=document.createElement("option");
@@ -108,17 +112,17 @@ function initpage(){
         }
         if(data.target && data.target.type=='Isolator'){
             if(!data.target.isclosed){
-                data.target._objects[4].path[1][0]='L';
-                data.target._objects[4].path[1][1]= data.target.points['mleft']+data.target.points['r'];
-                data.target._objects[4].path[1][2]= data.target.points['y1'];
+                data.target._objects[0].path[5][0]='L';
+                data.target._objects[0].path[5][1]= data.target.points['mleft']+data.target.points['r'];
+                data.target._objects[0].path[5][2]= data.target.points['y1'];
                 data.target.isclosed=true;
-                data.target._objects[4].set('fill','#008000');
+                data.target._objects[0].set('fill','#008000');
             }else{
-                data.target._objects[4].path[1][0]='L';
-                data.target._objects[4].path[1][1]= data.target.points['mright'];
-                data.target._objects[4].path[1][2]= data.target.points['y2'];
+                data.target._objects[0].path[5][0]='L';
+                data.target._objects[0].path[5][1]= data.target.points['mright'];
+                data.target._objects[0].path[5][2]= data.target.points['y2'];
                 data.target.isclosed=false;
-                data.target._objects[4].set('fill','#800000');
+                data.target._objects[0].set('fill','#800000');
             }
             fcanvas.renderAll();
             //$("#myModal").modal();//显示模态对话框

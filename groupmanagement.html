@@ -233,7 +233,7 @@
 			}
 			function addusergroups_bc(data){
 				if(data){
-					showmsg("用户组信息更新保存成功！");
+					showmsg("用户组信息更新保存成功！",info_showtime);
 				}
 			}
 			//保存组权限
@@ -258,7 +258,7 @@
 			}
 			function addgrouproles_bc(data){
 				if(data){
-					showmsg("组"+group.name+"权限信息保存成功！");
+					showmsg("组"+group.name+"权限信息保存成功！",info_showtime);
 				}
 			}
 			//修改组信息
@@ -269,7 +269,7 @@
 			}
 			function modifygroup_bc(data){
 				if(data){
-					showmsg("组"+group.name+'信息修改成功!');
+					showmsg("组"+group.name+'信息修改成功!',info_showtime);
 				}
 			}
 			//删除分组
@@ -282,7 +282,7 @@
 			}
 			function deletegroup_bc(data){
 				if(data){
-					showmsg("组"+group.name+"删除成功");
+					showmsg("组"+group.name+"删除成功",info_showtime);
 					pt--;
 					getgroup();
 				}

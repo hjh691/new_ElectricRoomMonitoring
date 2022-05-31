@@ -348,7 +348,7 @@ function queryhistorydataself() {
     }
     if(datatype[0].value==null||datatype[0].value.trim()==""){//
         dname="";
-        showmsg("请输入查询的数据类型名称");
+        showmsg("请输入查询的数据类型名称",info_showtime);
         return;
     }else{
         dname=datatype[0].value;

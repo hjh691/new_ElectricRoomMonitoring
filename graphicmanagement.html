@@ -67,6 +67,7 @@
             <input type="file" id="file" onchange="previewHandle(this)" accept=".vis" style="filter:alpha(opacity=0);opacity:0;width:0;height: 0;display:none"/><!--,image/*,application/json,.svg style="display: none;-->
             <input type="text" id="graphicfile_src" title="图形文件全路径名称"/>
             <button  onclick="selectFile()" style="width:70px;height:35px;">浏览</button>
+            <button  onclick="cleargraphic()" style="width:70px;height:35px;">清除</button>
             <button  onclick="savetofile()" style="width:70px;height:35px;margin-left: 10px;">保存</button>
           </div>
           <div class="row">
@@ -136,7 +137,7 @@
         pt=0;
       if((!data||data.length<=0)&&graphic_obj){
         graphic_obj={};
-        graphics=[];//.splice(0,graphics.length); 
+        graphics=[];//
       }else{
         if(isaddgraphic){
           pt=data.length-1;
@@ -170,10 +171,10 @@
                   sendorder("_manager/GetNodeGraphics?id="+graphicid,getnodegraphics_bc);
                   //GetBinary(graphicid);
                 }
-              })
+              });
             }
           }
-        })
+        });
       }else{
         v_graphic.graphics=graphics;
         v_graphic.graphicdetail=graphic_obj;
@@ -181,7 +182,7 @@
       v_graphic. changegraphic(pt);
     }
     function getnodegraphics_bc(data){
-      if(!data || jQuery.isEmptyObject(data.value)){//.Result
+      if(!data || jQuery.isEmptyObject(data.value)){//
         graphicdetail = null;
         try {
           drawmap(JSON.parse(graphicdetail),null,1,cwidth,cheight);
@@ -205,11 +206,9 @@
         reader = '';
       var ext_filename = file.name.split(".")[1];
       $("#graphicfile_src").val(file.name);
-      // 判断是否支持FileReader    
       if (window.FileReader) {
         reader = new FileReader();
       }
-      // IE9及以下不支持FileReader//
       else {
         alert("您的浏览器不支持图片预览功能，如需该功能请升级您的浏览器！");
         return;
@@ -232,7 +231,7 @@
               left:0,
               top:0,
               angle:0,
-              opacity:1
+              opacity:1,
             });
             //imgInstance.scaleX=imgInstance.scaleY=window.zoom;
             fcanvas.clear();//
@@ -275,19 +274,27 @@
       var blob = new Blob([graphicdetail], {type: "text/plain;charset=utf-8"});
       saveAs(blob, graphic_obj.name+".vis");
     }
+    //清除图形画面
+    function cleargraphic(){
+      fcanvas.clear();
+      graphicdetail=null;
+    }
     //修改图形参数配置等
     function modifygraphic(){
       if($("#graphic_name").val()){
         graphic_obj.name=($("#graphic_name").val());
       }
-      graphic_obj.value=$.base64.btoa(graphicdetail,true);
+      if(graphicdetail)
+        graphic_obj.value=$.base64.btoa(graphicdetail,true)
+      else
+        graphic_obj.value=null;
       if(confirm('确定要修改图形的配置信息吗')){
         sendorder("_manager/ModifyNodeGraphics",modifygraphic_bc, graphic_obj);
       }
     }
     function modifygraphic_bc(data){
       if(data){
-        showmsg("图形数据修改成功!");
+        showmsg("图形数据修改成功!",info_showtime);
       }
     }
     //删除指定图形及内容
@@ -297,7 +304,7 @@
     }
     function deletegraphic_bc(data){
       if(data){
-        showmsg("图形"+graphic_obj.name+" 删除成功！");
+        showmsg("图形"+graphic_obj.name+" 删除成功！",info_showtime);
       }
       pt>0?pt--:pt;
       GetGraphicsByNode(NodeId);
@@ -415,7 +422,8 @@
 　　（六）制止和纠正违章指挥、强令冒险作业、违反操作规程的行为；
 　　（七）督促落实本单位安全生产整改措施。
 　　生产经营单位可以设置专职安全生产分管负责人，协助本单位主要负责人履行安全生产管理职责。
-
+    监察部门：降级或撤职 评价机构：失实报告 责令停业整顿，并处3-10万元罚款，出借、挂靠：没收违法所得，10w以上2-5倍罚款，不足10w，单处或并处10-20W罚款
+    主要责任人 5-10w罚款，机构及其负责人，吊销资质和资格，五年内不得从事，严重者终身
     */
   </script>
 </body>

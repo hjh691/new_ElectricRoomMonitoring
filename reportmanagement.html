@@ -40,7 +40,7 @@
   <div class="container" style="margin:5px;">
     <div class="row" >
       <div class="col-xs-3 col-md-3 col-lg-2" style="border: rgb(192, 190, 190) solid 1px;height: 700px;" align="center" >
-        <a href="javascript:void(0)" onclick="getreportconfigs()"><button style="width:150px;height:30px;font-size: 1.2em;">报表配置列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
+        <a href="javascript:void(0)" onclick="getreportconfigs()"><button style="width:150px;height:30px;font-size: 1.2em;">报表配置名称列表<span class="glyphicon glyphicon-refresh" style="margin-left: 15px;"></span></button></a>
         <ul id="v_reportlist" style="list-style-type:none;text-align: center;padding-top: 20px;height: 650px;overflow: auto;">
           <li v-for="(reportconfig,idx) in reportconfigs" style="margin-top:20px;margin-bottom:10px;"><a href="javascript:void(0)" :id="idx" @click="changeconnection(idx)">{{reportconfig.name}}</a></li>
         </ul>
@@ -412,7 +412,7 @@
       //createddetail();
       $("#cell_edit").show();
     }
-    function setdetail(){
+    function setdetail(){//保存栏目配置到报表详情中（此时还为上传到服务端）
       var obj_node=nodestree.treeview("getSelected");
       if(reportconfig.nodeIds && reportconfig.nodeIds.length>0){
         reportconfig.nodeIds.splice(0,reportconfig.nodeIds.length);
@@ -431,7 +431,7 @@
     }
     function modifyreportconfig_bc(data){
       if(data)
-        showmsg("报表配置信息修改成功!");
+        showmsg("报表配置信息修改成功!",info_showtime);
     }
     function deleteconnection(){
       report_index=report_index-1;
@@ -443,7 +443,7 @@
     }
     function deletereportconfig_bc(data){
       if(data)
-        showmsg("报表"+reportconfig.name+"删除成功!");
+        showmsg("报表"+reportconfig.name+"删除成功!",info_showtime);
       getreportconfigs();
     }
     function addreportconfig(){

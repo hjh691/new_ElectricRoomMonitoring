@@ -136,6 +136,7 @@ function initpage() {
     if(sessionStorage.getItem("chartoption")){
         chartOption=JSON.parse(sessionStorage.getItem("chartoption"));
     }
+    if(localStorage.getItem("sensors"))
     sensors = JSON.parse(localStorage.getItem("sensors"));
     $('#realdata-tbody').empty();
     $table = document.getElementById('realdata-tbody');
@@ -144,6 +145,7 @@ function initpage() {
 }
 function showAllSensors(){
     //添加所有的标签项
+    if(localStorage.getItem("sensors"))
     sensors = JSON.parse(localStorage.getItem("sensors"));
     if(sensors!=null){
         is_have=true;
@@ -965,7 +967,7 @@ function decoderealdata(obj_realdata,asensorid,isload) {//obj_realdata 实时数
             }
         }
         if(nodata){
-            //showmsg("没有所选标签的实时数据");
+            //showmsg("没有所选标签的实时数据",info_showtime);
             return;
         }
         alert_obj=[];

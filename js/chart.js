@@ -59,7 +59,9 @@
             tree_obj.treeview("search",[nodeid+'', { ignoreCase: false, exactMatch: true }]);
         }
         //sensors=JSON.parse(localStorage.getItem("sensors"));//
+        try{
         configs=JSON.parse(localStorage.Config);
+        }catch(err){}
         //appenddisplaytype();//重复执行次数太多（3次），故去掉此处的调用。
         //setSelectOption("jcdd", sessionStorage.SensorId);
         oneChoice();
@@ -96,7 +98,9 @@
         let sel_str_len=sel_str.length;
         //$("#display_type_chart").empty();
         var temp=document.getElementById("display_type_chart");
+        try{
         allconfigs=JSON.parse(localStorage.Config);
+        }catch(err){}
         if(allconfigs){
             for(var ac in allconfigs){//如果有，读取其所有配置项
                 //if(allconfigs[ac].type.toLowerCase()==scatalog){
@@ -226,7 +230,7 @@
         }else{
             //parent.dialog.html("请选择要对比的测量点名称!");//,info_showtime);
             //parent.dialog.dialog('open');
-            showmsg("请选择要对比的测量点名称!")
+            showmsg("请选择要对比的测量点名称!",info_showtime)
             showstateinfo("请选择要对比的测量点名称!");
         }
         }catch(err){

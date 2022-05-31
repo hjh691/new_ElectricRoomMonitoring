@@ -49,10 +49,12 @@ $("#linewidth option[value='3']").attr("selected",true);
 changelinewidth(3);
 canvas.freeDrawingBrush.color = color; //设置自由绘颜色
 canvas.freeDrawingBrush.width = drawWidth;
+try{
 if(!sessionStorage.fabric_paras)
   sessionStorage.fabric_paras=JSON.stringify(fabric_paras)
 else
   fabric_paras=JSON.parse(sessionStorage.fabric_paras);
+}catch(err){}
 /*if(!sessionStorage.strokecolor){
   sessionStorage.strokecolor="#000";
 }

@@ -5,7 +5,7 @@ var jfjk_base_config={};
 var secc=-1;
 //_api与服务器通信地址列表，系统自动进行通道测试，保存首个通信正常地址进行数据交互； 
 var server_url_list=[
-    "http://localhost:22000/",
+    "http://localhost:20000/",
     "http://192.168.10.250:20000/",
     "http://yun.hebjka.com:20000/"
 ];
@@ -41,7 +41,7 @@ jfjk_base_config.bg_src="res/bj011.jpg";
 //系统名称
  jfjk_base_config.app_name="智能变电站辅助系统综合监测云平台";
 //版本号
- jfjk_base_config.ver_id="Ver 2.22.513";//20220513
+ jfjk_base_config.ver_id="Ver 2.22.526";//20220526
  //发布日期
  jfjk_base_config.date="2022-05-26";
 //公司名称
@@ -131,7 +131,6 @@ function initconfigOption(){
     configOption.type="";
     configOption.desc="";
 }
-//localStorage.showLeftMenu=false;//控制是否自动隐藏或显示左侧的节点树形菜单列表。
  /**un business
   * 1.2.2 节点树的节点字体颜色变化的问题，告警信息每次都显示的问题（同一节点有不同类型的数据和不一样的告警状态造成），节点目录自动折叠的问题；代码精简。
   * 

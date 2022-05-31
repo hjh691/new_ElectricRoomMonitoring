@@ -135,11 +135,16 @@
         function initpage(){
             updatapcnav(15);//*************
             var asessor=(parent.sensorsnode);
-            var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
-            var treenode=buildnode(treeseneors,0);
-            //inittreeview(treenode);
-            sensors=JSON.parse(localStorage.getItem("sensors"));
-			configs=JSON.parse(localStorage.Configs);
+            try{
+                var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+                
+                var treenode=buildnode(treeseneors,0);
+                //inittreeview(treenode);
+                sensors=JSON.parse(localStorage.getItem("sensors"));
+                configs=JSON.parse(localStorage.Configs);
+            }catch(err){
+                    
+            }
             appenddisplaytype();
             var parentid=-100,parentname="";
 			var maps=[];

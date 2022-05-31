@@ -417,13 +417,15 @@ function decoderealdata(obj_realdata,asensorid,isload) {
         var v_sel = $('[name="options"]');
         $('#others_realdata_tbody').empty();
         $table = document.getElementById('others_realdata_tbody');
-        if(!obj_realdata){
-            obj_realdata=JSON.parse(localStorage.getItem("realdata"));
-        }
-        var sensors_length=0;
-        var sensors = JSON.parse(localStorage.getItem("sensors"));
-        if(sensors)
-            sensors_length=sensors.length;
+        try{
+            if(!obj_realdata){
+                obj_realdata=JSON.parse(localStorage.getItem("realdata"));
+            }
+            var sensors_length=0;
+            var sensors = JSON.parse(localStorage.getItem("sensors"));
+            if(sensors)
+                sensors_length=sensors.length;
+        }catch(err){}
         var obj_data = new Object();
         var pt = 0;
         var dname;
@@ -1194,9 +1196,11 @@ function decodedatas(obj_chartdata) {
     //labels = [],
     //t;
     myChart2.clear();
-    if(obj_chartdata==null){
-        obj_chartdata=JSON.parse(localStorage.getItem("historydata"));
-    }
+    try{
+        if(obj_chartdata==null){
+            obj_chartdata=JSON.parse(localStorage.getItem("historydata"));
+        }
+    }catch(err){}
     if (obj_chartdata == null) {
         maxvalue=NaN;//20200518
         myChart2.hideLoading();

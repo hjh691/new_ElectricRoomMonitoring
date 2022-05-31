@@ -53,7 +53,7 @@
                 </div>
                 <div class="row">
                   <div class="col-xs-4 table-lable"> 上级节点编码:</div>
-                  <div class="col-xs-8"><input id="parent_id" type="text" readonly="readonly" style="width:250px;font-size: 1.6em;" v-model="nodedetail.parentId" value=""/>
+                  <div class="col-xs-8"><input id="parent_id" type="text" readonly="readonly" style="width:250px;font-size: 1.6em;" v-model="nodedetail.parentId" value="" onclick="changeparentid()"/>
                   </div>
                 </div>
                 <div class="row">
@@ -146,7 +146,7 @@
       }
       function modifynode_bc(data){
 				if(data)
-          showmsg("节点信息修改成功!");
+          showmsg("节点信息修改成功!",info_showtime);
 				getnodelist();
       }
       function deletenode(){
@@ -157,7 +157,7 @@
       }
       function deletenode_bc(data){
         if(data)
-          showmsg("节点删除成功!");
+          showmsg("节点删除成功!",info_showtime);
         getnodelist();
       }
       function addnode(){
@@ -188,17 +188,6 @@
 			}
       function buildnode(data, level) {
 			var tree = [];
-			/*if(level==0){// 
-				//*for (i = 0; i <1; i++) {
-					var anodes = new Object();
-					anodes.text = "节点列表" ;
-					anodes.id = -1;
-					anodes.type="";
-					anodes.nodes = [];
-					tree.push(anodes);
-				//}
-				//alert("该用户没有复合条件的节点数据,<br>请使用其他用户名称登录",info_showtime);
-			} */
 			if(data == null || typeof(data) == "undefined"|| data.length==0 ){
 				//return tree;
 			}else {
@@ -415,7 +404,13 @@
 				infotreedata.push(infotreeobj);
 			}
 		}
-      
+    function changeparentid(){
+			if(confirm("改变父节点ID将改变节点的附属关系，确定要更改吗？")){
+				$("#parent_id").removeAttr("readonly");
+			}else{
+				$("#parent_id").attr("readonly","readonly");
+			}
+		}
     </script><!---->
 </body>
 </html>

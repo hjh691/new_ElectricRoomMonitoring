@@ -680,7 +680,9 @@
     }
     
     function decoderealdata(){
-		var sensors=JSON.parse(localStorage.getItem("sensors"));
+		var sensors;
+        if(localStorage.getItem("sensors"))
+        sensors=JSON.parse(localStorage.getItem("sensors"));
 		var obj_data=new Object();
         var pt=0;
         //更新数据

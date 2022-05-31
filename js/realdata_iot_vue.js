@@ -119,7 +119,9 @@ function initpage() {
 }
 function showAllSensors(){
     var parentid=-1,parentname="";
-    sensors = JSON.parse(localStorage.getItem("sensors"));
+    try{
+        sensors = JSON.parse(localStorage.getItem("sensors"));
+    }catch(err){}
     $('#others_realdata_tbody').empty();
     arr_realdata=[];
     $table = document.getElementById('others_realdata_tbody');

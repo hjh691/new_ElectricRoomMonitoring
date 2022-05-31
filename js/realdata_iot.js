@@ -126,7 +126,9 @@ function initpage() {
 }
 function showAllSensors(){
     var parentid=-1,parentname="";
+    try{
     sensors = JSON.parse(localStorage.getItem("sensors"));
+    }catch(err){}
     $('#others_realdata_tbody').empty();
     $table = document.getElementById('others_realdata_tbody');
     //添加所有的标签项

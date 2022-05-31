@@ -81,8 +81,8 @@
               </div>
               <div class="row">
                 <div class="col-xs-12" align="center"><button style="width:100px;" onclick="adduser()">添加</button>
-                <button style="width:100px;" onclick="modifyuser()">修改</button>
-                <button style="width:100px;" onclick="deleteuser()">删除</button></div>
+                <button id="btn_edit" style="width:100px;" onclick="modifyuser()">修改</button>
+                <button id="btn_delete" style="width:100px;" onclick="deleteuser()">删除</button></div>
               </div>
               </div>
             </div>
@@ -98,7 +98,6 @@
       initusermanagement();
       function initusermanagement(){
         getuserroles();
-        
       }
       function getuserroles(){
         sendorder("_manager/ListUserRole",getuserroles_bc);
@@ -116,7 +115,6 @@
         //console.log(data);
         userlist=data;
         if(userlist.length>=0){
-          
           if(isadduser){
             pt=userlist.length-1;
             isadduser=false;
@@ -130,7 +128,6 @@
                 userdetail:userconfig,
                 roles:userroles,
               },
-              
               methods:{
                 changeuser(index){
                   //userconfig=userlist[index];
@@ -138,10 +135,16 @@
                     pt=index;
                     elem=$("#"+pt);
                     this.userdetail=userlist[pt];//
+                    if(this.userdetail.name==localStorage.username){
+                      $("#btn_edit").prop('disabled',true);
+                      $("#btn_delete").prop("disabled",true);
+                    }else{
+                      $("#btn_edit").prop('disabled',false);
+                      $("#btn_delete").prop("disabled",false);
+                    }
                     userconfig=this.userdetail;
                     decodeuserroles(userconfig.roles);
                     refreshlist(elem[0]);
-                    //showmsg("aaa");
                   })
                 },
                 destroy() {
@@ -155,13 +158,11 @@
             //v_user.users.$set("users",userlist);
             //v_user.reload();
           }
-        
           decodeuserroles(userconfig.roles);
           let elem=$("#"+pt);
           while(!elem)
             elem=$("#"+pt);
           refreshlist(elem[0]);
-
           v_user.changeuser(pt);
         }
       }
@@ -192,29 +193,33 @@
       function modifyuser(){
         userconfig.roles=codeuserroles();
         if (confirm("您确定要修改用户“"+userconfig.name+'”的配置信息吗')) {
-          sendorder("_manager/ModifyUser",modifyuser_bc,userconfig);
+          if(userconfig.name=="admin"){
+            showmsg('此用户为系统管理员用户，不能修改！！',info_showtime);
+          }else{
+            sendorder("_manager/ModifyUser",modifyuser_bc,userconfig);
+          }
         }
       }
       function modifyuser_bc(data){
         if(data)
-          showmsg("用户信息修改成功!");
-        sendorder("_manager/GetUserById?id="+userconfig.id,getuserbyid_bc);
-      }
-      function getuserbyid_bc(data){
-        userconfig=data;
-        v_user.userdetail=userconfig;
+          showmsg("用户信息修改成功!",info_showtime);
+        getuserlist();
       }
       function deleteuser(){
         pt=pt-1;
         if(pt<0)
           pt=0;
         if (confirm("您确定要删除用户“"+userconfig.name+'”吗')) {
-          sendorder("_manager/DeleteUser",deleteuser_bc,userconfig);
+          if(userconfig.name=="admin"){
+            showmsg('此用户为系统管理员用户，不能删除！！',info_showtime);
+          }else{
+            sendorder("_manager/DeleteUser",deleteuser_bc,userconfig);
+          }
         }
       }
       function deleteuser_bc(data){
         if(data)
-          showmsg("用户"+userconfig.dispaly+"删除成功!");
+          showmsg("用户"+userconfig.name+"删除成功!",info_showtime);
         getuserlist();
       }
       function adduser(){

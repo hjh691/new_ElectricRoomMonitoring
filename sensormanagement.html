@@ -21,7 +21,7 @@
         font-size: 12px;
       }
       input{
-        font-size: 1.6em;
+        font-size: 1.2em;
       }
       li{font-size: 16px;}
       button{
@@ -60,7 +60,7 @@
 							<li ><a href="#tab2" data-toggle="tab">批量管理</a></li>
 						</ul>
 						<div class="tab-content" id="tab-content">
-            <div class="container tab-pane in active fade" id="tab1"><!--align="center"-->
+            <div class="container tab-pane in active fade" id="tab1"><!--align="center"readonly="readonly" -->
               <div class="col-xs-12 col-md-6 col-lg-4">
                 <div id="sensorprofile">
 								<div class="row">
@@ -70,7 +70,7 @@
                 </div>
 								<div class="row">
                   <div class="col-xs-2 col-lg-2 table-lable"> 地址:</div>
-                  <div class="col-xs-8"><input id="address" type="text" readonly="readonly" style="width:200px;font-size: 1.6em;" v-model="nodedetail.address" value=""/>
+                  <div class="col-xs-8"><input id="address" type="text" style="width:200px;font-size: 1.2em;" v-model="nodedetail.address" value=""/>
                   </div>
                 </div>
                 <div class="row">
@@ -110,7 +110,7 @@
 									<div class="col-xs-8 col-lg-10">
 										<span id="configitem">
 											<v_configdetail ref="child_detail"></v_configdetail>
-											<button style="width:65px;" onclick="showconfig()">详情</button></span>
+											<button id="showdetail" style="width:65px;" onclick="showconfig()">详情</button></span>
 									</div>
 								</div><br>
 								<div class="row">
@@ -121,6 +121,10 @@
               </div>
 							<div class="col-sx-12 col-md-6 col-lg-8">
 								<div id="sensorconfigdetail" style="display:none">
+									<div class="row">
+									<div class="col-xs-3 col-lg-2 table-lable"> </div>
+									<div class="col-xs-8"><h4>配置选项详情</h4>
+									</div></div>
 									<div class="row">
 										<div class="col-xs-3 col-lg-2 table-lable"> 目录:</div>
 										<div class="col-xs-8"><input id="name" type="text" v-model="sensorconfigdetail.folder" style="width:200px;" value=""/>
@@ -214,7 +218,7 @@
     <script type="text/javascript">
       var nodelist=[],sensortypes=[],sensorconfigtypes=[];
       var sensorconfig=[],nodeconfig={},temp_sensorconfig=[],temp_configdetails=[];
-      var NodeId=0,nodeid=1,sensor_nodeid=1;
+      var NodeId=0,nodeid=1,sensor_nodeid=1,config=null;
       var v_node,v_sensorconfig,v_configdetail,v_configtype;
       var isaddsensor=false;
 			var nodestree=$("#nodetree");
@@ -272,7 +276,7 @@
 				}
 				getsensorconfigdetail(type,config||temp_sensorconfig[0] && temp_sensorconfig[0].name);
 				if(v_sensorconfig){
-					v_sensorconfig.update();
+					v_sensorconfig.update(config);
 				}else{
 					v_sensorconfig=new Vue({
 					el:'#senconfig',
@@ -288,12 +292,13 @@
 									this.$destroy();
 								},
 								updatedatas(num){
-                  this.sensorconfigs=temp_sensorconfig;
-									$("#sensorconfig").val(config);
-                  //this.$set();
+									this.sensorconfigs=temp_sensorconfig;
+                  this.$nextTick(function(){
+										$("#sensorconfig").val(num);
+									});
                 },
                 savetodetail(idx,avalue){
-                  //details[idx].value=avalue;
+                  //
                 }
 							}
 						},
@@ -302,9 +307,9 @@
 						destroy() {
               this.$destroy();
               },
-						update(){
-							this.$refs.mychild.updatedatas(0);
-							//this.$forceUpdate()
+						update(config){
+							this.$refs.mychild.updatedatas(config);
+							//
 						},
 					}
 				});
@@ -425,10 +430,13 @@
 			}
 			//显示配置项参数页面
 			function showconfig(){
-				if($("#sensorconfigdetail").is(":hidden"))
-					$("#sensorconfigdetail").show()
-				else
-					$("#sensorconfigdetail").hide()
+				if($("#sensorconfigdetail").is(":hidden")){
+					$("#sensorconfigdetail").show();
+					$("#showdetail").text("隐藏");
+				}else{
+					$("#sensorconfigdetail").hide();
+					$("#showdetail").text("详情");
+				}
 			}
 			//显示配置类型的参数编辑页
 			function modifypara(){
@@ -453,7 +461,7 @@
       }
       function modifynode_bc(data){
 				if(data)
-          showmsg("节点信息修改成功!");
+          showmsg("节点信息修改成功!",info_showtime);
 				GetSensorsByNode();
       }
       function deletesensor(){
@@ -464,7 +472,7 @@
       }
       function deletesensor_bc(data){
         if(data)
-          showmsg("节点"+nodeconfig.name+"删除成功!");
+          showmsg("节点"+nodeconfig.name+"删除成功!",info_showtime);
         GetSensorsByNode();
       }
       function addsensor(){
@@ -488,19 +496,6 @@
 				if(!atype)
 					atype='';
 				$("#sensortype").val(atype);
-				/*var sel=document.getElementById("sensortype");
-				var options=sel.options;
-				if(options){
-					options[0].defaultSelected = true;
-					options[0].selected = true;
-				}
-				for (var i = 0; i < options.length; i++) {
-					if (options[i].value == atype) {
-						options[i].defaultSelected = true;
-						options[i].selected = true;
-						break;
-					}
-				}*/
 			}
 			function decodesensorconfig(aconfig){
 				if(!aconfig)
@@ -509,17 +504,6 @@
 			}
       function buildnode(data, level) {
 			var tree = [];
-			/*if(level==0){// 
-				//*for (i = 0; i <1; i++) {
-					var anodes = new Object();
-					anodes.text = "节点列表" ;
-					anodes.id = -1;
-					anodes.type="";
-					anodes.nodes = [];
-					tree.push(anodes);
-				//}
-				//alert("该用户没有复合条件的节点数据,<br>请使用其他用户名称登录",info_showtime);
-			} */
 			if(data == null || typeof(data) == "undefined"|| data.length==0 ){
 				//return tree;
 			}else {
@@ -822,7 +806,7 @@
 		function inittreeview_level2(anodes,obj) {
 			var mnodes = [];
 			var nodes = new Object();
-				nodes.text = "节点列表" ;
+				nodes.text = "标签列表" ;
 				nodes.id = -1;
 				nodes.type="";
 				nodes.nodes = [];
@@ -877,48 +861,16 @@
 					v_node.nodedetail=nodeconfig;
 					decodesensortype(data.Catalog);
 					creatsensorconfig(data.Catalog,data.Config);
-					//decodesensorconfig(sensortypeconfig);
+					config=data.Config;
+					//decodesensorconfig(data.Config);
 					//if(!multiselect)//多选时，标签id不被保存；用于恢复所选项
 					sessionStorage.sel_id=data.id;
 					var offset=Math.ceil($('#tree').outerHeight()+50);
 					var firstSearchResult = tree1.find('ul').find('li[data-nodeid='+ sensor_nodeid +']');
 					if(firstSearchResult.length>0)//避免树形菜单为空时，可能报错
 						tree1.scrollTop(firstSearchResult[0].offsetTop-offset);
-					/*try{if ((sessionStorage.pageindex==2)||(sessionStorage.pageindex==17)){
-						iframemain[0].contentWindow.localrowbysensorid(data.id);//实时数据页面的点击标签树形菜单进行实时数据列表定位
-						}else{
-							iframemain[0].contentWindow.appenddisplaytype(data.id);//0710更新对应页面的配置项
-						}
-					}catch(e){}
-					sessionStorage.SensorName=data.text;
-					sessionStorage.sensorallpathname=getSensorAllPathName(data);
-					
-					sensorarray=tree1.treeview("getSelected");
-					if(sensorarray.length>6){
-						tree1.treeview("unselectNode",[data.nodeId]);
-						//dialog.html("对比测量点不能大于6个!");//jquery的对话框
-						//dialog.dialog("open");//,info_showtime);
-						showstateinfo("对比测量点不能大于6个","inittreeview_level2");
-						showmsg("对比测量点不能大于6个");
-						iframemain[0].contentWindow.stoptimer(iframemain[0].contentWindow.timer);//停止闪烁
-						return;
-					}else {
-						showselectesensors();
-					}
-                    //catalog=getcatalog(dname);
-                    //queryhistorydata();//0710
-					//对选中的节点进行处理：依据类型（名称）不同，进行不同的处理。TODO 
-					clickNode(event, data)*/
 				},
-				/*onNodeUnselected : function(event,data){
-					clickNode(event, data);
-					sensorarray=tree1.treeview("getSelected");
-					showselectesensors();
-				},*/
 				onSearchComplete:function(event, data) { //data返回的符合条件的node数组。
-					/*if( isEmpty(data)){
-						return; 
-					}*/
 					//如果查找到的位置数据超出当前范围滚动条直接滚动到搜索结果中的第一条数据的位置
 					//var tnodeId = data[0].nodeId;
 					var offset=Math.ceil($('#tree').outerHeight()+50);
@@ -936,13 +888,6 @@
 				//$("#tree_chi").treeview('checkAll'  , { silent:   true   });
 				var allnode=tree1.treeview("getUnselected");
 				var currentNode=null;
-				/*for(var j=0;j<allnode.length;j++){//根据所保存的标签编号（id）来确定那个标签被选中。
-					if(allnode[j].id==sessionStorage.sel_id)
-					{	currentNode=allnode[j]
-						sensor_nodeid=allnode[j].nodeId;
-						break;
-					}
-				}*/
 				if(isaddsensor){
 					currentNode=null;
 					sensor_nodeid=tree1.treeview('search', [ nodeconfig.name, { ignoreCase: false, exactMatch: true }])[0].nodeId;
@@ -1168,7 +1113,7 @@
 			}
 			//清空指定节点的所有标签
 			function clearsensorsbynode(anodeid){
-				if (confirm("您确定要清空所有标签吗")) {
+				if (confirm("您确定要清空节点 '"+$("#node").text()+"' 下的所有标签吗?")) {
 					if(!anodeid)
 						anodeid=NodeId;
 					sendorder("_manager/ClearSensorsByNode?nodeId="+anodeid,clearsensorsbynode_bc);

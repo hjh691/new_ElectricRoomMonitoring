@@ -347,8 +347,10 @@ function iniview(){
 		sel_sensor.remove(0);
 		sel_sensor.options[0] = null;
 	}
-	sensors=JSON.parse(localStorage.getItem("sensors"));
+	try{
+    sensors=JSON.parse(localStorage.getItem("sensors"));
 	configs=JSON.parse(localStorage.getItem("Configs"));
+    }catch(err){}
 	if(sensors!=null){
 		for(var i=0;i<sensors.length;i++){
 			if((sensors[i].Value.ParentId!="-1")&&(sensors[i].Value.ParentId!=parentid)){

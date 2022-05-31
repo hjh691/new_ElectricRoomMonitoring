@@ -78,14 +78,14 @@
 											<option v-for="config in allconfig">{{config.parentdesc+'-'+config.folder+'-'+config.name+'-'+config.desc}}
 											
 											</option></select>
-											<button style="width:60px;" onclick="resetdefault()">预置</button>
+											<button id="setexice" style="width:60px;" onclick="resetdefault()">预置</button>
 										</span>
 								</div>
 								<br>
 								<div id="sensorconfigdetail">
 									<div class="row">
 										<div class="col-xs-3 col-lg-2 table-lable"> 目录:</div>
-										<div class="col-xs-8"><input id="name" type="text" v-model="sensorconfigdetail.folder" style="width:200px;" value=""/>
+										<div class="col-xs-8"><input id="name" type="text"  readonly="readonly" v-model="sensorconfigdetail.folder" style="width:200px;" value=""/>
 										</div>
 									</div>
 									<div class="row">
@@ -152,8 +152,8 @@
 									</div>
 								</div-->
 								<div class="row">
-									<div class="col-xs-12"><button style="width:100px;" onclick="addconfigdetail()">添加</button>
-									<button style="width:100px;" onclick="deleteconfigdetail()">删除</button></div>
+									<div class="col-xs-12"><button id="append" style="width:100px;" onclick="addconfigdetail()">添加</button>
+									<button style="width:100px;" id="delete" onclick="deleteconfigdetail()">删除</button></div>
 								</div><br>
 								<div class="row">
 									<div class="col-xs-12">
@@ -220,6 +220,25 @@
       }
 			//标签类型发生改变
 			function sensortypechange(){
+				if(($("#sensortype").val()==="CUST") || ($("#sensortype").val()==="cust")){
+					$("#name").removeAttr("readonly");
+					$("#add").removeAttr("readonly");
+					$("#txt_configtype").removeAttr('readonly');
+					$("#append").prop('disabled',false);
+					$("#delete").prop('disabled',false);
+					//$("#setexice").prop('disabled',true);
+					//$("#configdetails").prop('disabled',true);
+					$("#configtype").prop("disabled",false);
+				}else{
+					$("#name").attr("readonly","readonly");
+					$("#add").attr("readonly","readonly");
+					$("#txt_configtype").attr("readonly","readonly");
+					$("#append").prop('disabled',true);
+					$("#delete").prop('disabled',true);
+					//$("#setexice").prop('disabled',false);
+					//$("#configdetails").prop('disabled',false);
+					$("#configtype").prop("disabled",true);
+				}
 				creatsensorconfig($("#sensortype").val());
 			}
 			function createallconfig(){
@@ -484,7 +503,7 @@
       }
       function modifynode_bc(data){
 				if(data)
-          showmsg("节点信息修改成功!");
+          showmsg("节点信息修改成功!",info_showtime);
 				GetSensorsByNode();
       }
       function deleteconfigdetail(){

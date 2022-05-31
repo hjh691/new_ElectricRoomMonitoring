@@ -210,7 +210,7 @@
 					var tip2=layer.msg('正在连接后台服务器...',{time:10000});
 					test_url(a_url);            
 				}catch(err){
-					showstateinfo(err.message);
+					showstateinfo(err.message,);
 				}
 			//}
 			//}
@@ -218,19 +218,23 @@
 				if(!url.match(/\/$/)){
 					url=url+"/";
 				}
-				url = encodeURI(url+"GetProfile");
+				if(url.indexOf("localhost")>-1){
+					url=url.replace("localhost",window.location.hostname);
+					//jfjk_base_config.speechurl=jfjk_base_config.speechurl.replace("localhost",window.location.hostname);
+				}
+				var aurl = encodeURI(url+"GetProfile");
 				$.ajax({
 					beforeSend: function (request) {
 						request.setRequestHeader("Authorization", sessionStorage.token);
 					},
-					url: url,
+					url: aurl,
 					type: 'GET',
 					dataType: 'json',
 					timeout: 5000,
 					error: function (jqXHR, textStatus, errorThrown) {
 						try{
 							if (errorThrown == "Unauthorized"||(errorThrown=="Bad Request"  && jqXHR.responseText=="用户登录超时！")) {
-								localStorage.server_url=server_url_list[list_pt];//jfjk_base_config.baseurl=
+								localStorage.server_url=url;//jfjk_base_config.baseurl=
 								if(!localStorage.server_url.match(/\/$/)){
 									localStorage.server_url=localStorage.server_url+"/";
 								}
@@ -253,11 +257,11 @@
 								}
 							} 
 						}catch(err){
-							showstateinfo(err.message,"sendpostorder");
+							showstateinfo(err.message,"test_url");
 						}
 					},
 					success: function (data, status) {
-						localStorage.server_url=server_url_list[list_pt];//jfjk_base_config.baseurl=
+						localStorage.server_url=url;//jfjk_base_config.baseurl=
 						//return secc=0;
 					}
 				});

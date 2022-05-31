@@ -30,8 +30,10 @@ $(function(){
         sessionStorage.framepage="detail.html";
         sessionStorage.pageindex=21;
         window.parent.document.getElementById("tree").style.pointerEvents ="none";
+        try{
         allsensors=JSON.parse(localStorage.getItem("sensors"));
         allconfigs=JSON.parse(localStorage.Config);
+        }catch(err){}
         list_group.empty();
         sa=findsensorbyid(js_sensors,sen_id);
         sa.sort(compare);
@@ -266,7 +268,11 @@ function refreshpicture(aid,asensors){
 }
 function refreshData(){//刷新数据内容，由主页面根据实时数据的页面索引来调用。
     $table = document.getElementById('detail_realdata_tbody');
+    try{
     var arrdata=JSON.parse(localStorage.getItem("realdata"));
+    }catch(err){
+
+    }
     var realdatafolder;
     var sid=-1;
     var tab_rows_len=$table.rows.length;
@@ -380,7 +386,11 @@ function refreshData(){//刷新数据内容，由主页面根据实时数据的�
 function getCatalog(atype,afolder,aname){
     try{
         initchartoption();//数据配置信息和单位信息初始化（更新）
+        try{
         allconfigs=JSON.parse(localStorage.Config);
+        }catch(err){
+            
+        }
         //return catalog;
         if(allconfigs){
             for(var q in allconfigs){

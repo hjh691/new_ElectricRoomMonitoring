@@ -91,11 +91,14 @@
       }
       function modifysystemconfig_bc(data){
         if(data){
-          showmsg("修改系统参数成功！");
+          showmsg("修改系统参数成功！",info_showtime);
         }
       }
       function add(adata){
-        $("#keepdays").val(parseInt($("#keepdays").val())+adata);
+        if($("#keepdays").val())
+          $("#keepdays").val(parseInt($("#keepdays").val())+adata)
+        else
+          $("#keepdays").val(0+adata);
         if(parseInt($("#keepdays").val())<=0)
           $("#keepdays").val(0);
       }

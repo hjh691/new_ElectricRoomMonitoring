@@ -200,7 +200,7 @@
 		var userdata;
 		const c_id=0,c_name=1,c_time=2,c_val=3,c_dataname=4,c_mes=5; 
 		var ws,wscount=0,wsconnect=false;
-		var iframepagename="";
+		var iframepagename="",oldpageindex=sessionStorage.pageindex;
 		//滚动插件实现，只用于横向滚动。
 		(function ($) {
 			$.fn.extend({
@@ -322,6 +322,7 @@
 				//refreshwindow();
 				initwindow();
 				initIndex();
+				sendorder("GetProfile",getprofile_bc);
 				isfirstload=false;
 				if(sessionStorage.kssj==undefined){
 					sessionStorage.kssj = getCurrentDate(1) + " 00:00:00"; // //;
@@ -376,6 +377,10 @@
 		//关闭动画
 		function closeloadlayer(){
 			layer.close(loadlayer);
+		}
+		function getprofile_bc(data){
+			if(data)
+			localStorage.curuser=JSON.stringify(data);
 		}
 		function refreshwindow() {//重画窗口，规定 尺寸,尤其是浮动窗口的位置
 			try{	
@@ -509,9 +514,11 @@
 			} else {
 				inittreeview();
 			}*/
-			if(localStorage.showLeftMenu && localStorage.showLeftMenu=="true")
-				showLeftMenu(localStorage.showLeftMenu)	
-			else showLeftMenu(false);
+			//if(localStorage.showLeftMenu && localStorage.showLeftMenu=="true")
+			try{	
+			showLeftMenu(JSON.parse(localStorage.showLeftMenu));	
+			}catch(err){}
+			//else showLeftMenu(false);
 		}
 		//开启告警声音
 		function showdailog(){
@@ -1194,26 +1201,33 @@
 		function showreportlist(el){
 			
 			if(el.value=="后台维护"){
-				iframepagename=iframemain.attr("src");
-				el.value="前端浏览";
-				$("#aside").hide();
-				$("#navigation").hide();
-				showLeftMenu(true);
-				iframemain.attr("src","serverSet.html");
-				//sessionStorage.pageindex=400;
-				
+				if((JSON.parse(localStorage.curuser)).roles.indexOf('admin')<0){
+					showmsg('当前用户权限受限，不能完成系操作! <br> 请使用管理员权限登录！');
+					return;
+				}
+				var str=prompt("请输入登录密码");
+				if(str==sessionStorage.password){
+					updatapcnav(20);
+					oldpageindex=sessionStorage.pageindex;
+					sessionStorage.pageindex=400;
+					iframepagename=iframemain.attr("src");
+					el.value="前端浏览";
+					$("#aside").hide();
+					$("#navigation").hide();
+					showLeftMenu(true);
+					iframemain.attr("src","serverSet.html");
+				}else{
+					showmsg('您输入的密码不正确，请重新输入！',info_showtime);
+					return;
+				}
 			}else{
 				el.value="后台维护";
 				$("#aside").show();
 				$("#navigation").show();
 				showLeftMenu(false);
 				iframemain.attr("src",iframepagename);
-				//sessionStorage.pageindex=2;
-				//history.go(-1);
-			
+				sessionStorage.pageindex=oldpageindex;
 			}
-			//showLeftMenu(true);
-			/**/
 		}
 		//获取指定节点的一次图形列表  //Fresh strawberries tastes good;
 		function GetBinariesByType(atype, anodeid){
@@ -1281,24 +1295,28 @@
 					tree2=true;
 				//inittreeview_level2(treenode);
 			} else {
-				tree2=false;
-				localStorage.setItem("sensor_tree",null);
-				var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
-				var treenode=buildnode_level2(treeseneors,0);
-				localStorage.setItem("sensors", null);
-				if(!jQuery.isEmptyObject(result.typeConfigs)){
-					var configs=new Object();
-					configs=result.typeConfigs;
-					localStorage.setItem("Configs",JSON.stringify(configs));
-				}else{
-					localStorage.setItem("Configs",null);
-				}
-				if(!jQuery.isEmptyObject(result.configs)){
-					var config=new Object();
-					config=result.configs;
-					localStorage.setItem("Config",JSON.stringify(config));
-				}else{
-					localStorage.setItem("Config",null);
+				try{
+					tree2=false;
+					localStorage.setItem("sensor_tree",null);
+					var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"))
+					var treenode=buildnode_level2(treeseneors,0);
+					localStorage.setItem("sensors", null);
+					if(!jQuery.isEmptyObject(result.typeConfigs)){
+						var configs=new Object();
+						configs=result.typeConfigs;
+						localStorage.setItem("Configs",JSON.stringify(configs));
+					}else{
+						localStorage.setItem("Configs",null);
+					}
+					if(!jQuery.isEmptyObject(result.configs)){
+						var config=new Object();
+						config=result.configs;
+						localStorage.setItem("Config",JSON.stringify(config));
+					}else{
+						localStorage.setItem("Config",null);
+					}
+				}catch(err){
+					
 				}
 				sessionStorage.SensorId=-1;//清除标签id，避免一些没有标签的节点借用保存的标签id形成错误的查询条件
 				//inittreeview_level2(treenode);
@@ -1313,6 +1331,9 @@
 		function refreshiframe(flag) {
 			try{
 			//var frame=document.getElementById("iframe_main");///
+			$("#aside").show();
+			$("#navigation").show();
+			$("#nav20").val("后台维护");
 			switch (sessionStorage.pageindex) {
 				case '0':
 					//if((iframemain.attr('src')).indexOf("infototal.html")<0){
@@ -1430,6 +1451,12 @@
 				case "300":
 				closeloadlayer();//frame.src="ContactUs.html";
 					break;//添加注释.......
+				case "400":
+					closeloadlayer();
+					$("#aside").hide();
+					$("#navigation").hide();
+					$("#nav20").val("前端浏览")
+					break;
 				default:
 					iframemain.arrt("src","newrealdata.html");
 					iframemain.arrt("src","realdata_vue.html");
@@ -1621,7 +1648,9 @@
 			//}
 			//obj_realdata=JSON.parse(localStorage.getItem("realdata"));//考虑使用此方法去掉调用的参数，20200408修改。暂时不用。
 			//var sensors = allsensors;
-			var sensors=JSON.parse(localStorage.getItem("allsensors"));
+			var sensors;
+			if(localStorage.getItem("allsensors"))
+				sensors=JSON.parse(localStorage.getItem("allsensors"));
 			var obj_data = new Object();
 			var pt = 0;
 			if (sensors != null  && obj_realdata) {//有一个为空对比就没有意义，所以跳过。
@@ -1896,8 +1925,16 @@
 		function inittreeview_level2(anodes) {
 			var tree1=$("#tree_chi");
 			if(!anodes){
-				var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"));
-				anodes=buildnode_level2(treeseneors,0);
+				if( localStorage.getItem("sensor_tree")){
+					try{
+					var treeseneors=JSON.parse(localStorage.getItem("sensor_tree"));
+					anodes=buildnode_level2(treeseneors,0);
+					}catch(eer){
+
+					}
+				}else{
+					return
+				}
 			}
 			var sensorarray;
 			tree1.treeview({
@@ -1948,7 +1985,7 @@
 						//dialog.html("对比测量点不能大于6个!");//jquery的对话框
 						//dialog.dialog("open");//,info_showtime);
 						showstateinfo("对比测量点不能大于6个","inittreeview_level2");
-						showmsg("对比测量点不能大于6个");
+						showmsg("对比测量点不能大于6个",info_showtime);
 						iframemain[0].contentWindow.stoptimer(iframemain[0].contentWindow.timer);//停止闪烁
 						return;
 					}else {
@@ -2343,7 +2380,7 @@
   在趋势对比页面将节点切换到机房监控将跳转到历史数据查询页面（机房监控暂时没有趋势对比项）。自动隐藏左侧菜单
   一次图不能随节点进行刷新的问题（没制项refreshifrane，颠倒get数据的顺序，在后边的get数据函数中制项refreshiframe。
   系统信息页面的更新和加载（自动刷新，页面记忆）页脚的超范围滚动条（高度设置）
-  0805左侧树形菜单根据配置项（localStorage.showLeftMenu)决定是否自动隐藏（鼠标离开菜单区域隐藏，鼠标到达左侧边缘显示）
+  左侧树形菜单根据配置项（localStorage.showLeftMenu)决定是否自动隐藏（鼠标离开菜单区域隐藏，鼠标到达左侧边缘显示）
   由于节点编号超出范围造成信息总览游戏节点的图形不能正常显示的问题。
   用户信息页面在浏览器刷新时被不能记忆的问题。调整用户信息页面的布局和格式（修改密码按钮）添加头像，三种浏览器测试后台定时器计时问题，极速浏览器在非活动页时减缓。
   360 google chrome tsBrowser

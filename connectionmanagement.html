@@ -178,7 +178,9 @@
                   refreshlist(elem[0]);
                   this.connectiondetail=connectionlist[pt];//
                   connectionconfig=this.connectiondetail;
+                  if(connectionconfig.hostParas)
                   connectparadetail=JSON.parse(connectionconfig.hostParas);
+                  if(connectionconfig.proParas)
                   protocolparadetail=JSON.parse(connectionconfig.proParas);
                   decodeconnectionroles(connectionconfig.type,connectionconfig.server);
                   decodeprotocols(connectionconfig.protocol);
@@ -374,7 +376,7 @@
     }
     function modifyconnection_bc(data){
       if(data)
-        showmsg("连接信息修改成功!");
+        showmsg("连接信息修改成功!",info_showtime);
       //sendorder("_manager/GetUserById?id="+userconfig.id,getuserbyid_bc);
     }
     /*function getuserbyid_bc(data){
@@ -391,7 +393,7 @@
     }
     function deleteconnection_bc(data){
       if(data)
-        showmsg("连接"+connectionconfig.dispaly+"删除成功!");
+        showmsg("连接"+connectionconfig.dispaly+"删除成功!",info_showtime);
       getconnectionlist();
     }
     function addconnection(){

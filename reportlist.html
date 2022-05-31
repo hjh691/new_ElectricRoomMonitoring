@@ -9,8 +9,10 @@
     <script src="js/bootstrap.js"></script>
 	<script type="text/javascript" src="js/jquery.table2excel.min.js"></script>
 	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
-    <script type="text/javascript" src="js/function.js"></script>
-    <style>
+	<script  type="text/javascript" src="js/config.js"></script>
+	<script type="text/javascript" src="js/layer/layer.js"></script>
+	<script type="text/javascript" src="js/function.js"></script>
+	<style>
         fieldset
 {
 	display:block;
@@ -114,7 +116,7 @@ label{
 		</div>
     </div>
     <script type="text/javascript">
-			window.parent.updatapcnav(20);
+			window.parent.updatapcnav(16);
 			sessionStorage.pageindex=400;
 			getReportConfig();
 			var arr_configs=[],arr_reportitem=[],arr_report=[],arr_titles=[],arr_items=[];
@@ -146,7 +148,7 @@ label{
 				}
 			}
 			function createreportmanual_bc(data){
-				console.log(data);
+				//console.log(data);
 			}
 			function queryreportlist(){//查询特定类型特定时间的报表
 				var kssj=$("#kssj_report").val(),jssj=$("#jssj_report").val();
@@ -163,8 +165,12 @@ label{
 				}
 			}
 			function getreportlist_bc(result){
-				arr_report=result.datas
-				showreportlist();//显示特定类型特定时间内的所有报表
+				if(result.datas && result.datas.length>0){
+					arr_report=result.datas
+					showreportlist();//显示特定类型特定时间内的所有报表
+				}else{
+					showmsg("没有符合条件的报表记录！",info_showtime);
+				}
 			}
 			function showreportlist(){//显示特定类型特定时间内的所有报表
 				let temp_str='<div id="temp1">\
@@ -324,10 +330,20 @@ label{
 			}
 			//报表内容回调函数
 			function getreportdetail_bc(result){
-				console.log(result);
+				//console.log(result);
 				arr_titles=result.titles;
 				arr_items=result.items;
 				strcaption=result.name+'<'+result.time.substr(0,10)+'>';
+				for(var i=0;i<result.items.length;i++){
+					for(var j=0;j<arr_titles.length;j++){
+						if(arr_titles[j].indexOf("发生时间")>=0){
+							result.items[i][j]=result.items[i][j].substr(0,19).replace(/T/g,' ');
+						}
+						if(arr_titles[j].indexOf("平均")>=0&&result.items[i][j]){
+							result.items[i][j]=parseFloat(result.items[i][j]).toFixed(Number_of_decimal);
+						}
+					}
+				}
 				createvue();
 			}
 			function createvue(){

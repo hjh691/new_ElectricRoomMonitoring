@@ -60,7 +60,7 @@
 			</div>
 			<div class="row">
 				<div class="col-xs-6 table-lable"> 用户权限:</div>
-				<div class="col-xs-6"><input id="up-yhqx" type="text" style="width:150px" value=""/>
+				<div class="col-xs-6"><input id="up-yhqx" type="text" readonly="readonly" style="width:150px" value=""/>
 				</div>
 			</div>
 			<div class="row">
@@ -147,7 +147,7 @@
 			});
 		}*/
 		function postuserinfo(arruserinfo){
-			sendpostorder("UpdateProfile",arruserinfo,function(data){
+			sendorder("UpdateProfile",function(data){
 				if (data!= null) {
 					layer.alert("用户信息修改成功!",info_showtime);//不添加时长参数不能自行关闭
 					showstateinfo("用户信息修改成功");
@@ -157,7 +157,7 @@
 					layer.alert("修改用户信息出错",info_showtime);
 					showstateinfo("修改用户信息出错");
 				}
-			})
+			},arruserinfo);
 		}
 	</script>
 </body>
